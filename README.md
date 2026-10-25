@@ -73,10 +73,15 @@ From the GDD (v1.0, 25 Oct 2026):
 `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `.csproj`/`.sln` files and builds are git-ignored and regenerated locally. Never commit them.
 
 ### Build targets
-- **Primary:** PC Standalone (Windows), 1920×1080 default.
-- **Secondary:** Web (WebGL), 960×600 default canvas. The template UI is set up to be phone-browser friendly (see [Mobile web](#mobile-web)).
+- **Primary (jam):** Web (WebGL) in desktop browsers, 960×600 default canvas. You need the **WebGL Build Support** module for 6000.6.7f1 (Unity Hub > Installs > Add modules). The template UI is also phone-browser friendly (see [Mobile web](#mobile-web)).
+- **Later:** PC Standalone (Windows), 1920×1080 default.
 
 Build via **File > Build Profiles**, choose the platform, and build into `Builds/` (git-ignored).
+
+Hosted build: _TBD_ (add the itch.io link here once the first browser build is published).
+
+## Architecture
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the game code is structured, how it maps to the staged production plan, and the open design decisions.
 
 ## Branching and workflow
 
