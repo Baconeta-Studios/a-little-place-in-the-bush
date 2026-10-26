@@ -2640,9 +2640,21 @@ function renderCampaign() {
   html += "</div>";
   // recipes
   html += '<div class="box"><h3>Recipes</h3><ul class="list-plain">' + (design.recipes || []).map(function (r) {
-    var ok = canCook(r), unl = recipeUnlocked(r);
-    return "<li><span><b>" + esc(r.name) + "</b>" + (unl ? "" : ' <span class="lock">locked</span>') + '<br><span class="small muted">' + esc((r.ingredients || []).map(function (g) { return (campaign.inventory[g.item] || 0) + "/" + g.qty + " " + itemName(g.item); }).join(", ")) + (campaign.cooked[r.id] ? " · cooked " + campaign.cooked[r.id] + "×" : "") + "</span></span>" +
-      '<span class="btn-row">' + (ok ? '<span class="pill-ok">can cook</span>' : '<span class="pill-no">not yet</span>') + '<button class="btn tiny" type="button" data-cook="' + esc(r.id) + '"' + (ok && (unl || ui.unlockAll) ? "" : " disabled") + ">Cook</button></span></li>";
+    var ok = canCook(r), unl = recipeUnlocked(r) || ui.unlockAll, price = Number(r.price) || 0;
+    var lockNote = unl ? "" : price > 0 ? ' <span class="lock">locked · learn for ' + price + " coins</span>" : ' <span class="lock">locked · unlocked by a quest</span>';
+    var actions;
+    if (unl) {
+      actions = (ok ? '<span class="pill-ok">can cook</span>' : '<span class="pill-no">not yet</span>') +
+        '<button class="btn tiny" type="button" data-cook="' + esc(r.id) + '"' + (ok ? "" : " disabled") + ">Cook</button>";
+    } else if (price > 0) {
+      var afford = campaign.coins >= price;
+      actions = '<span class="' + (afford ? "pill-ok" : "pill-no") + '">' + (afford ? "can afford" : campaign.coins + "/" + price + " coins") + "</span>" +
+        '<button class="btn tiny" type="button" data-learn="' + esc(r.id) + '"' + (afford ? "" : " disabled") + ">Learn (" + price + ")</button>";
+    } else {
+      actions = '<span class="pill-no">' + ((r.scraps || []).length ? "find all " + r.scraps.length + " scraps" : "quest reward") + "</span>";
+    }
+    return "<li><span><b>" + esc(r.name) + "</b>" + lockNote + '<br><span class="small muted">' + esc((r.ingredients || []).map(function (g) { return (campaign.inventory[g.item] || 0) + "/" + g.qty + " " + itemName(g.item); }).join(", ")) + " · pays " + (Number(r.coins) || 0) + " coins" + (campaign.cooked[r.id] ? " · cooked " + campaign.cooked[r.id] + "×" : "") + "</span></span>" +
+      '<span class="btn-row">' + actions + "</span></li>";
   }).join("") + "</ul></div>";
   // companions & perks
   html += '<div class="box"><h3>Companions and perks</h3><ul class="list-plain">' + (design.companions || []).map(function (c) {
@@ -2670,10 +2682,21 @@ $("campaignOut").addEventListener("change", function (e) {
   renderCampaign(); renderEffects(); saveAll();
 });
 $("campaignOut").addEventListener("click", function (e) {
+  var learn = e.target.closest("[data-learn]");
+  if (learn) {
+    var lr = findById(design.recipes, learn.dataset.learn), cost = lr ? Number(lr.price) || 0 : 0;
+    if (lr && cost > 0 && !recipeUnlocked(lr) && campaign.coins >= cost) {
+      campaign.coins -= cost;
+      campaign.unlockedRecipes.push(lr.id);
+      toast("Learned " + lr.name + " for " + cost + " coins.");
+      renderCampaign(); saveAll();
+    }
+    return;
+  }
   var b = e.target.closest("[data-cook]");
   if (b) {
     var r = findById(design.recipes, b.dataset.cook);
-    if (r && canCook(r)) {
+    if (r && canCook(r) && (recipeUnlocked(r) || ui.unlockAll)) {
       (r.ingredients || []).forEach(function (g) { campaign.inventory[g.item] -= Number(g.qty); });
       campaign.cooked[r.id] = (campaign.cooked[r.id] || 0) + 1;
       campaign.coins += Number(r.coins) || 0;
