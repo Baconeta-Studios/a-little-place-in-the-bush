@@ -11,9 +11,9 @@ Each scrap comes from a different part of the game, so the main quest pulls the 
 | Scrap | Where it comes from | System it teaches |
 | --- | --- | --- |
 | 1 (top) | Found **foraging** in the bush, only while *The lost recipe* is active | Expeditions, companions, focus |
-| 2 (left) | **Weka** "found" it and swaps it for two shiny buttons (*A fair trade*) | Treasures, trading, Weka's shiny bonus |
-| 3 (right) | **Snail** gives it after you cook two worm pies (*A very hungry snail*) | Cooking at the cafe |
-| 4 (bottom) | **Wētā** gives it for fixing its hollow tree with 5 bark + 2 silk (*Hollow home*); Spider joins as a companion | Materials, Kea's bark bonus |
+| 2 (left) | **Weka** "found" it and swaps it for a shiny button (*A fair trade*) | Treasures, trading, Weka's shiny bonus |
+| 3 (right) | **Snail** gives it after you cook two worm pies (*A very hungry snail*); Kunekune pig joins as a companion | Cooking at the cafe |
+| 4 (bottom) | **Wētā** gives it for fixing its hollow tree with 4 bark + 2 silk (*Hollow home*); Spider joins as a companion | Materials, Kea's bark bonus |
 
 Quest chain:
 
@@ -26,12 +26,13 @@ Quest chain:
 There's no special "quest inventory" system: quest items are ordinary items with two flags, so every existing rule (save, economy, validation, sandbox) already handles them.
 
 - **`KeyItem` category:** recipe scraps, letters, keys and so on. The validator stops key items being used as recipe ingredients, and the UI should hide sell buttons for them.
-- **`unique` flag:** at most one can be owned, and once the player has ever had it (`GameState.everObtained`) it never drops from foraging again, even after it's been handed in. Gaining a unique item you already have does nothing, so duplicate rewards are harmless.
+- **`unique` flag:** at most one can be owned. Once it's collected (owned now, or handed in for a quest, tracked in `GameState.handedIn`) it never drops from foraging or comes from a reward again. Gaining a unique item you already have does nothing, so duplicate rewards are harmless.
+- **Can't be lost:** key items can only leave the inventory through a quest hand-in. Removing, selling or cooking them is refused, so a scrap can never vanish before Ruru gets it, which would otherwise softlock the main quest (scraps 2-4 are one-off rewards).
 - **Quest-gated forage entries:** a forage table entry can name `requiresQuest`; it only drops while that quest is active. Scrap 1 uses this, so it can't turn up before the story introduces it.
 - **Recipe scraps:** `RecipeDefinition.scraps` lists the key items that make up a recipe. `CafeService.GetScrapProgress` gives "2 of 4 scraps found" for the recipe book, even before the recipe is unlocked.
 - **Putting them together:** a quest with `DeliverItems` objectives for each scrap and an `UnlockRecipe` reward. `QuestService.Claim` takes the scraps and unlocks the recipe in one transaction, and only once.
 
-All of this is covered by EditMode tests (`QuestAndCafeTests.RecipeScraps_DeliveredTogetherUnlockTheRecipe`, `ForagingTests.QuestScrap_*`, `ForagingTests.ClaimedScrap_*`, `EconomyTests.UniqueItems_*`).
+All of this is covered by EditMode tests (`QuestAndCafeTests.RecipeScraps_DeliveredTogetherUnlockTheRecipe`, `ForagingTests.QuestScrap_*`, `ForagingTests.CollectedScrap_*`, `EconomyTests.UniqueItems_*`, `EconomyTests.KeyItems_*`).
 
 ## UI suggestions (not built)
 

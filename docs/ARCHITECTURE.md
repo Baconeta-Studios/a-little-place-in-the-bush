@@ -89,8 +89,8 @@ Each definition converts to a plain C# model in `Bush.Core` (`ItemDefinition.ToD
 
 | Definition | Key fields | Seed content |
 | --- | --- | --- |
-| `ItemDefinition` | id, displayName, icon, category, rarity, tags, sellValue, unique | 27 items: leaves, berries, worms, insects, fungi, bark, silk, shinies, 4 recipe scraps |
-| `RecipeDefinition` | ingredients (item, qty), coins, unlockedByDefault, scraps | 11 recipes from the Miro list; 3 unlocked at the start |
+| `ItemDefinition` | id, displayName, icon, category, rarity, tags, sellValue, unique | 28 items: leaves, berries, worms, insects, fungi, bark, silk, shinies, 4 recipe scraps |
+| `RecipeDefinition` | ingredients (item, qty), coins, unlockedByDefault, price (coins to learn), scraps | 16 recipes from the Miro list: 3 known at the start, 12 to buy, 1 from the main quest |
 | `CompanionDefinition` | portrait, modifiers, teachesPerk, tripsToTeach, unlockedByDefault | Kea, Weka, Pekapeka (starters); Kunekune pig, Spider (unlocked by quests) |
 | `PerkDefinition` | icon, modifiers, unlockedByDefault | 7 perks: 3 at the start, 3 taught by companions, 1 quest reward |
 | `FocusDefinition` | tags, multiplier | bugs and worms, greens, fruit and flowers, fungi and mud, bark and silk |
@@ -99,7 +99,7 @@ Each definition converts to a plain C# model in `Bush.Core` (`ItemDefinition.ToD
 | `QuestDefinition` | giver, isMain, prerequisites, objectives, rewards, 4 dialogue lines | 2 main quests + 3 side quests (see [MAIN-QUEST.md](MAIN-QUEST.md)) |
 | `PlaceableDefinition` | item, prefab | none yet (Stage 6) |
 
-**Item categories:** `Ingredient` (cooked), `Material` (bark, silk: quests and repairs), `Treasure` (shinies: trades and selling), `KeyItem` (quest items like recipe scraps: can't be cooked or sold), `Placeable` (build mode). They all live in the one inventory; the UI can filter by category, which also covers the GDD's "cafe larder" (see Open decisions). Items marked `unique` can only be owned once and never drop again once found.
+**Item categories:** `Ingredient` (cooked), `Material` (bark, silk: quests and repairs), `Treasure` (shinies: trades and selling), `KeyItem` (quest items like recipe scraps: can't be cooked or sold), `Placeable` (build mode). They all live in the one inventory; the UI can filter by category, which also covers the GDD's "cafe larder" (see Open decisions). Items marked `unique` can only be owned once, and once collected (owned, or handed in for a quest) they never drop or get rewarded again. Key items can only leave the inventory through a quest hand-in, so a quest item can't be lost, sold or cooked by mistake.
 
 **Where the data comes from:** the seed lives in [`Design/design-data.json`](../Design/design-data.json). **Tools > Bush > Import Design Data** creates or updates the assets in `Assets/Data` from it, matching by ID so icons and prefabs survive; it never deletes anything. **Export Design Data** writes the assets back to JSON, so a designer can tune in the [forage sandbox](../Tools/ForageSandbox/README.md) and the changes come straight back into Unity. **Validate Design Data** flags duplicate IDs, broken references, impossible forage entries and modifiers that can never do anything (the Trello card *Check item and reward consistency*); an EditMode test runs the same checks on `design-data.json`.
 
@@ -112,27 +112,27 @@ Per the Miro decision log, crafting placeables is out of scope. Placeables come 
     public int saveVersion;
     public int currency;
     public List<ItemStack> inventory;           // itemId + qty; definitions stay in data
-    public List<string> everObtained;           // unique items ever owned, so scraps never drop twice
+    public List<string> handedIn;               // unique items handed in for quests (with the inventory: what's collected)
     public List<string> unlockedRecipes, unlockedPerks, unlockedCompanions;
     public List<CompanionProgress> companions;  // trips per companion, for learning perks
     public List<QuestProgress> quests;          // questId, status, event counters, rewardClaimed
     public List<PlacedObjectData> placed;       // placeableId, position, flipped
     public bool hasPendingExpedition;           // set on Go, cleared on claim: survives a refresh
-    public PendingExpedition pendingExpedition; // id, seed, setup
+    public PendingExpedition pendingExpedition; // id, seed, a copy of the setup, and the result
     public int day; public float timeOfDay;
 }
 ```
 
-`GameState.CreateNew(design)` starts a game with the default unlocks. The gecko's colour pattern (GDD) is still to add.
+Default unlocks aren't copied into the save: `Unlocks.IsRecipeUnlocked` (and the perk and companion versions) check the design's `unlockedByDefault` flag or the save's list, so a patched build that adds a default reaches existing saves. `GameState.Normalise()` tidies a loaded save (merges duplicate stacks, drops empty ones). The gecko's colour pattern (GDD) is still to add.
 
 Collections are lists rather than dictionaries so that `JsonUtility` can serialise them without adding Newtonsoft. Services build dictionaries from the lists when they load. The GDD's separate "cafe larder" can start as an item category filter on the one inventory, and be split out later only if playtesting shows it's needed.
 
 ## 4. Core services (plain C#)
 
-- **Economy** *(built)*: the only code that changes inventory or currency. `Count`, `Has`, `Add`, `TryRemove`, `AddCurrency`, `TrySpend`, plus `TryTransact(Transaction)`, which checks everything first (repeated costs are totalled) and then applies all of it or none of it. Rejects zero or negative amounts and unknown items, and caps unique items at one. Raises `InventoryChanged` / `CurrencyChanged`.
-- **ForagingService** *(built)*: `Resolve(design, setup, context, seed) → ForageResult`, a pure function following [FORAGING.md](FORAGING.md), plus `Preview` for the setup screen's odds. In the game: `Begin` (on Go: stores the setup and seed in the state), `ResolvePending` (for the results screen) and `Claim` (pays out exactly once, counts the companion trip and teaches its perk). The GDD's "dims for a few seconds" is purely visual: the result is fixed by the seed up front. The same seed gives the same result in the web sandbox.
-- **CafeService** *(built)*: `CanCook(recipe, out missing)` (what's short, for the UI), `Cook(recipe)` via one transaction, and `GetScrapProgress(recipe)` for the recipe book. Plan Stage 4 deliberately has no customer simulation: serving a dish pays its coins.
-- **QuestService** *(built)*: `CanStart` (prerequisites), `Start`, `GetStatus`, `GetProgress`, `GetDialogue`, `Claim`, `IsMainStoryComplete` (the win condition). Item objectives (`HaveItems`, `DeliverItems`) are checked against the inventory live; cooking, expeditions, talking and placing are counted from `GameEvents` while the quest is active. Stored states are `NotStarted`, `Active` and `Completed`; `ReadyToClaim` is worked out from the objectives, so spending a needed item drops a quest back to Active. `Claim` hands in `DeliverItems`, pays rewards and unlocks in one transaction and sets `rewardClaimed`, so it can't pay twice.
+- **Economy** *(built)*: the only code that changes inventory or currency. `Count`, `Has`, `Add`, `TryRemove`, `AddCurrency`, `TrySpend`, plus `TryTransact(Transaction)`, which checks everything first (repeated costs are totalled) and then applies all of it or none of it. Rejects zero or negative amounts and unknown items, caps unique items at one, and only lets key items go in a quest hand-in (`Transaction.questHandIn`). `TrySell` pays an item's sell value (never for key or unique items). Raises `InventoryChanged` / `CurrencyChanged`.
+- **ForagingService** *(built)*: `Resolve(design, setup, context, seed) → ForageResult`, a pure function following [FORAGING.md](FORAGING.md), plus `Preview` for the setup screen's odds. In the game: `CanBegin`/`Begin` (on Go: checks the companion and perks are unlocked, copies the setup, resolves it and stores the result in the state), `GetPendingResult` (for the results screen) and `Claim` (pays exactly the stored result once, counts the companion trip and teaches its perk). The GDD's "dims for a few seconds" is purely visual: the result is fixed by the seed up front. The same seed gives the same result in the web sandbox.
+- **CafeService** *(built)*: `CanCook(recipe, out missing)` (what's short, for the UI), `Cook(recipe)` via one transaction, `CanLearn`/`Learn(recipe)` to buy a recipe for its price (the GDD's "use what you earn to learn recipes", and so far the only thing coins buy), and `GetScrapProgress(recipe)` for the recipe book. Plan Stage 4 deliberately has no customer simulation: serving a dish pays its coins.
+- **QuestService** *(built)*: `CanStart` (prerequisites), `Start`, `GetStatus`, `GetProgress`, `GetDialogue`, `Claim`, `IsMainStoryComplete` (the win condition). Item objectives (`HaveItems`, `DeliverItems`) are checked against the inventory live; cooking, expeditions, talking and placing are counted from `GameEvents` while the quest is active. Stored states are `NotStarted`, `Active` and `Completed`; `ReadyToClaim` is worked out from the objectives (items are totalled across objectives), so it always means the claim will work, and spending a needed item drops a quest back to Active. Event counters are keyed by objective type and target rather than position, so a patch can reorder objectives. `Claim` hands in `DeliverItems`, pays rewards and unlocks in one transaction and sets `rewardClaimed`, so it can't pay twice; `Claim(id, out error)` says why it didn't.
 - **BuildService:** place / move / remove placeables. Placing takes the item out of the inventory and removing puts it back, both through Economy.
 - **SaveService:** turns `GameState` into JSON with `saveVersion`. On a missing, unreadable or older save it falls back to a fresh state and logs it, rather than crashing. Storage sits behind `ISaveStorage`:
   - **Default:** the existing `Utils.FileUtils` (`persistentDataPath`, which is IndexedDB on WebGL).
@@ -195,10 +195,10 @@ How every area scene is laid out. The Cafe greybox (`Assets/Scenes/Cafe.unity`) 
 
 ## 7. Tests
 
-EditMode tests in `Bush.Core.Tests` (`Assets/Tests/EditMode`, 42 tests) cover:
-- the Economy edge cases from Trello list 05: zero or negative quantities, unknown items, not enough items, repeated costs, unique items, `TryTransact` never applying half a change
-- foraging: same seed same result, roll counts, day/night and quest-gated entries, unique scraps (once per trip, never after being found), each modifier type, the odds preview, paying out exactly once, double-clicking Go, learning a companion's perk
-- quests and cooking: prerequisites, counters only while active, claiming once, recipe scraps handed in together unlocking the recipe, dialogue per state
+EditMode tests in `Bush.Core.Tests` (`Assets/Tests/EditMode`, 50 tests) cover:
+- the Economy edge cases from Trello list 05: zero or negative quantities, unknown items, not enough items, repeated costs, unique and key items, selling, tidying a save, `TryTransact` never applying half a change
+- foraging: same seed same result, roll counts, day/night and quest-gated entries, unique scraps (once per trip, never after being collected or handed in), each modifier type, the focus counting once, the odds preview, paying out exactly once, double-clicking Go, locked companions, learning a companion's perk
+- quests and cooking: prerequisites, counters only while active, claiming once (and why not), counters surviving reordered objectives, recipe scraps handed in together unlocking the recipe, learning recipes for coins, live default unlocks, dialogue per state
 - design data: the validator, the JSON round trip, and that `Design/design-data.json` loads and validates
 - still to add: a save written and loaded again comes back the same, and an unknown or old version falls back to a fresh state (with SaveService)
 
