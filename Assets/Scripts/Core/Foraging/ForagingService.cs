@@ -91,13 +91,25 @@ namespace Bush.Core
                 double averageQty = candidate.item.unique
                     ? 1
                     : (candidate.entry.min + candidate.entry.max) / 2.0 + QuantityBonus(candidate.item, modifiers);
+
+                // Bonus rolls add (chance x share of the tagged pool) finds of this item.
+                double bonusFinds = 0;
+                foreach (ForageModifier modifier in modifiers)
+                {
+                    if (modifier.type != ModifierType.BonusRoll || !candidate.item.HasTag(modifier.tag)) continue;
+                    double tagTotal = 0;
+                    foreach (Candidate other in eligible)
+                        if (other.weight > 0 && other.item.HasTag(modifier.tag)) tagTotal += other.weight;
+                    if (tagTotal > 0 && candidate.weight > 0) bonusFinds += Math.Min(1, modifier.value) * candidate.weight / tagTotal;
+                }
+
                 preview.odds.Add(new ForageOdds
                 {
                     itemId = candidate.entry.itemId,
                     weight = candidate.weight,
                     chancePerRoll = p,
                     chanceAtLeastOne = 1 - Math.Pow(1 - p, rolls),
-                    expectedQty = rolls * p * averageQty
+                    expectedQty = (rolls * p + bonusFinds) * averageQty
                 });
             }
 

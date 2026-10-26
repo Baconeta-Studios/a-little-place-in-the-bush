@@ -69,6 +69,6 @@ return (t XOR (t >> 14)) / 4294967296
 For the setup screen ("show what each choice does before Go"), the preview reports for each eligible entry:
 - chance per roll: `w / total`,
 - chance of finding at least one on a trip: `1 - (1 - p)^rolls` (ignores bonus rolls and uniqueness, so it's a slight underestimate),
-- expected quantity per trip.
+- expected quantity per trip: `(rolls * p + bonus finds) * average quantity`, where bonus finds = for each `BonusRoll` whose tag the item has, `chance * w / (total weight of eligible items with that tag)`, and average quantity = `(min + max) / 2 + TagQuantity bonus` (1 for unique items).
 
 The sandbox also runs thousands of simulated trips for exact averages.
