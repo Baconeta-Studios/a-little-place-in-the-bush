@@ -1,0 +1,1241 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "item.leaves",
+      "name": "Leaves",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 1,
+      "unique": false,
+      "description": "A handful of fresh green leaves."
+    },
+    {
+      "id": "item.fern_frond",
+      "name": "Fern frond",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "A curly young frond. Lovely fried."
+    },
+    {
+      "id": "item.moss",
+      "name": "Moss",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 1,
+      "unique": false,
+      "description": "Soft and springy. Surprisingly good on toast."
+    },
+    {
+      "id": "item.kawakawa",
+      "name": "Kawakawa leaf",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 4,
+      "unique": false,
+      "description": "Heart-shaped and peppery. The holey ones are the best."
+    },
+    {
+      "id": "item.berries",
+      "name": "Berries",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "fruit"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Small, bright and juicy."
+    },
+    {
+      "id": "item.feijoa",
+      "name": "Feijoa",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "fruit"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "Fragrant and sweet. Everyone has too many in autumn."
+    },
+    {
+      "id": "item.pohutukawa_petals",
+      "name": "Pōhutukawa petals",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "flower"
+      ],
+      "sellValue": 4,
+      "unique": false,
+      "description": "Crimson petals from the summer tree."
+    },
+    {
+      "id": "item.nectar",
+      "name": "Nectar",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "nectar",
+        "flower"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "A sticky drop of sweetness."
+    },
+    {
+      "id": "item.honeydew",
+      "name": "Honeydew",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "nectar"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "Sweet sap from the beech trees."
+    },
+    {
+      "id": "item.worm",
+      "name": "Worm",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "worm"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "A wriggly classic."
+    },
+    {
+      "id": "item.giant_worm",
+      "name": "Giant worm",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "worm"
+      ],
+      "sellValue": 6,
+      "unique": false,
+      "description": "Long enough to share. Snails go wild for these."
+    },
+    {
+      "id": "item.moth",
+      "name": "Moth",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Dusty wings, crunchy body."
+    },
+    {
+      "id": "item.cricket",
+      "name": "Cricket",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Chirps until the very end."
+    },
+    {
+      "id": "item.beetle",
+      "name": "Beetle",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 4,
+      "unique": false,
+      "description": "Shiny shell, nutty taste."
+    },
+    {
+      "id": "item.glowworm",
+      "name": "Glowworm",
+      "category": "Ingredient",
+      "rarity": "Rare",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 15,
+      "unique": false,
+      "description": "Glows softly. Only found at night."
+    },
+    {
+      "id": "item.mushroom",
+      "name": "Mushroom",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "fungi"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Earthy and plump."
+    },
+    {
+      "id": "item.truffle",
+      "name": "Truffle",
+      "category": "Ingredient",
+      "rarity": "Rare",
+      "tags": [
+        "fungi"
+      ],
+      "sellValue": 20,
+      "unique": false,
+      "description": "Kunekune pigs can sniff these out."
+    },
+    {
+      "id": "item.mud",
+      "name": "Mud",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "mud"
+      ],
+      "sellValue": 1,
+      "unique": false,
+      "description": "Good, rich mud. Ask a pig."
+    },
+    {
+      "id": "item.bark",
+      "name": "Bark",
+      "category": "Material",
+      "rarity": "Common",
+      "tags": [
+        "bark"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "A strip of tough bark. Useful for repairs."
+    },
+    {
+      "id": "item.silk",
+      "name": "Spider silk",
+      "category": "Material",
+      "rarity": "Uncommon",
+      "tags": [
+        "silk"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "Strong, fine thread."
+    },
+    {
+      "id": "item.shiny_button",
+      "name": "Shiny button",
+      "category": "Treasure",
+      "rarity": "Uncommon",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 10,
+      "unique": false,
+      "description": "Someone lost this. A weka would love it."
+    },
+    {
+      "id": "item.sea_glass",
+      "name": "Sea glass",
+      "category": "Treasure",
+      "rarity": "Uncommon",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "Smooth and green. Far from the sea."
+    },
+    {
+      "id": "item.paua_shell",
+      "name": "Pāua shell",
+      "category": "Treasure",
+      "rarity": "Rare",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 30,
+      "unique": false,
+      "description": "Swirls of blue and green."
+    },
+    {
+      "id": "item.recipe_scrap_1",
+      "name": "Recipe scrap (top)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "The top of an old recipe card. It smells of kawakawa."
+    },
+    {
+      "id": "item.recipe_scrap_2",
+      "name": "Recipe scrap (left)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "A torn corner with a list of ingredients."
+    },
+    {
+      "id": "item.recipe_scrap_3",
+      "name": "Recipe scrap (right)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "Half a method, in very small handwriting."
+    },
+    {
+      "id": "item.recipe_scrap_4",
+      "name": "Recipe scrap (bottom)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "The bottom of the card, signed 'R'."
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe.leaf_salad",
+      "name": "Leaf salad",
+      "ingredients": [
+        {
+          "item": "item.leaves",
+          "qty": 3
+        }
+      ],
+      "coins": 6,
+      "unlockedByDefault": true,
+      "scraps": [],
+      "description": "Simple, fresh and green."
+    },
+    {
+      "id": "recipe.worm_pie",
+      "name": "Worm pie",
+      "ingredients": [
+        {
+          "item": "item.worm",
+          "qty": 2
+        },
+        {
+          "item": "item.leaves",
+          "qty": 1
+        }
+      ],
+      "coins": 10,
+      "unlockedByDefault": true,
+      "scraps": [],
+      "description": "A hearty bush favourite."
+    },
+    {
+      "id": "recipe.berry_cake",
+      "name": "Berry cake",
+      "ingredients": [
+        {
+          "item": "item.berries",
+          "qty": 3
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        }
+      ],
+      "coins": 14,
+      "unlockedByDefault": true,
+      "scraps": [],
+      "description": "Sticky, sweet and very pink."
+    },
+    {
+      "id": "recipe.moss_toast",
+      "name": "Moss toast",
+      "ingredients": [
+        {
+          "item": "item.moss",
+          "qty": 2
+        },
+        {
+          "item": "item.mushroom",
+          "qty": 1
+        }
+      ],
+      "coins": 9,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Crunchy on top, squishy underneath."
+    },
+    {
+      "id": "recipe.fern_fritters",
+      "name": "Fern fritters",
+      "ingredients": [
+        {
+          "item": "item.fern_frond",
+          "qty": 2
+        },
+        {
+          "item": "item.berries",
+          "qty": 1
+        }
+      ],
+      "coins": 10,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Curly fronds in crispy batter."
+    },
+    {
+      "id": "recipe.mushroom_soup",
+      "name": "Mushroom soup",
+      "ingredients": [
+        {
+          "item": "item.mushroom",
+          "qty": 3
+        },
+        {
+          "item": "item.leaves",
+          "qty": 1
+        }
+      ],
+      "coins": 12,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Earthy and warming."
+    },
+    {
+      "id": "recipe.moth_muffins",
+      "name": "Moth muffins",
+      "ingredients": [
+        {
+          "item": "item.moth",
+          "qty": 2
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 14,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Fluffy, with a little crunch."
+    },
+    {
+      "id": "recipe.feijoa_juice",
+      "name": "Feijoa juice",
+      "ingredients": [
+        {
+          "item": "item.feijoa",
+          "qty": 2
+        }
+      ],
+      "coins": 12,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Tastes like autumn."
+    },
+    {
+      "id": "recipe.pohutukawa_biscuits",
+      "name": "Pōhutukawa petal biscuits",
+      "ingredients": [
+        {
+          "item": "item.pohutukawa_petals",
+          "qty": 2
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        }
+      ],
+      "coins": 18,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Pretty enough to frame."
+    },
+    {
+      "id": "recipe.glowworm_jelly",
+      "name": "Glowworm jelly",
+      "ingredients": [
+        {
+          "item": "item.glowworm",
+          "qty": 1
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 35,
+      "unlockedByDefault": false,
+      "scraps": [],
+      "description": "Wobbles and glows."
+    },
+    {
+      "id": "recipe.kawakawa_scroll",
+      "name": "Kawakawa scroll",
+      "ingredients": [
+        {
+          "item": "item.kawakawa",
+          "qty": 2
+        },
+        {
+          "item": "item.honeydew",
+          "qty": 1
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 45,
+      "unlockedByDefault": false,
+      "scraps": [
+        "item.recipe_scrap_1",
+        "item.recipe_scrap_2",
+        "item.recipe_scrap_3",
+        "item.recipe_scrap_4"
+      ],
+      "description": "Ruru's famous recipe, pieced back together."
+    }
+  ],
+  "companions": [
+    {
+      "id": "companion.kea",
+      "name": "Kea",
+      "description": "Uses its beak as a hammer. Finds much more bark.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "bark",
+          "rarity": "",
+          "value": 3
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "bark",
+          "rarity": "",
+          "value": 1
+        }
+      ],
+      "teachesPerk": "perk.bark_knowhow",
+      "tripsToTeach": 3
+    },
+    {
+      "id": "companion.weka",
+      "name": "Weka",
+      "description": "Always steals stuff. Good chance of bringing back something shiny.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "BonusRoll",
+          "tag": "shiny",
+          "rarity": "",
+          "value": 0.4
+        },
+        {
+          "type": "TagWeight",
+          "tag": "shiny",
+          "rarity": "",
+          "value": 1.5
+        }
+      ],
+      "teachesPerk": "perk.shiny_sense",
+      "tripsToTeach": 3
+    },
+    {
+      "id": "companion.pekapeka",
+      "name": "Pekapeka",
+      "description": "Sees in the dark and eats insects. Finds more bugs.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "insect",
+          "rarity": "",
+          "value": 2.5
+        }
+      ],
+      "teachesPerk": "perk.night_sight",
+      "tripsToTeach": 3
+    },
+    {
+      "id": "companion.kunekune",
+      "name": "Kunekune pig",
+      "description": "Slow and friendly, with a nose for mud and fungi. Sniffs out truffles.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "fungi",
+          "rarity": "",
+          "value": 2.5
+        },
+        {
+          "type": "TagWeight",
+          "tag": "mud",
+          "rarity": "",
+          "value": 2
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Rare",
+          "value": 1.5
+        }
+      ],
+      "teachesPerk": "",
+      "tripsToTeach": 0
+    },
+    {
+      "id": "companion.spider",
+      "name": "Spider",
+      "description": "Spins silk wherever it goes.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "silk",
+          "rarity": "",
+          "value": 3
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "silk",
+          "rarity": "",
+          "value": 1
+        }
+      ],
+      "teachesPerk": "",
+      "tripsToTeach": 0
+    }
+  ],
+  "perks": [
+    {
+      "id": "perk.big_basket",
+      "name": "Big basket",
+      "description": "Room for one more find each trip.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "ExtraRolls",
+          "tag": "",
+          "rarity": "",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "perk.sweet_tooth",
+      "name": "Sweet tooth",
+      "description": "Drawn to fruit and nectar.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "fruit",
+          "rarity": "",
+          "value": 2
+        },
+        {
+          "type": "TagWeight",
+          "tag": "nectar",
+          "rarity": "",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "perk.early_bird",
+      "name": "Early bird",
+      "description": "Up before the worms are. More worms, and more of them.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "worm",
+          "rarity": "",
+          "value": 2
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "worm",
+          "rarity": "",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "perk.keen_eye",
+      "name": "Keen eye",
+      "description": "Better at spotting rare things.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Uncommon",
+          "value": 1.5
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Rare",
+          "value": 2
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Legendary",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "perk.bark_knowhow",
+      "name": "Bark know-how",
+      "description": "Learned from Kea. A little extra bark every time.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagQuantity",
+          "tag": "bark",
+          "rarity": "",
+          "value": 1
+        },
+        {
+          "type": "TagWeight",
+          "tag": "bark",
+          "rarity": "",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "id": "perk.shiny_sense",
+      "name": "Shiny sense",
+      "description": "Learned from Weka. A small chance of a bonus shiny.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "BonusRoll",
+          "tag": "shiny",
+          "rarity": "",
+          "value": 0.2
+        }
+      ]
+    },
+    {
+      "id": "perk.night_sight",
+      "name": "Night sight",
+      "description": "Learned from Pekapeka. More insects.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "insect",
+          "rarity": "",
+          "value": 1.75
+        }
+      ]
+    }
+  ],
+  "focuses": [
+    {
+      "id": "focus.bugs",
+      "name": "Bugs and worms",
+      "tags": [
+        "insect",
+        "worm"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.greens",
+      "name": "Greens",
+      "tags": [
+        "leaf"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.sweet",
+      "name": "Fruit and flowers",
+      "tags": [
+        "fruit",
+        "flower",
+        "nectar"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.fungi",
+      "name": "Fungi and mud",
+      "tags": [
+        "fungi",
+        "mud"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.materials",
+      "name": "Bark and silk",
+      "tags": [
+        "bark",
+        "silk"
+      ],
+      "multiplier": 2
+    }
+  ],
+  "forageTables": [
+    {
+      "id": "table.bush",
+      "name": "The bush",
+      "rolls": 4,
+      "entries": [
+        {
+          "item": "item.leaves",
+          "weight": 30,
+          "min": 2,
+          "max": 4,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.fern_frond",
+          "weight": 18,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.moss",
+          "weight": 12,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.kawakawa",
+          "weight": 8,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.berries",
+          "weight": 25,
+          "min": 2,
+          "max": 4,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.feijoa",
+          "weight": 8,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.pohutukawa_petals",
+          "weight": 6,
+          "min": 1,
+          "max": 2,
+          "time": "Day",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.nectar",
+          "weight": 8,
+          "min": 1,
+          "max": 1,
+          "time": "Day",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.honeydew",
+          "weight": 6,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.worm",
+          "weight": 25,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.giant_worm",
+          "weight": 6,
+          "min": 1,
+          "max": 1,
+          "time": "Night",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.moth",
+          "weight": 14,
+          "min": 1,
+          "max": 2,
+          "time": "Night",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.cricket",
+          "weight": 12,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.beetle",
+          "weight": 8,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.glowworm",
+          "weight": 4,
+          "min": 1,
+          "max": 1,
+          "time": "Night",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.mushroom",
+          "weight": 14,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.truffle",
+          "weight": 2,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.mud",
+          "weight": 10,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.bark",
+          "weight": 15,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.silk",
+          "weight": 6,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.shiny_button",
+          "weight": 4,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.sea_glass",
+          "weight": 3,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.paua_shell",
+          "weight": 1,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": ""
+        },
+        {
+          "item": "item.recipe_scrap_1",
+          "weight": 12,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "quest.main_lost_recipe"
+        }
+      ]
+    }
+  ],
+  "npcs": [
+    {
+      "id": "npc.ruru",
+      "name": "Ruru",
+      "species": "Ruru (morepork)",
+      "description": "The old cafe owner. Wise, sleepy by day, and missing her famous recipe."
+    },
+    {
+      "id": "npc.weka",
+      "name": "Weka",
+      "species": "Weka",
+      "description": "Cheeky, always hanging around the cafe, and steals anything shiny."
+    },
+    {
+      "id": "npc.snail",
+      "name": "Snail",
+      "species": "Snail",
+      "description": "Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu."
+    },
+    {
+      "id": "npc.weta",
+      "name": "Wētā",
+      "species": "Wētā",
+      "description": "Nocturnal, lives in a hollow tree trunk that badly needs fixing."
+    }
+  ],
+  "quests": [
+    {
+      "id": "quest.main_welcome",
+      "title": "A cafe of my own",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [],
+      "summary": "Ruru wants to see you cook something before she trusts you with the cafe.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.leaf_salad",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.keen_eye",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "So you're the one taking over my old cafe? Show me you can make a simple leaf salad.",
+        "active": "A leaf salad. Three handfuls of leaves. You can manage that.",
+        "ready": "Ah, that smells right. You'll do.",
+        "done": "The cafe's in good claws."
+      }
+    },
+    {
+      "id": "quest.main_lost_recipe",
+      "title": "The lost recipe",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Ruru's famous kawakawa scroll recipe was torn into four scraps and scattered. Find all four and bring them to her.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_1",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_2",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_3",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_4",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.kawakawa_scroll",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 50
+        }
+      ],
+      "dialogue": {
+        "offer": "My kawakawa scroll recipe... the wind took it, and it tore into four. One blew into the bush. I'd bet that weka has another.",
+        "active": "Any luck with the scraps? Try the bush, and ask around the neighbours.",
+        "ready": "All four! Let me piece them together...",
+        "done": "The kawakawa scroll is yours now. Make the village proud."
+      }
+    },
+    {
+      "id": "quest.side_weka_trade",
+      "title": "A fair trade",
+      "giver": "npc.weka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Weka has a recipe scrap and will swap it for two shiny buttons.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.shiny_button",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_2",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Paper? Oh, THIS paper. It's not stolen, it's... found. Two shiny buttons and it's yours.",
+        "active": "Buttons. Two. Shiny ones.",
+        "ready": "Ooh, shiny! Deal. Take your paper.",
+        "done": "Got anything else shiny? No? Hmph."
+      }
+    },
+    {
+      "id": "quest.side_snail_hungry",
+      "title": "A very hungry snail",
+      "giver": "npc.snail",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Snail will share something it found if you cook two worm pies.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.worm_pie",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_3",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "Worm... pie...? Two, please. I found some old paper you can have.",
+        "active": "Still... hungry...",
+        "ready": "Mmmmm. Here. The paper. Slowly.",
+        "done": "Same time tomorrow?"
+      }
+    },
+    {
+      "id": "quest.side_weta_repairs",
+      "title": "Hollow home",
+      "giver": "npc.weta",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Wētā's hollow tree trunk is falling apart. Bring bark and silk to patch it up.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.bark",
+          "qty": 5
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.silk",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_4",
+          "qty": 1
+        },
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.spider",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "*rubs hind legs* My trunk is full of holes. Five bark and two silk would fix it. I'll give you a scrap I found inside.",
+        "active": "Five bark, two silk. Kea is good at finding bark.",
+        "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
+        "done": "Come by at night. I'm awake then."
+      }
+    }
+  ]
+}
