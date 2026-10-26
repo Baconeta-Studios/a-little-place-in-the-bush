@@ -48,6 +48,7 @@ return (t XOR (t >> 14)) / 4294967296
 2. **Eligible entries:** go through the table's entries in order and keep an entry if:
    - its `time` is `Any` or matches the time of day,
    - its `requiresQuest` is empty or that quest is active,
+   - its `requiresCompanion` is empty or that companion is on the expedition,
    - its item isn't `unique`, or the player hasn't collected it (doesn't have it now and hasn't handed it in).
 3. **Effective weight:** `w = entry.weight`, then multiply by every matching `TagWeight` and `RarityWeight` modifier value, in modifier order, then by the focus multiplier if the item has any of the focus's tags. Entries with `w <= 0` can't be picked.
 4. **Number of rolls:** `table.rolls + sum(floor(ExtraRolls values))`, at least 1.
@@ -62,6 +63,7 @@ return (t XOR (t >> 14)) / 4294967296
 ## After an expedition (not random)
 
 - When the player presses Go, the game copies the setup, resolves it with the seed and stores the result in the save (`ForagingService.Begin`). The results screen shows that stored result, and `Claim` pays exactly that, once: it clears the pending expedition in the same step. Pressing Go twice, closing the results twice or refreshing mid-expedition can't duplicate or lose rewards.
+- Items with `teachesRecipe` are rare encounters (e.g. meeting Kiwi at night). When one is paid out, its recipe is learned on the spot, if it isn't known already, and the item stays in the satchel as a keepsake. They're unique, so each one happens once. `Claim` reports the recipes learned so the results screen can celebrate them.
 - `Begin` refuses companions and perks that aren't unlocked (cheats can force it) and ignores a perk listed twice.
 - The companion's trip count goes up by 1. If the companion has `teachesPerk` and the count reaches `tripsToTeach`, the player learns that perk (shown on the results screen, per the GDD).
 
