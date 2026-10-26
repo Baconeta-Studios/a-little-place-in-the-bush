@@ -7,7 +7,7 @@ Play as a native NZ gecko with a dream of running your own cafe. Forage in the b
 - **Genre:** RPG cosy adventure sim
 - **Platform:** PC Standalone and Web
 - **Audience / rating:** Ages 8+, E (Everyone)
-- **View:** Third-person, 2D side-on world
+- **View:** Third-person 2D "stage" view with depth: a walkable floor in front of the cafe, where higher up the screen is further back
 - **Input:** Keyboard and mouse, touch screen
 - **Mode:** Single-player (multiplayer marketplace planned for phase 2)
 
@@ -15,14 +15,17 @@ Full GDD (Canva): https://www.canva.com/design/DAHY_0K-xoA/AdOWDfjHg6R3XCjFi38QH
 
 ## Current state
 
-**Pre-production / baseline.** The project was created from the Baconeta [Ludum Dare template](#template-systems) and builds and runs, but nothing game-specific has been built yet. What exists today:
+**Greybox.** The project was created from the Baconeta [Ludum Dare template](#template-systems). The first game scene is in, but there's no gameplay code yet. What exists today:
 
-- Template main menu (`Assets/Scenes/MenuTemplate.unity`) and a volume/settings test scene (`Assets/Scenes/VolumeTemplate.unity`). These are the only scenes in the build list.
+- **Cafe greybox** (`Assets/Scenes/Cafe.unity`), the only enabled scene in the build list: backdrop, floor with its walkable area, placeholder props with footprints, and a capsule stand-in for the gecko. Its layout, sorting and camera setup are described in [ARCHITECTURE.md, section 6](docs/ARCHITECTURE.md#6-world-camera-and-movement).
+- `CameraFit` (`Assets/Scripts/Camera`), which keeps the 16:9 safe area on screen at any aspect ratio.
+- Sorting layers, physics layers and Y-axis depth sorting set up in Project Settings and the 2D renderer.
+- Template menu and volume test scenes in `Assets/Scenes/Templates/`, kept for reference but disabled in the build list.
 - Template systems: UI state switching, popups (pause/settings/end game/high scores), audio manager with mix groups, scene loader, achievements, Unity Analytics bootstrap, cheat menu, prefab pooling.
 - URP 2D renderer setup.
 - Firebase/Terraform scaffolding in `Infrastructure/`. Not provisioned for this game yet.
 
-Still to do from the template: rename the product (Player Settings still says `ld-template`), replace the template scenes with the game's own, and decide whether to enable Git LFS before art and audio go in.
+Still to do from the template: rename the product (Player Settings still says `ld-template`), build the game's own menu to replace the template one, and decide whether to enable Git LFS before art and audio go in.
 
 ## High-level design goals
 
@@ -68,9 +71,21 @@ From the GDD (v1.0, 25 Oct 2026):
 1. `git clone https://github.com/Baconeta-Studios/a-little-place-in-the-bush.git`
 2. In Unity Hub, click **Add > Add project from disk** and select the cloned folder.
 3. Open it with **6000.6.7f1**. The first import regenerates `Library/` and can take several minutes. It also pulls the `com.eflatun.scenereference` package from GitHub, so you need network access.
-4. Open `Assets/Scenes/MenuTemplate.unity` and press Play.
+4. Open `Assets/Scenes/Cafe.unity` and press Play.
 
 `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `.csproj`/`.sln` files and builds are git-ignored and regenerated locally. Never commit them.
+
+### Game view sizes
+Unity saves custom Game view sizes per computer (in `%APPDATA%/Unity/Editor-5.x/Preferences/GameViewSizes.asset`, shared by all your projects), not in the project, so they aren't in git. Add these once with the **+** at the bottom of the Game view's resolution menu (type *Fixed Resolution*) to check the layout at each aspect ratio:
+
+| Name | Size | Aspect |
+| --- | --- | --- |
+| 16:9 | 1920 × 1080 | 16:9, the safe area exactly |
+| iPad | 2048 × 1536 | 4:3, the tallest screen we support |
+| MacBook | 2560 × 1600 | 16:10 |
+| iPhone | 2532 × 1170 | ~19.5:9, a wide phone |
+
+The yellow `CameraFit` gizmo should stay fully on screen at every size.
 
 ### Build targets
 - **Primary (jam):** Web (WebGL) in desktop browsers, 960×600 default canvas. You need the **WebGL Build Support** module for 6000.6.7f1 (Unity Hub > Installs > Add modules). The template UI is also phone-browser friendly (see [Mobile web](#mobile-web)).
