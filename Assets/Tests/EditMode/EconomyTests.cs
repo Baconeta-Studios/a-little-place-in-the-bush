@@ -74,16 +74,50 @@ namespace Bush.Core.Tests
         }
 
         [Test]
-        public void UniqueItems_AreCappedAtOneAndRemembered()
+        public void UniqueItems_AreCappedAtOne()
         {
             Assert.IsTrue(Economy.Add(TestDesign.Scrap1, 3));
             Assert.AreEqual(1, Economy.Count(TestDesign.Scrap1));
             Economy.Add(TestDesign.Scrap1, 1);
             Assert.AreEqual(1, Economy.Count(TestDesign.Scrap1));
+            Assert.IsTrue(Economy.IsUniqueCollected(TestDesign.Scrap1));
+        }
 
-            Economy.TryRemove(TestDesign.Scrap1, 1);
+        [Test]
+        public void KeyItems_CanOnlyLeaveThroughAQuestHandIn()
+        {
+            Economy.Add(TestDesign.Scrap1, 1);
+            Assert.IsFalse(Economy.TryRemove(TestDesign.Scrap1, 1), "A scrap must not be lost before its quest.");
+            Assert.IsFalse(Economy.TrySell(TestDesign.Scrap1, 1));
+            Assert.AreEqual(1, Economy.Count(TestDesign.Scrap1));
+
+            Assert.IsTrue(Economy.TryTransact(new Transaction { questHandIn = true }.Cost(TestDesign.Scrap1, 1)));
             Assert.AreEqual(0, Economy.Count(TestDesign.Scrap1));
-            Assert.IsTrue(Economy.HasEverObtained(TestDesign.Scrap1));
+            Assert.IsTrue(Economy.IsUniqueCollected(TestDesign.Scrap1), "Handed in still counts as collected.");
+
+            Economy.Add(TestDesign.Scrap1, 1);
+            Assert.AreEqual(0, Economy.Count(TestDesign.Scrap1), "A handed-in unique never comes back.");
+        }
+
+        [Test]
+        public void Sell_PaysSellValueForNormalItems()
+        {
+            Economy.Add(TestDesign.Button, 2);
+            Assert.IsTrue(Economy.TrySell(TestDesign.Button, 2));
+            Assert.AreEqual(0, Economy.Count(TestDesign.Button));
+            Assert.AreEqual(2, Economy.Currency, "Test items are worth 1 each.");
+            Assert.IsFalse(Economy.TrySell(TestDesign.Button, 1), "None left.");
+        }
+
+        [Test]
+        public void Normalise_MergesStacksAndDropsEmptyOnes()
+        {
+            _game.state.inventory.Add(new ItemStack(TestDesign.Leaf, 2));
+            _game.state.inventory.Add(new ItemStack(TestDesign.Leaf, 3));
+            _game.state.inventory.Add(new ItemStack(TestDesign.Berry, 0));
+            _game.state.Normalise();
+            Assert.AreEqual(1, _game.state.inventory.Count);
+            Assert.AreEqual(5, Economy.Count(TestDesign.Leaf));
         }
 
         [Test]

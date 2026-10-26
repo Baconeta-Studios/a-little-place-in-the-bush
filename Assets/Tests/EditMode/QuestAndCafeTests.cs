@@ -136,12 +136,53 @@ namespace Bush.Core.Tests
         }
 
         [Test]
-        public void NewGame_HasDefaultUnlocks()
+        public void DefaultUnlocks_AreReadFromTheDesignData()
         {
-            CollectionAssert.Contains(_game.state.unlockedRecipes, TestDesign.Salad);
-            CollectionAssert.DoesNotContain(_game.state.unlockedRecipes, TestDesign.SecretPie);
-            CollectionAssert.Contains(_game.state.unlockedPerks, TestDesign.BigBasket);
-            CollectionAssert.Contains(_game.state.unlockedCompanions, TestDesign.Kea);
+            Assert.IsTrue(_game.cafe.IsUnlocked(TestDesign.Salad));
+            Assert.IsFalse(_game.cafe.IsUnlocked(TestDesign.SecretPie));
+            Assert.IsTrue(Unlocks.IsPerkUnlocked(_game.design, _game.state, TestDesign.BigBasket));
+            Assert.IsTrue(Unlocks.IsCompanionUnlocked(_game.design, _game.state, TestDesign.Kea));
+
+            // A patch that makes a recipe a default reaches existing saves.
+            _game.design.GetRecipe(TestDesign.SecretPie).unlockedByDefault = true;
+            Assert.IsTrue(_game.cafe.IsUnlocked(TestDesign.SecretPie));
+        }
+
+        [Test]
+        public void Recipes_CanBeLearnedForCoins()
+        {
+            _game.design.GetRecipe(TestDesign.SecretPie).price = 30;
+            Assert.IsFalse(_game.cafe.Learn(TestDesign.SecretPie), "No coins yet.");
+            _game.economy.AddCurrency(35);
+            Assert.IsTrue(_game.cafe.Learn(TestDesign.SecretPie));
+            Assert.AreEqual(5, _game.economy.Currency);
+            Assert.IsTrue(_game.cafe.IsUnlocked(TestDesign.SecretPie));
+            Assert.IsFalse(_game.cafe.Learn(TestDesign.SecretPie), "Already known.");
+        }
+
+        [Test]
+        public void Claim_SaysWhyItFailed()
+        {
+            Assert.IsFalse(_game.quests.Claim(TestDesign.Welcome, out string error));
+            StringAssert.Contains("hasn't been started", error);
+            _game.quests.Start(TestDesign.Welcome);
+            Assert.IsFalse(_game.quests.Claim(TestDesign.Welcome, out error));
+            StringAssert.Contains("Not every objective", error);
+        }
+
+        [Test]
+        public void Counters_SurviveReorderedObjectives()
+        {
+            QuestData quest = _game.design.GetQuest(TestDesign.Welcome);
+            quest.objectives.Insert(0, new QuestObjective { type = ObjectiveType.TalkTo, target = TestDesign.Ruru, qty = 1 });
+            _game.quests.Start(TestDesign.Welcome);
+            _game.economy.Add(TestDesign.Leaf, 3);
+            _game.cafe.Cook(TestDesign.Salad);
+
+            // A patch moves the cook objective first: progress must follow it.
+            quest.objectives.Reverse();
+            Assert.AreEqual((1, 1), _game.quests.GetProgress(TestDesign.Welcome, 0));
+            Assert.AreEqual((0, 1), _game.quests.GetProgress(TestDesign.Welcome, 1));
         }
 
         private void CompleteWelcome()

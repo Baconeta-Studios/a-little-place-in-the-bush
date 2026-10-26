@@ -44,6 +44,8 @@ namespace Bush.Core
         public List<ItemAmount> ingredients = new();
         public int coins;
         public bool unlockedByDefault;
+        /// <summary>Coins to learn it at the cafe. 0 = can't be bought (default or quest unlock only).</summary>
+        public int price;
         /// <summary>Key items that piece this recipe together (shown as progress in the recipe book).</summary>
         public List<string> scraps = new();
         public string description;

@@ -161,8 +161,9 @@ namespace Bush.Core.Tests
         public void Claim_PaysOutExactlyOnce()
         {
             var game = new TestGame();
-            ForagingService.Begin(game.state, TestDesign.Setup(), 42u);
-            ForageResult expected = ForagingService.ResolvePending(game.design, game.state);
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(), 42u);
+            ForageResult expected = ForagingService.GetPendingResult(game.state);
+            Assert.AreEqual(ForagingService.Resolve(game.design, TestDesign.Setup(), new ForageContext(), 42u).TotalItems(), expected.TotalItems());
 
             ExpeditionClaim first = ForagingService.Claim(game.design, game.state, game.economy, game.events);
             ExpeditionClaim second = ForagingService.Claim(game.design, game.state, game.economy, game.events);
@@ -178,8 +179,8 @@ namespace Bush.Core.Tests
         public void Begin_TwiceKeepsTheFirstExpedition()
         {
             var game = new TestGame();
-            PendingExpedition first = ForagingService.Begin(game.state, TestDesign.Setup(), 1u);
-            PendingExpedition second = ForagingService.Begin(game.state, TestDesign.Setup(TestDesign.Kea), 2u);
+            PendingExpedition first = ForagingService.Begin(game.design, game.state, TestDesign.Setup(), 1u);
+            PendingExpedition second = ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 2u);
             Assert.AreSame(first, second, "Double-clicking Go must not start a second expedition.");
             Assert.AreEqual(1, game.state.expeditionsStarted);
         }
@@ -191,20 +192,20 @@ namespace Bush.Core.Tests
             string learned = null;
             game.events.PerkLearned += id => learned = id;
 
-            ForagingService.Begin(game.state, TestDesign.Setup(TestDesign.Kea), 1u);
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 1u);
             Assert.IsNull(ForagingService.Claim(game.design, game.state, game.economy, game.events).learnedPerkId);
 
-            ForagingService.Begin(game.state, TestDesign.Setup(TestDesign.Kea), 2u);
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 2u);
             Assert.AreEqual(TestDesign.BarkSense, ForagingService.Claim(game.design, game.state, game.economy, game.events).learnedPerkId);
             Assert.AreEqual(TestDesign.BarkSense, learned);
             Assert.Contains(TestDesign.BarkSense, game.state.unlockedPerks);
 
-            ForagingService.Begin(game.state, TestDesign.Setup(TestDesign.Kea), 3u);
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 3u);
             Assert.IsNull(ForagingService.Claim(game.design, game.state, game.economy, game.events).learnedPerkId, "A perk is only learned once.");
         }
 
         [Test]
-        public void ClaimedScrap_IsRememberedSoItNeverDropsAgain()
+        public void CollectedScrap_NeverDropsAgain()
         {
             var game = new TestGame();
             game.state.quests.Add(new QuestProgress { questId = TestDesign.LostRecipe, status = QuestStatus.Active });
@@ -212,13 +213,51 @@ namespace Bush.Core.Tests
             // Find a seed that drops the scrap, then claim it.
             uint seed = 0;
             while (!Has(ForagingService.Resolve(game.design, TestDesign.Setup(), new GameStateForageContext(game.state), seed), TestDesign.Scrap1)) seed++;
-            ForagingService.Begin(game.state, TestDesign.Setup(), seed);
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(), seed);
             ForagingService.Claim(game.design, game.state, game.economy, game.events);
+            Assert.AreEqual(1, game.economy.Count(TestDesign.Scrap1));
 
-            Assert.IsTrue(game.economy.HasEverObtained(TestDesign.Scrap1));
-            game.economy.TryRemove(TestDesign.Scrap1, 1); // handed in
             for (uint s = 0; s < 300; s++)
                 Assert.IsFalse(Has(ForagingService.Resolve(game.design, TestDesign.Setup(), new GameStateForageContext(game.state), s), TestDesign.Scrap1));
+
+            // Handed in for a quest: still never drops again.
+            game.economy.TryTransact(new Transaction { questHandIn = true }.Cost(TestDesign.Scrap1, 1));
+            for (uint s = 0; s < 300; s++)
+                Assert.IsFalse(Has(ForagingService.Resolve(game.design, TestDesign.Setup(), new GameStateForageContext(game.state), s), TestDesign.Scrap1));
+        }
+
+        [Test]
+        public void Begin_RefusesLockedCompanionsAndCopiesTheSetup()
+        {
+            var game = new TestGame();
+            game.design.GetCompanion(TestDesign.Kea).unlockedByDefault = false;
+            Assert.IsNull(ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 1u));
+            Assert.IsNotNull(ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 1u, force: true), "Cheats can force it.");
+
+            var other = new TestGame();
+            ExpeditionSetup setup = TestDesign.Setup(perk: TestDesign.BigBasket);
+            setup.perkIds.Add(TestDesign.BigBasket); // the same perk twice must not stack
+            PendingExpedition pending = ForagingService.Begin(other.design, other.state, setup, 5u);
+            Assert.AreEqual(1, pending.setup.perkIds.Count);
+            Assert.AreEqual(4, pending.result.rollCount);
+
+            setup.companionId = TestDesign.Weka; // editing the screen's object after Go changes nothing
+            Assert.IsNull(pending.setup.companionId);
+        }
+
+        [Test]
+        public void Focus_CountsOncePerItem()
+        {
+            DesignData design = TestDesign.Create();
+            design.items.Find(i => i.id == TestDesign.Bug).tags.Add("leaf"); // two of the focus's tags
+            design.focuses[0].tags.Add("leaf");
+            design.RebuildIndex();
+
+            ForagePreview plain = ForagingService.Preview(design, TestDesign.Setup(), _context);
+            ForagePreview focused = ForagingService.Preview(design, TestDesign.Setup(focus: TestDesign.FocusBugs), _context);
+            double before = plain.odds.Find(o => o.itemId == TestDesign.Bug).weight;
+            double after = focused.odds.Find(o => o.itemId == TestDesign.Bug).weight;
+            Assert.AreEqual(before * 2, after, 1e-9, "x2, not x4, even with two matching tags.");
         }
 
         private int CountFinds(ExpeditionSetup setup, string itemId)

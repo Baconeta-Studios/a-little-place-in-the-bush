@@ -122,7 +122,7 @@ namespace Bush.Core.Tests
         }
 
         private static ItemData Item(string id, ItemCategory category, Rarity rarity, string tag, bool unique = false) =>
-            new() { id = id, name = id, category = category, rarity = rarity, tags = { tag }, unique = unique, sellValue = 1 };
+            new() { id = id, name = id, category = category, rarity = rarity, tags = { tag }, unique = unique, sellValue = category == ItemCategory.KeyItem ? 0 : 1 };
 
         private static ForageEntry Entry(string item, double weight, int min, int max, EntryTime time = EntryTime.Any, string quest = "") =>
             new() { itemId = item, weight = weight, min = min, max = max, time = time, requiresQuest = quest };

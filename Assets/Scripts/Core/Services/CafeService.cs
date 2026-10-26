@@ -21,7 +21,23 @@ namespace Bush.Core
             _events = events;
         }
 
-        public bool IsUnlocked(string recipeId) => _state.unlockedRecipes.Contains(recipeId);
+        public bool IsUnlocked(string recipeId) => Unlocks.IsRecipeUnlocked(_design, _state, recipeId);
+
+        /// <summary>Recipes that can be bought: locked, with a price.</summary>
+        public bool CanLearn(string recipeId)
+        {
+            RecipeData recipe = _design.GetRecipe(recipeId);
+            return recipe != null && recipe.price > 0 && !IsUnlocked(recipeId) && _economy.Currency >= recipe.price;
+        }
+
+        /// <summary>Learns a recipe for its price in coins (the GDD's "use what you earn to learn recipes").</summary>
+        public bool Learn(string recipeId)
+        {
+            if (!CanLearn(recipeId)) return false;
+            if (!_economy.TrySpend(_design.GetRecipe(recipeId).price)) return false;
+            _state.unlockedRecipes.Add(recipeId);
+            return true;
+        }
 
         /// <summary>Whether the recipe can be cooked now. <paramref name="missing"/> lists what's short, for the UI.</summary>
         public bool CanCook(string recipeId, out List<ItemAmount> missing)
@@ -52,14 +68,14 @@ namespace Bush.Core
             return true;
         }
 
-        /// <summary>How many of the recipe's scraps the player has ever found, for the recipe book.</summary>
+        /// <summary>How many of the recipe's scraps the player has collected (has now or handed in), for the recipe book.</summary>
         public (int found, int total) GetScrapProgress(string recipeId)
         {
             RecipeData recipe = _design.GetRecipe(recipeId);
             if (recipe == null) return (0, 0);
             int found = 0;
             foreach (string scrap in recipe.scraps)
-                if (_state.everObtained.Contains(scrap)) found++;
+                if (_state.IsUniqueCollected(scrap)) found++;
             return (found, recipe.scraps.Count);
         }
     }

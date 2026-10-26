@@ -20,17 +20,19 @@ namespace Bush.Core
     public interface IForageContext
     {
         bool IsQuestActive(string questId);
-        bool HasEverObtained(string itemId);
+        /// <summary>A unique item the player has now or has handed in: it shouldn't drop again.</summary>
+        bool IsUniqueCollected(string itemId);
     }
 
     /// <summary>A context from plain sets, for tests, tools and cheats.</summary>
     public class ForageContext : IForageContext
     {
         public readonly HashSet<string> activeQuests = new();
+        /// <summary>Unique items already collected (the sandbox's "obtained").</summary>
         public readonly HashSet<string> obtained = new();
 
         public bool IsQuestActive(string questId) => activeQuests.Contains(questId);
-        public bool HasEverObtained(string itemId) => obtained.Contains(itemId);
+        public bool IsUniqueCollected(string itemId) => obtained.Contains(itemId);
     }
 
     /// <summary>The context for a real game.</summary>
@@ -44,7 +46,7 @@ namespace Bush.Core
         }
 
         public bool IsQuestActive(string questId) => _state.IsQuestActive(questId);
-        public bool HasEverObtained(string itemId) => _state.everObtained.Contains(itemId);
+        public bool IsUniqueCollected(string itemId) => _state.IsUniqueCollected(itemId);
     }
 
     /// <summary>One roll of the expedition, kept for the results screen and debugging.</summary>

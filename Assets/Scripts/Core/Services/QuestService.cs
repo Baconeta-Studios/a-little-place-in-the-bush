@@ -57,11 +57,7 @@ namespace Bush.Core
         public bool Start(string questId)
         {
             if (!CanStart(questId)) return false;
-
-            QuestData quest = _design.GetQuest(questId);
-            var progress = new QuestProgress { questId = questId, status = QuestStatus.Active };
-            for (int i = 0; i < quest.objectives.Count; i++) progress.counters.Add(0);
-            _state.quests.Add(progress);
+            _state.quests.Add(new QuestProgress { questId = questId, status = QuestStatus.Active });
             _events.RaiseQuestStarted(questId);
             return true;
         }
@@ -81,35 +77,58 @@ namespace Bush.Core
             int current = objective.type switch
             {
                 ObjectiveType.HaveItems or ObjectiveType.DeliverItems => _economy.Count(objective.target),
-                _ => objectiveIndex < progress.counters.Count ? progress.counters[objectiveIndex] : 0
+                _ => GetCounter(progress, objective)
             };
             return (Math.Min(current, required), required);
         }
 
+        /// <summary>
+        /// Every objective met. Items asked for by more than one objective are totalled, so "ready"
+        /// always means <see cref="Claim"/> will succeed.
+        /// </summary>
         public bool AllObjectivesMet(string questId)
         {
             QuestData quest = _design.GetQuest(questId);
             if (quest == null) return false;
+
+            var itemTotals = new Dictionary<string, int>();
             for (int i = 0; i < quest.objectives.Count; i++)
             {
+                QuestObjective objective = quest.objectives[i];
+                if (objective.type is ObjectiveType.HaveItems or ObjectiveType.DeliverItems)
+                {
+                    itemTotals.TryGetValue(objective.target ?? "", out int total);
+                    itemTotals[objective.target ?? ""] = total + Math.Max(1, objective.qty);
+                    continue;
+                }
+
                 (int current, int required) = GetProgress(questId, i);
                 if (current < required) return false;
             }
+
+            foreach (KeyValuePair<string, int> total in itemTotals)
+                if (_economy.Count(total.Key) < total.Value) return false;
             return true;
         }
 
+        public bool Claim(string questId) => Claim(questId, out _);
+
         /// <summary>
-        /// Hands in DeliverItems objectives and pays every reward in one transaction, then marks
-        /// the quest completed. Does nothing if it isn't ready, or was already claimed.
+        /// Hands in DeliverItems objectives and pays every reward in one transaction, then marks the
+        /// quest completed. Does nothing if it isn't ready or was already claimed; <paramref name="error"/> says why.
         /// </summary>
-        public bool Claim(string questId)
+        public bool Claim(string questId, out string error)
         {
+            error = null;
             QuestData quest = _design.GetQuest(questId);
             QuestProgress progress = _state.FindQuest(questId);
-            if (quest == null || progress == null || progress.rewardClaimed) return false;
-            if (GetStatus(questId) != QuestStatus.ReadyToClaim) return false;
+            if (quest == null) error = $"Unknown quest '{questId}'.";
+            else if (progress == null) error = "The quest hasn't been started.";
+            else if (progress.rewardClaimed) error = "The reward was already claimed.";
+            else if (GetStatus(questId) != QuestStatus.ReadyToClaim) error = "Not every objective is done yet.";
+            if (error != null) return false;
 
-            var transaction = new Transaction();
+            var transaction = new Transaction { questHandIn = true };
             foreach (QuestObjective objective in quest.objectives)
                 if (objective.type == ObjectiveType.DeliverItems) transaction.Cost(objective.target, objective.qty);
 
@@ -119,7 +138,7 @@ namespace Bush.Core
                 else if (reward.type == RewardType.Coins) transaction.coinGain += reward.qty;
             }
 
-            if (!_economy.TryTransact(transaction)) return false;
+            if (!_economy.CanTransact(transaction, out error) || !_economy.TryTransact(transaction)) return false;
 
             foreach (QuestReward reward in quest.rewards)
             {
@@ -167,6 +186,16 @@ namespace Bush.Core
         /// <summary>Quests this NPC gives, in design order.</summary>
         public List<QuestData> GetQuestsFrom(string npcId) => _design.quests.FindAll(q => q.giver == npcId);
 
+        /// <summary>Counters are keyed by objective type and target, not position, so patches can reorder objectives safely.</summary>
+        public static string CounterKey(QuestObjective objective) => $"{objective.type}:{objective.target}";
+
+        private static int GetCounter(QuestProgress progress, QuestObjective objective)
+        {
+            string key = CounterKey(objective);
+            QuestCounter counter = progress.counters.Find(c => c.key == key);
+            return counter?.count ?? 0;
+        }
+
         private void OnRecipeCooked(string recipeId) =>
             Count(ObjectiveType.CookRecipe, o => string.IsNullOrEmpty(o.target) || o.target == recipeId);
 
@@ -185,12 +214,16 @@ namespace Bush.Core
                 QuestData quest = _design.GetQuest(progress.questId);
                 if (quest == null) continue;
 
-                for (int i = 0; i < quest.objectives.Count; i++)
+                var counted = new HashSet<string>();
+                foreach (QuestObjective objective in quest.objectives)
                 {
-                    QuestObjective objective = quest.objectives[i];
                     if (objective.type != type || !matches(objective)) continue;
-                    while (progress.counters.Count <= i) progress.counters.Add(0);
-                    progress.counters[i]++;
+                    string key = CounterKey(objective);
+                    if (!counted.Add(key)) continue; // two identical objectives share one counter
+
+                    QuestCounter counter = progress.counters.Find(c => c.key == key);
+                    if (counter == null) progress.counters.Add(counter = new QuestCounter { key = key });
+                    counter.count++;
                 }
             }
         }

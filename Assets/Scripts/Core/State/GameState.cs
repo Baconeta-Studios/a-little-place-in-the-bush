@@ -15,8 +15,8 @@ namespace Bush.Core
         public int saveVersion = CurrentSaveVersion;
         public int currency;
         public List<ItemStack> inventory = new();
-        /// <summary>Unique items (like recipe scraps) the player has ever had, so they don't drop again after being handed in.</summary>
-        public List<string> everObtained = new();
+        /// <summary>Unique items (like recipe scraps) handed in for a quest. With the inventory, this says which uniques are collected.</summary>
+        public List<string> handedIn = new();
 
         public List<string> unlockedRecipes = new();
         public List<string> unlockedPerks = new();
@@ -35,17 +35,28 @@ namespace Bush.Core
         /// <summary>0-1 through the current day.</summary>
         public float timeOfDay;
 
-        /// <summary>A fresh game: default unlocks from the design data, nothing else.</summary>
-        public static GameState CreateNew(DesignData design)
+        /// <summary>
+        /// A fresh game. Default unlocks aren't copied in: <see cref="Unlocks"/> reads them from the design
+        /// data, so a patched build that adds a default recipe or companion reaches existing saves too.
+        /// </summary>
+        public static GameState CreateNew(DesignData design) => new();
+
+        /// <summary>Has it now, or handed it in. Collected uniques never drop or get rewarded again.</summary>
+        public bool IsUniqueCollected(string itemId) =>
+            handedIn.Contains(itemId) || inventory.Exists(s => s.itemId == itemId && s.qty > 0);
+
+        /// <summary>Tidies a loaded save: merges duplicate stacks and drops empty ones. SaveService should call it after loading.</summary>
+        public void Normalise()
         {
-            var state = new GameState();
-            foreach (RecipeData recipe in design.recipes)
-                if (recipe.unlockedByDefault) state.unlockedRecipes.Add(recipe.id);
-            foreach (PerkData perk in design.perks)
-                if (perk.unlockedByDefault) state.unlockedPerks.Add(perk.id);
-            foreach (CompanionData companion in design.companions)
-                if (companion.unlockedByDefault) state.unlockedCompanions.Add(companion.id);
-            return state;
+            var merged = new List<ItemStack>();
+            foreach (ItemStack stack in inventory)
+            {
+                if (stack == null || string.IsNullOrEmpty(stack.itemId) || stack.qty <= 0) continue;
+                ItemStack existing = merged.Find(s => s.itemId == stack.itemId);
+                if (existing == null) merged.Add(new ItemStack(stack.itemId, stack.qty));
+                else existing.qty += stack.qty;
+            }
+            inventory = merged;
         }
 
         public QuestProgress FindQuest(string questId) => quests.Find(q => q.questId == questId);
@@ -94,9 +105,17 @@ namespace Bush.Core
         public string questId;
         /// <summary>NotStarted, Active or Completed. ReadyToClaim is never stored.</summary>
         public QuestStatus status;
-        /// <summary>Counters for event objectives (cook, expeditions, talk, place), one per objective.</summary>
-        public List<int> counters = new();
+        /// <summary>Counts for event objectives (cook, expeditions, talk, place), keyed by objective type and target
+        /// rather than position, so reordering a quest's objectives in a patch doesn't move progress around.</summary>
+        public List<QuestCounter> counters = new();
         public bool rewardClaimed;
+    }
+
+    [Serializable]
+    public class QuestCounter
+    {
+        public string key;
+        public int count;
     }
 
     [Serializable]
@@ -114,5 +133,7 @@ namespace Bush.Core
         public int id;
         public uint seed;
         public ExpeditionSetup setup = new();
+        /// <summary>Worked out once when Go is pressed, so the results shown are exactly what gets paid.</summary>
+        public ForageResult result = new();
     }
 }

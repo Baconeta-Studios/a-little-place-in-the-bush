@@ -23,7 +23,7 @@ namespace Bush.Core
 
         [Serializable] public class Item { public string id; public string name; public string category; public string rarity; public List<string> tags = new(); public int sellValue; public bool unique; public string description; }
         [Serializable] public class Amount { public string item; public int qty; }
-        [Serializable] public class Recipe { public string id; public string name; public List<Amount> ingredients = new(); public int coins; public bool unlockedByDefault; public List<string> scraps = new(); public string description; }
+        [Serializable] public class Recipe { public string id; public string name; public List<Amount> ingredients = new(); public int coins; public bool unlockedByDefault; public int price; public List<string> scraps = new(); public string description; }
         [Serializable] public class Modifier { public string type; public string tag; public string rarity; public double value; }
         [Serializable] public class Companion { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); public string teachesPerk; public int tripsToTeach; }
         [Serializable] public class Perk { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); }
@@ -55,7 +55,7 @@ namespace Bush.Core
             {
                 var recipe = new RecipeData
                 {
-                    id = x.id, name = x.name, description = x.description, coins = x.coins,
+                    id = x.id, name = x.name, description = x.description, coins = x.coins, price = x.price,
                     unlockedByDefault = x.unlockedByDefault, scraps = new List<string>(x.scraps ?? new List<string>())
                 };
                 foreach (Amount amount in x.ingredients) recipe.ingredients.Add(new ItemAmount(amount.item, amount.qty));
@@ -138,7 +138,7 @@ namespace Bush.Core
             {
                 var recipe = new Recipe
                 {
-                    id = x.id, name = x.name, coins = x.coins, unlockedByDefault = x.unlockedByDefault,
+                    id = x.id, name = x.name, coins = x.coins, unlockedByDefault = x.unlockedByDefault, price = x.price,
                     scraps = new List<string>(x.scraps), description = x.description
                 };
                 foreach (ItemAmount amount in x.ingredients) recipe.ingredients.Add(new Amount { item = amount.itemId, qty = amount.qty });
@@ -201,8 +201,11 @@ namespace Bush.Core
             if (modifiers == null) return result;
             foreach (Modifier x in modifiers)
             {
+                ModifierType type = Parse(x.type, ModifierType.TagWeight, errors, owner);
+                if (type == ModifierType.RarityWeight && string.IsNullOrEmpty(x.rarity))
+                    errors?.Add($"{owner}: RarityWeight needs a rarity (Common, Uncommon, Rare or Legendary).");
                 Rarity rarity = string.IsNullOrEmpty(x.rarity) ? Rarity.Common : Parse(x.rarity, Rarity.Common, errors, owner);
-                result.Add(new ForageModifier(Parse(x.type, ModifierType.TagWeight, errors, owner), x.value, x.tag ?? "", rarity));
+                result.Add(new ForageModifier(type, x.value, x.tag ?? "", rarity));
             }
             return result;
         }
@@ -221,7 +224,8 @@ namespace Bush.Core
         private static T Parse<T>(string value, T fallback, List<string> errors, string owner) where T : struct, Enum
         {
             if (string.IsNullOrEmpty(value)) return fallback;
-            if (Enum.TryParse(value, true, out T parsed)) return parsed;
+            // Case-sensitive, like the sandbox: "night" would silently never match there.
+            if (Enum.TryParse(value, false, out T parsed) && Enum.IsDefined(typeof(T), parsed)) return parsed;
             errors?.Add($"{owner}: unknown {typeof(T).Name} '{value}', using {fallback}.");
             return fallback;
         }

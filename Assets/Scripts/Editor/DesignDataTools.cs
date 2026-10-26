@@ -60,15 +60,16 @@ public static class DesignDataTools
     public static void Collect()
     {
         GameDatabase database = LoadOrCreateDatabase();
-        database.items = FindAll<ItemDefinition>();
-        database.recipes = FindAll<RecipeDefinition>();
-        database.companions = FindAll<CompanionDefinition>();
-        database.perks = FindAll<PerkDefinition>();
-        database.focuses = FindAll<FocusDefinition>();
-        database.forageTables = FindAll<ForageTableDefinition>();
-        database.npcs = FindAll<NpcDefinition>();
-        database.quests = FindAll<QuestDefinition>();
-        database.placeables = FindAll<PlaceableDefinition>();
+        // Keeps the current order (design order matters, e.g. for an NPC's quests) and adds anything new at the end.
+        database.items = Merge(database.items, FindAll<ItemDefinition>());
+        database.recipes = Merge(database.recipes, FindAll<RecipeDefinition>());
+        database.companions = Merge(database.companions, FindAll<CompanionDefinition>());
+        database.perks = Merge(database.perks, FindAll<PerkDefinition>());
+        database.focuses = Merge(database.focuses, FindAll<FocusDefinition>());
+        database.forageTables = Merge(database.forageTables, FindAll<ForageTableDefinition>());
+        database.npcs = Merge(database.npcs, FindAll<NpcDefinition>());
+        database.quests = Merge(database.quests, FindAll<QuestDefinition>());
+        database.placeables = Merge(database.placeables, FindAll<PlaceableDefinition>());
         EditorUtility.SetDirty(database);
         AssetDatabase.SaveAssets();
         Debug.Log($"[Bush] Database now lists {database.All().Count()} definitions.");
@@ -84,6 +85,7 @@ public static class DesignDataTools
 
         DesignFile file = JsonUtility.FromJson<DesignFile>(File.ReadAllText(path));
         var errors = new List<string>();
+        if (file.version != 1) errors.Add($"The file is version {file.version}; this importer reads version 1.");
         DesignData design = file.ToDesign(errors);
         errors.AddRange(DesignValidator.Validate(design));
         if (errors.Count > 0)
@@ -137,6 +139,7 @@ public static class DesignDataTools
             {
                 var asset = assets.Get<RecipeDefinition>(x.id);
                 asset.coins = x.coins;
+                asset.price = x.price;
                 asset.unlockedByDefault = x.unlockedByDefault;
                 asset.ingredients = x.ingredients.Select(i => new IngredientEntry { item = assets.Get<ItemDefinition>(i.itemId), qty = i.qty }).ToList();
                 asset.scraps = x.scraps.Select(assets.Get<ItemDefinition>).Where(s => s).ToList();
@@ -179,11 +182,64 @@ public static class DesignDataTools
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Collect();
+
+        // The database follows the file's order. Assets that aren't in the file stay (nothing is
+        // deleted) but are listed, so removed or stray content doesn't sneak into the game unnoticed.
+        GameDatabase database = LoadOrCreateDatabase();
+        var leftovers = new List<string>();
+        database.items = InFileOrder(design.items.Select(x => x.id), FindAll<ItemDefinition>(), leftovers);
+        database.recipes = InFileOrder(design.recipes.Select(x => x.id), FindAll<RecipeDefinition>(), leftovers);
+        database.companions = InFileOrder(design.companions.Select(x => x.id), FindAll<CompanionDefinition>(), leftovers);
+        database.perks = InFileOrder(design.perks.Select(x => x.id), FindAll<PerkDefinition>(), leftovers);
+        database.focuses = InFileOrder(design.focuses.Select(x => x.id), FindAll<FocusDefinition>(), leftovers);
+        database.forageTables = InFileOrder(design.forageTables.Select(x => x.id), FindAll<ForageTableDefinition>(), leftovers);
+        database.npcs = InFileOrder(design.npcs.Select(x => x.id), FindAll<NpcDefinition>(), leftovers);
+        database.quests = InFileOrder(design.quests.Select(x => x.id), FindAll<QuestDefinition>(), leftovers);
+        database.placeables = Merge(database.placeables, FindAll<PlaceableDefinition>()); // placeables aren't in the file yet
+        EditorUtility.SetDirty(database);
+        AssetDatabase.SaveAssets();
+
+        if (leftovers.Count > 0)
+            Debug.LogWarning("[Bush] These assets aren't in the design file but are still in the database. Delete them if they're gone from the design:\n- " +
+                             string.Join("\n- ", leftovers));
+    }
+
+    private static List<T> InFileOrder<T>(IEnumerable<string> ids, List<T> assets, List<string> leftovers) where T : GameDefinition
+    {
+        var ordered = new List<T>();
+        foreach (string id in ids)
+        {
+            T asset = assets.FirstOrDefault(a => a.id == id);
+            if (asset && !ordered.Contains(asset)) ordered.Add(asset);
+        }
+        foreach (T asset in assets)
+        {
+            if (ordered.Contains(asset)) continue;
+            ordered.Add(asset);
+            leftovers.Add($"{asset.id} ({AssetDatabase.GetAssetPath(asset)})");
+        }
+        return ordered;
+    }
+
+    private static List<T> Merge<T>(List<T> current, List<T> found) where T : GameDefinition
+    {
+        var merged = current.Where(a => a && found.Contains(a)).Distinct().ToList();
+        merged.AddRange(found.Where(a => !merged.Contains(a)));
+        return merged;
     }
 
     private static IEnumerable<string> ValidateAssets(GameDatabase database)
     {
+        var seen = new Dictionary<string, GameDefinition>();
+        foreach (string guid in AssetDatabase.FindAssets("t:GameDefinition"))
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<GameDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+            if (!asset || string.IsNullOrEmpty(asset.id)) continue;
+            if (seen.TryGetValue(asset.id, out GameDefinition other))
+                yield return $"Two assets share the id {asset.id}: {AssetDatabase.GetAssetPath(other)} and {AssetDatabase.GetAssetPath(asset)} (a duplicated asset keeps its id; change one).";
+            else seen.Add(asset.id, asset);
+        }
+
         foreach (QuestDefinition quest in database.quests.Where(q => q))
         {
             foreach (ObjectiveEntry objective in quest.objectives)

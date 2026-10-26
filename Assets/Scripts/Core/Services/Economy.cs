@@ -9,6 +9,11 @@ namespace Bush.Core
         public readonly List<ItemAmount> gains = new();
         public int coinCost;
         public int coinGain;
+        /// <summary>
+        /// Set only by quest claims. Key items (recipe scraps...) can't be spent, sold or cooked any other
+        /// way, so a quest item can never be lost before it's handed in. Handed-in uniques are remembered.
+        /// </summary>
+        public bool questHandIn;
 
         public Transaction Cost(string itemId, int qty) { costs.Add(new ItemAmount(itemId, qty)); return this; }
         public Transaction Gain(string itemId, int qty) { gains.Add(new ItemAmount(itemId, qty)); return this; }
@@ -43,9 +48,10 @@ namespace Bush.Core
 
         public bool Has(string itemId, int qty = 1) => qty > 0 && Count(itemId) >= qty;
 
-        public bool HasEverObtained(string itemId) => _state.everObtained.Contains(itemId);
+        /// <summary>Has it now or handed it in (unique items only make sense here).</summary>
+        public bool IsUniqueCollected(string itemId) => _state.IsUniqueCollected(itemId);
 
-        /// <summary>Adds items. Fails on unknown items or qty &lt;= 0. Unique items are capped at one.</summary>
+        /// <summary>Adds items. Fails on unknown items or qty &lt;= 0. Unique items are capped at one and never come back once handed in.</summary>
         public bool Add(string itemId, int qty)
         {
             return TryTransact(new Transaction().Gain(itemId, qty));
@@ -68,6 +74,14 @@ namespace Bush.Core
             return TryTransact(new Transaction { coinCost = amount });
         }
 
+        /// <summary>Sells items for their sell value. Key items, unique items and items worth nothing can't be sold.</summary>
+        public bool TrySell(string itemId, int qty)
+        {
+            ItemData item = _design.GetItem(itemId);
+            if (item == null || item.unique || item.category == ItemCategory.KeyItem || item.sellValue <= 0 || qty <= 0) return false;
+            return TryTransact(new Transaction { coinGain = item.sellValue * qty }.Cost(itemId, qty));
+        }
+
         /// <summary>Checks the whole transaction first, then applies all of it. Never applies half.</summary>
         public bool TryTransact(Transaction transaction)
         {
@@ -79,6 +93,7 @@ namespace Bush.Core
                 ItemStack stack = Find(cost.itemId);
                 stack.qty -= cost.qty;
                 if (stack.qty <= 0) _state.inventory.Remove(stack);
+                if (_design.GetItem(cost.itemId).unique && !_state.handedIn.Contains(cost.itemId)) _state.handedIn.Add(cost.itemId);
                 itemsChanged = true;
             }
 
@@ -88,10 +103,9 @@ namespace Bush.Core
                 int qty = gain.qty;
                 if (item.unique)
                 {
-                    // Unique items are capped at one; a duplicate gain is silently ignored.
-                    if (Count(gain.itemId) > 0) continue;
+                    // Capped at one, and never given again once handed in; a duplicate gain is ignored.
+                    if (_state.IsUniqueCollected(gain.itemId)) continue;
                     qty = 1;
-                    if (!_state.everObtained.Contains(gain.itemId)) _state.everObtained.Add(gain.itemId);
                 }
 
                 ItemStack stack = Find(gain.itemId);
@@ -123,6 +137,11 @@ namespace Bush.Core
             foreach (ItemAmount cost in transaction.costs)
             {
                 if (!IsValid(cost, out error)) return false;
+                if (!transaction.questHandIn && _design.GetItem(cost.itemId).category == ItemCategory.KeyItem)
+                {
+                    error = $"{cost.itemId} is a key item: it can only be handed in for a quest.";
+                    return false;
+                }
                 totals.TryGetValue(cost.itemId, out int total);
                 totals[cost.itemId] = total + cost.qty;
             }

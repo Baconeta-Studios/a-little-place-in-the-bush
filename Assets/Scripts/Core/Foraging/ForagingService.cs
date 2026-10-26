@@ -24,11 +24,12 @@ namespace Bush.Core
             ForageTableData table = design.GetForageTable(setup.tableId);
             if (table == null) return result;
 
-            // 1. Modifiers: companion, then perks, then focus.
+            // 1. Modifiers: companion, then perks. The focus is applied once per item in step 3.
             List<ForageModifier> modifiers = CollectModifiers(design, setup);
+            FocusData focus = design.GetFocus(setup.focusId);
 
             // 2-3. Eligible entries and their effective weights.
-            List<Candidate> eligible = GetEligible(design, table, setup.time, context, modifiers);
+            List<Candidate> eligible = GetEligible(design, table, setup.time, context, modifiers, focus);
 
             // 4. Number of rolls.
             int rollCount = CountRolls(table, modifiers);
@@ -78,16 +79,17 @@ namespace Bush.Core
             if (table == null) return preview;
 
             List<ForageModifier> modifiers = CollectModifiers(design, setup);
-            List<Candidate> eligible = GetEligible(design, table, setup.time, context, modifiers);
+            List<Candidate> eligible = GetEligible(design, table, setup.time, context, modifiers, design.GetFocus(setup.focusId));
             int rolls = CountRolls(table, modifiers);
             preview.rolls = rolls;
 
             double total = 0;
-            foreach (Candidate candidate in eligible) total += candidate.weight;
+            foreach (Candidate candidate in eligible)
+                if (candidate.weight > 0) total += candidate.weight;
 
             foreach (Candidate candidate in eligible)
             {
-                double p = total > 0 ? candidate.weight / total : 0;
+                double p = total > 0 && candidate.weight > 0 ? candidate.weight / total : 0;
                 double averageQty = candidate.item.unique
                     ? 1
                     : (candidate.entry.min + candidate.entry.max) / 2.0 + QuantityBonus(candidate.item, modifiers);
@@ -103,20 +105,22 @@ namespace Bush.Core
                     if (tagTotal > 0 && candidate.weight > 0) bonusFinds += Math.Min(1, modifier.value) * candidate.weight / tagTotal;
                 }
 
+                double expectedFinds = rolls * p + bonusFinds;
+                if (candidate.item.unique) expectedFinds = Math.Min(1, expectedFinds); // found at most once per trip
                 preview.odds.Add(new ForageOdds
                 {
                     itemId = candidate.entry.itemId,
                     weight = candidate.weight,
                     chancePerRoll = p,
                     chanceAtLeastOne = 1 - Math.Pow(1 - p, rolls),
-                    expectedQty = (rolls * p + bonusFinds) * averageQty
+                    expectedQty = expectedFinds * averageQty
                 });
             }
 
             return preview;
         }
 
-        /// <summary>Companion modifiers, then each perk's, then one TagWeight per focus tag.</summary>
+        /// <summary>Companion modifiers, then each perk's. The focus isn't a modifier: it multiplies an item's weight once if the item has any of its tags.</summary>
         public static List<ForageModifier> CollectModifiers(DesignData design, ExpeditionSetup setup)
         {
             var modifiers = new List<ForageModifier>();
@@ -132,47 +136,74 @@ namespace Bush.Core
                 }
             }
 
-            FocusData focus = design.GetFocus(setup.focusId);
-            if (focus != null)
-            {
-                foreach (string tag in focus.tags)
-                    modifiers.Add(new ForageModifier(ModifierType.TagWeight, focus.multiplier, tag));
-            }
-
             return modifiers;
         }
 
         // ----- Running an expedition in the game (changes state) -----
 
+        /// <summary>Whether this setup can be sent: the table and focus exist, and the companion and perks are unlocked.</summary>
+        public static bool CanBegin(DesignData design, GameState state, ExpeditionSetup setup, out string error)
+        {
+            error = null;
+            if (state.hasPendingExpedition) error = "An expedition is already under way.";
+            else if (design.GetForageTable(setup.tableId) == null) error = $"Unknown forage table '{setup.tableId}'.";
+            else if (!string.IsNullOrEmpty(setup.companionId) && !Unlocks.IsCompanionUnlocked(design, state, setup.companionId))
+                error = $"Companion '{setup.companionId}' isn't unlocked.";
+            else if (!string.IsNullOrEmpty(setup.focusId) && design.GetFocus(setup.focusId) == null) error = $"Unknown focus '{setup.focusId}'.";
+            else if (setup.perkIds != null)
+            {
+                foreach (string perkId in setup.perkIds)
+                {
+                    if (Unlocks.IsPerkUnlocked(design, state, perkId)) continue;
+                    error = $"Perk '{perkId}' isn't unlocked.";
+                    break;
+                }
+            }
+            return error == null;
+        }
+
         /// <summary>
-        /// Call when the player presses Go. Stores the expedition in the state so a refresh during
-        /// the dim or the results screen doesn't lose or duplicate it. Save straight after.
+        /// Call when the player presses Go. Copies the setup, works out the result from the seed and
+        /// stores both in the state, so the results screen shows exactly what <see cref="Claim"/> pays,
+        /// and a refresh during the dim or the results neither loses nor duplicates it. Save straight
+        /// after. Returns null if the setup isn't allowed (<paramref name="force"/> skips the unlock
+        /// checks, for cheats). Pressing Go twice returns the expedition already under way.
         /// </summary>
-        public static PendingExpedition Begin(GameState state, ExpeditionSetup setup, uint seed)
+        public static PendingExpedition Begin(DesignData design, GameState state, ExpeditionSetup setup, uint seed, bool force = false)
         {
             if (state.hasPendingExpedition) return state.pendingExpedition;
+            if (!force && !CanBegin(design, state, setup, out _)) return null;
+
+            var copy = new ExpeditionSetup
+            {
+                tableId = setup.tableId,
+                companionId = setup.companionId,
+                focusId = setup.focusId,
+                time = setup.time,
+                perkIds = new List<string>()
+            };
+            if (setup.perkIds != null)
+                foreach (string perkId in setup.perkIds)
+                    if (!string.IsNullOrEmpty(perkId) && !copy.perkIds.Contains(perkId)) copy.perkIds.Add(perkId);
 
             state.expeditionsStarted++;
             state.pendingExpedition = new PendingExpedition
             {
                 id = state.expeditionsStarted,
                 seed = seed,
-                setup = setup
+                setup = copy,
+                result = Resolve(design, copy, new GameStateForageContext(state), seed)
             };
             state.hasPendingExpedition = true;
             return state.pendingExpedition;
         }
 
-        /// <summary>The result of the pending expedition, worked out again from its seed. Null if there isn't one.</summary>
-        public static ForageResult ResolvePending(DesignData design, GameState state)
-        {
-            if (!state.hasPendingExpedition) return null;
-            PendingExpedition pending = state.pendingExpedition;
-            return Resolve(design, pending.setup, new GameStateForageContext(state), pending.seed);
-        }
+        /// <summary>The pending expedition's result, for the results screen. Null if there isn't one.</summary>
+        public static ForageResult GetPendingResult(GameState state) =>
+            state.hasPendingExpedition ? state.pendingExpedition.result : null;
 
         /// <summary>
-        /// Pays out the pending expedition exactly once: adds the items, counts the trip for the
+        /// Pays out the pending expedition exactly once: adds the stored items, counts the trip for the
         /// companion and teaches its perk when due. Calling it again does nothing.
         /// </summary>
         public static ExpeditionClaim Claim(DesignData design, GameState state, Economy economy, GameEvents events)
@@ -180,26 +211,22 @@ namespace Bush.Core
             var claim = new ExpeditionClaim();
             if (!state.hasPendingExpedition) return claim;
 
-            ForageResult result = ResolvePending(design, state);
-            ExpeditionSetup setup = state.pendingExpedition.setup;
+            PendingExpedition pending = state.pendingExpedition;
+            ForageResult result = pending.result ?? new ForageResult();
             state.hasPendingExpedition = false;
             state.pendingExpedition = new PendingExpedition();
 
-            var payout = new Transaction();
-            foreach (ItemStack stack in result.stacks) payout.Gain(stack.itemId, stack.qty);
-            if (payout.gains.Count > 0 && !economy.TryTransact(payout))
-            {
-                // Only possible if the design data changed under a pending expedition. Pay what we can.
-                foreach (ItemStack stack in result.stacks) economy.Add(stack.itemId, stack.qty);
-            }
+            // Item by item rather than one transaction: if the design data changed under a saved
+            // expedition, an item that no longer exists is skipped instead of losing the whole basket.
+            foreach (ItemStack stack in result.stacks) economy.Add(stack.itemId, stack.qty);
 
-            CompanionData companion = design.GetCompanion(setup.companionId);
+            CompanionData companion = design.GetCompanion(pending.setup.companionId);
             if (companion != null)
             {
                 CompanionProgress progress = state.GetOrAddCompanion(companion.id);
                 progress.trips++;
                 bool canTeach = !string.IsNullOrEmpty(companion.teachesPerk) && design.GetPerk(companion.teachesPerk) != null;
-                if (canTeach && progress.trips >= companion.tripsToTeach && !state.unlockedPerks.Contains(companion.teachesPerk))
+                if (canTeach && progress.trips >= companion.tripsToTeach && !Unlocks.IsPerkUnlocked(design, state, companion.teachesPerk))
                 {
                     state.unlockedPerks.Add(companion.teachesPerk);
                     claim.learnedPerkId = companion.teachesPerk;
@@ -224,7 +251,7 @@ namespace Bush.Core
         }
 
         private static List<Candidate> GetEligible(DesignData design, ForageTableData table, TimeOfDay time,
-            IForageContext context, List<ForageModifier> modifiers)
+            IForageContext context, List<ForageModifier> modifiers, FocusData focus)
         {
             var eligible = new List<Candidate>();
             foreach (ForageEntry entry in table.entries)
@@ -234,7 +261,7 @@ namespace Bush.Core
                 if (entry.time == EntryTime.Day && time != TimeOfDay.Day) continue;
                 if (entry.time == EntryTime.Night && time != TimeOfDay.Night) continue;
                 if (!string.IsNullOrEmpty(entry.requiresQuest) && (context == null || !context.IsQuestActive(entry.requiresQuest))) continue;
-                if (item.unique && context != null && context.HasEverObtained(item.id)) continue;
+                if (item.unique && context != null && context.IsUniqueCollected(item.id)) continue;
 
                 double weight = entry.weight;
                 foreach (ForageModifier modifier in modifiers)
@@ -242,6 +269,7 @@ namespace Bush.Core
                     if (modifier.type == ModifierType.TagWeight && item.HasTag(modifier.tag)) weight *= modifier.value;
                     else if (modifier.type == ModifierType.RarityWeight && item.rarity == modifier.rarity) weight *= modifier.value;
                 }
+                if (focus != null && focus.tags.Exists(item.HasTag)) weight *= focus.multiplier;
 
                 eligible.Add(new Candidate { entry = entry, item = item, weight = weight });
             }
