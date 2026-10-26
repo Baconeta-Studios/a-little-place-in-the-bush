@@ -35,7 +35,7 @@ flowchart TB
 
     subgraph Game["Game (MonoBehaviours, Assembly-CSharp)"]
         Session[GameSession<br/>EverlastingSingleton] --> Core
-        Player[PlayerController + Interactor] --> I[IInteractable]
+        Player[ClickToMove + Interactor] --> I[IInteractable]
         I --> Stations[CafeCounter / ExpeditionPath / Npc / Mailbox / AreaExit]
         Stations --> Session
         UI[Popups + HUD] --> Session
@@ -47,26 +47,31 @@ flowchart TB
 
 ## 1. Folders and assemblies
 
-Game code goes under `Assets/_Game/` so it stays separate from the template code (`Assets/Scripts`, `Assets/Prefabs`, ...). The underscore keeps it at the top of the Project window.
+Game code goes into the template's existing folders (there is no separate `_Game` folder), with one subfolder per area. Template folders are marked *(template)*.
 
 ```
-Assets/_Game/
+Assets/
   Scripts/
     Core/          Bush.Core.asmdef: GameState, Economy, services, events (no MonoBehaviours)
-    Data/          ScriptableObject definition classes + GameDatabase
+    Definitions/   ScriptableObject definition classes + GameDatabase
     Session/       GameSession, autosave, scene/area flow
-    Player/        movement, Interactor
-    Interaction/   IInteractable and its implementations (stations, NPCs, exits)
-    Building/      build mode, placement grid, PlacedObject
-    UI/            HUD and game popups (built on the template Popup)
-    DebugTools/    CheatMenu registrations
-  Data/            Items/, Recipes/, Companions/, Perks/, ForageTables/, Quests/, Placeables/
-  Scenes/          Boot, Cafe, Garden (+ Village if kept)
-  Prefabs/  Art/  Audio/
+    Camera/        CameraFit
+    Navigation/    WalkableGrid, IPathfinder, GridPathfinder
+    Player/        ClickToMove, Interactor
+    Interaction/   IInteractable, StandPoint and the stations, NPCs and exits
+    Building/      build mode, placement, PlacedObject
+    UI/            (template) popups and UI states, plus the game HUD and popups
+    Debugging/     (template) cheat menu, plus the game's CheatMenu registrations
+    Achievements/ Analytics/ Audio/ HighScores/ Managers/ Utils/   (template)
+  Data/            definition assets: Items/, Recipes/, Companions/, Perks/, ForageTables/, Quests/, Placeables/
+  Scenes/          Cafe, Garden (+ Boot, and Village if kept); template scenes are in Scenes/Templates/
+  Images/  Prefabs/  Audio/  Animations/
   Tests/EditMode/  Bush.Core.Tests.asmdef
 ```
 
-**Why only one asmdef for the game:** the template scripts (singletons, `PopupManager`, `CheatMenu`, `SceneLoader`) have no assembly definition, so they compile into `Assembly-CSharp`, and an asmdef can't reference `Assembly-CSharp`. `Bush.Core` therefore holds only rules and state with no template dependencies, which is exactly the part worth testing. Everything that touches the template stays in `Assembly-CSharp`. Wrapping the template in asmdefs isn't worth the time during the jam.
+Scripts in `Assembly-CSharp` sit in the global namespace like the template's (Rider's namespace-from-folder hint is switched off per folder in `Assembly-CSharp.csproj.DotSettings`). Never name a namespace after a Unity type such as `Camera`, because it hides that type from every script in the project.
+
+**Why only one asmdef for the game:** the template scripts (singletons, `PopupManager`, `CheatMenu`, `SceneLoader`) have no assembly definition, so they compile into `Assembly-CSharp`, and an asmdef can't reference `Assembly-CSharp`. `Bush.Core` (in `Assets/Scripts/Core`, so it's a separate assembly even though it sits next to the other scripts) therefore holds only rules and state with no template dependencies, which is exactly the part worth testing. Everything that touches the template stays in `Assembly-CSharp`. Wrapping the template in asmdefs isn't worth the time during the jam.
 
 ## 2. Data: definitions with stable IDs
 
@@ -118,7 +123,7 @@ Collections are lists rather than dictionaries so that `JsonUtility` can seriali
 ## 5. Game layer (MonoBehaviours)
 
 - **GameSession** (`EverlastingSingleton`, lives in a `Boot` scene together with the template `PopupCanvas` and audio): creates the services, loads the save, and exposes the services to the scene. It autosaves after an expedition, a dish, a quest claim and leaving build mode, and also on `OnApplicationPause` / tab hidden, because the template already detects that for auto-pause.
-- **Player:** click/tap to walk (per the GDD). `PlayerController` moves the gecko along each area's walkable ground to the clicked point, with no jump. Clicks on UI are ignored. Clicking an `IInteractable` makes `Interactor` walk the gecko to it and interact on arrival. Prompts and highlights must work without hover, for touch screens.
+- **Player:** click/tap to walk (per the GDD). `ClickToMove` walks the gecko along a path to the clicked point on the floor, with no jump (see [section 6](#6-world-camera-and-movement)). Clicks on UI are ignored. Clicking an `IInteractable` makes `Interactor` walk the gecko to it and interact on arrival. Prompts and highlights must work without hover, for touch screens.
 - **IInteractable:** `string Prompt`, `bool CanInteract(ctx)`, `void Interact(ctx)`. Every interactive thing uses this one pattern:
   - `ExpeditionPath`: the path at the garden's edge, opens forage setup
   - `CafeCounter`: menu / cook
@@ -138,7 +143,38 @@ Collections are lists rather than dictionaries so that `JsonUtility` can seriali
 - **Time of day:** a simple `GameClock` (day count + 0-1 time) tints a Global Light 2D. Critter schedules are post-jam.
 - **Debug:** `CheatMenu.AddButton` / `AddToggle` registrations for: grant item, set currency, complete or reset a quest, force a forage result, reset the save. They compile out of release builds, as the template already does.
 
-## 6. Tests
+## 6. World, camera and movement
+
+How every area scene is laid out. The Cafe greybox (`Assets/Scenes/Cafe.unity`) is the reference.
+
+**View:** a "stage" view with depth, not a side-scroller. There's a walkable floor band in front of the cafe, and the further up the screen something is, the further back it is. Objects can be placed at different depths.
+
+**Screen sizes**
+- The safe area, **19.2 × 10.8 units** (16:9), is always visible. Keep anything important inside it.
+- The backdrop bleeds out to **24 × 14.4 units** (2400 × 1440 px at 100 PPU), which covers everything from 4:3 iPads to 20:9 phones. On a 2400 × 1440 art canvas the safe-area guides are at x 240 / 2160 and y 180 / 1260.
+- All final art is 100 PPU. Placeholders can use any PPU and be scaled.
+
+**Camera:** orthographic Main Camera at (0, 0, -10) with `CameraFit`, which sets `orthographicSize = max(safe.y / 2, safe.x / 2 / aspect)` so the whole safe area always fits, and draws it as a yellow gizmo. UI canvases use Canvas Scaler *Scale With Screen Size* at 1920 × 1080 with *Expand*, and the template **Safe Area** component for notches.
+
+**Depth sorting:** `Default_2D_Renderer` uses Transparency Sort Mode *Custom Axis* (0, 1, 0), so lower on screen draws in front. Props and characters share the `World` sorting layer with Sprite Sort Point *Pivot*, and their pivots are at the feet.
+
+| Sorting layers (back to front) | Physics layers |
+| --- | --- |
+| Background, Floor, FloorDecals, World, Foreground | Floor, Obstacle, Interactable, Player |
+
+**Scene hierarchy:** `Systems`, `Main Camera`, `Global Light 2D`, `World` (a `Grid`, holding `Backdrop`, `Floor` with its `WalkableArea`, `Static` props, `Placed` props, `Characters`, `Foreground`, `Markers`), `HUD`, `EventSystem`.
+
+**Props:** each prop is a parent object at its floor contact point (unscaled) with a `BoxCollider2D` footprint on the `Obstacle` layer, and a child `Visual` sprite that holds any scale.
+
+**Walkable floor and pathfinding**
+- `Floor/WalkableArea` is a trigger `PolygonCollider2D` outlining where the gecko can walk.
+- `WalkableGrid` splits the World `Grid` into 0.25-unit cells. A cell is walkable if it's inside `WalkableArea` and doesn't overlap an `Obstacle` footprint. It draws green and red gizmos.
+- `GridPathfinder` runs A* over the grid behind an `IPathfinder` interface, so it can be swapped for NavMeshPlus later. Paths are smoothed by line of sight, and clicking a blocked spot walks to the nearest walkable cell.
+- `ClickToMove` uses a `Physics2DRaycaster` on the camera, so clicks on UI never move the gecko. The gecko faces the way it's walking.
+- Interactables have a `StandPoint` child. Clicking one walks the gecko to the stand point and then calls `Interact()`.
+- Build mode must not let the player place something that blocks the path to an exit or a key stand point.
+
+## 7. Tests
 
 EditMode tests in `Bush.Core.Tests` cover:
 - the Economy edge cases from Trello list 05: zero or negative quantities, not enough items, `TryTransact` never applying half a change
@@ -148,11 +184,11 @@ EditMode tests in `Bush.Core.Tests` cover:
 
 Everything else is tested by playing the browser build, as the plan describes.
 
-## 7. How this maps to the plan
+## 8. How this maps to the plan
 
 | Plan stage / Trello list | Pieces built |
 | --- | --- |
-| 1 Movement and interaction / 03 | Boot + Cafe scenes, PlayerController, Interactor, IInteractable, AreaExit |
+| 1 Movement and interaction / 03 | Boot + Cafe scenes, WalkableGrid + GridPathfinder, ClickToMove, Interactor, IInteractable, AreaExit |
 | 2 Foraging / 04 | Item and forage-table data, ForagingService, companions/perks, forage setup + result popups |
 | 3 Inventory, currency, save / 05 | GameState, Economy, SaveService, inventory UI, reset-save cheat |
 | 4 Recipes and cafe / 06 | RecipeDefinition, CafeService, CafeCounter, menu popup |
@@ -164,6 +200,8 @@ Everything else is tested by playing the browser build, as the plan describes.
 
 - **Movement:** click/tap to walk and interact, with no jump (the GDD wins over the original Trello 03 wording; the cards have been updated).
 - **Foraging:** a paused expedition screen (companion, perk, focus), then a short dimmed wait, then a results screen. There's no walk-around gathering (Trello 04 has been reworked to match).
+- **View:** a stage view with depth (see [section 6](#6-world-camera-and-movement)), not a side-scroller.
+- **Folders:** game code goes into the template's existing `Assets/Scripts/...` folders, not a separate `_Game` folder.
 - **Primary platform:** WebGL in desktop browsers for the jam. PC Standalone comes later.
 
 ## Open decisions
