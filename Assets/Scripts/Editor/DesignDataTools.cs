@@ -135,6 +135,8 @@ public static class DesignDataTools
             foreach (QuestData x in design.quests) SetBasics(assets.GetOrCreate<QuestDefinition>(x.id, "Quests"), x.id, x.title, x.summary);
 
             // Pass 2: everything that refers to other assets.
+            foreach (ItemData x in design.items)
+                assets.Get<ItemDefinition>(x.id).teachesRecipe = assets.Get<RecipeDefinition>(x.teachesRecipe);
             foreach (RecipeData x in design.recipes)
             {
                 var asset = assets.Get<RecipeDefinition>(x.id);
@@ -159,7 +161,8 @@ public static class DesignDataTools
                 asset.entries = x.entries.Select(e => new ForageEntryDefinition
                 {
                     item = assets.Get<ItemDefinition>(e.itemId), weight = e.weight, min = e.min, max = e.max, time = e.time,
-                    requiresQuest = assets.Get<QuestDefinition>(e.requiresQuest)
+                    requiresQuest = assets.Get<QuestDefinition>(e.requiresQuest),
+                    requiresCompanion = assets.Get<CompanionDefinition>(e.requiresCompanion)
                 }).ToList();
             }
             foreach (QuestData x in design.quests)

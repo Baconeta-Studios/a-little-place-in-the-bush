@@ -32,6 +32,8 @@ namespace Bush.Core
         public int sellValue;
         public bool unique;
         public string description;
+        /// <summary>A rare encounter or note: getting it teaches this recipe on the spot. Empty for normal items.</summary>
+        public string teachesRecipe;
 
         public bool HasTag(string tag) => !string.IsNullOrEmpty(tag) && tags != null && tags.Contains(tag);
     }
@@ -123,6 +125,8 @@ namespace Bush.Core
         public EntryTime time;
         /// <summary>Only drops while this quest is active. Empty for always.</summary>
         public string requiresQuest;
+        /// <summary>Only drops when this companion is on the expedition. Empty for any.</summary>
+        public string requiresCompanion;
     }
 
     [Serializable]

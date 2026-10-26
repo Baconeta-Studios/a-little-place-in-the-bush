@@ -103,5 +103,7 @@ namespace Bush.Core
         public ForageResult result;
         /// <summary>Perk learned from the companion on this trip, or null.</summary>
         public string learnedPerkId;
+        /// <summary>Recipes taught by rare encounters found on this trip.</summary>
+        public List<string> learnedRecipeIds = new();
     }
 }

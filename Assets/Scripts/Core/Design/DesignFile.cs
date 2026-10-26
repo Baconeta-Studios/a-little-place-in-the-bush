@@ -21,14 +21,14 @@ namespace Bush.Core
         public List<Npc> npcs = new();
         public List<Quest> quests = new();
 
-        [Serializable] public class Item { public string id; public string name; public string category; public string rarity; public List<string> tags = new(); public int sellValue; public bool unique; public string description; }
+        [Serializable] public class Item { public string id; public string name; public string category; public string rarity; public List<string> tags = new(); public int sellValue; public bool unique; public string description; public string teachesRecipe; }
         [Serializable] public class Amount { public string item; public int qty; }
         [Serializable] public class Recipe { public string id; public string name; public List<Amount> ingredients = new(); public int coins; public bool unlockedByDefault; public int price; public List<string> scraps = new(); public string description; }
         [Serializable] public class Modifier { public string type; public string tag; public string rarity; public double value; }
         [Serializable] public class Companion { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); public string teachesPerk; public int tripsToTeach; }
         [Serializable] public class Perk { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); }
         [Serializable] public class Focus { public string id; public string name; public List<string> tags = new(); public double multiplier; }
-        [Serializable] public class Entry { public string item; public double weight; public int min; public int max; public string time; public string requiresQuest; }
+        [Serializable] public class Entry { public string item; public double weight; public int min; public int max; public string time; public string requiresQuest; public string requiresCompanion; }
         [Serializable] public class Table { public string id; public string name; public int rolls; public List<Entry> entries = new(); }
         [Serializable] public class Npc { public string id; public string name; public string species; public string description; }
         [Serializable] public class Objective { public string type; public string target; public int qty; }
@@ -48,7 +48,7 @@ namespace Bush.Core
                     category = Parse(x.category, ItemCategory.Ingredient, errors, x.id),
                     rarity = Parse(x.rarity, Rarity.Common, errors, x.id),
                     tags = new List<string>(x.tags ?? new List<string>()),
-                    sellValue = x.sellValue, unique = x.unique
+                    sellValue = x.sellValue, unique = x.unique, teachesRecipe = x.teachesRecipe ?? ""
                 });
 
             foreach (Recipe x in recipes)
@@ -87,7 +87,7 @@ namespace Bush.Core
                     {
                         itemId = entry.item, weight = entry.weight, min = entry.min, max = entry.max,
                         time = Parse(entry.time, EntryTime.Any, errors, $"{x.id}/{entry.item}"),
-                        requiresQuest = entry.requiresQuest
+                        requiresQuest = entry.requiresQuest, requiresCompanion = entry.requiresCompanion ?? ""
                     });
                 design.forageTables.Add(table);
             }
@@ -131,7 +131,8 @@ namespace Bush.Core
                 file.items.Add(new Item
                 {
                     id = x.id, name = x.name, category = x.category.ToString(), rarity = x.rarity.ToString(),
-                    tags = new List<string>(x.tags), sellValue = x.sellValue, unique = x.unique, description = x.description
+                    tags = new List<string>(x.tags), sellValue = x.sellValue, unique = x.unique, description = x.description,
+                    teachesRecipe = x.teachesRecipe ?? ""
                 });
 
             foreach (RecipeData x in design.recipes)
@@ -169,7 +170,8 @@ namespace Bush.Core
                     table.entries.Add(new Entry
                     {
                         item = entry.itemId, weight = entry.weight, min = entry.min, max = entry.max,
-                        time = entry.time.ToString(), requiresQuest = entry.requiresQuest ?? ""
+                        time = entry.time.ToString(), requiresQuest = entry.requiresQuest ?? "",
+                        requiresCompanion = entry.requiresCompanion ?? ""
                     });
                 file.forageTables.Add(table);
             }

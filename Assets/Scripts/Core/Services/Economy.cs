@@ -88,6 +88,7 @@ namespace Bush.Core
             if (!CanTransact(transaction, out _)) return false;
 
             bool itemsChanged = false;
+            List<string> learned = null;
             foreach (ItemAmount cost in transaction.costs)
             {
                 ItemStack stack = Find(cost.itemId);
@@ -112,6 +113,15 @@ namespace Bush.Core
                 if (stack == null) _state.inventory.Add(new ItemStack(gain.itemId, qty));
                 else stack.qty += qty;
                 itemsChanged = true;
+
+                // Rare encounters and notes teach a recipe the moment they're found, however they arrive.
+                if (!string.IsNullOrEmpty(item.teachesRecipe) && _design.GetRecipe(item.teachesRecipe) != null &&
+                    !Unlocks.IsRecipeUnlocked(_design, _state, item.teachesRecipe))
+                {
+                    _state.unlockedRecipes.Add(item.teachesRecipe);
+                    learned ??= new List<string>();
+                    learned.Add(item.teachesRecipe);
+                }
             }
 
             int coinDelta = transaction.coinGain - transaction.coinCost;
@@ -119,6 +129,8 @@ namespace Bush.Core
 
             if (itemsChanged) _events?.RaiseInventoryChanged();
             if (coinDelta != 0) _events?.RaiseCurrencyChanged(_state.currency);
+            if (learned != null)
+                foreach (string recipeId in learned) _events?.RaiseRecipeLearned(recipeId);
             return true;
         }
 

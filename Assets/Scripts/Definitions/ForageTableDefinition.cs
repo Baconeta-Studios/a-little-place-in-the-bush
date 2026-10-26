@@ -13,6 +13,8 @@ public struct ForageEntryDefinition
     public EntryTime time;
     [Tooltip("Only drops while this quest is active. Leave empty for always.")]
     public QuestDefinition requiresQuest;
+    [Tooltip("Only drops when this companion is on the expedition. Leave empty for any.")]
+    public CompanionDefinition requiresCompanion;
 }
 
 [CreateAssetMenu(menuName = "Bush/Forage Table", fileName = "table.new")]
@@ -28,7 +30,8 @@ public class ForageTableDefinition : GameDefinition
             data.entries.Add(new ForageEntry
             {
                 itemId = Definitions.Id(entry.item), weight = entry.weight, min = entry.min, max = entry.max,
-                time = entry.time, requiresQuest = Definitions.Id(entry.requiresQuest)
+                time = entry.time, requiresQuest = Definitions.Id(entry.requiresQuest),
+                requiresCompanion = Definitions.Id(entry.requiresCompanion)
             });
         return data;
     }

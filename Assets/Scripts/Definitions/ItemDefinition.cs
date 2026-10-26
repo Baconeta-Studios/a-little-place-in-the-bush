@@ -13,10 +13,12 @@ public class ItemDefinition : GameDefinition
     public int sellValue;
     [Tooltip("Only one can ever be owned, and it never drops again once found (recipe scraps).")]
     public bool unique;
+    [Tooltip("A rare encounter or note: finding it teaches this recipe on the spot. Make the item unique.")]
+    public RecipeDefinition teachesRecipe;
 
     public ItemData ToData() => new()
     {
         id = id, name = displayName, description = description, category = category, rarity = rarity,
-        tags = new List<string>(tags), sellValue = sellValue, unique = unique
+        tags = new List<string>(tags), sellValue = sellValue, unique = unique, teachesRecipe = Definitions.Id(teachesRecipe)
     };
 }

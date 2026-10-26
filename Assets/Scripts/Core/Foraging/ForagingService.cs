@@ -29,7 +29,7 @@ namespace Bush.Core
             FocusData focus = design.GetFocus(setup.focusId);
 
             // 2-3. Eligible entries and their effective weights.
-            List<Candidate> eligible = GetEligible(design, table, setup.time, context, modifiers, focus);
+            List<Candidate> eligible = GetEligible(design, table, setup, context, modifiers, focus);
 
             // 4. Number of rolls.
             int rollCount = CountRolls(table, modifiers);
@@ -79,7 +79,7 @@ namespace Bush.Core
             if (table == null) return preview;
 
             List<ForageModifier> modifiers = CollectModifiers(design, setup);
-            List<Candidate> eligible = GetEligible(design, table, setup.time, context, modifiers, design.GetFocus(setup.focusId));
+            List<Candidate> eligible = GetEligible(design, table, setup, context, modifiers, design.GetFocus(setup.focusId));
             int rolls = CountRolls(table, modifiers);
             preview.rolls = rolls;
 
@@ -218,7 +218,14 @@ namespace Bush.Core
 
             // Item by item rather than one transaction: if the design data changed under a saved
             // expedition, an item that no longer exists is skipped instead of losing the whole basket.
-            foreach (ItemStack stack in result.stacks) economy.Add(stack.itemId, stack.qty);
+            // Items that teach a recipe unlock it as they're added (see Economy).
+            foreach (ItemStack stack in result.stacks)
+            {
+                ItemData item = design.GetItem(stack.itemId);
+                bool teaches = item != null && !string.IsNullOrEmpty(item.teachesRecipe) && !Unlocks.IsRecipeUnlocked(design, state, item.teachesRecipe);
+                if (economy.Add(stack.itemId, stack.qty) && teaches && Unlocks.IsRecipeUnlocked(design, state, item.teachesRecipe))
+                    claim.learnedRecipeIds.Add(item.teachesRecipe);
+            }
 
             CompanionData companion = design.GetCompanion(pending.setup.companionId);
             if (companion != null)
@@ -250,7 +257,7 @@ namespace Bush.Core
             public double weight;
         }
 
-        private static List<Candidate> GetEligible(DesignData design, ForageTableData table, TimeOfDay time,
+        private static List<Candidate> GetEligible(DesignData design, ForageTableData table, ExpeditionSetup setup,
             IForageContext context, List<ForageModifier> modifiers, FocusData focus)
         {
             var eligible = new List<Candidate>();
@@ -258,8 +265,9 @@ namespace Bush.Core
             {
                 ItemData item = design.GetItem(entry.itemId);
                 if (item == null) continue;
-                if (entry.time == EntryTime.Day && time != TimeOfDay.Day) continue;
-                if (entry.time == EntryTime.Night && time != TimeOfDay.Night) continue;
+                if (entry.time == EntryTime.Day && setup.time != TimeOfDay.Day) continue;
+                if (entry.time == EntryTime.Night && setup.time != TimeOfDay.Night) continue;
+                if (!string.IsNullOrEmpty(entry.requiresCompanion) && entry.requiresCompanion != setup.companionId) continue;
                 if (!string.IsNullOrEmpty(entry.requiresQuest) && (context == null || !context.IsQuestActive(entry.requiresQuest))) continue;
                 if (item.unique && context != null && context.IsUniqueCollected(item.id)) continue;
 

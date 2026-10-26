@@ -260,6 +260,42 @@ namespace Bush.Core.Tests
             Assert.AreEqual(before * 2, after, 1e-9, "x2, not x4, even with two matching tags.");
         }
 
+        [Test]
+        public void CompanionOnlyEntries_NeedThatCompanion()
+        {
+            bool withoutWeka = false, withWeka = false;
+            for (uint seed = 0; seed < 400; seed++)
+            {
+                withoutWeka |= Has(ForagingService.Resolve(_design, TestDesign.Setup(TestDesign.Kea), _context, seed), TestDesign.Note);
+                withWeka |= Has(ForagingService.Resolve(_design, TestDesign.Setup(TestDesign.Weka), _context, seed), TestDesign.Note);
+            }
+            Assert.IsFalse(withoutWeka);
+            Assert.IsTrue(withWeka);
+        }
+
+        [Test]
+        public void Encounter_TeachesItsRecipeOnceWhenClaimed()
+        {
+            var game = new TestGame();
+            string learnedEvent = null;
+            game.events.RecipeLearned += id => learnedEvent = id;
+            Assert.IsFalse(game.cafe.IsUnlocked(TestDesign.SecretPie));
+
+            uint seed = 0;
+            while (!Has(ForagingService.Resolve(game.design, TestDesign.Setup(TestDesign.Weka), new GameStateForageContext(game.state), seed), TestDesign.Note)) seed++;
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Weka), seed);
+            ExpeditionClaim claim = ForagingService.Claim(game.design, game.state, game.economy, game.events);
+
+            CollectionAssert.AreEqual(new[] { TestDesign.SecretPie }, claim.learnedRecipeIds);
+            Assert.AreEqual(TestDesign.SecretPie, learnedEvent);
+            Assert.IsTrue(game.cafe.IsUnlocked(TestDesign.SecretPie));
+            Assert.AreEqual(1, game.economy.Count(TestDesign.Note), "The note is kept as a keepsake.");
+
+            // Collected, so it never turns up again.
+            for (uint s = 0; s < 300; s++)
+                Assert.IsFalse(Has(ForagingService.Resolve(game.design, TestDesign.Setup(TestDesign.Weka), new GameStateForageContext(game.state), s), TestDesign.Note));
+        }
+
         private int CountFinds(ExpeditionSetup setup, string itemId)
         {
             int finds = 0;

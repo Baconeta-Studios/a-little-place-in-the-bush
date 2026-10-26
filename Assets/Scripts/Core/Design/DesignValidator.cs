@@ -46,6 +46,13 @@ namespace Bush.Core
             }
             foreach (CompanionData companion in design.companions)
                 if (!string.IsNullOrEmpty(companion.teachesPerk)) unlockablePerks.Add(companion.teachesPerk);
+            foreach (ItemData item in design.items)
+            {
+                if (string.IsNullOrEmpty(item.teachesRecipe)) continue;
+                unlockableRecipes.Add(item.teachesRecipe);
+                if (design.GetRecipe(item.teachesRecipe) == null) errors.Add($"Item {item.id} teaches unknown recipe {item.teachesRecipe}.");
+                if (!item.unique) errors.Add($"Item {item.id} teaches a recipe, so it should be unique (it can only be learned once).");
+            }
 
             foreach (ItemData item in design.items)
             {
@@ -108,8 +115,10 @@ namespace Bush.Core
                 {
                     string where = $"forage table {table.id}";
                     ItemData item = RequireItem(errors, design, entry.itemId, where);
-                    if (item != null && item.category == ItemCategory.KeyItem && string.IsNullOrEmpty(entry.requiresQuest))
+                    if (item != null && item.category == ItemCategory.KeyItem && string.IsNullOrEmpty(entry.requiresQuest) && string.IsNullOrEmpty(item.teachesRecipe))
                         errors.Add($"{where}: key item {item.id} should only drop while its quest is active (set requiresQuest).");
+                    if (!string.IsNullOrEmpty(entry.requiresCompanion) && design.GetCompanion(entry.requiresCompanion) == null)
+                        errors.Add($"{where}: {entry.itemId} requires unknown companion {entry.requiresCompanion}.");
                     if (entry.weight <= 0) errors.Add($"{where}: {entry.itemId} weight must be above 0.");
                     if (entry.min < 1) errors.Add($"{where}: {entry.itemId} min must be at least 1.");
                     if (entry.min > entry.max) errors.Add($"{where}: {entry.itemId} min ({entry.min}) is more than max ({entry.max}).");

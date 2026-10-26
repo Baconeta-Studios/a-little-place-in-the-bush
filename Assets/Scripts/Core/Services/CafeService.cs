@@ -36,6 +36,7 @@ namespace Bush.Core
             if (!CanLearn(recipeId)) return false;
             if (!_economy.TrySpend(_design.GetRecipe(recipeId).price)) return false;
             _state.unlockedRecipes.Add(recipeId);
+            _events.RaiseRecipeLearned(recipeId);
             return true;
         }
 

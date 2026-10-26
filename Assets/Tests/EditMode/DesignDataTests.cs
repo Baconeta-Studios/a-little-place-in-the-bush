@@ -20,6 +20,8 @@ namespace Bush.Core.Tests
             design.items.Add(new ItemData { id = TestDesign.Leaf });
             design.forageTables[0].entries.Add(new ForageEntry { itemId = "item.missing", weight = 0, min = 3, max = 1 });
             design.perks.Add(new PerkData { id = "perk.bad", modifiers = { new ForageModifier(ModifierType.TagWeight, 2, "nothing_has_this") } });
+            design.items.Add(new ItemData { id = "item.bad_note", category = ItemCategory.KeyItem, tags = { "encounter" }, teachesRecipe = "recipe.missing" });
+            design.forageTables[0].entries.Add(new ForageEntry { itemId = TestDesign.Leaf, weight = 1, min = 1, max = 1, requiresCompanion = "companion.missing" });
 
             List<string> errors = DesignValidator.Validate(design);
             string all = string.Join("\n", errors);
@@ -28,6 +30,9 @@ namespace Bush.Core.Tests
             StringAssert.Contains("weight must be above 0", all);
             StringAssert.Contains("min (3) is more than max (1)", all);
             StringAssert.Contains("'nothing_has_this'", all);
+            StringAssert.Contains("teaches unknown recipe recipe.missing", all);
+            StringAssert.Contains("should be unique", all);
+            StringAssert.Contains("requires unknown companion companion.missing", all);
         }
 
         [Test]
@@ -41,6 +46,8 @@ namespace Bush.Core.Tests
             Assert.IsEmpty(DesignValidator.Validate(copy));
             Assert.AreEqual(design.items.Count, copy.items.Count);
             Assert.AreEqual(EntryTime.Night, copy.GetForageTable(TestDesign.Table).entries[3].time);
+            Assert.AreEqual(TestDesign.Weka, copy.GetForageTable(TestDesign.Table).entries[^1].requiresCompanion);
+            Assert.AreEqual(TestDesign.SecretPie, copy.GetItem(TestDesign.Note).teachesRecipe);
 
             // The same seed must give the same expedition after a round trip.
             ExpeditionSetup setup = TestDesign.Setup(TestDesign.Weka, TestDesign.BigBasket, TestDesign.FocusBugs, TimeOfDay.Night);

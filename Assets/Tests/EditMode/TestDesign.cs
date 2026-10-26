@@ -14,6 +14,7 @@ namespace Bush.Core.Tests
         public const string Gem = "item.gem";
         public const string Scrap1 = "item.scrap_1";
         public const string Scrap2 = "item.scrap_2";
+        public const string Note = "item.note";
 
         public const string Table = "table.test";
         public const string Kea = "companion.kea";
@@ -44,7 +45,9 @@ namespace Bush.Core.Tests
                 Item(Gem, ItemCategory.Treasure, Rarity.Rare, "shiny"),
                 Item(Scrap1, ItemCategory.KeyItem, Rarity.Rare, "scrap", unique: true),
                 Item(Scrap2, ItemCategory.KeyItem, Rarity.Rare, "scrap", unique: true),
+                Item(Note, ItemCategory.KeyItem, Rarity.Rare, "encounter", unique: true),
             });
+            design.items.Find(i => i.id == Note).teachesRecipe = SecretPie;
 
             design.forageTables.Add(new ForageTableData
             {
@@ -59,6 +62,7 @@ namespace Bush.Core.Tests
                     Entry(Button, 4, 1, 1),
                     Entry(Gem, 1, 1, 1),
                     Entry(Scrap1, 10, 1, 1, EntryTime.Any, LostRecipe),
+                    Entry(Note, 15, 1, 1, EntryTime.Any, "", Weka), // only with Weka along
                 }
             });
 
@@ -124,8 +128,8 @@ namespace Bush.Core.Tests
         private static ItemData Item(string id, ItemCategory category, Rarity rarity, string tag, bool unique = false) =>
             new() { id = id, name = id, category = category, rarity = rarity, tags = { tag }, unique = unique, sellValue = category == ItemCategory.KeyItem ? 0 : 1 };
 
-        private static ForageEntry Entry(string item, double weight, int min, int max, EntryTime time = EntryTime.Any, string quest = "") =>
-            new() { itemId = item, weight = weight, min = min, max = max, time = time, requiresQuest = quest };
+        private static ForageEntry Entry(string item, double weight, int min, int max, EntryTime time = EntryTime.Any, string quest = "", string companion = "") =>
+            new() { itemId = item, weight = weight, min = min, max = max, time = time, requiresQuest = quest, requiresCompanion = companion };
     }
 
     /// <summary>A game wired up the way GameSession will do it.</summary>

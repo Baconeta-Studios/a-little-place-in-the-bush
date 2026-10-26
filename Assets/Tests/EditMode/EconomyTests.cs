@@ -100,6 +100,13 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void TeachingItem_UnlocksItsRecipeHoweverItArrives()
+        {
+            Assert.IsTrue(Economy.Add(TestDesign.Note, 1)); // e.g. a quest reward
+            Assert.IsTrue(_game.cafe.IsUnlocked(TestDesign.SecretPie));
+        }
+
+        [Test]
         public void Sell_PaysSellValueForNormalItems()
         {
             Economy.Add(TestDesign.Button, 2);
