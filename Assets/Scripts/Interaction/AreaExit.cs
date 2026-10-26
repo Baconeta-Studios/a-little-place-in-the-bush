@@ -23,13 +23,10 @@ public class AreaExit : Interactable
         AreaTravel.Instance.Travel(targetScene.Name, targetSpawnId);
     }
 
-    private bool HasTarget
+    private bool HasTarget => targetScene != null && targetScene.State == SceneReferenceState.Regular;
+
+    private void Start()
     {
-        get
-        {
-            bool valid = targetScene != null && targetScene.State == SceneReferenceState.Regular;
-            if (!valid) Debug.LogWarning($"[AreaExit] {name} has no target scene yet, or it isn't in the build list.", this);
-            return valid;
-        }
+        if (!HasTarget) Debug.LogWarning($"[AreaExit] {name} has no target scene yet, or it isn't in the build list.", this);
     }
 }

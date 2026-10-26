@@ -12,9 +12,15 @@ public class Interactor : MonoBehaviour
     [Tooltip("The player's interactor. Prompts measure distance to it.")]
     [SerializeField] private bool isPlayer = true;
 
+    [Tooltip("Ignore a second interaction with the same thing for this long (stops double taps using it twice).")]
+    [SerializeField, Min(0f)] private float repeatCooldown = 0.4f;
+
     private CharacterMover _mover;
     private IInteractable _target;
+    private Vector2 _targetStand;
     private bool _startingWalk;
+    private IInteractable _lastUsed;
+    private float _lastUsedTime = -10f;
 
     public static Interactor Player { get; private set; }
 
@@ -43,13 +49,15 @@ public class Interactor : MonoBehaviour
     public void Request(IInteractable target)
     {
         if (target == null) return;
+        if (ReferenceEquals(target, _lastUsed) && Time.unscaledTime - _lastUsedTime < repeatCooldown) return;
         ClearTarget();
 
         _target = target;
         target.SetTargeted(true);
 
         Vector2 stand = target.GetStandPosition(transform.position);
-        float range = target is Interactable interactable ? interactable.InteractRange : 0.35f;
+        _targetStand = stand;
+        float range = RangeOf(target);
         if (Vector2.Distance(transform.position, stand) <= range)
         {
             // Stopping fires Cancelled; don't let that clear the target we just set.
@@ -80,8 +88,14 @@ public class Interactor : MonoBehaviour
 
         var context = new InteractionContext(this);
         Mover.FaceTowards(target.transform.position);
-        if (target.CanInteract(context))
+
+        // The path may have stopped short (the stand point is fenced off or off the floor).
+        float slack = RangeOf(target) + 0.3f;
+        bool reached = Vector2.Distance(transform.position, _targetStand) <= slack;
+        if (reached && target.CanInteract(context))
         {
+            _lastUsed = target;
+            _lastUsedTime = Time.unscaledTime;
             target.Interact(context);
             Interacted?.Invoke(target);
         }
@@ -90,6 +104,8 @@ public class Interactor : MonoBehaviour
             InteractionRefused?.Invoke(target);
         }
     }
+
+    private static float RangeOf(IInteractable target) => target is Interactable interactable ? interactable.InteractRange : 0.35f;
 
     private void OnWalkCancelled()
     {

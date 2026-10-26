@@ -84,6 +84,7 @@ public class NavigationTests
         Assert.IsTrue(_pathfinder.TryFindPath(new Vector2(-2f, -2f), inWall, path));
         Assert.IsTrue(_grid.IsWalkable(path[^1]));
         Assert.That(Vector2.Distance(path[^1], inWall), Is.LessThan(0.8f), "Next to the wall (touching edges count as blocked).");
+        Assert.Less(path[^1].x, 0f, "Stops on the gecko's side of the wall, not behind it.");
     }
 
     [Test]

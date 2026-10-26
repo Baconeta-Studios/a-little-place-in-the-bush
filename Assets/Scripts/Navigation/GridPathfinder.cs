@@ -45,11 +45,14 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
         return found;
     }
 
+    /// <summary>For build mode: can the gecko get from one point to the other? A target within about a cell of the floor counts.</summary>
     public bool IsReachable(Vector2 from, Vector2 to)
     {
-        if (!Grid.IsWalkable(to)) return false;
+        if (!Grid.IsBuilt) Grid.Rebuild();
         if (!Grid.TryFindNearestWalkable(from, out Vector2Int start)) return false;
-        return Search(start, Grid.WorldToCell(to), out _) ;
+        if (!Grid.TryFindNearestWalkable(to, out Vector2Int goal)) return false;
+        if (Vector2.Distance(Grid.CellToWorld(goal), to) > Mathf.Max(Grid.CellSize.x, Grid.CellSize.y) * 1.5f) return false;
+        return Search(start, goal, out _);
     }
 
     public bool TryFindPath(Vector2 from, Vector2 to, List<Vector2> path)
@@ -63,7 +66,8 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
         Vector2Int goal = Grid.WorldToCell(to);
         if (!Grid.IsWalkable(goal))
         {
-            if (!Grid.TryFindNearestWalkable(to, out goal)) return false;
+            // Prefer the gecko's side of whatever was clicked.
+            if (!Grid.TryFindNearestWalkable(to, out goal, from)) return false;
             goalPoint = Grid.CellToWorld(goal);
         }
 
@@ -75,6 +79,16 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
             // Unreachable (e.g. a fenced-off spot): walk to the closest cell we could reach.
             goal = CellOf(reached);
             goalPoint = Grid.CellToWorld(goal);
+        }
+
+        if (goal == start)
+        {
+            // Already as close as it gets: step onto the floor if off it, otherwise stay put
+            // (exact points within the start cell are still walked to).
+            if (startWasBlocked) path.Add(startPoint);
+            else if (Grid.IsWalkable(to) && Grid.WorldToCell(to) == start) path.Add(to);
+            RememberPath(from, path);
+            return true;
         }
 
         var cells = new List<Vector2>();
@@ -89,10 +103,15 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
         else path.AddRange(cells.GetRange(1, cells.Count - 1));
         if (path.Count == 0) path.Add(goalPoint);
 
+        RememberPath(from, path);
+        return true;
+    }
+
+    private void RememberPath(Vector2 from, List<Vector2> path)
+    {
         _lastPath.Clear();
         _lastPath.Add(from);
         _lastPath.AddRange(path);
-        return true;
     }
 
     /// <summary>String pulling: keep only the waypoints needed to walk around corners.</summary>

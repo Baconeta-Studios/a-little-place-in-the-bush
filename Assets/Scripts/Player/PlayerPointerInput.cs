@@ -29,6 +29,7 @@ public class PlayerPointerInput : MonoBehaviour
     private static readonly List<RaycastResult> UiHits = new();
     private readonly Collider2D[] _overlaps = new Collider2D[16];
 
+    private InputActionAsset _actionsCopy;
     private InputAction _point;
     private InputAction _click;
     private Interactor _interactor;
@@ -48,7 +49,10 @@ public class PlayerPointerInput : MonoBehaviour
 
         if (actions)
         {
-            InputActionMap map = actions.FindActionMap("Gameplay", true);
+            // A copy per player: during a scene change the old gecko's OnDisable would otherwise
+            // disable the actions the new gecko has just enabled, and input would stop working.
+            _actionsCopy = Instantiate(actions);
+            InputActionMap map = _actionsCopy.FindActionMap("Gameplay", true);
             _point = map.FindAction("Point", true);
             _click = map.FindAction("Click", true);
         }
@@ -72,6 +76,16 @@ public class PlayerPointerInput : MonoBehaviour
         _click.Disable();
         SetHovered(null);
         _steering = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (_actionsCopy) Destroy(_actionsCopy);
+        else
+        {
+            _point?.Dispose();
+            _click?.Dispose();
+        }
     }
 
     private void Update()
@@ -167,7 +181,8 @@ public class PlayerPointerInput : MonoBehaviour
     private void UpdateHover(IInteractable hovered)
     {
         // Hover highlights are a desktop nicety; touch has no hover, so the prompt covers that.
-        if (Pointer.current is not Mouse) hovered = null;
+        // Phone browsers can send fake mouse events after a tap, so never hover on a phone.
+        if (Pointer.current is not Mouse || Utils.UnityHelper.IsMobileDevice) hovered = null;
         SetHovered(hovered);
     }
 

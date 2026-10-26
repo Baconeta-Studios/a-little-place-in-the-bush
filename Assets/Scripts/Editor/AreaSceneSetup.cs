@@ -27,17 +27,17 @@ public static class AreaSceneSetup
         GameObject world = Find("World");
         GameObject walkableArea = Find("World/Floor/WalkableArea");
         GameObject gecko = Find("World/Characters/Gecko");
-        GameObject markers = Find("World/Markers") ?? Create("Markers", world ? world.transform : null, Vector3.zero, log);
-        GameObject statics = Find("World/Static") ?? Create("Static", world ? world.transform : null, Vector3.zero, log);
-        GameObject systems = Find("Systems") ?? Create("Systems", null, Vector3.zero, log);
-        Camera camera = Camera.main;
-
-        if (!world || !walkableArea || !gecko)
+        if (!world || !world.GetComponent<Grid>() || !walkableArea || !walkableArea.GetComponent<Collider2D>() || !gecko)
         {
             EditorUtility.DisplayDialog("Set Up Area Scene",
-                "This needs World (with a Grid), World/Floor/WalkableArea and World/Characters/Gecko, like the Cafe scene.", "OK");
+                "This needs World (with a Grid), World/Floor/WalkableArea (with a trigger collider) and World/Characters/Gecko, like the Cafe scene. Nothing was changed.", "OK");
             return;
         }
+
+        GameObject markers = Find("World/Markers") ?? Create("Markers", world.transform, Vector3.zero, log);
+        GameObject statics = Find("World/Static") ?? Create("Static", world.transform, Vector3.zero, log);
+        GameObject systems = Find("Systems") ?? Create("Systems", null, Vector3.zero, log);
+        Camera camera = Camera.main;
 
         // Walkable grid and pathfinding on the World grid.
         var grid = Ensure<WalkableGrid>(world, log);
@@ -87,13 +87,14 @@ public static class AreaSceneSetup
 
         // A placeholder counter to test click-to-interact, if the scene has nothing interactive yet.
         if (!Object.FindAnyObjectByType<Interactable>())
-            CreateInteractable<Interactable>("Counter", statics.transform, new Vector2(2.5f, -1.4f), new Vector2(2.4f, 1.1f), "Look at the counter", log);
+            CreateInteractable<Interactable>("Counter", statics.transform, new Vector2(2.5f, -1.4f), new Vector2(2.4f, 1.1f), "Look at the counter", true, log);
 
-        // A placeholder exit on the left edge, per the GDD (garden to the left of the cafe).
+        // A placeholder exit at the bottom-left edge, per the GDD (garden to the left of the cafe),
+        // clear of the plant. Exits get no Obstacle footprint: the gecko walks right up to them.
         if (!Object.FindAnyObjectByType<AreaExit>())
         {
-            AreaExit exit = CreateInteractable<AreaExit>("Exit_Garden", markers.transform, new Vector2(-8.4f, -2.6f), new Vector2(1.2f, 1.6f), null, log);
-            exit.transform.Find("StandPoint").localPosition = new Vector3(0.9f, -0.4f, 0f);
+            AreaExit exit = CreateInteractable<AreaExit>("Exit_Garden", markers.transform, new Vector2(-9.1f, -4.2f), new Vector2(1.2f, 1.4f), null, false, log);
+            exit.transform.Find("StandPoint").localPosition = new Vector3(1.0f, -0.2f, 0f);
             log.Add("Exit_Garden needs its Target Scene once the Garden scene exists.");
         }
 
@@ -120,20 +121,25 @@ public static class AreaSceneSetup
         Debug.Log("[Bush] Area scene set up:\n- " + (log.Count > 0 ? string.Join("\n- ", log) : "nothing was missing."));
     }
 
-    private static T CreateInteractable<T>(string name, Transform parent, Vector2 position, Vector2 size, string prompt, List<string> log)
-        where T : Interactable
+    private static T CreateInteractable<T>(string name, Transform parent, Vector2 position, Vector2 size, string prompt,
+        bool blocksWalking, List<string> log) where T : Interactable
     {
-        // Parent at the floor contact point with an Obstacle footprint, child Visual holds the scale.
+        // Parent at the floor contact point (with an Obstacle footprint if it blocks walking); child Visual holds the scale.
         GameObject root = Create(name, parent, position, log);
-        SetLayer(root, "Obstacle");
-        var footprint = Undo.AddComponent<BoxCollider2D>(root);
-        footprint.size = new Vector2(size.x, 0.4f);
-        footprint.offset = new Vector2(0f, 0.2f);
+        if (blocksWalking)
+        {
+            SetLayer(root, "Obstacle");
+            var footprint = Undo.AddComponent<BoxCollider2D>(root);
+            Undo.RecordObject(footprint, "Set footprint");
+            footprint.size = new Vector2(size.x, 0.4f);
+            footprint.offset = new Vector2(0f, 0.2f);
+        }
 
         GameObject visual = Create("Visual", root.transform, Vector3.zero, null);
         visual.transform.localPosition = Vector3.zero;
-        visual.transform.localScale = new Vector3(size.x, size.y, 1f);
+        visual.transform.localScale = new Vector3(size.x, size.y, 1f); // set before the undo snapshot is taken, so redo keeps it
         var renderer = Undo.AddComponent<SpriteRenderer>(visual);
+        Undo.RecordObject(renderer, "Set sprite");
         renderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(PlaceholderSpritePath);
         renderer.color = new Color(0.62f, 0.45f, 0.3f);
         renderer.sortingLayerName = "World";
@@ -144,6 +150,7 @@ public static class AreaSceneSetup
         click.transform.localPosition = Vector3.zero;
         SetLayer(click, "Interactable");
         var clickCollider = Undo.AddComponent<BoxCollider2D>(click);
+        Undo.RecordObject(clickCollider, "Set click area");
         clickCollider.isTrigger = true;
         clickCollider.size = size;
         clickCollider.offset = new Vector2(0f, size.y * 0.5f);

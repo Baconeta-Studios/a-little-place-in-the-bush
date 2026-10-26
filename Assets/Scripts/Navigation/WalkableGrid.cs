@@ -6,7 +6,6 @@ using UnityEngine;
 /// inside the WalkableArea polygon and not overlapping an Obstacle footprint. Green/red gizmos show
 /// the result when the object is selected. Call <see cref="Rebuild"/> after placing or moving props.
 /// </summary>
-[ExecuteAlways]
 [RequireComponent(typeof(Grid))]
 public class WalkableGrid : MonoBehaviour
 {
@@ -90,8 +89,13 @@ public class WalkableGrid : MonoBehaviour
     public Vector2 CellToWorld(Vector2Int cell) =>
         GridComponent.GetCellCenterWorld(new Vector3Int(cell.x + _minCell.x, cell.y + _minCell.y, 0));
 
-    /// <summary>The walkable cell closest to <paramref name="world"/>, searching outwards ring by ring.</summary>
-    public bool TryFindNearestWalkable(Vector2 world, out Vector2Int nearest, int maxRadius = 64)
+    /// <summary>
+    /// The walkable cell closest to <paramref name="world"/>. Cells within about one cell of the closest
+    /// count as a tie, and ties go to the one nearest <paramref name="preferNear"/> (pass the gecko's
+    /// position), so clicking the base of a prop stops on the gecko's side of it rather than behind it.
+    /// Points far outside the floor (e.g. a tap near the top of a tall phone screen) still work.
+    /// </summary>
+    public bool TryFindNearestWalkable(Vector2 world, out Vector2Int nearest, Vector2? preferNear = null)
     {
         nearest = default;
         if (!IsBuilt) return false;
@@ -103,50 +107,35 @@ public class WalkableGrid : MonoBehaviour
             return true;
         }
 
-        for (int radius = 1; radius <= maxRadius; radius++)
+        // A plain scan: areas are a few thousand cells at most, and this is exact for any point,
+        // including ones far outside the floor (a tap near the top of a tall phone screen).
+        float best = float.MaxValue;
+        for (int i = 0; i < _walkable.Length; i++)
         {
-            float bestDistance = float.MaxValue;
-            bool found = false;
-            for (int dy = -radius; dy <= radius; dy++)
-            {
-                for (int dx = -radius; dx <= radius; dx++)
-                {
-                    if (Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius) continue; // ring only
-                    var cell = new Vector2Int(origin.x + dx, origin.y + dy);
-                    if (!IsWalkable(cell)) continue;
-                    float distance = (CellToWorld(cell) - world).sqrMagnitude;
-                    if (distance < bestDistance)
-                    {
-                        bestDistance = distance;
-                        nearest = cell;
-                        found = true;
-                    }
-                }
-            }
+            if (!_walkable[i]) continue;
+            float distance = Vector2.Distance(CellToWorld(new Vector2Int(i % Width, i / Width)), world);
+            if (distance < best) best = distance;
+        }
+        if (best == float.MaxValue) return false;
 
-            // A cell one ring further out can still be a little closer, so check one more ring.
-            if (found)
+        // Cells within about a cell of the closest count as a tie; ties go to the one nearest the gecko.
+        float tieMargin = Mathf.Min(CellSize.x, CellSize.y) * 1.1f;
+        float bestScore = float.MaxValue;
+        for (int i = 0; i < _walkable.Length; i++)
+        {
+            if (!_walkable[i]) continue;
+            var cell = new Vector2Int(i % Width, i / Width);
+            Vector2 center = CellToWorld(cell);
+            float distance = Vector2.Distance(center, world);
+            if (distance > best + tieMargin) continue;
+            float score = preferNear.HasValue ? Vector2.Distance(center, preferNear.Value) : distance;
+            if (score < bestScore)
             {
-                for (int dy = -radius - 1; dy <= radius + 1; dy++)
-                {
-                    for (int dx = -radius - 1; dx <= radius + 1; dx++)
-                    {
-                        if (Mathf.Abs(dx) != radius + 1 && Mathf.Abs(dy) != radius + 1) continue;
-                        var cell = new Vector2Int(origin.x + dx, origin.y + dy);
-                        if (!IsWalkable(cell)) continue;
-                        float distance = (CellToWorld(cell) - world).sqrMagnitude;
-                        if (distance < bestDistance)
-                        {
-                            bestDistance = distance;
-                            nearest = cell;
-                        }
-                    }
-                }
-                return true;
+                bestScore = score;
+                nearest = cell;
             }
         }
-
-        return false;
+        return true;
     }
 
     /// <summary>True if a straight walk from a to b only crosses walkable cells.</summary>
@@ -162,9 +151,12 @@ public class WalkableGrid : MonoBehaviour
         return true;
     }
 
+    private float _lastEditorBuild = -1f;
+
     private void OnValidate()
     {
-        if (!Application.isPlaying) _walkable = null;
+        if (Application.isPlaying && IsBuilt) Rebuild(); // e.g. tweaking Clearance while playing
+        else _walkable = null;
     }
 
     private void OnDrawGizmos()
@@ -180,7 +172,12 @@ public class WalkableGrid : MonoBehaviour
     private void DrawCells()
     {
         if (!walkableArea) return;
-        if (!Application.isPlaying) Rebuild(); // cheap, and keeps the gizmo in sync while editing
+        // In edit mode, rebuild at most twice a second so the gizmo follows props as they're moved.
+        if (!Application.isPlaying && (!IsBuilt || Time.realtimeSinceStartup - _lastEditorBuild > 0.5f))
+        {
+            _lastEditorBuild = Time.realtimeSinceStartup;
+            Rebuild();
+        }
         if (!IsBuilt) return;
 
         Vector3 size = new Vector3(CellSize.x, CellSize.y, 0f) * 0.9f;
