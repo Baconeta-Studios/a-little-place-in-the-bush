@@ -10,7 +10,7 @@ How to get click-to-walk, interaction and area travel running in a scene, and ho
    - `CharacterMover`, `Interactor` and `PlayerPointerInput` on `Characters/Gecko` (with the input actions asset and the camera)
    - `AreaInfo` (display name, marked as the hub) and `GameplayCheats` on `Systems`
    - `Markers/Spawn_Default` where the gecko stands
-   - a placeholder `Static/Counter` to test interaction, and `Markers/Exit_Garden` on the left edge
+   - a placeholder `Static/Counter` to test interaction, and `Markers/Exit_Garden` at the bottom-left edge (clear of the plant)
    - the template `PopupCanvas` (pause menu), if the scene has none
 3. Select `World` and check the gizmos: green cells are walkable, red are blocked by footprints. Move the counter and the exit (and their `StandPoint` children) wherever you like. Each `StandPoint` must sit on a green cell.
 4. Check `HUD` doesn't have a full-screen graphic with **Raycast Target** ticked, or every click will count as a UI click.
@@ -36,7 +36,7 @@ From the Trello cards *Check click-to-walk feel and edge cases* and *Test first 
 - [ ] Click a new spot mid-walk: it turns and goes there straight away.
 - [ ] Click rapidly in different places: no jitter, no getting stuck.
 - [ ] Click behind a prop: it walks around, never through.
-- [ ] Click on a prop or footprint: it walks to the nearest spot it can reach.
+- [ ] Click on a prop or footprint: it walks to the nearest spot it can reach, on its own side of the prop.
 - [ ] Click the sky or off the floor: it walks to the closest edge of the floor.
 - [ ] Hold the button or finger and drag: it keeps following.
 - [ ] Click the HUD or the pause button: the gecko doesn't move.
@@ -46,7 +46,7 @@ From the Trello cards *Check click-to-walk feel and edge cases* and *Test first 
 - [ ] Walk near the counter: a marker appears above it (touch players need this, since they have no hover).
 - [ ] Hover it with a mouse: it brightens and shows its prompt.
 - [ ] Click it from far away: the gecko walks to the stand point, faces it, and the Console logs the interaction once.
-- [ ] Click it while already standing at it: it interacts straight away.
+- [ ] Click it while already standing at it: it interacts straight away. Double-tapping uses it only once.
 - [ ] Click it, then click the floor before arriving: it cancels, no interaction.
 - [ ] Click it while already walking somewhere else: it re-routes to the counter.
 - [ ] On a phone, tap slightly off the counter: it still counts (tap tolerance).
@@ -73,5 +73,7 @@ From the Trello cards *Check click-to-walk feel and edge cases* and *Test first 
 | Gecko > PlayerPointerInput | Click Marker Prefab | Optional little effect where you click. |
 | World > WalkableGrid | Clearance | How much space to keep around prop footprints. |
 | Interactable | Interact Range | How close counts as "already there". |
+| Gecko > Interactor | Repeat Cooldown | Ignores a second use of the same thing within this time (double taps). |
+| InteractionPrompt | Highlight Color / Amount | What hovering or walking to something blends it towards. |
 | InteractionPrompt | Show Distance | How near the gecko must be for the marker to show (0 = always). |
 | AreaTravel (created at runtime) | Fade times, name time | Edit the defaults in `AreaTravel.cs`. |
