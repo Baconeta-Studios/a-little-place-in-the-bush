@@ -21,6 +21,9 @@ Full GDD (Canva): https://www.canva.com/design/DAHY_0K-xoA/AdOWDfjHg6R3XCjFi38QH
 - `CameraFit` (`Assets/Scripts/Camera`), which keeps the 16:9 safe area on screen at any aspect ratio.
 - Sorting layers, physics layers and Y-axis depth sorting set up in Project Settings and the 2D renderer.
 - Template menu and volume test scenes in `Assets/Scenes/Templates/`, kept for reference but disabled in the build list.
+- **Game rules in `Bush.Core`** (`Assets/Scripts/Core`): economy, foraging, cooking and quests, as plain C# with EditMode tests. No UI uses them yet.
+- **Design data**: items, recipes, companions, perks, forage tables, NPCs and a draft main quest in `Design/design-data.json`, imported into ScriptableObjects with **Tools > Bush > Import Design Data**. See [docs/MAIN-QUEST.md](docs/MAIN-QUEST.md).
+- **Forage sandbox** (`Tools/ForageSandbox/index.html`): a standalone web page for trying out and tuning foraging without Unity. It uses the same rules and gives the same results for the same seed.
 - Template systems: UI state switching, popups (pause/settings/end game/high scores), audio manager with mix groups, scene loader, achievements, Unity Analytics bootstrap, cheat menu, prefab pooling.
 - URP 2D renderer setup.
 - Firebase/Terraform scaffolding in `Infrastructure/`. Not provisioned for this game yet.
@@ -86,6 +89,11 @@ Unity saves custom Game view sizes per computer (in `%APPDATA%/Unity/Editor-5.x/
 | iPhone | 2532 × 1170 | ~19.5:9, a wide phone |
 
 The yellow `CameraFit` gizmo should stay fully on screen at every size.
+
+### Design data and tests
+- **First time, or after pulling design changes:** run **Tools > Bush > Import Design Data (Design folder)**. It creates or updates the assets in `Assets/Data` from `Design/design-data.json`. Then run **Tools > Bush > Validate Design Data**.
+- **Tuning foraging without Unity:** open `Tools/ForageSandbox/index.html` in a browser (see its [README](Tools/ForageSandbox/README.md)). Export JSON from it, then import as above. The rules are in [docs/FORAGING.md](docs/FORAGING.md).
+- **Tests:** **Window > General > Test Runner > EditMode > Run All**.
 
 ### Build targets
 - **Primary (jam):** Web (WebGL) in desktop browsers, 960×600 default canvas. You need the **WebGL Build Support** module for 6000.6.7f1 (Unity Hub > Installs > Add modules). The template UI is also phone-browser friendly (see [Mobile web](#mobile-web)).
