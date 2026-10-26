@@ -1,0 +1,71 @@
+using System.Collections.Generic;
+using System.IO;
+using NUnit.Framework;
+
+namespace Bush.Core.Tests
+{
+    public class DesignDataTests
+    {
+        [Test]
+        public void TestDesign_IsValid()
+        {
+            List<string> errors = DesignValidator.Validate(TestDesign.Create());
+            Assert.IsEmpty(errors, string.Join("\n", errors));
+        }
+
+        [Test]
+        public void Validator_FindsBrokenData()
+        {
+            DesignData design = TestDesign.Create();
+            design.items.Add(new ItemData { id = TestDesign.Leaf });
+            design.forageTables[0].entries.Add(new ForageEntry { itemId = "item.missing", weight = 0, min = 3, max = 1 });
+            design.perks.Add(new PerkData { id = "perk.bad", modifiers = { new ForageModifier(ModifierType.TagWeight, 2, "nothing_has_this") } });
+
+            List<string> errors = DesignValidator.Validate(design);
+            string all = string.Join("\n", errors);
+            StringAssert.Contains("Duplicate item id 'item.leaf'", all);
+            StringAssert.Contains("unknown item 'item.missing'", all);
+            StringAssert.Contains("weight must be above 0", all);
+            StringAssert.Contains("min (3) is more than max (1)", all);
+            StringAssert.Contains("'nothing_has_this'", all);
+        }
+
+        [Test]
+        public void DesignFile_RoundTrips()
+        {
+            DesignData design = TestDesign.Create();
+            var errors = new List<string>();
+            DesignData copy = DesignFile.FromDesign(design).ToDesign(errors);
+
+            Assert.IsEmpty(errors);
+            Assert.IsEmpty(DesignValidator.Validate(copy));
+            Assert.AreEqual(design.items.Count, copy.items.Count);
+            Assert.AreEqual(EntryTime.Night, copy.GetForageTable(TestDesign.Table).entries[3].time);
+
+            // The same seed must give the same expedition after a round trip.
+            ExpeditionSetup setup = TestDesign.Setup(TestDesign.Weka, TestDesign.BigBasket, TestDesign.FocusBugs, TimeOfDay.Night);
+            ForageResult a = ForagingService.Resolve(design, setup, new ForageContext(), 777u);
+            ForageResult b = ForagingService.Resolve(copy, setup, new ForageContext(), 777u);
+            Assert.AreEqual(a.rolls.Count, b.rolls.Count);
+            for (int i = 0; i < a.rolls.Count; i++)
+            {
+                Assert.AreEqual(a.rolls[i].itemId, b.rolls[i].itemId);
+                Assert.AreEqual(a.rolls[i].qty, b.rolls[i].qty);
+            }
+        }
+
+        /// <summary>The real design data in Design/design-data.json must always load and validate.</summary>
+        [Test]
+        public void ProjectDesignData_IsValid()
+        {
+            string path = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "..", "Design", "design-data.json"));
+            Assert.IsTrue(File.Exists(path), path);
+
+            var file = UnityEngine.JsonUtility.FromJson<DesignFile>(File.ReadAllText(path));
+            var errors = new List<string>();
+            DesignData design = file.ToDesign(errors);
+            errors.AddRange(DesignValidator.Validate(design));
+            Assert.IsEmpty(errors, string.Join("\n", errors));
+        }
+    }
+}
