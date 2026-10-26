@@ -1723,7 +1723,8 @@ function collectModifiers(design, setup) {
     var f = findById(design.focuses, setup.focus);
     if (f) {
       var ft = f.tags || [];
-      for (var t = 0; t < ft.length; t++) mods.push({ type: "TagWeight", tag: ft[t], rarity: "", value: Number(f.multiplier), src: { kind: "focus", id: f.id, name: f.name } });
+      // One entry for the whole focus: an item with several of its tags still gets the multiplier once.
+      if (ft.length) mods.push({ type: "Focus", tags: ft.slice(), tag: ft.join("/"), rarity: "", value: Number(f.multiplier), src: { kind: "focus", id: f.id, name: f.name } });
     }
   }
   return mods;
@@ -1755,6 +1756,7 @@ function prepare(design, setup, context) {
       var md = mods[m];
       if (md.type === "TagWeight" && hasTag(item, md.tag)) w *= md.value;
       else if (md.type === "RarityWeight" && item.rarity === md.rarity) w *= md.value;
+      else if (md.type === "Focus" && md.tags.some(function (t) { return hasTag(item, t); })) w *= md.value;
     }
     var qb = 0;
     for (var q = 0; q < mods.length; q++) {
@@ -1863,6 +1865,7 @@ function preview(design, setup, context) {
       bonusChance += c;
       exp += c * avg;
     });
+    if (p.item.unique) exp = Math.min(1, pr * P.rolls + bonusChance) * avg;
     return {
       item: p.item.id, weight: p.w, chancePerRoll: pr,
       chanceAtLeastOne: 1 - Math.pow(1 - pr, P.rolls),
@@ -1884,8 +1887,13 @@ var storageOk = true;
 function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { storageOk = false; return false; } }
 function randSeed() { return Math.floor(Math.random() * 4294967296) >>> 0; }
 
+function hashText(text) { var h = 5381; for (var i = 0; i < text.length; i++) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0; return h.toString(16); }
+var KEY_BASE = "forageSandbox.designBase.v1";
+var DEFAULT_HASH = hashText(JSON.stringify(DEFAULT_DESIGN));
 var design = load(KEY_DESIGN);
+var staleDesign = false;
 if (!design || schemaErrors(design).length) design = clone(DEFAULT_DESIGN);
+else staleDesign = load(KEY_BASE) !== DEFAULT_HASH;
 var campaign = load(KEY_CAMPAIGN) || newCampaign();
 var ui = Object.assign({
   table: (design.forageTables[0] || {}).id, companion: null, perk: null, focus: null, time: "Day",
@@ -1910,6 +1918,7 @@ function saveAll() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function () {
     var ok = save(KEY_DESIGN, design) & save(KEY_CAMPAIGN, campaign) & save(KEY_UI, ui);
+    if (!staleDesign) save(KEY_BASE, DEFAULT_HASH);
     var el = document.getElementById("saveState");
     el.textContent = ok ? "Saved in this browser" : "Not saved: this browser blocks storage. Export JSON to keep changes.";
   }, 200);
@@ -1951,6 +1960,7 @@ function describeMod(m) {
   var v = Number(m.value);
   switch (m.type) {
     case "TagWeight": return m.tag + " weight ×" + trimNum(v);
+    case "Focus": return (m.tags || [m.tag]).join(" / ") + " weight ×" + trimNum(v) + " (once per item)";
     case "TagQuantity": return "+" + Math.floor(v) + " " + m.tag + " per find";
     case "RarityWeight": return m.rarity + " items weight ×" + trimNum(v);
     case "ExtraRolls": return "+" + Math.floor(v) + " find" + (Math.floor(v) === 1 ? "" : "s") + " per trip";
@@ -2975,6 +2985,11 @@ try {
   console.log("[ForageSandbox self-test] seed 1 kea Day " + JSON.stringify(st2));
 } catch (err) { console.error("[ForageSandbox self-test] failed", err); }
 })();
+
+// The page's built-in data changed since this browser's copy was saved: say so, so old data isn't exported over new.
+if (staleDesign) setTimeout(function () {
+  toast("Heads up: the page's built-in design data has changed since you last edited here. Your saved copy is older. Export it if you need your edits, then Reset to defaults to get the new data.", true);
+}, 400);
 </script>
 </body>
 </html>
