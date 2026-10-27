@@ -192,6 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f54cb833c6a4dc7a164d2ad4981c87d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameHud
+  forageButton: 1
 --- !u!114 &142429088
 MonoBehaviour:
   m_ObjectHideFlags: 0
