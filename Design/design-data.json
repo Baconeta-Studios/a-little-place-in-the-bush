@@ -391,6 +391,84 @@
       "unique": true,
       "description": "The kunekune pig rooted up an old tin with a recipe inside, and insisted you keep it.",
       "teachesRecipe": "recipe.truffle_toast"
+    },
+    {
+      "id": "item.chair",
+      "name": "Cafe chair",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 8,
+      "unique": false,
+      "description": "A little wooden chair. One guest can perch here.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.cafe_table",
+      "name": "Cafe table",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "A round table for two.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.bench",
+      "name": "Log bench",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 15,
+      "unique": false,
+      "description": "A split log on stumps. Room for two.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.potted_fern",
+      "name": "Potted fern",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 6,
+      "unique": false,
+      "description": "A happy fern in a clay pot.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.flower_barrel",
+      "name": "Flower barrel",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 10,
+      "unique": false,
+      "description": "An old barrel spilling with flowers.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.lantern_post",
+      "name": "Lantern post",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "A warm glow for the evenings.",
+      "teachesRecipe": ""
     }
   ],
   "recipes": [
@@ -1470,6 +1548,68 @@
         "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
         "done": "Come by at night. I'm awake then."
       }
+    }
+  ],
+  "placeables": [
+    {
+      "id": "placeable.chair",
+      "item": "item.chair",
+      "placement": "Floor",
+      "footprintWidth": 0.9,
+      "footprintDepth": 0.4,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 1
+    },
+    {
+      "id": "placeable.cafe_table",
+      "item": "item.cafe_table",
+      "placement": "Floor",
+      "footprintWidth": 1.2,
+      "footprintDepth": 0.5,
+      "canFlip": false,
+      "category": "Furniture",
+      "seats": 0
+    },
+    {
+      "id": "placeable.bench",
+      "item": "item.bench",
+      "placement": "Floor",
+      "footprintWidth": 1.8,
+      "footprintDepth": 0.4,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 2
+    },
+    {
+      "id": "placeable.potted_fern",
+      "item": "item.potted_fern",
+      "placement": "Floor",
+      "footprintWidth": 0.8,
+      "footprintDepth": 0.4,
+      "canFlip": true,
+      "category": "Plants",
+      "seats": 0
+    },
+    {
+      "id": "placeable.flower_barrel",
+      "item": "item.flower_barrel",
+      "placement": "Floor",
+      "footprintWidth": 0.9,
+      "footprintDepth": 0.5,
+      "canFlip": true,
+      "category": "Plants",
+      "seats": 0
+    },
+    {
+      "id": "placeable.lantern_post",
+      "item": "item.lantern_post",
+      "placement": "Floor",
+      "footprintWidth": 0.4,
+      "footprintDepth": 0.3,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0
     }
   ]
 }
