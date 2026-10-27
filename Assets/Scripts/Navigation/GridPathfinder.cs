@@ -59,7 +59,10 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
     {
         path.Clear();
         if (!Grid.IsBuilt) Grid.Rebuild();
-        if (!Grid.TryFindNearestWalkable(from, out Vector2Int start)) return false;
+        // Standing on a blocked square (brushing a prop or the floor's edge): step back onto the floor
+        // on the side we're heading, not whichever side the search finds first.
+        bool startWasBlocked = !Grid.IsWalkable(from);
+        if (!Grid.TryFindNearestWalkable(from, out Vector2Int start, startWasBlocked ? to : null)) return false;
 
         // Aim for the exact point if it's walkable, otherwise the closest walkable cell.
         Vector2 goalPoint = to;
@@ -71,8 +74,8 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
             goalPoint = Grid.CellToWorld(goal);
         }
 
-        bool startWasBlocked = !Grid.IsWalkable(from);
-        Vector2 startPoint = startWasBlocked ? Grid.CellToWorld(start) : from;
+        // Only as far as the edge of that square, not its middle, so there's no visible sidestep.
+        Vector2 startPoint = startWasBlocked ? ClosestPointInCell(start, from) : from;
 
         if (!Search(start, goal, out int reached))
         {
@@ -112,6 +115,14 @@ public class GridPathfinder : MonoBehaviour, IPathfinder
         _lastPath.Clear();
         _lastPath.Add(from);
         _lastPath.AddRange(path);
+    }
+
+    private Vector2 ClosestPointInCell(Vector2Int cell, Vector2 point)
+    {
+        Vector2 centre = Grid.CellToWorld(cell);
+        Vector2 half = Grid.CellSize * 0.45f; // just inside, so it rounds to this cell
+        return new Vector2(Mathf.Clamp(point.x, centre.x - half.x, centre.x + half.x),
+                           Mathf.Clamp(point.y, centre.y - half.y, centre.y + half.y));
     }
 
     /// <summary>String pulling: keep only the waypoints needed to walk around corners.</summary>

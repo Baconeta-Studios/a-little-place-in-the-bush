@@ -121,6 +121,17 @@ public class NavigationTests
         Assert.IsTrue(_grid.IsWalkable(path[0]));
     }
 
+    [Test]
+    public void StartOffTheGrid_StepsOffTowardsTheTarget()
+    {
+        var path = new List<Vector2>();
+        Vector2 inWall = new(0f, -2f);
+        Assert.IsTrue(_pathfinder.TryFindPath(inWall, new Vector2(2f, -2f), path));
+        Assert.Greater(path[0].x, 0f, "Steps out of the wall on the target's side.");
+        Assert.That(Vector2.Distance(path[0], inWall), Is.LessThan(0.8f), "Only as far as the edge of the floor (touching edges count as blocked).");
+        Assert.AreEqual(2, path.Count, "Then straight to the target, not round through the gap.");
+    }
+
     private void AssertWalkablePath(Vector2 from, List<Vector2> path)
     {
         Vector2 previous = from;
