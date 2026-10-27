@@ -9,6 +9,10 @@ using UnityEngine;
 public class CharacterMover : MonoBehaviour
 {
     [SerializeField, Min(0.1f)] private float speed = 3.5f;
+    [Tooltip("Seconds to get from standing still to full speed. 0 starts instantly.")]
+    [SerializeField, Min(0f)] private float accelerationTime = 0.12f;
+    [Tooltip("How far (world units) from the end of a walk it starts slowing down. 0 stops dead.")]
+    [SerializeField, Min(0f)] private float brakingDistance = 0.4f;
     [Tooltip("Child that holds the sprite. Its X scale is flipped to face left or right.")]
     [SerializeField] private Transform visual;
     [Tooltip("Whether the sprite art faces right when its X scale is positive.")]
@@ -26,6 +30,8 @@ public class CharacterMover : MonoBehaviour
     private Action _onArrived;
     private IPathfinder _pathfinder;
     private bool _hasSpeedParam, _hasWalkingParam;
+    private float _currentSpeed;
+    private Vector2 _heading;
 
     /// <summary>Raised when a walk ends without arriving: a new destination, Stop() or Teleport().</summary>
     public event Action Cancelled;
@@ -34,6 +40,8 @@ public class CharacterMover : MonoBehaviour
     public bool IsMoving => _nextWaypoint < _path.Count;
     public bool FacingRight { get; private set; } = true;
     public float SpeedMultiplier { get; set; } = 1f;
+    /// <summary>How fast it's actually going right now, after speeding up and slowing down.</summary>
+    public float CurrentSpeed => _currentSpeed;
     public Vector2 Position => transform.position;
     public IReadOnlyList<Vector2> CurrentPath => _path;
 
@@ -78,6 +86,14 @@ public class CharacterMover : MonoBehaviour
 
         _nextWaypoint = 0;
         _onArrived = onArrived;
+        // Keep going if the new walk heads roughly the same way (re-clicking, steering); slow
+        // right down to turn round.
+        if (_path.Count > 0 && _currentSpeed > 0f)
+        {
+            Vector2 newHeading = _path[0] - Position;
+            float alignment = newHeading.sqrMagnitude > 0.0001f ? Vector2.Dot(_heading, newHeading.normalized) : 0f;
+            _currentSpeed *= Mathf.Clamp01(alignment * 0.5f + 0.5f);
+        }
         // Already there: arrive straight away so interactions still happen.
         if (_path.Count == 0 || (_path.Count == 1 && Vector2.Distance(Position, _path[0]) < 0.01f))
         {
@@ -87,12 +103,17 @@ public class CharacterMover : MonoBehaviour
         return true;
     }
 
-    public void Stop() => CancelCurrent();
+    public void Stop()
+    {
+        CancelCurrent();
+        _currentSpeed = 0f;
+    }
 
     /// <summary>Jumps to a point (snapped onto the walkable floor), cancelling any walk.</summary>
     public void Teleport(Vector2 point)
     {
         CancelCurrent();
+        _currentSpeed = 0f;
         if (Pathfinder != null && Pathfinder.TryGetNearestWalkable(point, out Vector2 nearest)) point = nearest;
         transform.position = new Vector3(point.x, point.y, transform.position.z);
     }
@@ -117,16 +138,19 @@ public class CharacterMover : MonoBehaviour
     {
         if (!IsMoving)
         {
+            _currentSpeed = 0f;
             UpdateAnimator(0f);
             return;
         }
 
-        float step = speed * SpeedMultiplier * Time.deltaTime;
         Vector2 position = Position;
+        UpdateSpeed(position);
+        float step = _currentSpeed * Time.deltaTime;
         while (step > 0f && IsMoving)
         {
             Vector2 target = _path[_nextWaypoint];
             float distance = Vector2.Distance(position, target);
+            if (distance > 0.0001f) _heading = (target - position) / distance;
             // Only turn round when clearly heading sideways; walking (nearly) straight up or down
             // would otherwise flip the sprite back and forth on every tiny wobble in the path.
             if (distance > 0.0001f && Mathf.Abs(target.x - position.x) > distance * turnThreshold) FaceTowards(target);
@@ -145,7 +169,7 @@ public class CharacterMover : MonoBehaviour
         }
 
         transform.position = new Vector3(position.x, position.y, transform.position.z);
-        UpdateAnimator(speed * SpeedMultiplier);
+        UpdateAnimator(_currentSpeed);
 
         if (!IsMoving)
         {
@@ -154,10 +178,36 @@ public class CharacterMover : MonoBehaviour
         }
     }
 
+    /// <summary>Speeds up towards full speed, and eases off near the end of the walk.</summary>
+    private void UpdateSpeed(Vector2 position)
+    {
+        float topSpeed = speed * SpeedMultiplier;
+        float target = topSpeed;
+        if (brakingDistance > 0f)
+        {
+            // Slow down as if braking evenly, so it settles into the stop. Never quite to zero, so it
+            // still arrives.
+            float remaining = RemainingDistance(position);
+            target = Mathf.Clamp(topSpeed * Mathf.Sqrt(remaining / brakingDistance), topSpeed * 0.15f, topSpeed);
+        }
+
+        if (target < _currentSpeed) _currentSpeed = target;
+        else if (accelerationTime <= 0f) _currentSpeed = target;
+        else _currentSpeed = Mathf.MoveTowards(_currentSpeed, target, topSpeed / accelerationTime * Time.deltaTime);
+    }
+
+    private float RemainingDistance(Vector2 position)
+    {
+        float total = Vector2.Distance(position, _path[_nextWaypoint]);
+        for (int i = _nextWaypoint + 1; i < _path.Count; i++) total += Vector2.Distance(_path[i - 1], _path[i]);
+        return total;
+    }
+
     private void Arrive()
     {
         Action callback = _onArrived;
         _onArrived = null;
+        _currentSpeed = 0f;
         UpdateAnimator(0f);
         Arrived?.Invoke();
         callback?.Invoke();
