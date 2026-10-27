@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.side_weta_repairs
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.side_weta_repairs
+  displayName: Hollow home
+  description: "W\u0113t\u0101's hollow tree trunk is falling apart. Bring 4 bark and 2 silk to patch it up."
+  giver: {fileID: 11400000, guid: b558caa69688ba5439b48ee795767966, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  objectives:
+  - type: 1
+    target: {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
+    qty: 4
+  - type: 1
+    target: {fileID: 11400000, guid: 5fef92819bc9cd541bc4ace75ef76865, type: 2}
+    qty: 2
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: b26579b96f4166b429c92751e78521f7, type: 2}
+    qty: 1
+  - type: 3
+    target: {fileID: 11400000, guid: 4a3116d55d123c84ebb2c53c7813a3a5, type: 2}
+    qty: 1
+  offerLine: '*rubs hind legs* My trunk is full of holes. Four bark and two silk would fix it. I''ll give you a scrap I found inside.'
+  activeLine: Four bark, two silk. Kea is good at finding bark.
+  readyLine: Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.
+  doneLine: Come by at night. I'm awake then.

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.side_weka_trade
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.side_weka_trade
+  displayName: A fair trade
+  description: Weka has a recipe scrap and will swap it for a shiny button.
+  giver: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  objectives:
+  - type: 1
+    target: {fileID: 11400000, guid: 4db78b696f792f1439cc12c1fdd2bc98, type: 2}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 34c49c2eae8d1a64ab82f5921e7fc0c7, type: 2}
+    qty: 1
+  offerLine: Paper? Oh, THIS paper. It's not stolen, it's... found. One shiny button and it's yours.
+  activeLine: A button. A shiny one.
+  readyLine: Ooh, shiny! Deal. Take your paper.
+  doneLine: Got anything else shiny? No? Hmph.

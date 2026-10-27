@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.side_snail_hungry
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.side_snail_hungry
+  displayName: A very hungry snail
+  description: Snail will share something it found if you cook two worm pies.
+  giver: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  objectives:
+  - type: 2
+    target: {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
+    qty: 2
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 8b36c8f712b3ec34e9b9eaff26923882, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 10
+  - type: 3
+    target: {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
+    qty: 1
+  offerLine: Worm... pie...? Two, please. I found some old paper you can have.
+  activeLine: Still... hungry...
+  readyLine: Mmmmm. Here. The paper. Slowly. And my friend the kunekune pig wants to forage with you.
+  doneLine: Same time tomorrow?

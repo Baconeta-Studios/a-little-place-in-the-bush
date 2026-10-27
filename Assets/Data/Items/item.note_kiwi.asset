@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb1ffe09847a4ad6b3fec74071f10727, type: 3}
+  m_Name: item.note_kiwi
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: item.note_kiwi
+  displayName: Kiwi's late-night note
+  description: You met Kiwi snuffling by the stream in the dark. Kiwi scratched out how to make glowworm jelly.
+  icon: {fileID: 0}
+  category: 3
+  rarity: 2
+  tags:
+  - encounter
+  sellValue: 0
+  unique: 1
+  teachesRecipe: {fileID: 11400000, guid: b16007e25e96f8f4c9a9ed5868dc5032, type: 2}
