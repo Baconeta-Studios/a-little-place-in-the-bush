@@ -75,3 +75,18 @@ For the setup screen ("show what each choice does before Go"), the preview repor
 - expected quantity per trip: `(rolls * p + bonus finds) * average quantity`, where bonus finds = for each `BonusRoll` whose tag the item has, `chance * w / (total weight of eligible items with that tag)`, and average quantity = `(min + max) / 2 + TagQuantity bonus`. For unique items the expected finds are capped at 1 and the average quantity is 1.
 
 The sandbox also runs thousands of simulated trips for exact averages.
+
+## In the game (first version)
+
+`ForagePopup` (`Assets/Scripts/UI/ForagePopup.cs`), opened by the **Forage** button on the HUD in areas where `GameHud` has **Forage Button** ticked (the cafe for now). It's deliberately simple:
+
+- **Setup:** the place (the first forage table), what to look out for (a focus, or Anything) and Day or Night. "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
+- **Go:** works out and saves the result straight away, then shows "Out foraging..." for a moment.
+- **Results:** what was found, rare finds and recipe encounters called out, then **Collect** (or closing) puts it all in the bag.
+- No companions or perks yet. The rules support them; the screen will add a companion slot and a perk slot later.
+
+**Debugging:** every trip logs its table, focus, time and seed to the Console, and the results show the seed in the editor and development builds. Put the same setup and seed into the web sandbox to get the same result. To open foraging from something in the world later (a garden gate), call `ForagePopup.Show()`.
+
+## Open questions
+
+- **Keeping companions and perks special.** Once they're in, it shouldn't be possible to keep the best perk on every trip. Ideas: a perk has a cooldown in days, or uses up something (a snack for the companion); a companion gets tired after a trip and rests a day; one trip a day (or a morning and an evening trip) once day and night exist.
