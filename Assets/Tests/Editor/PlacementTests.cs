@@ -103,7 +103,7 @@ public class PlacementTests
     {
         PlacementCheck check = PlacementValidator.Check(_area, _chair, At(3f, -3.2f));
         Assert.IsFalse(check.ok);
-        StringAssert.Contains("the Counter", check.reason);
+        StringAssert.Contains("the counter", check.reason);
     }
 
     [Test]
@@ -122,7 +122,7 @@ public class PlacementTests
         Vector2 inGap = At(0f, -1.05f);
         PlacementCheck check = PlacementValidator.Check(_area, hedge, inGap);
         Assert.IsFalse(check.ok);
-        StringAssert.Contains("block the path to the Counter", check.reason);
+        StringAssert.Contains("block the path to the counter", check.reason);
 
         Assert.IsTrue(_area.Grid.IsWalkable(At(0f, -0.3f)), "The what-if block must be cleared after checking.");
     }

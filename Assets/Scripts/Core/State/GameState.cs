@@ -49,9 +49,17 @@ namespace Bush.Core
         public bool IsUniqueCollected(string itemId) =>
             handedIn.Contains(itemId) || inventory.Exists(s => s.itemId == itemId && s.qty > 0);
 
-        /// <summary>Tidies a loaded save: merges duplicate stacks and drops empty ones. SaveService should call it after loading.</summary>
-        public void Normalise()
+        /// <summary>
+        /// Tidies a loaded save: merges duplicate stacks, drops empty ones, keeps placed-object ids unique,
+        /// and (given the design data) drops placed things whose placeable no longer exists.
+        /// SaveService calls it after loading.
+        /// </summary>
+        public void Normalise(DesignData design = null)
         {
+            if (design != null) placed.RemoveAll(p => p == null || design.GetPlaceable(p.placeableId) == null);
+            foreach (PlacedObjectData p in placed)
+                if (p.instanceId >= nextPlacedId) nextPlacedId = p.instanceId + 1;
+
             var merged = new List<ItemStack>();
             foreach (ItemStack stack in inventory)
             {

@@ -65,10 +65,13 @@ public class FileSaveStorage : ISaveStorage
 public class SaveService
 {
     private readonly ISaveStorage _storage;
+    private readonly ISaveStorage _backup;
 
-    public SaveService(ISaveStorage storage)
+    /// <param name="backup">Where a save that can't be used is copied before it's replaced. Optional.</param>
+    public SaveService(ISaveStorage storage, ISaveStorage backup = null)
     {
         _storage = storage;
+        _backup = backup;
     }
 
     /// <summary>PlayerPrefs on the web (reliable after a refresh), a file everywhere else.</summary>
@@ -76,6 +79,11 @@ public class SaveService
         Application.platform == RuntimePlatform.WebGLPlayer
             ? new PlayerPrefsSaveStorage("bush.save.v1")
             : new FileSaveStorage("bush-save.json");
+
+    public static ISaveStorage CreateDefaultBackupStorage() =>
+        Application.platform == RuntimePlatform.WebGLPlayer
+            ? new PlayerPrefsSaveStorage("bush.save.v1.backup")
+            : new FileSaveStorage("bush-save.backup.json");
 
     public GameState Load(DesignData design)
     {
@@ -99,26 +107,32 @@ public class SaveService
         }
         catch (Exception e)
         {
-            Debug.LogWarning($"[Save] The save is unreadable, starting fresh: {e.Message}");
-            return GameState.CreateNew(design);
+            return StartFresh(design, json, $"the save is unreadable ({e.Message})");
         }
 
-        if (state == null)
-        {
-            Debug.LogWarning("[Save] The save was empty, starting fresh.");
-            return GameState.CreateNew(design);
-        }
-
+        if (state == null) return StartFresh(design, json, "the save was empty");
         if (state.saveVersion > GameState.CurrentSaveVersion)
-        {
-            Debug.LogWarning($"[Save] The save is from a newer version ({state.saveVersion}), starting fresh.");
-            return GameState.CreateNew(design);
-        }
+            return StartFresh(design, json, $"the save is from a newer version ({state.saveVersion})");
 
         // Older saves would be upgraded here, one version at a time. There's only version 1 so far.
         state.saveVersion = GameState.CurrentSaveVersion;
-        state.Normalise();
+        state.Normalise(design);
         return state;
+    }
+
+    /// <summary>Keeps a copy of the unusable save (it would be overwritten by the next save), then starts again.</summary>
+    private GameState StartFresh(DesignData design, string unusableJson, string why)
+    {
+        try
+        {
+            _backup?.Write(unusableJson);
+            Debug.LogWarning($"[Save] Starting fresh because {why}. The old save was copied to the backup slot.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[Save] Starting fresh because {why}. Couldn't back it up: {e.Message}");
+        }
+        return GameState.CreateNew(design);
     }
 
     public void Save(GameState state)

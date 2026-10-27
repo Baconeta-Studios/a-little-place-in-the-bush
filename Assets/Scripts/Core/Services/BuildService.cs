@@ -95,7 +95,10 @@ namespace Bush.Core
             return true;
         }
 
-        /// <summary>Puts down an area's starting layout the first time it's visited in a save. Free, and only once.</summary>
+        /// <summary>
+        /// Puts down an area's starting layout the first time it's visited in a save, only once. These
+        /// count as the player's own things: putting one away puts it in the bag, so nothing is lost.
+        /// </summary>
         public bool InitialiseArea(string area, IEnumerable<(string placeableId, float x, float y, bool flipped)> layout)
         {
             if (_state.initialisedAreas.Contains(area)) return false;
@@ -103,7 +106,7 @@ namespace Bush.Core
             foreach ((string placeableId, float x, float y, bool flipped) in layout)
             {
                 PlaceableData placeable = _design.GetPlaceable(placeableId);
-                if (placeable != null) Add(area, placeable, x, y, flipped, false);
+                if (placeable != null) Add(area, placeable, x, y, flipped, true);
             }
             _events?.RaiseBuildChanged(area);
             return true;

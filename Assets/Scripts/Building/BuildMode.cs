@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Bush.Core;
 using Debugging;
 using UI.Popups;
@@ -35,6 +37,7 @@ public class BuildMode : MonoBehaviour
         public bool originalFlipped;
         public PlacementCheck check;
         public bool checkedOnce;
+        public PlacementContext context;
     }
 
     private BuildArea _area;
@@ -46,6 +49,11 @@ public class BuildMode : MonoBehaviour
     private bool _dragging;
     private Vector2 _dragOffset;
     private float _timeScaleBefore = 1f;
+    private Camera _camera;
+    private Vector3 _cameraRest;
+    private CameraFollow _follow;
+    private bool _followWasEnabled;
+    private Coroutine _cameraMove;
 
     public static event Action<bool> ActiveChanged;
 
@@ -57,6 +65,18 @@ public class BuildMode : MonoBehaviour
     public string CandidateName => _candidate?.obj ? _candidate.obj.DisplayName : null;
     /// <summary>World point just under the candidate's base, for floating buttons.</summary>
     public Vector2 CandidateAnchor => _candidate == null ? Vector2.zero : _candidate.position + new Vector2(0f, -0.25f);
+    /// <summary>World point just above the candidate's art: floating buttons go here, clear of a dragging finger.</summary>
+    public Vector2 CandidateTop
+    {
+        get
+        {
+            if (_candidate == null) return Vector2.zero;
+            float top = _candidate.position.y + 1f;
+            foreach (SpriteRenderer renderer in _candidate.obj.GetComponentsInChildren<SpriteRenderer>())
+                if (renderer.sortingLayerName != "FloorDecals") top = Mathf.Max(top, renderer.bounds.max.y);
+            return new Vector2(_candidate.position.x, top + 0.2f);
+        }
+    }
     public BuildArea Area => _area;
 
     private static GameSession Session => GameSession.Current;
@@ -86,7 +106,15 @@ public class BuildMode : MonoBehaviour
 
     private void OnDisable()
     {
-        if (IsActive) Exit();
+        if (IsActive)
+        {
+            // Unloading (scene change, stopping Play): just undo what Enter did; other objects may be gone.
+            IsActive = false;
+            if (Time.timeScale == 0f) Time.timeScale = _timeScaleBefore;
+            InputLock.Unlock(this);
+            SetPauseMenuAllowed(true);
+            ActiveChanged?.Invoke(false);
+        }
         _point.Disable();
         _click.Disable();
     }
@@ -104,7 +132,7 @@ public class BuildMode : MonoBehaviour
 
     // ----- Entering and leaving -----
 
-    public bool CanEnter => _area && _area.IsLoaded && Session != null && !IsActive;
+    public bool CanEnter => _area && _area.IsLoaded && Session != null && !IsActive && !InputLock.IsLocked && !PopupManager.AnyOpen;
 
     public void Enter()
     {
@@ -119,6 +147,7 @@ public class BuildMode : MonoBehaviour
 
         if (!_ui) _ui = BuildUi.Create(this);
         _ui.Show();
+        MoveCameraAboveTray(true);
         ActiveChanged?.Invoke(true);
     }
 
@@ -128,19 +157,77 @@ public class BuildMode : MonoBehaviour
         Cancel();
         IsActive = false;
 
-        Time.timeScale = _timeScaleBefore;
+        if (Time.timeScale == 0f) Time.timeScale = _timeScaleBefore; // leave a cheat's time scale alone
         InputLock.Unlock(this);
-        SetPauseMenuAllowed(true);
+        // Next frame: otherwise the same Escape press that left build mode would open the pause menu.
+        StartCoroutine(AllowPauseMenuNextFrame());
         _dragging = false;
+        MoveCameraAboveTray(false);
 
-        // If something new now stands where the gecko is, step it onto free ground.
+        // Make sure the gecko isn't standing in new furniture or boxed in: if it can't walk to the
+        // spawn point any more, it's moved there.
         _area.Grid.Rebuild();
         Interactor player = Interactor.Player;
-        if (player && !_area.Grid.IsWalkable(player.transform.position)) player.Mover.Teleport(player.transform.position);
+        if (player)
+        {
+            Vector2 origin = _area.PathOrigin();
+            if (!_area.Grid.IsWalkable(player.transform.position)) player.Mover.Teleport(player.transform.position);
+            if (!_area.Pathfinder.IsReachable(player.transform.position, origin)) player.Mover.Teleport(origin);
+        }
 
         Session?.SaveNow();
         if (_ui) _ui.Hide();
         ActiveChanged?.Invoke(false);
+    }
+
+    private static IEnumerator AllowPauseMenuNextFrame()
+    {
+        yield return null;
+        SetPauseMenuAllowed(true);
+    }
+
+    /// <summary>
+    /// The tray covers the bottom of the screen, where the floor is, so the camera slides down while
+    /// building to keep the whole floor visible above it. Put back on leaving.
+    /// </summary>
+    private void MoveCameraAboveTray(bool building)
+    {
+        if (building)
+        {
+            _camera = Camera.main;
+            if (!_camera || !_ui) return;
+            _cameraRest = _camera.transform.position;
+            _follow = _camera.GetComponent<CameraFollow>();
+            _followWasEnabled = _follow && _follow.enabled;
+            if (_follow) _follow.enabled = false;
+
+            float trayWorld = _ui.BottomCoverFraction * _camera.orthographicSize * 2f;
+            StartCameraMove(_cameraRest + new Vector3(0f, -trayWorld, 0f));
+        }
+        else if (_camera)
+        {
+            StartCameraMove(_cameraRest);
+            if (_follow) _follow.enabled = _followWasEnabled;
+        }
+    }
+
+    private void StartCameraMove(Vector3 target)
+    {
+        if (_cameraMove != null) StopCoroutine(_cameraMove);
+        _cameraMove = StartCoroutine(MoveCamera(target));
+    }
+
+    private IEnumerator MoveCamera(Vector3 target)
+    {
+        Vector3 from = _camera.transform.position;
+        const float duration = 0.3f;
+        for (float t = 0f; t < duration && _camera; t += Time.unscaledDeltaTime)
+        {
+            _camera.transform.position = Vector3.Lerp(from, target, Mathf.SmoothStep(0f, 1f, t / duration));
+            yield return null;
+        }
+        if (_camera) _camera.transform.position = target;
+        _cameraMove = null;
     }
 
     // ----- Actions (the tray and the floating buttons call these) -----
@@ -160,7 +247,7 @@ public class BuildMode : MonoBehaviour
         ghost.Setup(definition, 0);
         ghost.SetFootprintActive(false);
         ghost.name = "Ghost: " + definition.id;
-        _candidate = new Candidate { obj = ghost, definition = definition, isNew = true };
+        _candidate = new Candidate { obj = ghost, definition = definition, isNew = true, context = PlacementContext.For(_area) };
         SetCandidatePosition(FindStartSpot(definition));
         _ui.Refresh();
     }
@@ -176,7 +263,8 @@ public class BuildMode : MonoBehaviour
         {
             obj = placed, definition = placed.Definition, isNew = false,
             position = placed.transform.position, flipped = placed.Flipped,
-            originalPosition = placed.transform.position, originalFlipped = placed.Flipped
+            originalPosition = placed.transform.position, originalFlipped = placed.Flipped,
+            context = PlacementContext.For(_area)
         };
         SetCandidatePosition(_candidate.position);
         _ui.Refresh();
@@ -263,8 +351,13 @@ public class BuildMode : MonoBehaviour
 
         string label = _candidate.obj.DisplayName;
         int id = _candidate.obj.InstanceId;
+        if (!Session.Build.Remove(id))
+        {
+            _ui.Toast($"Couldn't put the {label.ToLowerInvariant()} away.");
+            Cancel();
+            return;
+        }
         _candidate = null;
-        Session.Build.Remove(id);
         _area.Despawn(id);
         _area.Grid.Rebuild();
         Session.RequestSave();
@@ -411,7 +504,8 @@ public class BuildMode : MonoBehaviour
     private void Validate()
     {
         if (_candidate == null) return;
-        _candidate.check = PlacementValidator.Check(_area, _candidate.definition, _candidate.position, _candidate.isNew ? null : _candidate.obj);
+        _candidate.check = PlacementValidator.Check(_area, _candidate.definition, _candidate.position,
+            _candidate.isNew ? null : _candidate.obj, _candidate.context);
         _candidate.checkedOnce = true;
         _candidate.obj.ShowBuildState(_candidate.check.ok);
         if (_ui) _ui.RefreshCandidate();
@@ -420,10 +514,14 @@ public class BuildMode : MonoBehaviour
     /// <summary>A free spot near the middle of the view, searched outwards. Falls back to the middle.</summary>
     private Vector2 FindStartSpot(PlaceableDefinition definition)
     {
-        Camera camera = Camera.main;
-        Vector2 centre = Snap(camera ? (Vector2)camera.transform.position + new Vector2(0f, -2f) : Vector2.zero);
+        // The middle of the floor (not the view: the camera slides while building).
+        Bounds floor = _area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds : new Bounds(Vector3.zero, Vector3.one);
+        Vector2 centre = Snap(floor.center);
+        PlacementContext context = _candidate?.context ?? PlacementContext.For(_area);
+        var tried = new HashSet<Vector2>();
         const float step = 0.5f;
-        for (int ring = 0; ring <= 10; ring++)
+        const int maxChecks = 120; // each check can run pathfinding; keep it quick on phones
+        for (int ring = 0; ring <= 12 && tried.Count < maxChecks; ring++)
         {
             for (int dy = -ring; dy <= ring; dy++)
             {
@@ -431,7 +529,9 @@ public class BuildMode : MonoBehaviour
                 {
                     if (Mathf.Abs(dx) != ring && Mathf.Abs(dy) != ring) continue;
                     Vector2 spot = Snap(centre + new Vector2(dx, dy) * step);
-                    if (PlacementValidator.Check(_area, definition, spot).ok) return spot;
+                    if (!tried.Add(spot)) continue; // clamped onto a spot already tried
+                    if (PlacementValidator.Check(_area, definition, spot, null, context).ok) return spot;
+                    if (tried.Count >= maxChecks) break;
                 }
             }
         }

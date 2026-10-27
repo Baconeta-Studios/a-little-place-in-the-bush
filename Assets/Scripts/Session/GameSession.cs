@@ -40,7 +40,7 @@ public class GameSession : MonoBehaviour
         var session = root.AddComponent<GameSession>();
         session.Database = database;
         session.Design = database.BuildDesign();
-        session._save = new SaveService(SaveService.CreateDefaultStorage());
+        session._save = new SaveService(SaveService.CreateDefaultStorage(), SaveService.CreateDefaultBackupStorage());
         Current = session;
         session.StartGame(session._save.Load(session.Design));
         session.RegisterCheats();

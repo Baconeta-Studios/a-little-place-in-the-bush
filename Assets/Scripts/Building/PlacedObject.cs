@@ -14,6 +14,8 @@ public class PlacedObject : MonoBehaviour
     private SpriteRenderer _footprintMarkerRenderer;
     private GameObject _shadow;
     private Coroutine _plop;
+    private Transform _visual;
+    private Vector3 _visualRestScale;
 
     public int InstanceId { get; private set; }
     public PlaceableDefinition Definition { get; private set; }
@@ -44,6 +46,9 @@ public class PlacedObject : MonoBehaviour
         _footprint.size = size;
         _footprint.offset = new Vector2(0f, size.y * 0.5f);
         _footprint.isTrigger = false;
+
+        _visual = transform.Find("Visual");
+        if (_visual) _visualRestScale = _visual.localScale;
 
         _renderers = GetComponentsInChildren<SpriteRenderer>(true);
         _baseColors = new Color[_renderers.Length];
@@ -93,15 +98,14 @@ public class PlacedObject : MonoBehaviour
     /// <summary>A quick squash and settle when it's put down.</summary>
     public void PlayPlacedFeedback()
     {
-        Transform visual = transform.Find("Visual");
-        if (!visual) return;
+        if (!_visual) return;
         if (_plop != null) StopCoroutine(_plop);
-        _plop = StartCoroutine(Plop(visual));
+        _plop = StartCoroutine(Plop(_visual));
     }
 
     private IEnumerator Plop(Transform visual)
     {
-        Vector3 rest = visual.localScale;
+        Vector3 rest = _visualRestScale;
         const float duration = 0.25f;
         for (float t = 0f; t < duration; t += Time.unscaledDeltaTime)
         {

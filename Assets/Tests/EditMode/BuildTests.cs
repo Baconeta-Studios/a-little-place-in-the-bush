@@ -116,7 +116,7 @@ namespace Bush.Core.Tests
 
             PlacedObjectData chair = Build.GetPlaced(TestDesign.Area).First();
             Build.Remove(chair.instanceId);
-            Assert.AreEqual(0, _game.economy.Count(TestDesign.ChairItem), "Starting furniture isn't from the inventory.");
+            Assert.AreEqual(1, _game.economy.Count(TestDesign.ChairItem), "Starting furniture is the player's own: putting it away puts it in the bag.");
         }
 
         [Test]
@@ -136,6 +136,19 @@ namespace Bush.Core.Tests
             Assert.AreEqual((1, 2), _game.quests.GetProgress("quest.decorate", 0));
             Build.Place(TestDesign.Area, TestDesign.Chair, 2f, 0f, false);
             Assert.AreEqual(QuestStatus.ReadyToClaim, _game.quests.GetStatus("quest.decorate"));
+        }
+
+        [Test]
+        public void Normalise_KeepsIdsUniqueAndDropsUnknownPlaceables()
+        {
+            _game.state.placed.Add(new PlacedObjectData { instanceId = 7, area = TestDesign.Area, placeableId = TestDesign.Chair });
+            _game.state.placed.Add(new PlacedObjectData { instanceId = 8, area = TestDesign.Area, placeableId = "placeable.gone" });
+            _game.state.nextPlacedId = 1;
+            _game.state.Normalise(_game.design);
+
+            Assert.AreEqual(1, _game.state.placed.Count);
+            Build.UnlimitedItems = true;
+            Assert.AreEqual(8, Build.Place(TestDesign.Area, TestDesign.Chair, 0f, 0f, false).instanceId);
         }
 
         [Test]

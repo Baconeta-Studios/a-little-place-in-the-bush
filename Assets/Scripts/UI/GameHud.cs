@@ -65,7 +65,10 @@ public class GameHud : MonoBehaviour
 
     private void OnCurrencyChanged(int coins) => _coins.text = $"{coins} coins";
 
-    private void OnBuildModeChanged(bool building) => _bar.gameObject.SetActive(!building);
+    private void OnBuildModeChanged(bool building)
+    {
+        if (_bar) _bar.gameObject.SetActive(!building);
+    }
 
     private void OpenBag()
     {

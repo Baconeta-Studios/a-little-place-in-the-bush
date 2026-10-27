@@ -115,7 +115,7 @@ public class BuildArea : MonoBehaviour
             Transform owner = stand.transform.parent;
             if (owner && owner.GetComponentInParent<PlacedObject>()) continue; // placed things don't protect themselves
             if (!IsInThisArea(stand.transform.position)) continue;
-            yield return (stand.transform.position, owner ? $"the {owner.name}" : "a stand point");
+            yield return (stand.transform.position, owner ? $"the {Friendly(owner.name).ToLowerInvariant()}" : "a stand point");
         }
         foreach (SpawnPoint spawn in FindObjectsByType<SpawnPoint>())
             if (IsInThisArea(spawn.transform.position)) yield return (spawn.transform.position, "where the gecko arrives");
@@ -134,6 +134,21 @@ public class BuildArea : MonoBehaviour
         if (fallback) return fallback.transform.position;
         if (Interactor.Player && IsInThisArea(Interactor.Player.transform.position)) return Interactor.Player.transform.position;
         return Grid.WalkableArea ? (Vector2)Grid.WalkableArea.bounds.center : (Vector2)transform.position;
+    }
+
+    /// <summary>"CafeDoor" or "Exit_Garden" as words a player would read: "Cafe Door", "Exit Garden".</summary>
+    public static string Friendly(string objectName)
+    {
+        if (string.IsNullOrEmpty(objectName)) return objectName;
+        var text = new System.Text.StringBuilder();
+        for (int i = 0; i < objectName.Length; i++)
+        {
+            char c = objectName[i];
+            if (c == '_' || c == '-') { text.Append(' '); continue; }
+            if (i > 0 && char.IsUpper(c) && char.IsLower(objectName[i - 1])) text.Append(' ');
+            text.Append(c);
+        }
+        return text.ToString().Trim();
     }
 
     /// <summary>Near this area's floor (exits sit just off its edge).</summary>

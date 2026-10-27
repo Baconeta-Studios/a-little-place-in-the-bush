@@ -126,8 +126,11 @@ public class InventoryPopup : Popup
         // Dim the game behind, and block clicks to it.
         GameUi.AddPanel(root, new Color(0.08f, 0.07f, 0.05f, 0.55f), false);
 
+        // Stretches with the screen (4:3 tablets are narrower than 16:9), with a margin all round.
         RectTransform panel = GameUi.NewRect("Panel", root);
-        GameUi.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1500f, 900f));
+        panel.anchorMin = new Vector2(0.03f, 0.04f);
+        panel.anchorMax = new Vector2(0.97f, 0.96f);
+        panel.offsetMin = panel.offsetMax = Vector2.zero;
         GameUi.AddPanel(panel, GameUi.Panel);
 
         TextMeshProUGUI title = GameUi.AddText(panel, "Bag", 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");

@@ -14,6 +14,7 @@ using UnityEngine.UI;
 public class BuildUi : MonoBehaviour
 {
     private const string AllTab = "All";
+    private const float TrayHeight = 330f;
 
     private BuildMode _mode;
     private RectTransform _root;
@@ -58,7 +59,27 @@ public class BuildUi : MonoBehaviour
     public void Hide()
     {
         if (GameSession.Current != null) GameSession.Current.Events.InventoryChanged -= Refresh;
+        if (_toastRoutine != null) StopCoroutine(_toastRoutine);
+        _toastRoutine = null;
+        _toast.gameObject.SetActive(false);
         _root.gameObject.SetActive(false);
+    }
+
+    /// <summary>How much of the screen's height the tray (plus a margin) covers, from the bottom: 0-1.</summary>
+    public float BottomCoverFraction
+    {
+        get
+        {
+            Canvas.ForceUpdateCanvases();
+            var canvas = (RectTransform)GameUi.Current.Canvas.transform;
+            float canvasHeight = canvas.rect.height;
+            if (canvasHeight <= 0f) return 0.3f;
+            // The safe area can start above the screen's bottom edge (phones), so measure from the canvas.
+            float safeBottom = _root.TransformPoint(new Vector3(0f, _root.rect.yMin, 0f)).y;
+            float canvasBottom = canvas.TransformPoint(new Vector3(0f, canvas.rect.yMin, 0f)).y;
+            float safeOffset = (safeBottom - canvasBottom) / canvas.lossyScale.y;
+            return Mathf.Clamp01((safeOffset + 16f + TrayHeight + 30f) / canvasHeight);
+        }
     }
 
     private void OnDestroy()
@@ -117,15 +138,20 @@ public class BuildUi : MonoBehaviour
         Camera camera = Camera.main;
         if (!camera) return;
 
-        // Keep the buttons just under the held item, but on screen.
-        Vector2 local = GameUi.Current.WorldToCanvas(_mode.CandidateAnchor, camera, _root);
+        // Buttons go above the held item, so they're never under a dragging finger (which is below it).
+        // If there's no room above (it's at the back), they go just below its base instead.
         Rect bounds = _root.rect;
         Vector2 half = _actions.sizeDelta * 0.5f;
-        float trayTop = bounds.yMin + 300f;
+        float trayTop = bounds.yMin + 16f + TrayHeight;
+        float topLimit = bounds.yMax - 140f; // under the top bar
+        Vector2 above = GameUi.Current.WorldToCanvas(_mode.CandidateTop, camera, _root) + new Vector2(0f, half.y + 70f);
+        Vector2 local = above;
+        if (above.y + half.y > topLimit)
+            local = GameUi.Current.WorldToCanvas(_mode.CandidateAnchor, camera, _root) - new Vector2(0f, half.y + 20f);
         local.x = Mathf.Clamp(local.x, bounds.xMin + half.x + 16f, bounds.xMax - half.x - 16f);
-        local.y = Mathf.Clamp(local.y - half.y - 20f, trayTop + half.y + 10f, bounds.yMax - 220f);
+        local.y = Mathf.Clamp(local.y, trayTop + half.y + 10f, topLimit - half.y - 70f);
         _actions.anchoredPosition = local;
-        _reason.anchoredPosition = local + new Vector2(0f, half.y + 50f);
+        _reason.anchoredPosition = local + new Vector2(0f, half.y + 45f);
     }
 
     // ----- Contents -----
@@ -181,7 +207,11 @@ public class BuildUi : MonoBehaviour
     {
         // Top bar: what to do, and Done.
         RectTransform top = GameUi.NewRect("TopBar", _root);
-        GameUi.Place(top, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -16f), new Vector2(1500f, 110f));
+        top.anchorMin = new Vector2(0f, 1f);
+        top.anchorMax = new Vector2(1f, 1f);
+        top.pivot = new Vector2(0.5f, 1f);
+        top.offsetMin = new Vector2(16f, -126f);
+        top.offsetMax = new Vector2(-16f, -16f);
         GameUi.AddPanel(top, GameUi.PanelDark);
         _hint = GameUi.AddText(top, "", 30f, GameUi.Cream, TextAlignmentOptions.MidlineLeft, "Hint");
         _hint.rectTransform.offsetMin = new Vector2(32f, 0f);
@@ -195,7 +225,7 @@ public class BuildUi : MonoBehaviour
         tray.anchorMax = new Vector2(1f, 0f);
         tray.pivot = new Vector2(0.5f, 0f);
         tray.offsetMin = new Vector2(16f, 16f);
-        tray.offsetMax = new Vector2(-16f, 316f);
+        tray.offsetMax = new Vector2(-16f, 16f + TrayHeight);
         GameUi.AddPanel(tray, GameUi.Panel);
 
         _tabs = GameUi.NewRect("Tabs", tray);
@@ -235,7 +265,7 @@ public class BuildUi : MonoBehaviour
 
         // Short messages above the tray.
         _toast = GameUi.NewRect("Toast", _root);
-        GameUi.Place(_toast, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 340f), new Vector2(900f, 70f));
+        GameUi.Place(_toast, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f + TrayHeight), new Vector2(900f, 70f));
         GameUi.AddPanel(_toast, GameUi.PanelDark).raycastTarget = false;
         _toastText = GameUi.AddText(_toast, "", 28f, GameUi.Cream);
         _toast.gameObject.SetActive(false);
