@@ -33,7 +33,7 @@ public class PlayerPointerInput : MonoBehaviour
     private IInteractable _hovered;
     private bool _steering;
     private float _nextSteerTime;
-    private Vector2 _lastSteerTarget;
+    private Vector2 _lastSteerScreen;
     private GameObject _clickMarker;
 
     private void Awake()
@@ -117,7 +117,7 @@ public class PlayerPointerInput : MonoBehaviour
             WalkTo(world);
             _steering = holdToSteer;
             _nextSteerTime = Time.unscaledTime + steerInterval;
-            _lastSteerTarget = world;
+            _lastSteerScreen = screen;
             return;
         }
 
@@ -129,10 +129,12 @@ public class PlayerPointerInput : MonoBehaviour
                 return;
             }
 
-            if (Time.unscaledTime >= _nextSteerTime && Vector2.Distance(world, _lastSteerTarget) > 0.3f)
+            // Only re-aim when the pointer itself moves on screen. Comparing world points would also
+            // re-aim whenever the camera moves under a still pointer, making the gecko zig-zag.
+            if (Time.unscaledTime >= _nextSteerTime && Vector2.Distance(screen, _lastSteerScreen) > 12f)
             {
                 _nextSteerTime = Time.unscaledTime + steerInterval;
-                _lastSteerTarget = world;
+                _lastSteerScreen = screen;
                 WalkTo(world, showMarker: false);
             }
         }
