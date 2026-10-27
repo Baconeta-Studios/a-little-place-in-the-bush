@@ -1,0 +1,3290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forage Sandbox</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Play with and tune the foraging rules for A Little Place in the Bush. Same data + seed = same result in Unity.">
+<style>
+/* Layout: a field notebook. Setup on the left, the basket on the right; tabs work like notebook dividers. */
+:root {
+  --bg: #f3ecdc;
+  --surface: #fbf7ee;
+  --surface-2: #ece3cf;
+  --ink: #2a2a1f;
+  --ink-soft: #5f5b48;
+  --line: #d6c9ad;
+  --moss: #4f6f3a;
+  --moss-strong: #33502a;
+  --moss-tint: #e0e8d0;
+  --bark: #7b5636;
+  --bark-tint: #ecdcc5;
+  --poh: #c2372e;
+  --poh-tint: #f7ddd7;
+  --on-accent: #fbf7ee;
+  --head-bg: #2f4a2a;
+  --head-fg: #f3ecdc;
+  --head-soft: #c9d6b6;
+  --r-common: #77725f;
+  --r-uncommon: #3a8634;
+  --r-rare: #3a62bd;
+  --r-legendary: #a87a06;
+  --warn: #8f5a00;
+  --warn-tint: #fbecc9;
+  --good: #3a7d2f;
+  --shadow: 0 1px 0 rgba(70,50,20,.06), 0 8px 20px -14px rgba(70,50,20,.45);
+  --dim: rgba(18,24,14,.78);
+  --f-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --f-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --f-mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161b14; --surface: #20271c; --surface-2: #2a3324; --ink: #ebe4d2; --ink-soft: #b2aa93; --line: #3b4733;
+    --moss: #8db474; --moss-strong: #a9cc8f; --moss-tint: #2c3a25; --bark: #cc9d6e; --bark-tint: #3a2f22;
+    --poh: #ef6b5e; --poh-tint: #4a2420; --on-accent: #161b14; --head-bg: #0f140d; --head-fg: #ebe4d2; --head-soft: #93a884;
+    --r-common: #aaa48f; --r-uncommon: #74c266; --r-rare: #86a8f2; --r-legendary: #e8bb4c;
+    --warn: #e9b04c; --warn-tint: #3d3018; --good: #8fcf7c;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 10px 22px -14px rgba(0,0,0,.8); --dim: rgba(4,6,3,.82);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161b14; --surface: #20271c; --surface-2: #2a3324; --ink: #ebe4d2; --ink-soft: #b2aa93; --line: #3b4733;
+  --moss: #8db474; --moss-strong: #a9cc8f; --moss-tint: #2c3a25; --bark: #cc9d6e; --bark-tint: #3a2f22;
+  --poh: #ef6b5e; --poh-tint: #4a2420; --on-accent: #161b14; --head-bg: #0f140d; --head-fg: #ebe4d2; --head-soft: #93a884;
+  --r-common: #aaa48f; --r-uncommon: #74c266; --r-rare: #86a8f2; --r-legendary: #e8bb4c;
+  --warn: #e9b04c; --warn-tint: #3d3018; --good: #8fcf7c;
+  --shadow: 0 1px 0 rgba(0,0,0,.3), 0 10px 22px -14px rgba(0,0,0,.8); --dim: rgba(4,6,3,.82);
+  color-scheme: dark;
+}
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--head-bg); }
+[hidden] { display: none !important; }
+h1, h2, h3, h4 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.2; font-weight: 600; }
+h2 { font-size: 1.45rem; }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; }
+p { margin: 0; }
+a { color: var(--moss); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--poh); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.muted { color: var(--ink-soft); }
+.small { font-size: .85rem; }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.num { font-size: .9em; }
+
+/* Header */
+header.top { background: var(--head-bg); color: var(--head-fg); }
+.top-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 18px 14px; flex-wrap: wrap; }
+.brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.brand svg { flex: none; }
+.brand h1 { font-size: 1.7rem; letter-spacing: .01em; }
+.brand .sub { color: var(--head-soft); font-size: .9rem; }
+.theme-btn { background: transparent; border: 1px solid var(--head-soft); color: var(--head-fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; font-size: .85rem; }
+.tabs-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: thin; padding-block: 8px; }
+.tab { flex: none; border: 1px solid transparent; background: transparent; padding: 7px 14px; border-radius: 999px; cursor: pointer; font-weight: 600; color: var(--ink-soft); }
+.tab:hover { background: var(--surface-2); color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--moss); color: var(--on-accent); }
+.tab .badge { display: inline-block; min-width: 1.4em; padding: 0 .4em; margin-left: 4px; border-radius: 999px; background: var(--warn-tint); color: var(--warn); font-size: .75rem; text-align: center; }
+
+main { padding-block: 22px 40px; }
+.panel { display: grid; gap: 20px; }
+.panel-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 16px; }
+.panel-head p { max-width: 65ch; margin-top: 4px; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; min-width: 0; }
+.box > h3 { margin-bottom: 10px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; align-items: start; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 7px 13px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: .9rem; }
+.btn:hover { border-color: var(--moss); }
+.btn.primary { background: var(--moss); border-color: var(--moss); color: var(--on-accent); }
+.btn.danger { color: var(--poh); }
+.btn.danger.armed { background: var(--poh); color: var(--on-accent); border-color: var(--poh); }
+.btn.tiny { padding: 3px 10px; font-size: .8rem; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.go { width: 100%; justify-content: center; font-family: var(--f-display); font-size: 1.35rem; font-weight: 700; padding: 14px; border-radius: var(--radius); background: var(--poh); border: none; color: var(--on-accent); cursor: pointer; box-shadow: var(--shadow); }
+.go:hover { filter: brightness(1.06); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* Expedition setup */
+.exp-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .exp-grid { grid-template-columns: minmax(0, 1fr); } }
+fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
+legend { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--bark); margin-bottom: 8px; padding: 0; }
+.setup { display: grid; gap: 18px; min-width: 0; }
+.opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr)); gap: 10px; }
+.opt { text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 11px 12px; cursor: pointer; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.opt:hover { border-color: var(--moss); }
+.opt[aria-pressed="true"] { border-color: var(--moss); background: var(--moss-tint); box-shadow: var(--shadow); }
+.opt .nm { font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; display: flex; justify-content: space-between; gap: 6px; align-items: baseline; }
+.opt .ds { font-size: .82rem; color: var(--ink-soft); }
+.opt .fx { font-size: .8rem; color: var(--moss-strong); font-weight: 600; }
+.opt .teach { font-size: .75rem; color: var(--bark); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 13px; cursor: pointer; font-weight: 600; font-size: .9rem; }
+.chip[aria-pressed="true"] { background: var(--bark); border-color: var(--bark); color: var(--on-accent); }
+.chip .x { font-weight: 400; opacity: .85; font-size: .8rem; }
+.row-wrap { display: flex; flex-wrap: wrap; gap: 18px; align-items: end; }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { border: none; background: var(--surface); padding: 6px 16px; cursor: pointer; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--head-bg); color: var(--head-fg); }
+.seed-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+input[type="number"], input[type="text"], select, textarea { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+textarea { width: 100%; resize: vertical; }
+#seedInput { width: 9.5em; font-family: var(--f-mono); }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: .9rem; cursor: pointer; }
+.checks { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.tag { display: inline-block; font-size: .72rem; padding: 0 7px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); margin: 1px 2px 1px 0; }
+.lock { font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; color: var(--bark); font-weight: 700; font-family: var(--f-body); }
+
+.before { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 64px); display: grid; gap: 14px; }
+@media (max-width: 860px) { .before { position: static; } }
+.fx-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.fx-list li { display: grid; gap: 1px; }
+.fx-list .src { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--bark); font-weight: 700; }
+.likely { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.likely td { padding: 3px 0; border-bottom: 1px dashed var(--line); }
+.likely td:last-child, .likely td:nth-child(2) { text-align: right; white-space: nowrap; padding-left: 8px; font-variant-numeric: tabular-nums; }
+
+/* Rarity */
+.r-Common { --rc: var(--r-common); }
+.r-Uncommon { --rc: var(--r-uncommon); }
+.r-Rare { --rc: var(--r-rare); }
+.r-Legendary { --rc: var(--r-legendary); }
+.rpill { display: inline-block; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--rc, var(--r-common)); border: 1.5px solid var(--rc, var(--r-common)); border-radius: 999px; padding: 0 7px; white-space: nowrap; }
+.rname { color: var(--rc, var(--ink)); font-weight: 700; }
+
+/* Results */
+.results-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+.basket { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; margin-top: 14px; }
+.find { background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--rc); border-radius: var(--radius-sm); padding: 12px 12px 12px 14px; display: grid; gap: 4px; box-shadow: var(--shadow); align-content: start; }
+.find .q { font-family: var(--f-display); font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.find .nm { font-weight: 700; }
+.find .note { font-size: .8rem; color: var(--poh); font-weight: 700; }
+.find .note.b { color: var(--bark); }
+.find.rare { outline: 2px solid var(--rc); outline-offset: -1px; }
+.reveal { animation: pop .45s cubic-bezier(.2,.9,.3,1.3) both; }
+@keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+.banner { border-radius: var(--radius-sm); padding: 10px 14px; font-weight: 600; }
+.banner + .banner, .basket + .banner, .banner + .basket { margin-top: 12px; }
+.banner.rare { background: var(--poh-tint); color: var(--poh); }
+.banner.learn { background: var(--moss-tint); color: var(--moss-strong); }
+.banner.info { background: var(--surface-2); color: var(--ink-soft); font-weight: 500; }
+.empty { border: 2px dashed var(--line); border-radius: var(--radius); padding: 22px; text-align: center; color: var(--ink-soft); }
+details summary { cursor: pointer; font-weight: 600; }
+.rolllog { margin: 8px 0 0; padding-left: 1.6em; font-size: .88rem; }
+.rolllog li { padding: 2px 0; }
+
+/* Overlay */
+.overlay { position: fixed; inset: 0; z-index: 50; background: var(--dim); display: grid; place-items: center; padding: 24px max(16px, env(safe-area-inset-left, 0px)); cursor: pointer; animation: fade .3s both; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.overlay-card { color: var(--head-fg); text-align: center; display: grid; gap: 14px; width: min(30rem, 100%); }
+.overlay-card h2 { font-size: 1.8rem; }
+.trail { height: 6px; background: var(--head-bg); border-radius: 999px; overflow: hidden; }
+.trail i { display: block; height: 100%; width: 0; background: var(--head-soft); border-radius: inherit; }
+.trail i.run { animation: trail var(--dur, 1.7s) linear forwards; }
+@keyframes trail { to { width: 100%; } }
+.overlay .skip { justify-self: center; background: transparent; border: 1px solid var(--head-soft); color: var(--head-fg); border-radius: 999px; padding: 6px 16px; cursor: pointer; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+table.data { width: 100%; border-collapse: collapse; font-size: .88rem; }
+table.data th, table.data td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+table.data th { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+table.data th.sortable { cursor: pointer; user-select: none; }
+table.data th.sortable:hover { color: var(--ink); }
+table.data td.n, table.data th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.data tr.changed td { background: var(--moss-tint); }
+table.data tbody tr:last-child td { border-bottom: none; }
+.delta-up { color: var(--good); font-weight: 600; font-size: .8em; }
+.delta-down { color: var(--poh); font-weight: 600; font-size: .8em; }
+.mult { font-size: .78rem; color: var(--bark); font-weight: 700; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; }
+.tile .v { font-family: var(--f-display); font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile .k { font-size: .8rem; color: var(--ink-soft); }
+.form-row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
+.form-row label { display: grid; gap: 3px; font-size: .8rem; color: var(--ink-soft); font-weight: 600; }
+.form-row input[type="number"] { width: 9em; }
+.ok { color: var(--good); font-weight: 700; }
+
+/* Campaign */
+.inv { display: flex; flex-wrap: wrap; gap: 6px; }
+.inv .it { border: 1px solid var(--line); border-left: 4px solid var(--rc); background: var(--surface); border-radius: 8px; padding: 3px 9px; font-size: .88rem; }
+.prog { height: 7px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-top: 3px; }
+.prog i { display: block; height: 100%; background: var(--moss); border-radius: inherit; }
+.quest { border-top: 1px solid var(--line); padding-block: 10px; display: grid; gap: 6px; }
+.quest:first-of-type { border-top: none; padding-top: 0; }
+.obj { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; font-size: .88rem; }
+.list-plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; }
+.list-plain li { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+.pill-ok { font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--moss-tint); color: var(--moss-strong); }
+.pill-no { font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); }
+
+/* Design editor */
+.warns { display: grid; gap: 4px; margin: 0; padding: 10px 14px 10px 30px; border-radius: var(--radius-sm); background: var(--warn-tint); color: var(--warn); font-size: .88rem; }
+.errs { background: var(--poh-tint); color: var(--poh); }
+.allgood { padding: 10px 14px; border-radius: var(--radius-sm); background: var(--moss-tint); color: var(--moss-strong); font-weight: 600; font-size: .9rem; }
+.ed-sec { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+.ed-sec > summary { font-family: var(--f-display); font-size: 1.15rem; }
+.ed-sec[open] > summary { margin-bottom: 12px; }
+.ed-sec .tbl-wrap { border: none; }
+table.ed { border-collapse: collapse; font-size: .85rem; width: 100%; }
+table.ed th { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); text-align: left; padding: 4px 5px; white-space: nowrap; }
+table.ed td { padding: 3px 5px; vertical-align: middle; }
+table.ed tbody tr:nth-child(even) td { background: var(--surface-2); }
+table.ed input[type="text"], table.ed select { width: 100%; padding: 4px 6px; }
+table.ed input[type="number"] { width: 5.5em; padding: 4px 6px; }
+table.ed td.wide { min-width: 15em; }
+table.ed td.mid { min-width: 9.5em; }
+table.ed td.act { white-space: nowrap; }
+.iconbtn { border: 1px solid var(--line); background: var(--surface); border-radius: 7px; cursor: pointer; padding: 2px 7px; font-size: .8rem; }
+.iconbtn:hover { border-color: var(--poh); }
+.ed-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 12px; margin-bottom: 12px; }
+.ed-card { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px; display: grid; gap: 8px; background: var(--bg); min-width: 0; }
+.ed-card .f { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 6px; align-items: center; font-size: .85rem; }
+.ed-card .f > span { color: var(--ink-soft); font-weight: 600; font-size: .78rem; }
+.ed-card .f input[type="text"], .ed-card .f select { width: 100%; }
+.ed-card .hd { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+/* How it works */
+.prose { max-width: 70ch; display: grid; gap: 12px; }
+.prose h3 { margin-top: 6px; }
+.prose ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+code { font-family: var(--f-mono); font-size: .88em; background: var(--surface-2); padding: 0 4px; border-radius: 4px; }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 20px; justify-content: space-between; }
+.toasts { position: fixed; z-index: 60; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px; max-width: min(92vw, 24rem); }
+.toast { background: var(--head-bg); color: var(--head-fg); padding: 10px 14px; border-radius: var(--radius-sm); box-shadow: var(--shadow); font-size: .9rem; animation: fade .2s both; }
+.toast.err { background: var(--poh); color: var(--on-accent); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-delay: 0s !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="var(--moss)"/><path d="M22 8c7 6 9 13 6 21-2 4-5 7-6 7s-4-3-6-7c-3-8-1-15 6-21z" fill="var(--head-bg)" opacity=".9"/><path d="M22 12v22M22 18l-4-3M22 23l5-4M22 28l-4-3" stroke="var(--head-soft)" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+      <div>
+        <h1>Forage Sandbox</h1>
+        <p class="sub">A Little Place in the Bush · tune the foraging before it's in the game</p>
+      </div>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button" title="Switch between system, light and dark">Theme: system</button>
+  </div>
+</header>
+<div class="tabs-bar">
+  <nav class="wrap tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tabbtn-expedition" data-tab="expedition" aria-selected="true">Expedition</button>
+    <button class="tab" role="tab" id="tabbtn-odds" data-tab="odds" aria-selected="false">Odds</button>
+    <button class="tab" role="tab" id="tabbtn-simulate" data-tab="simulate" aria-selected="false">Simulate</button>
+    <button class="tab" role="tab" id="tabbtn-campaign" data-tab="campaign" aria-selected="false">Campaign</button>
+    <button class="tab" role="tab" id="tabbtn-design" data-tab="design" aria-selected="false">Design data<span class="badge" id="warnBadge" hidden>0</span></button>
+    <button class="tab" role="tab" id="tabbtn-help" data-tab="help" aria-selected="false">How this works</button>
+  </nav>
+</div>
+
+<main class="wrap">
+  <!-- EXPEDITION -->
+  <section class="panel" id="tab-expedition" role="tabpanel" aria-labelledby="tabbtn-expedition">
+    <div class="exp-grid">
+      <div class="setup">
+        <fieldset id="tableField"><legend>Where</legend><select id="tableSelect" aria-label="Forage table"></select></fieldset>
+        <fieldset><legend>Companion</legend><div class="opts" id="companionOpts"></div></fieldset>
+        <fieldset><legend>Perk slot</legend><div class="opts" id="perkOpts"></div></fieldset>
+        <fieldset><legend>Focus</legend><div class="chips" id="focusChips"></div></fieldset>
+        <div class="row-wrap">
+          <fieldset><legend>Time of day</legend>
+            <div class="seg" id="timeSeg"><button type="button" data-time="Day" aria-pressed="true">Day</button><button type="button" data-time="Night" aria-pressed="false">Night</button></div>
+          </fieldset>
+          <fieldset><legend>Seed</legend>
+            <div class="seed-row"><input id="seedInput" type="number" min="0" max="4294967295" step="1" aria-label="Seed"><button class="btn tiny" type="button" id="rerollBtn">Reroll</button></div>
+          </fieldset>
+        </div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="newSeedEach"> New seed after each trip</label>
+          <label class="check"><input type="checkbox" id="addToCampaign"> Add finds to the campaign</label>
+          <label class="check"><input type="checkbox" id="unlockAll"> Designer mode: everything unlocked</label>
+        </div>
+        <div class="btn-row">
+          <button class="btn tiny" type="button" data-act="invent-companion">Randomise a companion</button>
+          <button class="btn tiny" type="button" data-act="invent-perk">Invent a perk</button>
+          <span class="small muted">Made-up ones go into the design data, so you can tweak or delete them there.</span>
+        </div>
+      </div>
+      <aside class="before box" aria-labelledby="beforeHead">
+        <h3 id="beforeHead">Before you go</h3>
+        <div id="effects"></div>
+        <button class="go" type="button" id="goBtn">Go foraging</button>
+      </aside>
+    </div>
+    <section class="box" id="results" aria-live="polite"></section>
+  </section>
+
+  <!-- ODDS -->
+  <section class="panel" id="tab-odds" role="tabpanel" aria-labelledby="tabbtn-odds" hidden>
+    <div class="panel-head">
+      <div><h2>Odds preview</h2><p class="muted">What the current expedition setup can find, per roll and per trip. Green rows are changed by the companion, perk or focus; the small numbers show the difference from going alone with no perk or focus. Click a column to sort.</p></div>
+      <button class="btn" type="button" data-goto="expedition">Change setup</button>
+    </div>
+    <div id="oddsSetup" class="banner info"></div>
+    <div class="tbl-wrap"><table class="data" id="oddsTable"></table></div>
+    <div id="oddsExcluded" class="small muted"></div>
+  </section>
+
+  <!-- SIMULATE -->
+  <section class="panel" id="tab-simulate" role="tabpanel" aria-labelledby="tabbtn-simulate" hidden>
+    <div class="panel-head">
+      <div><h2>Simulator</h2><p class="muted">Runs many trips with the current expedition setup, using the campaign's active quests and found scraps. Each trip gets its own seed drawn from the simulation seed, so the same numbers come back every time you run it.</p></div>
+    </div>
+    <div class="box">
+      <div class="form-row">
+        <label for="simTrips">Trips<input type="number" id="simTrips" min="1" max="200000" step="1" value="1000"></label>
+        <label for="simRuns">Playthroughs for "trips until"<input type="number" id="simRuns" min="10" max="5000" step="10" value="500"></label>
+        <label for="simCap">Give up after (trips)<input type="number" id="simCap" min="1" max="500" step="1" value="100"></label>
+        <label for="simSeed">Simulation seed<input type="number" id="simSeed" min="0" max="4294967295" step="1" value="2024"></label>
+        <button class="btn primary" type="button" id="simRun">Run simulation</button>
+      </div>
+      <p class="small muted" id="simSetup" style="margin-top:10px"></p>
+    </div>
+    <div id="simOut"><div class="empty">Press <b>Run simulation</b> to see averages per trip, and how many trips it takes before the player can cook each recipe or finish each quest.</div></div>
+  </section>
+
+  <!-- CAMPAIGN -->
+  <section class="panel" id="tab-campaign" role="tabpanel" aria-labelledby="tabbtn-campaign" hidden>
+    <div class="panel-head">
+      <div><h2>Campaign</h2><p class="muted">A running save across trips, like the game: the basket fills up, companions teach perks, recipe scraps stop dropping once found, and the first scrap only drops while The lost recipe is active.</p></div>
+      <div class="btn-row"><button class="btn" type="button" data-goto="expedition">Go on a trip</button><button class="btn danger" type="button" id="resetCampaign">Reset campaign</button></div>
+    </div>
+    <div id="campaignOut"></div>
+  </section>
+
+  <!-- DESIGN -->
+  <section class="panel" id="tab-design" role="tabpanel" aria-labelledby="tabbtn-design" hidden>
+    <div class="panel-head">
+      <div><h2>Design data</h2><p class="muted">Edit items, the forage table, companions, perks and focuses. Changes save in this browser and update every other tab. Export gives a <code>design-data.json</code> for Unity: <b>Tools &gt; Bush &gt; Import Design Data</b>.</p></div>
+      <div class="btn-row">
+        <button class="btn primary" type="button" id="exportBtn">Export JSON</button>
+        <label class="btn" for="importFile">Import JSON</label><input type="file" id="importFile" accept=".json,application/json" hidden>
+        <button class="btn" type="button" id="copyBtn">Copy JSON</button>
+        <button class="btn danger" type="button" id="resetDesign">Reset to defaults</button>
+      </div>
+    </div>
+    <div id="importErrors"></div>
+    <div id="warnings"></div>
+    <textarea id="copyFallback" hidden readonly rows="6" aria-label="Design JSON"></textarea>
+    <div id="editor" class="panel"></div>
+  </section>
+
+  <!-- HELP -->
+  <section class="panel" id="tab-help" role="tabpanel" aria-labelledby="tabbtn-help" hidden>
+    <div class="prose">
+      <h2>How foraging works</h2>
+      <p>Every trip into the bush is a handful of <b>rolls</b>. Each roll is like pulling one thing out of a big bag. What's in the bag, and how much of each, comes from the <b>forage table</b>.</p>
+      <h3>Weights</h3>
+      <p>Each line in the table has a <b>weight</b>. Bigger weight, more of the bag. If leaves have weight 30 and truffles 2, a roll is fifteen times more likely to find leaves than a truffle. The chance of one roll finding something is its weight divided by the total weight of everything in the bag.</p>
+      <p>Each line also has a <b>min</b> and <b>max</b> (how many you get when it's picked), a <b>time</b> (Any, Day only or Night only) and sometimes a <b>quest</b> it needs: the first recipe scrap only drops while <i>The lost recipe</i> is active. Items marked <b>unique</b> drop once ever. Once the player has one, it leaves the bag for good.</p>
+      <h3>Modifiers</h3>
+      <p>Companions and perks carry modifiers. The focus you pick becomes a weight boost for each of its tags.</p>
+      <ul>
+        <li><b>TagWeight</b>: items with this tag get their weight multiplied (Kea: bark ×3).</li>
+        <li><b>TagQuantity</b>: every find of an item with this tag gives extra (+1 bark per find).</li>
+        <li><b>RarityWeight</b>: items of this rarity get their weight multiplied (Rare ×2).</li>
+        <li><b>ExtraRolls</b>: more rolls per trip (Big basket: +1 find).</li>
+        <li><b>BonusRoll</b>: after the normal rolls, a chance of one extra roll that can only find items with this tag (Weka: 40% chance to snatch something shiny).</li>
+      </ul>
+      <p>Weight boosts multiply together, so a ×2 focus on top of a ×2.5 companion makes ×5. Extra quantities and extra rolls round down, so a value of 1.7 counts as 1.</p>
+      <h3>Seeds</h3>
+      <p>The dice are a seeded random number generator. The same design data, setup and seed always give the same trip, here and in Unity. When something odd happens, note the seed on the result ("seed 12345 gave 3 truffles") and anyone can replay it exactly.</p>
+      <h3>Reading the odds</h3>
+      <ul>
+        <li><b>Chance per roll</b>: how likely one roll is to find it.</li>
+        <li><b>At least one per trip</b>: how likely a whole trip is to find one or more. It ignores bonus rolls, so it's a slight underestimate.</li>
+        <li><b>Expected per trip</b>: the average amount you'd bring home per trip over many trips (bonus rolls included).</li>
+      </ul>
+      <p>The Simulator runs thousands of trips for exact averages, and answers the design goal: after one or two trips, can the player cook a recipe and finish a quest?</p>
+      <p class="small muted">The full rules live in <code>docs/FORAGING.md</code>. From the browser console you can call <code>ForageSandbox.resolve(design, setup, context, seed)</code> and <code>ForageSandbox.preview(design, setup, context)</code> to compare against Unity. <code>ForageSandbox.defaultDesign</code> is the built-in data and <code>ForageSandbox.currentDesign()</code> is your edited copy.</p>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><span>Rules follow docs/FORAGING.md. Same data + seed = same result in Unity.</span><span id="saveState"></span></div></footer>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="overlay" id="overlay" hidden>
+  <div class="overlay-card">
+    <h2 id="ovTitle">Off into the bush</h2>
+    <p id="ovText">Rustling through the ferns.</p>
+    <div class="trail"><i id="ovTrail"></i></div>
+    <button class="skip" type="button" id="ovSkip">Skip</button>
+  </div>
+</div>
+<datalist id="tagList"></datalist>
+<script type="application/json" id="seed-design">
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "item.leaves",
+      "name": "Leaves",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 1,
+      "unique": false,
+      "description": "A handful of fresh green leaves.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.fern_frond",
+      "name": "Fern frond",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "A curly young frond. Lovely fried.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.moss",
+      "name": "Moss",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 1,
+      "unique": false,
+      "description": "Soft and springy. Surprisingly good on toast.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.kawakawa",
+      "name": "Kawakawa leaf",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "leaf"
+      ],
+      "sellValue": 4,
+      "unique": false,
+      "description": "Heart-shaped and peppery. The holey ones are the best.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.berries",
+      "name": "Berries",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "fruit"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Small, bright and juicy.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.feijoa",
+      "name": "Feijoa",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "fruit"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "Fragrant and sweet. Everyone has too many in autumn.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.pohutukawa_petals",
+      "name": "Pōhutukawa petals",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "flower"
+      ],
+      "sellValue": 4,
+      "unique": false,
+      "description": "Crimson petals from the summer tree.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.nectar",
+      "name": "Nectar",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "nectar",
+        "flower"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "A sticky drop of sweetness.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.honeydew",
+      "name": "Honeydew",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "nectar"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "Sweet sap from the beech trees.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.worm",
+      "name": "Worm",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "worm"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "A wriggly classic.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.giant_worm",
+      "name": "Giant worm",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "worm"
+      ],
+      "sellValue": 6,
+      "unique": false,
+      "description": "Long enough to share. Snails go wild for these.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.moth",
+      "name": "Moth",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Dusty wings, crunchy body.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.cricket",
+      "name": "Cricket",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Chirps until the very end.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.beetle",
+      "name": "Beetle",
+      "category": "Ingredient",
+      "rarity": "Uncommon",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 4,
+      "unique": false,
+      "description": "Shiny shell, nutty taste.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.glowworm",
+      "name": "Glowworm",
+      "category": "Ingredient",
+      "rarity": "Rare",
+      "tags": [
+        "insect"
+      ],
+      "sellValue": 15,
+      "unique": false,
+      "description": "Glows softly. Only found at night.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.mushroom",
+      "name": "Mushroom",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "fungi"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "Earthy and plump.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.truffle",
+      "name": "Truffle",
+      "category": "Ingredient",
+      "rarity": "Rare",
+      "tags": [
+        "fungi"
+      ],
+      "sellValue": 20,
+      "unique": false,
+      "description": "Kunekune pigs can sniff these out.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.mud",
+      "name": "Mud",
+      "category": "Ingredient",
+      "rarity": "Common",
+      "tags": [
+        "mud"
+      ],
+      "sellValue": 1,
+      "unique": false,
+      "description": "Good, rich mud. Ask a pig.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.bark",
+      "name": "Bark",
+      "category": "Material",
+      "rarity": "Common",
+      "tags": [
+        "bark"
+      ],
+      "sellValue": 2,
+      "unique": false,
+      "description": "A strip of tough bark. Useful for repairs.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.silk",
+      "name": "Spider silk",
+      "category": "Material",
+      "rarity": "Uncommon",
+      "tags": [
+        "silk"
+      ],
+      "sellValue": 5,
+      "unique": false,
+      "description": "Strong, fine thread.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.shiny_button",
+      "name": "Shiny button",
+      "category": "Treasure",
+      "rarity": "Uncommon",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 10,
+      "unique": false,
+      "description": "Someone lost this. A weka would love it.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.sea_glass",
+      "name": "Sea glass",
+      "category": "Treasure",
+      "rarity": "Uncommon",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "Smooth and green. Far from the sea.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.paua_shell",
+      "name": "Pāua shell",
+      "category": "Treasure",
+      "rarity": "Rare",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 30,
+      "unique": false,
+      "description": "Swirls of blue and green.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.kauri_gum",
+      "name": "Kauri gum",
+      "category": "Treasure",
+      "rarity": "Legendary",
+      "tags": [
+        "shiny"
+      ],
+      "sellValue": 80,
+      "unique": false,
+      "description": "A golden lump of ancient resin. Very rare.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.recipe_scrap_1",
+      "name": "Recipe scrap (top)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "The top of an old recipe card. It smells of kawakawa.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.recipe_scrap_2",
+      "name": "Recipe scrap (left)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "A torn corner with a list of ingredients.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.recipe_scrap_3",
+      "name": "Recipe scrap (right)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "Half a method, in very small handwriting.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.recipe_scrap_4",
+      "name": "Recipe scrap (bottom)",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "scrap"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "The bottom of the card, signed 'R'.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.note_kiwi",
+      "name": "Kiwi's late-night note",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "encounter"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "You met Kiwi snuffling by the stream in the dark. Kiwi scratched out how to make glowworm jelly.",
+      "teachesRecipe": "recipe.glowworm_jelly"
+    },
+    {
+      "id": "item.note_kunekune",
+      "name": "A muddy recipe scribble",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "encounter"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "The kunekune pig rooted up an old tin with a recipe inside, and insisted you keep it.",
+      "teachesRecipe": "recipe.truffle_toast"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe.leaf_salad",
+      "name": "Leaf salad",
+      "ingredients": [
+        {
+          "item": "item.leaves",
+          "qty": 3
+        }
+      ],
+      "coins": 6,
+      "unlockedByDefault": true,
+      "price": 0,
+      "scraps": [],
+      "description": "Simple, fresh and green."
+    },
+    {
+      "id": "recipe.worm_pie",
+      "name": "Worm pie",
+      "ingredients": [
+        {
+          "item": "item.worm",
+          "qty": 2
+        },
+        {
+          "item": "item.leaves",
+          "qty": 1
+        }
+      ],
+      "coins": 10,
+      "unlockedByDefault": true,
+      "price": 0,
+      "scraps": [],
+      "description": "A hearty bush favourite."
+    },
+    {
+      "id": "recipe.berry_cake",
+      "name": "Berry cake",
+      "ingredients": [
+        {
+          "item": "item.berries",
+          "qty": 3
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        }
+      ],
+      "coins": 14,
+      "unlockedByDefault": true,
+      "price": 0,
+      "scraps": [],
+      "description": "Sticky, sweet and very pink."
+    },
+    {
+      "id": "recipe.moss_toast",
+      "name": "Moss toast",
+      "ingredients": [
+        {
+          "item": "item.moss",
+          "qty": 2
+        },
+        {
+          "item": "item.mushroom",
+          "qty": 1
+        }
+      ],
+      "coins": 9,
+      "unlockedByDefault": false,
+      "price": 20,
+      "scraps": [],
+      "description": "Crunchy on top, squishy underneath."
+    },
+    {
+      "id": "recipe.fern_fritters",
+      "name": "Fern fritters",
+      "ingredients": [
+        {
+          "item": "item.fern_frond",
+          "qty": 2
+        },
+        {
+          "item": "item.berries",
+          "qty": 1
+        }
+      ],
+      "coins": 10,
+      "unlockedByDefault": false,
+      "price": 20,
+      "scraps": [],
+      "description": "Curly fronds in crispy batter."
+    },
+    {
+      "id": "recipe.mushroom_soup",
+      "name": "Mushroom soup",
+      "ingredients": [
+        {
+          "item": "item.mushroom",
+          "qty": 3
+        },
+        {
+          "item": "item.leaves",
+          "qty": 1
+        }
+      ],
+      "coins": 12,
+      "unlockedByDefault": false,
+      "price": 25,
+      "scraps": [],
+      "description": "Earthy and warming."
+    },
+    {
+      "id": "recipe.moth_muffins",
+      "name": "Moth muffins",
+      "ingredients": [
+        {
+          "item": "item.moth",
+          "qty": 2
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 14,
+      "unlockedByDefault": false,
+      "price": 30,
+      "scraps": [],
+      "description": "Fluffy, with a little crunch."
+    },
+    {
+      "id": "recipe.feijoa_juice",
+      "name": "Feijoa juice",
+      "ingredients": [
+        {
+          "item": "item.feijoa",
+          "qty": 2
+        }
+      ],
+      "coins": 12,
+      "unlockedByDefault": false,
+      "price": 25,
+      "scraps": [],
+      "description": "Tastes like autumn."
+    },
+    {
+      "id": "recipe.pohutukawa_biscuits",
+      "name": "Pōhutukawa petal biscuits",
+      "ingredients": [
+        {
+          "item": "item.pohutukawa_petals",
+          "qty": 2
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        }
+      ],
+      "coins": 18,
+      "unlockedByDefault": false,
+      "price": 40,
+      "scraps": [],
+      "description": "Pretty enough to frame."
+    },
+    {
+      "id": "recipe.glowworm_jelly",
+      "name": "Glowworm jelly",
+      "ingredients": [
+        {
+          "item": "item.glowworm",
+          "qty": 1
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 35,
+      "unlockedByDefault": false,
+      "price": 60,
+      "scraps": [],
+      "description": "Wobbles and glows."
+    },
+    {
+      "id": "recipe.kawakawa_scroll",
+      "name": "Kawakawa scroll",
+      "ingredients": [
+        {
+          "item": "item.kawakawa",
+          "qty": 2
+        },
+        {
+          "item": "item.honeydew",
+          "qty": 1
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 45,
+      "unlockedByDefault": false,
+      "price": 0,
+      "scraps": [
+        "item.recipe_scrap_1",
+        "item.recipe_scrap_2",
+        "item.recipe_scrap_3",
+        "item.recipe_scrap_4"
+      ],
+      "description": "Ruru's famous recipe, pieced back together."
+    },
+    {
+      "id": "recipe.cricket_croissants",
+      "name": "Cricket croissants",
+      "ingredients": [
+        {
+          "item": "item.cricket",
+          "qty": 2
+        },
+        {
+          "item": "item.leaves",
+          "qty": 1
+        }
+      ],
+      "coins": 12,
+      "unlockedByDefault": false,
+      "price": 25,
+      "scraps": [],
+      "description": "Flaky, buttery, chirpy."
+    },
+    {
+      "id": "recipe.beetlejuice",
+      "name": "Beetlejuice",
+      "ingredients": [
+        {
+          "item": "item.beetle",
+          "qty": 1
+        },
+        {
+          "item": "item.berries",
+          "qty": 2
+        }
+      ],
+      "coins": 14,
+      "unlockedByDefault": false,
+      "price": 30,
+      "scraps": [],
+      "description": "Don't say it three times."
+    },
+    {
+      "id": "recipe.mud_puddle_brownies",
+      "name": "Mud puddle brownies",
+      "ingredients": [
+        {
+          "item": "item.mud",
+          "qty": 2
+        },
+        {
+          "item": "item.nectar",
+          "qty": 1
+        }
+      ],
+      "coins": 12,
+      "unlockedByDefault": false,
+      "price": 25,
+      "scraps": [],
+      "description": "Squelchy in the middle. In a good way."
+    },
+    {
+      "id": "recipe.giant_worm_noodles",
+      "name": "Giant worm noodles",
+      "ingredients": [
+        {
+          "item": "item.giant_worm",
+          "qty": 1
+        },
+        {
+          "item": "item.fern_frond",
+          "qty": 1
+        }
+      ],
+      "coins": 16,
+      "unlockedByDefault": false,
+      "price": 35,
+      "scraps": [],
+      "description": "Like spaghetti, but wigglier."
+    },
+    {
+      "id": "recipe.truffle_toast",
+      "name": "Truffle toast",
+      "ingredients": [
+        {
+          "item": "item.truffle",
+          "qty": 1
+        },
+        {
+          "item": "item.moss",
+          "qty": 1
+        }
+      ],
+      "coins": 40,
+      "unlockedByDefault": false,
+      "price": 50,
+      "scraps": [],
+      "description": "Fancy. The kunekune pig insists."
+    }
+  ],
+  "companions": [
+    {
+      "id": "companion.kea",
+      "name": "Kea",
+      "description": "Uses its beak as a hammer. Finds much more bark.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "bark",
+          "rarity": "",
+          "value": 3
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "bark",
+          "rarity": "",
+          "value": 1
+        }
+      ],
+      "teachesPerk": "perk.bark_knowhow",
+      "tripsToTeach": 3
+    },
+    {
+      "id": "companion.weka",
+      "name": "Weka",
+      "description": "Always steals stuff. Good chance of bringing back something shiny.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "BonusRoll",
+          "tag": "shiny",
+          "rarity": "",
+          "value": 0.4
+        },
+        {
+          "type": "TagWeight",
+          "tag": "shiny",
+          "rarity": "",
+          "value": 1.5
+        }
+      ],
+      "teachesPerk": "perk.shiny_sense",
+      "tripsToTeach": 3
+    },
+    {
+      "id": "companion.pekapeka",
+      "name": "Pekapeka",
+      "description": "Sees in the dark and eats insects. Finds more bugs, and spots night visitors.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "insect",
+          "rarity": "",
+          "value": 2.5
+        },
+        {
+          "type": "TagWeight",
+          "tag": "encounter",
+          "rarity": "",
+          "value": 2
+        }
+      ],
+      "teachesPerk": "perk.night_sight",
+      "tripsToTeach": 3
+    },
+    {
+      "id": "companion.kunekune",
+      "name": "Kunekune pig",
+      "description": "Slow and friendly, with a nose for mud and fungi. Sniffs out truffles.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "fungi",
+          "rarity": "",
+          "value": 2.5
+        },
+        {
+          "type": "TagWeight",
+          "tag": "mud",
+          "rarity": "",
+          "value": 2
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Rare",
+          "value": 1.5
+        }
+      ],
+      "teachesPerk": "",
+      "tripsToTeach": 0
+    },
+    {
+      "id": "companion.spider",
+      "name": "Spider",
+      "description": "Spins silk wherever it goes.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "silk",
+          "rarity": "",
+          "value": 3
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "silk",
+          "rarity": "",
+          "value": 1
+        }
+      ],
+      "teachesPerk": "",
+      "tripsToTeach": 0
+    }
+  ],
+  "perks": [
+    {
+      "id": "perk.big_basket",
+      "name": "Big basket",
+      "description": "Room for one more find each trip.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "ExtraRolls",
+          "tag": "",
+          "rarity": "",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "perk.sweet_tooth",
+      "name": "Sweet tooth",
+      "description": "Drawn to fruit and nectar.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "fruit",
+          "rarity": "",
+          "value": 2
+        },
+        {
+          "type": "TagWeight",
+          "tag": "nectar",
+          "rarity": "",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "perk.early_bird",
+      "name": "Early bird",
+      "description": "Up before the worms are. More worms, and more of them.",
+      "unlockedByDefault": true,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "worm",
+          "rarity": "",
+          "value": 2
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "worm",
+          "rarity": "",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "perk.keen_eye",
+      "name": "Keen eye",
+      "description": "Better at spotting rare things.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Uncommon",
+          "value": 1.5
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Rare",
+          "value": 2
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Legendary",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "perk.bark_knowhow",
+      "name": "Bark know-how",
+      "description": "Learned from Kea. A little extra bark every time.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagQuantity",
+          "tag": "bark",
+          "rarity": "",
+          "value": 1
+        },
+        {
+          "type": "TagWeight",
+          "tag": "bark",
+          "rarity": "",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "id": "perk.shiny_sense",
+      "name": "Shiny sense",
+      "description": "Learned from Weka. A small chance of a bonus shiny.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "BonusRoll",
+          "tag": "shiny",
+          "rarity": "",
+          "value": 0.2
+        }
+      ]
+    },
+    {
+      "id": "perk.night_sight",
+      "name": "Night sight",
+      "description": "Learned from Pekapeka. More insects.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "insect",
+          "rarity": "",
+          "value": 1.75
+        }
+      ]
+    }
+  ],
+  "focuses": [
+    {
+      "id": "focus.bugs",
+      "name": "Bugs and worms",
+      "tags": [
+        "insect",
+        "worm"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.greens",
+      "name": "Greens",
+      "tags": [
+        "leaf"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.sweet",
+      "name": "Fruit and flowers",
+      "tags": [
+        "fruit",
+        "flower",
+        "nectar"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.fungi",
+      "name": "Fungi and mud",
+      "tags": [
+        "fungi",
+        "mud"
+      ],
+      "multiplier": 2
+    },
+    {
+      "id": "focus.materials",
+      "name": "Bark and silk",
+      "tags": [
+        "bark",
+        "silk"
+      ],
+      "multiplier": 2
+    }
+  ],
+  "forageTables": [
+    {
+      "id": "table.bush",
+      "name": "The bush",
+      "rolls": 4,
+      "entries": [
+        {
+          "item": "item.leaves",
+          "weight": 40,
+          "min": 2,
+          "max": 4,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.fern_frond",
+          "weight": 18,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.moss",
+          "weight": 12,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.kawakawa",
+          "weight": 8,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.berries",
+          "weight": 25,
+          "min": 2,
+          "max": 4,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.feijoa",
+          "weight": 8,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.pohutukawa_petals",
+          "weight": 6,
+          "min": 1,
+          "max": 2,
+          "time": "Day",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.nectar",
+          "weight": 8,
+          "min": 1,
+          "max": 1,
+          "time": "Day",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.honeydew",
+          "weight": 6,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.worm",
+          "weight": 25,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.giant_worm",
+          "weight": 6,
+          "min": 1,
+          "max": 1,
+          "time": "Night",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.moth",
+          "weight": 14,
+          "min": 1,
+          "max": 2,
+          "time": "Night",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.cricket",
+          "weight": 12,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.beetle",
+          "weight": 8,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.glowworm",
+          "weight": 4,
+          "min": 1,
+          "max": 1,
+          "time": "Night",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.mushroom",
+          "weight": 14,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.truffle",
+          "weight": 2,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.mud",
+          "weight": 10,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.bark",
+          "weight": 15,
+          "min": 1,
+          "max": 3,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.silk",
+          "weight": 14,
+          "min": 1,
+          "max": 2,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.shiny_button",
+          "weight": 4,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.sea_glass",
+          "weight": 3,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.paua_shell",
+          "weight": 1,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.kauri_gum",
+          "weight": 0.4,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.recipe_scrap_1",
+          "weight": 12,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "quest.main_lost_recipe",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.note_kiwi",
+          "weight": 1.5,
+          "min": 1,
+          "max": 1,
+          "time": "Night",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.note_kunekune",
+          "weight": 2,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": "companion.kunekune"
+        }
+      ]
+    }
+  ],
+  "npcs": [
+    {
+      "id": "npc.ruru",
+      "name": "Ruru",
+      "species": "Ruru (morepork)",
+      "description": "The old cafe owner. Wise, sleepy by day, and missing her famous recipe."
+    },
+    {
+      "id": "npc.weka",
+      "name": "Weka",
+      "species": "Weka",
+      "description": "Cheeky, always hanging around the cafe, and steals anything shiny."
+    },
+    {
+      "id": "npc.snail",
+      "name": "Snail",
+      "species": "Snail",
+      "description": "Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu."
+    },
+    {
+      "id": "npc.weta",
+      "name": "Wētā",
+      "species": "Wētā",
+      "description": "Nocturnal, lives in a hollow tree trunk that badly needs fixing."
+    }
+  ],
+  "quests": [
+    {
+      "id": "quest.main_welcome",
+      "title": "A cafe of my own",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [],
+      "summary": "Ruru wants to see you cook something before she trusts you with the cafe.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.leaf_salad",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.keen_eye",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "So you're the one taking over my old cafe? Show me you can make a simple leaf salad.",
+        "active": "A leaf salad. Three handfuls of leaves. You can manage that.",
+        "ready": "Ah, that smells right. You'll do.",
+        "done": "The cafe's in good claws."
+      }
+    },
+    {
+      "id": "quest.main_lost_recipe",
+      "title": "The lost recipe",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Ruru's famous kawakawa scroll recipe was torn into four scraps and scattered. Find all four and bring them to her.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_1",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_2",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_3",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.recipe_scrap_4",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.kawakawa_scroll",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 50
+        }
+      ],
+      "dialogue": {
+        "offer": "My kawakawa scroll recipe... the wind took it, and it tore into four. One blew into the bush. I'd bet that weka has another.",
+        "active": "Any luck with the scraps? Try the bush, and ask around the neighbours.",
+        "ready": "All four! Let me piece them together...",
+        "done": "The kawakawa scroll is yours now. Make the village proud."
+      }
+    },
+    {
+      "id": "quest.side_weka_trade",
+      "title": "A fair trade",
+      "giver": "npc.weka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Weka has a recipe scrap and will swap it for a shiny button.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.shiny_button",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_2",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Paper? Oh, THIS paper. It's not stolen, it's... found. One shiny button and it's yours.",
+        "active": "A button. A shiny one.",
+        "ready": "Ooh, shiny! Deal. Take your paper.",
+        "done": "Got anything else shiny? No? Hmph."
+      }
+    },
+    {
+      "id": "quest.side_snail_hungry",
+      "title": "A very hungry snail",
+      "giver": "npc.snail",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Snail will share something it found if you cook two worm pies.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.worm_pie",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_3",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        },
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.kunekune",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Worm... pie...? Two, please. I found some old paper you can have.",
+        "active": "Still... hungry...",
+        "ready": "Mmmmm. Here. The paper. Slowly. And my friend the kunekune pig wants to forage with you.",
+        "done": "Same time tomorrow?"
+      }
+    },
+    {
+      "id": "quest.side_weta_repairs",
+      "title": "Hollow home",
+      "giver": "npc.weta",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Wētā's hollow tree trunk is falling apart. Bring 4 bark and 2 silk to patch it up.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.bark",
+          "qty": 4
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.silk",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_4",
+          "qty": 1
+        },
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.spider",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "*rubs hind legs* My trunk is full of holes. Four bark and two silk would fix it. I'll give you a scrap I found inside.",
+        "active": "Four bark, two silk. Kea is good at finding bark.",
+        "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
+        "done": "Come by at night. I'm awake then."
+      }
+    }
+  ]
+}
+</script>
+<script>
+(function () {
+"use strict";
+
+/* =====================================================================
+   CORE RULES: follows docs/FORAGING.md step by step. No DOM access.
+   ===================================================================== */
+var RARITIES = ["Common", "Uncommon", "Rare", "Legendary"];
+var CATEGORIES = ["Ingredient", "Material", "Treasure", "KeyItem"];
+var MOD_TYPES = ["TagWeight", "TagQuantity", "RarityWeight", "ExtraRolls", "BonusRoll"];
+var TIMES = ["Any", "Day", "Night"];
+
+// mulberry32: returns doubles in [0, 1). uint32 maths via Math.imul and >>> 0.
+function mulberry32(seed) {
+  var state = seed >>> 0;
+  return function next() {
+    state = (state + 0x6D2B79F5) >>> 0;
+    var t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function findById(list, id) {
+  if (!list) return null;
+  for (var i = 0; i < list.length; i++) if (list[i] && list[i].id === id) return list[i];
+  return null;
+}
+function tagsOf(item) { return Array.isArray(item.tags) ? item.tags : []; }
+function hasTag(item, tag) { return tagsOf(item).indexOf(tag) >= 0; }
+
+// Step 1: collect modifiers: companion, then each perk in order, then the focus.
+function collectModifiers(design, setup) {
+  var mods = [];
+  function addFrom(owner, kind) {
+    var list = owner.modifiers || [];
+    for (var i = 0; i < list.length; i++) {
+      var m = list[i];
+      mods.push({ type: m.type, tag: m.tag || "", rarity: m.rarity || "", value: Number(m.value), src: { kind: kind, id: owner.id, name: owner.name } });
+    }
+  }
+  if (setup.companion) { var c = findById(design.companions, setup.companion); if (c) addFrom(c, "companion"); }
+  var perks = setup.perks || [];
+  for (var p = 0; p < perks.length; p++) { var pk = findById(design.perks, perks[p]); if (pk) addFrom(pk, "perk"); }
+  if (setup.focus) {
+    var f = findById(design.focuses, setup.focus);
+    if (f) {
+      var ft = f.tags || [];
+      // One entry for the whole focus: an item with several of its tags still gets the multiplier once.
+      if (ft.length) mods.push({ type: "Focus", tags: ft.slice(), tag: ft.join("/"), rarity: "", value: Number(f.multiplier), src: { kind: "focus", id: f.id, name: f.name } });
+    }
+  }
+  return mods;
+}
+
+// Steps 2-4: eligible entries, effective weights, number of rolls.
+function prepare(design, setup, context) {
+  var table = findById(design.forageTables, setup.table);
+  if (!table) throw new Error("Unknown forage table: " + setup.table);
+  var itemMap = {};
+  (design.items || []).forEach(function (it) { itemMap[it.id] = it; });
+  var mods = collectModifiers(design, setup);
+  var ctx = context || {};
+  var active = ctx.activeQuests || [];
+  var obtained = ctx.obtained || [];
+  var time = setup.time === "Night" ? "Night" : "Day";
+  var eligible = [];
+  var entries = table.entries || [];
+  for (var i = 0; i < entries.length; i++) {
+    var e = entries[i];
+    var item = itemMap[e.item];
+    if (!item) continue; // unknown item id: skipped (the editor warns about it)
+    var et = e.time || "Any";
+    if (et !== "Any" && et !== time) continue;
+    if (e.requiresQuest && active.indexOf(e.requiresQuest) < 0) continue;
+    if (e.requiresCompanion && setup.companion !== e.requiresCompanion) continue;
+    if (item.unique && obtained.indexOf(item.id) >= 0) continue;
+    var w = Number(e.weight);
+    for (var m = 0; m < mods.length; m++) {
+      var md = mods[m];
+      if (md.type === "TagWeight" && hasTag(item, md.tag)) w *= md.value;
+      else if (md.type === "RarityWeight" && item.rarity === md.rarity) w *= md.value;
+      else if (md.type === "Focus" && md.tags.some(function (t) { return hasTag(item, t); })) w *= md.value;
+    }
+    var qb = 0;
+    for (var q = 0; q < mods.length; q++) {
+      if (mods[q].type === "TagQuantity" && hasTag(item, mods[q].tag)) qb += Math.floor(mods[q].value);
+    }
+    eligible.push({ index: i, entry: e, item: item, w: w, baseW: Number(e.weight), qb: qb });
+  }
+  var extra = 0;
+  for (var x = 0; x < mods.length; x++) if (mods[x].type === "ExtraRolls") extra += Math.floor(mods[x].value);
+  var rolls = Number(table.rolls) + extra;
+  if (!(rolls >= 1)) rolls = 1;
+  return { table: table, mods: mods, eligible: eligible, rolls: rolls, extraRolls: extra, time: time };
+}
+
+// Step 5: one roll, exactly two random numbers (none if the pool is empty).
+function rollOnce(pool, rng, foundUnique, bonus, src) {
+  if (pool.length === 0) return null;
+  var total = 0;
+  for (var i = 0; i < pool.length; i++) total += pool[i].w;
+  var r = rng() * total;
+  var pick = null;
+  for (var j = 0; j < pool.length; j++) {
+    r -= pool[j].w;
+    if (r < 0) { pick = pool[j]; break; }
+  }
+  if (!pick) pick = pool[pool.length - 1];
+  var min = Number(pick.entry.min), max = Number(pick.entry.max);
+  var qty = min + Math.floor(rng() * (max - min + 1)) + pick.qb;
+  if (pick.item.unique) { qty = 1; foundUnique[pick.item.id] = true; }
+  return { item: pick.item.id, qty: qty, chance: pick.w / total, bonus: bonus, src: src };
+}
+
+function buildPool(P, foundUnique, tag) {
+  var pool = [];
+  for (var i = 0; i < P.eligible.length; i++) {
+    var p = P.eligible[i];
+    if (!(p.w > 0)) continue;
+    if (p.item.unique && foundUnique[p.item.id]) continue;
+    if (tag !== undefined && !hasTag(p.item, tag)) continue;
+    pool.push(p);
+  }
+  return pool;
+}
+
+function resolveFull(design, setup, context, seed) {
+  var P = prepare(design, setup, context);
+  var rng = mulberry32(seed >>> 0);
+  var found = {};
+  var rolls = [];
+  for (var i = 0; i < P.rolls; i++) {
+    var r = rollOnce(buildPool(P, found), rng, found, false, null);
+    if (r) rolls.push(r);
+  }
+  // Step 6: bonus rolls, in modifier order.
+  for (var m = 0; m < P.mods.length; m++) {
+    var md = P.mods[m];
+    if (md.type !== "BonusRoll") continue;
+    var x = rng();
+    if (x < md.value) {
+      var b = rollOnce(buildPool(P, found, md.tag), rng, found, true, md.src);
+      if (b) rolls.push(b);
+    }
+  }
+  // Step 7: merge into stacks in order of first appearance; flag rare finds.
+  var stacks = [], idx = {};
+  rolls.forEach(function (r) {
+    if (idx[r.item] === undefined) { idx[r.item] = stacks.length; stacks.push({ item: r.item, qty: 0 }); }
+    stacks[idx[r.item]].qty += r.qty;
+  });
+  var rareFinds = [];
+  stacks.forEach(function (s) {
+    var it = findById(design.items, s.item);
+    if (it && (it.rarity === "Rare" || it.rarity === "Legendary")) rareFinds.push(s.item);
+  });
+  return { rolls: rolls, stacks: stacks, rareFinds: rareFinds, rollCount: P.rolls };
+}
+
+function resolve(design, setup, context, seed) {
+  var full = resolveFull(design, setup, context, seed);
+  return {
+    rolls: full.rolls.map(function (r) { return { item: r.item, qty: r.qty, chance: r.chance, bonus: r.bonus }; }),
+    stacks: full.stacks,
+    rareFinds: full.rareFinds,
+    rollCount: full.rollCount
+  };
+}
+
+// Odds preview. chanceAtLeastOne ignores bonus rolls and uniqueness (per spec);
+// expectedQty includes the expected bonus-roll contribution.
+function preview(design, setup, context) {
+  var P = prepare(design, setup, context);
+  var total = 0;
+  P.eligible.forEach(function (p) { if (p.w > 0) total += p.w; });
+  var bonusMods = P.mods.filter(function (m) { return m.type === "BonusRoll"; });
+  var entries = P.eligible.map(function (p) {
+    var pr = p.w > 0 && total > 0 ? p.w / total : 0;
+    var min = Number(p.entry.min), max = Number(p.entry.max);
+    var avg = p.item.unique ? 1 : (min + max) / 2 + p.qb;
+    var exp = pr * P.rolls * avg;
+    var bonusChance = 0;
+    bonusMods.forEach(function (bm) {
+      if (!(p.w > 0) || !hasTag(p.item, bm.tag)) return;
+      var tb = 0;
+      P.eligible.forEach(function (o) { if (o.w > 0 && hasTag(o.item, bm.tag)) tb += o.w; });
+      var c = Math.max(0, Math.min(1, bm.value)) * (p.w / tb);
+      bonusChance += c;
+      exp += c * avg;
+    });
+    if (p.item.unique) exp = Math.min(1, pr * P.rolls + bonusChance) * avg;
+    return {
+      item: p.item.id, weight: p.w, chancePerRoll: pr,
+      chanceAtLeastOne: 1 - Math.pow(1 - pr, P.rolls),
+      expectedQty: exp,
+      baseWeight: p.baseW, qtyBonus: p.qb, bonusChance: bonusChance, entryIndex: p.index
+    };
+  });
+  return { rolls: P.rolls, total: total, entries: entries, bonusRolls: bonusMods.map(function (m) { return { tag: m.tag, value: m.value, from: m.src.name }; }) };
+}
+
+/* =====================================================================
+   APP STATE + STORAGE
+   ===================================================================== */
+var DEFAULT_DESIGN = JSON.parse(document.getElementById("seed-design").textContent);
+var KEY_DESIGN = "forageSandbox.design.v1", KEY_CAMPAIGN = "forageSandbox.campaign.v1", KEY_UI = "forageSandbox.ui.v1", KEY_THEME = "forageSandbox.theme.v1";
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function load(key) { try { var s = localStorage.getItem(key); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+var storageOk = true;
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { storageOk = false; return false; } }
+function randSeed() { return Math.floor(Math.random() * 4294967296) >>> 0; }
+
+function hashText(text) { var h = 5381; for (var i = 0; i < text.length; i++) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0; return h.toString(16); }
+var KEY_BASE = "forageSandbox.designBase.v1";
+var DEFAULT_HASH = hashText(JSON.stringify(DEFAULT_DESIGN));
+var design = load(KEY_DESIGN);
+var staleDesign = false;
+if (!design || schemaErrors(design).length) design = clone(DEFAULT_DESIGN);
+else staleDesign = load(KEY_BASE) !== DEFAULT_HASH;
+var campaign = load(KEY_CAMPAIGN) || newCampaign();
+var ui = Object.assign({
+  table: (design.forageTables[0] || {}).id, companion: null, perk: null, focus: null, time: "Day",
+  seed: randSeed(), newSeedEach: true, addToCampaign: true, unlockAll: false, tab: "expedition",
+  oddsSort: { key: "chance", dir: -1 }
+}, load(KEY_UI) || {});
+var lastResult = null, expeditionCounter = 0;
+
+function newCampaign() {
+  var qs = (design && design.quests) || [];
+  var act = ["quest.main_lost_recipe", "quest.side_weta_repairs"].filter(function (id) { return findById(qs, id); });
+  return { trip: 0, lastPaidId: 0, coins: 0, inventory: {}, cooked: {}, companionTrips: {}, learnedPerks: [], unlockedCompanions: [], unlockedRecipes: [], obtained: [], activeQuests: act, completedQuests: [], log: [] };
+}
+function fixCampaign() {
+  var base = newCampaign();
+  Object.keys(base).forEach(function (k) { if (campaign[k] === undefined) campaign[k] = base[k]; });
+}
+fixCampaign();
+
+var saveTimer = null;
+function saveAll() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function () {
+    var ok = save(KEY_DESIGN, design) & save(KEY_CAMPAIGN, campaign) & save(KEY_UI, ui);
+    if (!staleDesign) save(KEY_BASE, DEFAULT_HASH);
+    var el = document.getElementById("saveState");
+    el.textContent = ok ? "Saved in this browser" : "Not saved: this browser blocks storage. Export JSON to keep changes.";
+  }, 200);
+}
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function itemOf(id) { return findById(design.items, id); }
+function itemName(id) { var it = itemOf(id); return it ? it.name : id; }
+function rarityOf(id) { var it = itemOf(id); return it ? it.rarity : "Common"; }
+function pct(x) { if (!isFinite(x)) return "-"; var v = x * 100; return (v > 0 && v < 1 ? v.toFixed(2) : v.toFixed(1)) + "%"; }
+function fmt(x, d) { if (!isFinite(x)) return "-"; return Number(x).toFixed(d == null ? 2 : d); }
+function trimNum(x) { return String(Math.round(x * 1000) / 1000); }
+function questName(id) { var q = findById(design.quests, id); return q ? q.title : id; }
+function allTags() {
+  var s = {}; (design.items || []).forEach(function (it) { tagsOf(it).forEach(function (t) { s[t] = 1; }); });
+  return Object.keys(s).sort();
+}
+function toast(msg, err) {
+  var t = document.createElement("div");
+  t.className = "toast" + (err ? " err" : "");
+  t.textContent = msg;
+  $("toasts").appendChild(t);
+  setTimeout(function () { t.remove(); }, err ? 6000 : 3200);
+}
+// Two-click confirm (the page avoids confirm() dialogs).
+function armed(btn, label, fn) {
+  if (btn.classList.contains("armed")) { btn.classList.remove("armed"); btn.textContent = btn.dataset.label; fn(); return; }
+  btn.dataset.label = btn.textContent;
+  btn.classList.add("armed");
+  btn.textContent = label;
+  setTimeout(function () { if (btn.classList.contains("armed")) { btn.classList.remove("armed"); btn.textContent = btn.dataset.label; } }, 3500);
+}
+
+function describeMod(m) {
+  var v = Number(m.value);
+  switch (m.type) {
+    case "TagWeight": return m.tag + " weight ×" + trimNum(v);
+    case "Focus": return (m.tags || [m.tag]).join(" / ") + " weight ×" + trimNum(v) + " (once per item)";
+    case "TagQuantity": return "+" + Math.floor(v) + " " + m.tag + " per find";
+    case "RarityWeight": return m.rarity + " items weight ×" + trimNum(v);
+    case "ExtraRolls": return "+" + Math.floor(v) + " find" + (Math.floor(v) === 1 ? "" : "s") + " per trip";
+    case "BonusRoll": return Math.round(v * 1000) / 10 + "% chance of a bonus " + m.tag + " find";
+    default: return m.type + " " + (m.tag || m.rarity || "") + " " + v;
+  }
+}
+function describeMods(list) { return (list || []).map(describeMod).join(", ") || "no changes"; }
+
+function availableCompanions() {
+  return (design.companions || []).filter(function (c) { return ui.unlockAll || c.unlockedByDefault || campaign.unlockedCompanions.indexOf(c.id) >= 0; });
+}
+function availablePerks() {
+  return (design.perks || []).filter(function (p) { return ui.unlockAll || p.unlockedByDefault || campaign.learnedPerks.indexOf(p.id) >= 0; });
+}
+function sanitiseUi() {
+  if (!findById(design.forageTables, ui.table)) ui.table = (design.forageTables[0] || {}).id;
+  if (ui.companion && !findById(availableCompanions(), ui.companion)) ui.companion = null;
+  if (ui.perk && !findById(availablePerks(), ui.perk)) ui.perk = null;
+  if (ui.focus && !findById(design.focuses, ui.focus)) ui.focus = null;
+  if (ui.time !== "Night") ui.time = "Day";
+  ui.seed = (Number(ui.seed) >>> 0);
+}
+function currentSetup() {
+  return { table: ui.table, companion: ui.companion || null, perks: ui.perk ? [ui.perk] : [], focus: ui.focus || null, time: ui.time };
+}
+function currentContext() { return { activeQuests: campaign.activeQuests.slice(), obtained: campaign.obtained.slice() }; }
+function setupLabel(setup) {
+  var parts = [];
+  var c = findById(design.companions, setup.companion); parts.push(c ? c.name : "No companion");
+  (setup.perks || []).forEach(function (p) { var pk = findById(design.perks, p); if (pk) parts.push(pk.name); });
+  var f = findById(design.focuses, setup.focus); if (f) parts.push("focus: " + f.name);
+  parts.push(setup.time);
+  return parts.join(" · ");
+}
+
+/* =====================================================================
+   TABS + THEME
+   ===================================================================== */
+var TABS = ["expedition", "odds", "simulate", "campaign", "design", "help"];
+function showTab(name) {
+  if (TABS.indexOf(name) < 0) name = "expedition";
+  ui.tab = name;
+  TABS.forEach(function (t) {
+    $("tab-" + t).hidden = t !== name;
+    $("tabbtn-" + t).setAttribute("aria-selected", t === name ? "true" : "false");
+  });
+  try { if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name); } catch (e) { /* file:// or sandbox */ }
+  if (name === "odds") renderOdds();
+  if (name === "campaign") renderCampaign();
+  if (name === "simulate") $("simSetup").textContent = "Setup: " + setupLabel(currentSetup()) + ". Active quests: " + (campaign.activeQuests.map(questName).join(", ") || "none") + ".";
+  saveAll();
+}
+document.querySelector(".tabs").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-tab]"); if (b) showTab(b.dataset.tab);
+});
+document.addEventListener("click", function (e) {
+  var g = e.target.closest("[data-goto]"); if (g) { showTab(g.dataset.goto); window.scrollTo(0, 0); }
+});
+var themeMode = "system";
+try { themeMode = localStorage.getItem(KEY_THEME) || "system"; } catch (e) { /* ignore */ }
+function applyTheme() {
+  if (themeMode === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", themeMode);
+  $("themeBtn").textContent = "Theme: " + themeMode;
+}
+$("themeBtn").addEventListener("click", function () {
+  themeMode = themeMode === "system" ? "light" : themeMode === "light" ? "dark" : "system";
+  try { localStorage.setItem(KEY_THEME, themeMode); } catch (e) { /* ignore */ }
+  applyTheme();
+});
+
+/* =====================================================================
+   EXPEDITION
+   ===================================================================== */
+function renderSetup() {
+  sanitiseUi();
+  var ts = $("tableSelect");
+  ts.innerHTML = design.forageTables.map(function (t) { return '<option value="' + esc(t.id) + '"' + (t.id === ui.table ? " selected" : "") + ">" + esc(t.name) + "</option>"; }).join("");
+  $("tableField").hidden = design.forageTables.length < 2;
+
+  var comps = availableCompanions();
+  var html = '<button type="button" class="opt" data-companion="" aria-pressed="' + (!ui.companion) + '"><span class="nm">Go alone</span><span class="ds">Just you and your basket.</span><span class="fx">No changes</span></button>';
+  comps.forEach(function (c) {
+    var trips = campaign.companionTrips[c.id] || 0;
+    var teach = "";
+    var tp = findById(design.perks, c.teachesPerk);
+    if (tp && c.tripsToTeach > 0) {
+      teach = campaign.learnedPerks.indexOf(tp.id) >= 0 ? "Taught you " + tp.name : "Teaches " + tp.name + " after " + c.tripsToTeach + " trips (" + Math.min(trips, c.tripsToTeach) + "/" + c.tripsToTeach + ")";
+    }
+    var locked = !c.unlockedByDefault && campaign.unlockedCompanions.indexOf(c.id) < 0;
+    html += '<button type="button" class="opt" data-companion="' + esc(c.id) + '" aria-pressed="' + (ui.companion === c.id) + '">' +
+      '<span class="nm">' + esc(c.name) + (locked ? ' <span class="lock">locked in game</span>' : "") + "</span>" +
+      '<span class="ds">' + esc(c.description) + "</span>" +
+      '<span class="fx">' + esc(c.name) + ": " + esc(describeMods(c.modifiers)) + "</span>" +
+      (teach ? '<span class="teach">' + esc(teach) + "</span>" : "") + "</button>";
+  });
+  $("companionOpts").innerHTML = html;
+
+  var perks = availablePerks();
+  html = '<button type="button" class="opt" data-perk="" aria-pressed="' + (!ui.perk) + '"><span class="nm">No perk</span><span class="fx">No changes</span></button>';
+  perks.forEach(function (p) {
+    var learned = campaign.learnedPerks.indexOf(p.id) >= 0;
+    var locked = !p.unlockedByDefault && !learned;
+    html += '<button type="button" class="opt" data-perk="' + esc(p.id) + '" aria-pressed="' + (ui.perk === p.id) + '">' +
+      '<span class="nm">' + esc(p.name) + (learned ? ' <span class="lock">learned</span>' : locked ? ' <span class="lock">locked in game</span>' : "") + "</span>" +
+      '<span class="ds">' + esc(p.description) + "</span>" +
+      '<span class="fx">' + esc(describeMods(p.modifiers)) + "</span></button>";
+  });
+  $("perkOpts").innerHTML = html;
+
+  html = '<button type="button" class="chip" data-focus="" aria-pressed="' + (!ui.focus) + '">No focus</button>';
+  (design.focuses || []).forEach(function (f) {
+    html += '<button type="button" class="chip" data-focus="' + esc(f.id) + '" aria-pressed="' + (ui.focus === f.id) + '">' + esc(f.name) + ' <span class="x">' + esc((f.tags || []).join(", ")) + " ×" + trimNum(Number(f.multiplier)) + "</span></button>";
+  });
+  $("focusChips").innerHTML = html;
+
+  Array.prototype.forEach.call($("timeSeg").children, function (b) { b.setAttribute("aria-pressed", b.dataset.time === ui.time ? "true" : "false"); });
+  if (document.activeElement !== $("seedInput")) $("seedInput").value = ui.seed;
+  $("newSeedEach").checked = !!ui.newSeedEach;
+  $("addToCampaign").checked = !!ui.addToCampaign;
+  $("unlockAll").checked = !!ui.unlockAll;
+  renderEffects();
+}
+
+function renderEffects() {
+  var setup = currentSetup(), ctx = currentContext();
+  var out = "";
+  try {
+    var P = prepare(design, setup, ctx);
+    var pv = preview(design, setup, ctx);
+    var items = [];
+    var c = findById(design.companions, setup.companion);
+    if (c) items.push(["Companion · " + c.name, describeMods(c.modifiers)]);
+    var pk = findById(design.perks, setup.perks[0]);
+    if (pk) items.push(["Perk · " + pk.name, describeMods(pk.modifiers)]);
+    var f = findById(design.focuses, setup.focus);
+    if (f) items.push(["Focus · " + f.name, (f.tags || []).join(", ") + " weight ×" + trimNum(Number(f.multiplier))]);
+    var tbl = P.table;
+    items.push(["Basket", P.rolls + " finds per trip" + (P.extraRolls ? " (" + tbl.rolls + " + " + P.extraRolls + ")" : "") +
+      (pv.bonusRolls.length ? ", plus " + pv.bonusRolls.map(function (b) { return Math.round(b.value * 100) + "% chance of a bonus " + b.tag + " find"; }).join(" and ") : "")]);
+    // time-of-day differences
+    var only = [], missing = [];
+    (tbl.entries || []).forEach(function (e) {
+      if (!e.time || e.time === "Any") return;
+      (e.time === setup.time ? only : missing).push(itemName(e.item));
+    });
+    var tline = "";
+    if (only.length) tline += "Only now: " + only.join(", ") + ". ";
+    if (missing.length) tline += "Not now: " + missing.join(", ") + ".";
+    if (tline) items.push([setup.time, tline]);
+    // quest-gated entries
+    (tbl.entries || []).forEach(function (e) {
+      if (!e.requiresQuest) return;
+      var it = itemOf(e.item);
+      var activeQ = ctx.activeQuests.indexOf(e.requiresQuest) >= 0;
+      var have = it && it.unique && ctx.obtained.indexOf(it.id) >= 0;
+      items.push(["Quest", itemName(e.item) + (have ? ": already found, won't drop again" : activeQ ? ": can drop (" + questName(e.requiresQuest) + " is active)" : ": won't drop until " + questName(e.requiresQuest) + " is active")]);
+    });
+    (tbl.entries || []).forEach(function (e) {
+      var it = itemOf(e.item);
+      if (!it || !(it.teachesRecipe || e.requiresCompanion)) return;
+      var have = it.unique && ctx.obtained.indexOf(it.id) >= 0;
+      var comp = e.requiresCompanion ? findById(design.companions, e.requiresCompanion) : null;
+      var why = have ? "already found" : e.requiresCompanion && setup.companion !== e.requiresCompanion ? "only with " + (comp ? comp.name : e.requiresCompanion) + " along" :
+        e.time && e.time !== "Any" && e.time !== setup.time ? e.time.toLowerCase() + " only" : "could turn up (very rare)";
+      items.push(["Encounter", it.name + ": " + why]);
+    });
+    out += '<ul class="fx-list">' + items.map(function (i) { return '<li><span class="src">' + esc(i[0]) + "</span><span>" + esc(i[1]) + "</span></li>"; }).join("") + "</ul>";
+    var top = pv.entries.slice().sort(function (a, b) { return b.chancePerRoll - a.chancePerRoll; }).slice(0, 6);
+    var base = previewBaseline(setup, ctx);
+    out += '<div><div class="fx-list"><span class="src" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--bark);font-weight:700">Most likely finds</span></div><table class="likely"><tbody>' +
+      top.map(function (e) {
+        var b = base[e.item];
+        var d = b ? e.chancePerRoll - b.chancePerRoll : 0;
+        return '<tr class="r-' + esc(rarityOf(e.item)) + '"><td><span class="rname">' + esc(itemName(e.item)) + "</span>" +
+          (Math.abs(d) > 0.0005 ? ' <span class="' + (d > 0 ? "delta-up" : "delta-down") + '">' + (d > 0 ? "+" : "") + (d * 100).toFixed(1) + "</span>" : "") +
+          '</td><td title="Chance per roll">' + pct(e.chancePerRoll) + '</td><td title="Chance of at least one this trip">' + pct(e.chanceAtLeastOne) + "</td></tr>";
+      }).join("") + '</tbody></table><p class="small muted" style="margin-top:4px">Per roll, then at least one per trip. Full table on the <a href="#odds" data-goto="odds">Odds</a> tab.</p></div>';
+  } catch (err) {
+    out = '<p class="small" style="color:var(--poh)">' + esc(err.message) + "</p>";
+  }
+  $("effects").innerHTML = out;
+}
+
+function previewBaseline(setup, ctx) {
+  var bs = { table: setup.table, companion: null, perks: [], focus: null, time: setup.time };
+  var map = {};
+  try { preview(design, bs, ctx).entries.forEach(function (e) { map[e.item] = e; }); } catch (e) { /* ignore */ }
+  return map;
+}
+
+$("companionOpts").addEventListener("click", function (e) { var b = e.target.closest("[data-companion]"); if (!b) return; ui.companion = b.dataset.companion || null; afterSetupChange(); });
+$("perkOpts").addEventListener("click", function (e) { var b = e.target.closest("[data-perk]"); if (!b) return; ui.perk = b.dataset.perk || null; afterSetupChange(); });
+$("focusChips").addEventListener("click", function (e) { var b = e.target.closest("[data-focus]"); if (!b) return; ui.focus = b.dataset.focus || null; afterSetupChange(); });
+$("timeSeg").addEventListener("click", function (e) { var b = e.target.closest("[data-time]"); if (!b) return; ui.time = b.dataset.time; afterSetupChange(); });
+$("tableSelect").addEventListener("change", function () { ui.table = this.value; afterSetupChange(); });
+$("seedInput").addEventListener("change", function () {
+  var v = Math.floor(Number(this.value));
+  if (!isFinite(v) || v < 0 || v > 4294967295) { toast("Seeds are whole numbers from 0 to 4294967295.", true); this.value = ui.seed; return; }
+  ui.seed = v >>> 0; saveAll();
+});
+$("rerollBtn").addEventListener("click", function () { ui.seed = randSeed(); $("seedInput").value = ui.seed; saveAll(); });
+$("newSeedEach").addEventListener("change", function () { ui.newSeedEach = this.checked; saveAll(); });
+$("addToCampaign").addEventListener("change", function () { ui.addToCampaign = this.checked; saveAll(); });
+$("unlockAll").addEventListener("change", function () { ui.unlockAll = this.checked; afterSetupChange(); });
+function afterSetupChange() { renderSetup(); if (ui.tab === "odds") renderOdds(); saveAll(); }
+
+// --- Go! ---
+var overlayTimer = null, pendingReveal = null;
+$("goBtn").addEventListener("click", goForaging);
+function goForaging() {
+  var setup = currentSetup(), ctx = currentContext(), seed = ui.seed >>> 0;
+  var full;
+  try { full = resolveFull(design, setup, ctx, seed); } catch (err) { toast(err.message, true); return; }
+  var id = ++expeditionCounter;
+  var res = { id: id, seed: seed, setup: setup, full: full, tripNo: null, learned: null, added: false };
+  if (ui.addToCampaign) applyToCampaign(res);
+  if (ui.newSeedEach) ui.seed = randSeed();
+  saveAll();
+  lastResult = res;
+  var c = findById(design.companions, setup.companion);
+  $("ovTitle").textContent = c ? "Off into the bush with " + c.name : "Off into the bush";
+  $("ovText").textContent = setup.time === "Night" ? "Torch on. Something is rustling in the ferns." : "Sun through the canopy, basket on your back.";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var dur = reduce ? 400 : 1700;
+  var trail = $("ovTrail");
+  trail.classList.remove("run"); void trail.offsetWidth; trail.style.setProperty("--dur", dur + "ms"); trail.classList.add("run");
+  $("overlay").hidden = false;
+  pendingReveal = res;
+  clearTimeout(overlayTimer);
+  overlayTimer = setTimeout(finishOverlay, dur);
+}
+function finishOverlay() {
+  clearTimeout(overlayTimer);
+  if (!pendingReveal) return;
+  $("overlay").hidden = true;
+  var r = pendingReveal; pendingReveal = null;
+  renderResult(r, true);
+  renderSetup();
+  $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+$("overlay").addEventListener("click", finishOverlay);
+document.addEventListener("keydown", function (e) { if (!$("overlay").hidden && (e.key === "Escape" || e.key === "Enter" || e.key === " ")) { e.preventDefault(); finishOverlay(); } });
+
+// Rare encounters: an item with teachesRecipe teaches it the moment it's found (like Economy in Unity).
+function learnFromItem(itemId) {
+  var it = itemOf(itemId);
+  if (!it || !it.teachesRecipe) return null;
+  var r = findById(design.recipes, it.teachesRecipe);
+  if (!r || recipeUnlocked(r)) return null;
+  campaign.unlockedRecipes.push(r.id);
+  return { item: it, recipe: r };
+}
+
+function applyToCampaign(res) {
+  if (res.id <= campaign.lastPaidId && res.added) return; // pays out once per expedition
+  campaign.trip += 1;
+  res.tripNo = campaign.trip;
+  res.full.stacks.forEach(function (s) {
+    campaign.inventory[s.item] = (campaign.inventory[s.item] || 0) + s.qty;
+    var it = itemOf(s.item);
+    if (it && it.unique && campaign.obtained.indexOf(s.item) < 0) campaign.obtained.push(s.item);
+    var taught = learnFromItem(s.item);
+    if (taught) (res.recipes = res.recipes || []).push(taught);
+  });
+  var cid = res.setup.companion;
+  if (cid) {
+    campaign.companionTrips[cid] = (campaign.companionTrips[cid] || 0) + 1;
+    var c = findById(design.companions, cid);
+    if (c && c.teachesPerk && Number(c.tripsToTeach) > 0 && campaign.companionTrips[cid] >= Number(c.tripsToTeach) && campaign.learnedPerks.indexOf(c.teachesPerk) < 0) {
+      campaign.learnedPerks.push(c.teachesPerk);
+      res.learned = { perk: c.teachesPerk, from: c.name };
+    }
+  }
+  campaign.lastPaidId = Math.max(campaign.lastPaidId, res.id);
+  res.added = true;
+  campaign.log.unshift({ trip: res.tripNo, seed: res.seed, label: setupLabel(res.setup), finds: res.full.stacks.map(function (s) { return itemName(s.item) + " ×" + s.qty; }).join(", ") || "nothing" });
+  campaign.log = campaign.log.slice(0, 30);
+}
+
+function bonusNote(src) {
+  if (!src) return "Bonus find!";
+  if (src.kind === "companion") return src.name + " snatched this!";
+  return src.name + " turned this up!";
+}
+
+function renderResult(res, animate) {
+  var el = $("results");
+  if (!res) {
+    el.innerHTML = '<div class="empty"><b>Your basket is empty.</b><br>Pick a companion, a perk and a focus, then press Go foraging. Each result shows its seed so you can replay it.</div>';
+    return;
+  }
+  var full = res.full;
+  var head = '<div class="results-head"><h3>' + (res.tripNo ? "Trip " + res.tripNo + " · " : "") + full.stacks.reduce(function (a, s) { return a + s.qty; }, 0) + " things found</h3>" +
+    '<span class="small muted">Seed <b class="mono">' + res.seed + "</b> · " + esc(setupLabel(res.setup)) + " · " + full.rollCount + " rolls</span></div>";
+  var cards = full.stacks.map(function (s, i) {
+    var it = itemOf(s.item) || { name: s.item, rarity: "Common", tags: [] };
+    var rs = full.rolls.filter(function (r) { return r.item === s.item; });
+    var notes = rs.filter(function (r) { return r.bonus; }).map(function (r) { return '<span class="note b">' + esc(bonusNote(r.src)) + "</span>"; }).join("");
+    var rare = it.rarity === "Rare" || it.rarity === "Legendary";
+    return '<div class="find r-' + esc(it.rarity) + (rare ? " rare" : "") + (animate ? " reveal" : "") + '" style="animation-delay:' + (animate ? i * 320 : 0) + 'ms">' +
+      '<span class="q">×' + s.qty + "</span>" +
+      '<span class="nm">' + esc(it.name) + "</span>" +
+      '<span><span class="rpill">' + esc(it.rarity) + "</span> " + tagsOf(it).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</span>" +
+      (rare ? '<span class="note">Rare find!</span>' : "") + notes + "</div>";
+  }).join("");
+  var after = full.stacks.length * (animate ? 320 : 0);
+  var banners = "";
+  if (full.rareFinds.length) banners += '<div class="banner rare' + (animate ? " reveal" : "") + '" style="animation-delay:' + after + 'ms">Rare find' + (full.rareFinds.length > 1 ? "s" : "") + ": " + esc(full.rareFinds.map(itemName).join(", ")) + "</div>";
+  if (res.learned) {
+    var lp = findById(design.perks, res.learned.perk);
+    banners += '<div class="banner learn' + (animate ? " reveal" : "") + '" style="animation-delay:' + (after + 200) + 'ms">' + esc(res.learned.from) + " taught you a perk: <b>" + esc(lp ? lp.name : res.learned.perk) + "</b>" + (lp ? " (" + esc(describeMods(lp.modifiers)) + ")" : "") + ". It's now in your perk slot choices.</div>";
+  }
+  full.stacks.forEach(function (st) {
+    var enc = itemOf(st.item);
+    if (!enc || !enc.teachesRecipe) return;
+    var rr = findById(design.recipes, enc.teachesRecipe);
+    var learnedNow = (res.recipes || []).some(function (x) { return x.item.id === enc.id; });
+    banners += '<div class="banner learn' + (animate ? " reveal" : "") + '" style="animation-delay:' + (after + 300) + 'ms"><b>' + esc(enc.name) + ".</b> " + esc(enc.description || "") + " " +
+      (learnedNow ? "You learned <b>" + esc(rr ? rr.name : enc.teachesRecipe) + "</b>!" : res.added ? "(You already knew " + esc(rr ? rr.name : enc.teachesRecipe) + ".)" : "(This teaches " + esc(rr ? rr.name : enc.teachesRecipe) + " in a campaign.)") + "</div>";
+  });
+  if (!full.stacks.length) banners += '<div class="banner info">Nothing found. The table has no items that can drop with this setup.</div>';
+  banners += '<div class="banner info">' + (res.added ? "Added to the campaign basket." : "Not added to the campaign (the box above is unticked).") + "</div>";
+  var log = '<details style="margin-top:12px"><summary>Roll by roll</summary><ol class="rolllog">' + full.rolls.map(function (r) {
+    return "<li>" + (r.bonus ? "<b>Bonus</b>: " : "") + esc(itemName(r.item)) + " ×" + r.qty + ' <span class="muted">(' + pct(r.chance) + " chance" + (r.bonus ? ", " + esc(bonusNote(r.src)) : "") + ")</span></li>";
+  }).join("") + "</ol>" +
+    '<div class="btn-row" style="margin-top:8px"><button class="btn tiny" type="button" id="copyReport">Copy a bug report line</button><button class="btn tiny" type="button" id="replayBtn">Use this seed again</button></div></details>';
+  el.innerHTML = head + '<div class="basket">' + cards + "</div>" + banners + log;
+  $("copyReport").addEventListener("click", function () {
+    var line = "Seed " + res.seed + " | " + setupLabel(res.setup) + " | quests: " + (campaign.activeQuests.join(",") || "none") + " | found: " + full.stacks.map(function (s) { return itemName(s.item) + " x" + s.qty; }).join(", ");
+    copyText(line, "Copied the report line.");
+  });
+  $("replayBtn").addEventListener("click", function () { ui.seed = res.seed; ui.newSeedEach = false; renderSetup(); saveAll(); toast("Seed set to " + res.seed + ". New seed after each trip is now off."); });
+}
+
+function copyText(text, okMsg) {
+  function fallback() {
+    var ta = $("copyFallback");
+    ta.hidden = false; ta.value = text; ta.focus(); ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    if (ok) { ta.hidden = true; toast(okMsg); } else toast("Couldn't copy automatically. The text is selected in the box on the Design data tab; press Ctrl+C.", true);
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(okMsg); }, fallback);
+    else fallback();
+  } catch (e) { fallback(); }
+}
+
+/* =====================================================================
+   ODDS
+   ===================================================================== */
+function renderOdds() {
+  var setup = currentSetup(), ctx = currentContext();
+  var pv;
+  try { pv = preview(design, setup, ctx); } catch (err) { $("oddsTable").innerHTML = "<tbody><tr><td>" + esc(err.message) + "</td></tr></tbody>"; return; }
+  var base = previewBaseline(setup, ctx);
+  $("oddsSetup").innerHTML = "<b>" + esc(setupLabel(setup)) + "</b> · " + pv.rolls + " rolls per trip · total weight " + fmt(pv.total, 2) +
+    (pv.bonusRolls.length ? " · bonus: " + esc(pv.bonusRolls.map(function (b) { return Math.round(b.value * 100) + "% " + b.tag + " (" + b.from + ")"; }).join(", ")) : "");
+  var rows = pv.entries.map(function (e) {
+    var it = itemOf(e.item), b = base[e.item] || e;
+    return { e: e, it: it, b: b, name: it.name, rarity: RARITIES.indexOf(it.rarity), weight: e.weight, chance: e.chancePerRoll, atLeast: e.chanceAtLeastOne, exp: e.expectedQty,
+      changed: Math.abs(e.weight - e.baseWeight) > 1e-9 || e.qtyBonus !== 0 || e.bonusChance > 0 };
+  });
+  var s = ui.oddsSort || { key: "chance", dir: -1 };
+  rows.sort(function (a, b) {
+    var x = a[s.key], y = b[s.key];
+    if (typeof x === "string") return s.dir * x.localeCompare(y);
+    return s.dir * (x - y) || a.e.entryIndex - b.e.entryIndex;
+  });
+  function th(key, label, n) {
+    var arrow = s.key === key ? (s.dir > 0 ? " ▲" : " ▼") : "";
+    return '<th class="sortable' + (n ? " n" : "") + '" data-sort="' + key + '" aria-sort="' + (s.key === key ? (s.dir > 0 ? "ascending" : "descending") : "none") + '">' + label + arrow + "</th>";
+  }
+  function delta(now, was, asPct) {
+    var d = now - was;
+    if (Math.abs(d) < (asPct ? 0.0005 : 0.005)) return "";
+    var txt = asPct ? (d > 0 ? "+" : "") + (d * 100).toFixed(1) : (d > 0 ? "+" : "") + d.toFixed(2);
+    return ' <span class="' + (d > 0 ? "delta-up" : "delta-down") + '">' + txt + "</span>";
+  }
+  var html = "<thead><tr>" + th("name", "Item") + th("rarity", "Rarity") + "<th>Tags</th><th>Time</th>" + th("weight", "Weight", 1) + th("chance", "Per roll", 1) + th("atLeast", "≥1 per trip", 1) + th("exp", "Expected / trip", 1) + "</tr></thead><tbody>";
+  rows.forEach(function (r) {
+    var e = r.e, entry = (findById(design.forageTables, setup.table).entries || [])[e.entryIndex] || {};
+    var mult = e.baseWeight ? e.weight / e.baseWeight : 1;
+    var extras = [];
+    if (e.qtyBonus) extras.push("+" + e.qtyBonus + " per find");
+    if (e.bonusChance > 0) extras.push(pct(e.bonusChance) + " via bonus roll");
+    html += '<tr class="r-' + esc(r.it.rarity) + (r.changed ? " changed" : "") + '">' +
+      '<td><span class="rname">' + esc(r.name) + "</span>" + (r.it.unique ? ' <span class="tag">unique</span>' : "") + (extras.length ? '<br><span class="mult">' + esc(extras.join(" · ")) + "</span>" : "") + "</td>" +
+      '<td><span class="rpill">' + esc(r.it.rarity) + "</span></td>" +
+      "<td>" + tagsOf(r.it).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</td>" +
+      "<td>" + esc(entry.time || "Any") + (entry.requiresQuest ? '<br><span class="small muted">needs quest</span>' : "") + "</td>" +
+      '<td class="n">' + trimNum(e.weight) + (Math.abs(mult - 1) > 1e-9 ? ' <span class="mult">×' + trimNum(mult) + "</span>" : "") + "</td>" +
+      '<td class="n">' + pct(e.chancePerRoll) + delta(e.chancePerRoll, r.b.chancePerRoll, true) + "</td>" +
+      '<td class="n">' + pct(e.chanceAtLeastOne) + delta(e.chanceAtLeastOne, r.b.chanceAtLeastOne, true) + "</td>" +
+      '<td class="n">' + fmt(e.expectedQty, 2) + delta(e.expectedQty, r.b.expectedQty, false) + "</td></tr>";
+  });
+  html += "</tbody>";
+  $("oddsTable").innerHTML = html;
+  // entries not available right now
+  var tbl = findById(design.forageTables, setup.table);
+  var elig = {}; pv.entries.forEach(function (e) { elig[e.entryIndex] = 1; });
+  var out = [];
+  (tbl.entries || []).forEach(function (e, i) {
+    if (elig[i]) return;
+    var it = itemOf(e.item);
+    var why = !it ? "unknown item id" : (e.time && e.time !== "Any" && e.time !== setup.time) ? e.time + " only" :
+      (e.requiresQuest && ctx.activeQuests.indexOf(e.requiresQuest) < 0) ? "needs " + questName(e.requiresQuest) + " active" :
+      (e.requiresCompanion && setup.companion !== e.requiresCompanion) ? "only with " + ((findById(design.companions, e.requiresCompanion) || {}).name || e.requiresCompanion) : (it.unique ? "already found (unique)" : "not eligible");
+    out.push(esc(it ? it.name : e.item) + " (" + esc(why) + ")");
+  });
+  var zero = pv.entries.filter(function (e) { return !(e.weight > 0); }).map(function (e) { return esc(itemName(e.item)); });
+  $("oddsExcluded").innerHTML = (out.length ? "<b>Not available right now:</b> " + out.join(", ") + ". " : "") + (zero.length ? "<b>Weight 0, can't be picked:</b> " + zero.join(", ") + "." : "");
+}
+$("oddsTable").addEventListener("click", function (e) {
+  var th = e.target.closest("[data-sort]"); if (!th) return;
+  var k = th.dataset.sort, s = ui.oddsSort || {};
+  ui.oddsSort = { key: k, dir: s.key === k ? -s.dir : (k === "name" || k === "rarity" ? 1 : -1) };
+  renderOdds(); saveAll();
+});
+
+/* =====================================================================
+   SIMULATOR
+   ===================================================================== */
+function needsMet(inv, needs) {
+  for (var k in needs) if ((inv[k] || 0) < needs[k]) return false;
+  return true;
+}
+function questNeeds(q) {
+  var needs = {}, any = false;
+  (q.objectives || []).forEach(function (o) {
+    if (o.type === "DeliverItems" || o.type === "HaveItems") { needs[o.target] = (needs[o.target] || 0) + Number(o.qty); any = true; }
+    else if (o.type === "CookRecipe") {
+      var r = findById(design.recipes, o.target);
+      if (r) (r.ingredients || []).forEach(function (g) { needs[g.item] = (needs[g.item] || 0) + Number(g.qty) * Number(o.qty); any = true; });
+    }
+  });
+  return any ? needs : null;
+}
+function quantile(sorted, p) { if (!sorted.length) return NaN; var i = Math.max(0, Math.ceil(p * sorted.length) - 1); return sorted[i]; }
+
+function runSimulation() {
+  var setup = currentSetup(), ctx = currentContext();
+  var N = Math.max(1, Math.min(200000, Math.floor(Number($("simTrips").value) || 1000)));
+  var RUNS = Math.max(10, Math.min(5000, Math.floor(Number($("simRuns").value) || 500)));
+  var CAP = Math.max(1, Math.min(500, Math.floor(Number($("simCap").value) || 100)));
+  var simSeed = (Math.floor(Number($("simSeed").value)) || 0) >>> 0;
+  var t0 = performance.now();
+  // 1) independent trips
+  var rng = mulberry32(simSeed);
+  var stats = {}, order = [], totalItems = 0, totalRare = 0, totalBonus = 0, minItems = Infinity, maxItems = 0;
+  for (var i = 0; i < N; i++) {
+    var seed = Math.floor(rng() * 4294967296) >>> 0;
+    var r = resolveFull(design, setup, ctx, seed);
+    var tripItems = 0;
+    r.stacks.forEach(function (s) {
+      var st = stats[s.item];
+      if (!st) { st = stats[s.item] = { sum: 0, trips: 0, max: 0 }; order.push(s.item); }
+      st.sum += s.qty; st.trips += 1; if (s.qty > st.max) st.max = s.qty;
+      tripItems += s.qty;
+    });
+    totalItems += tripItems; totalRare += r.rareFinds.length;
+    totalBonus += r.rolls.filter(function (x) { return x.bonus; }).length;
+    if (tripItems < minItems) minItems = tripItems; if (tripItems > maxItems) maxItems = tripItems;
+  }
+  // 2) trips until cookable / quest ready, accumulating from zero, spending nothing
+  var droppable = {};
+  try { prepare(design, setup, ctx).eligible.forEach(function (p) { if (p.w > 0) droppable[p.item.id] = 1; }); } catch (e) { /* ignore */ }
+  var targets = [];
+  (design.recipes || []).forEach(function (rc) {
+    var needs = {}; (rc.ingredients || []).forEach(function (g) { needs[g.item] = (needs[g.item] || 0) + Number(g.qty); });
+    targets.push({ kind: "Recipe", name: rc.name, needs: needs, extra: rc.unlockedByDefault ? "" : "locked at start", results: [] });
+  });
+  (design.quests || []).forEach(function (q) {
+    var needs = questNeeds(q); if (!needs) return;
+    targets.push({ kind: "Quest", name: q.title, needs: needs, extra: "", results: [] });
+  });
+  var anyRecipe = [];
+  var rng2 = mulberry32((simSeed ^ 0x9E3779B9) >>> 0);
+  for (var run = 0; run < RUNS; run++) {
+    var inv = {}, obtained = ctx.obtained.slice(), done = targets.map(function () { return 0; }), remaining = targets.length, firstRecipe = 0;
+    for (var trip = 1; trip <= CAP && remaining > 0; trip++) {
+      var sd = Math.floor(rng2() * 4294967296) >>> 0;
+      var rr = resolveFull(design, setup, { activeQuests: ctx.activeQuests, obtained: obtained }, sd);
+      rr.stacks.forEach(function (s) {
+        inv[s.item] = (inv[s.item] || 0) + s.qty;
+        var it = itemOf(s.item); if (it && it.unique && obtained.indexOf(s.item) < 0) obtained.push(s.item);
+      });
+      for (var t = 0; t < targets.length; t++) {
+        if (done[t]) continue;
+        if (needsMet(inv, targets[t].needs)) { done[t] = trip; remaining--; if (targets[t].kind === "Recipe" && !firstRecipe) firstRecipe = trip; }
+      }
+    }
+    for (var u = 0; u < targets.length; u++) targets[u].results.push(done[u] || Infinity);
+    anyRecipe.push(firstRecipe || Infinity);
+  }
+  var ms = performance.now() - t0;
+  renderSimulation({ N: N, RUNS: RUNS, CAP: CAP, simSeed: simSeed, stats: stats, order: order, totalItems: totalItems, totalRare: totalRare, totalBonus: totalBonus, minItems: minItems, maxItems: maxItems, targets: targets, anyRecipe: anyRecipe, droppable: droppable, ms: ms, setup: setup });
+}
+
+function renderSimulation(S) {
+  function tripsTxt(v) { return v === Infinity ? S.CAP + "+" : String(v); }
+  var anySorted = S.anyRecipe.slice().sort(function (a, b) { return a - b; });
+  var within2 = S.anyRecipe.filter(function (v) { return v <= 2; }).length / S.RUNS;
+  var html = '<div class="tiles">' +
+    '<div class="tile"><div class="v">' + fmt(S.totalItems / S.N, 2) + '</div><div class="k">items per trip on average (fewest ' + S.minItems + ", most " + S.maxItems + ")</div></div>" +
+    '<div class="tile"><div class="v">' + fmt(S.totalRare / S.N, 3) + '</div><div class="k">rare finds per trip</div></div>' +
+    '<div class="tile"><div class="v">' + fmt(S.totalBonus / S.N, 3) + '</div><div class="k">bonus finds per trip</div></div>' +
+    '<div class="tile"><div class="v">' + pct(within2) + '</div><div class="k">of playthroughs can cook some recipe within 2 trips (median ' + tripsTxt(quantile(anySorted, 0.5)) + " trip" + (quantile(anySorted, 0.5) === 1 ? "" : "s") + ")</div></div></div>";
+  html += '<p class="small muted">' + S.N.toLocaleString() + " trips and " + S.RUNS.toLocaleString() + " playthroughs with " + esc(setupLabel(S.setup)) + ", simulation seed " + S.simSeed + ", in " + Math.round(S.ms) + " ms.</p>";
+  // per item
+  var rows = S.order.slice().sort(function (a, b) { return S.stats[b].sum - S.stats[a].sum; });
+  html += '<div class="grid2"><div class="box"><h3>Per item</h3><div class="tbl-wrap"><table class="data"><thead><tr><th>Item</th><th class="n">Avg / trip</th><th class="n">Trips with ≥1</th><th class="n">Max seen</th></tr></thead><tbody>' +
+    rows.map(function (id) {
+      var st = S.stats[id];
+      return '<tr class="r-' + esc(rarityOf(id)) + '"><td><span class="rname">' + esc(itemName(id)) + '</span></td><td class="n">' + fmt(st.sum / S.N, 3) + '</td><td class="n">' + pct(st.trips / S.N) + '</td><td class="n">' + st.max + "</td></tr>";
+    }).join("") + "</tbody></table></div></div>";
+  // trips until
+  html += '<div class="box"><h3>Trips until I can…</h3><p class="small muted" style="margin-bottom:8px">Starting from an empty basket and spending nothing. Median is the typical player; 90th percentile is the unlucky one. Quests count the items they ask for (and the ingredients for any recipes they ask you to cook).</p><div class="tbl-wrap"><table class="data"><thead><tr><th>Goal</th><th class="n">Median</th><th class="n">90th pct</th><th class="n">Within 2 trips</th></tr></thead><tbody>' +
+    S.targets.map(function (t) {
+      var sorted = t.results.slice().sort(function (a, b) { return a - b; });
+      var w2 = t.results.filter(function (v) { return v <= 2; }).length / t.results.length;
+      var missing = Object.keys(t.needs).filter(function (k) { return !S.droppable[k]; });
+      var needTxt = Object.keys(t.needs).map(function (k) { return t.needs[k] + " " + itemName(k); }).join(", ");
+      return "<tr><td><b>" + esc(t.name) + '</b> <span class="small muted">' + esc(t.kind) + (t.extra ? ", " + esc(t.extra) : "") + '</span><br><span class="small muted">' + esc(needTxt) + "</span>" +
+        (missing.length ? '<br><span class="small" style="color:var(--poh)">Can\'t forage with this setup: ' + esc(missing.map(itemName).join(", ")) + "</span>" : "") + "</td>" +
+        '<td class="n">' + tripsTxt(quantile(sorted, 0.5)) + '</td><td class="n">' + tripsTxt(quantile(sorted, 0.9)) + '</td><td class="n">' + (w2 >= 0.5 ? '<span class="ok">' + pct(w2) + "</span>" : pct(w2)) + "</td></tr>";
+    }).join("") + "</tbody></table></div></div></div>";
+  $("simOut").innerHTML = html;
+}
+$("simRun").addEventListener("click", function () {
+  var b = this; b.disabled = true; b.textContent = "Running…";
+  setTimeout(function () {
+    try { runSimulation(); } catch (err) { toast("Simulation failed: " + err.message, true); }
+    b.disabled = false; b.textContent = "Run simulation";
+  }, 30);
+});
+
+/* =====================================================================
+   CAMPAIGN
+   ===================================================================== */
+function objectiveProgress(o) {
+  if (o.type === "DeliverItems" || o.type === "HaveItems") return { have: campaign.inventory[o.target] || 0, need: Number(o.qty), label: (o.type === "DeliverItems" ? "Bring " : "Have ") + o.qty + " " + itemName(o.target) };
+  if (o.type === "CookRecipe") { var r = findById(design.recipes, o.target); return { have: campaign.cooked[o.target] || 0, need: Number(o.qty), label: "Cook " + o.qty + " " + (r ? r.name : o.target) }; }
+  return { have: 0, need: Number(o.qty) || 1, label: o.type + " " + o.target, unknown: true };
+}
+function recipeUnlocked(r) { return r.unlockedByDefault || campaign.unlockedRecipes.indexOf(r.id) >= 0; }
+function canCook(r) { return (r.ingredients || []).every(function (g) { return (campaign.inventory[g.item] || 0) >= Number(g.qty); }); }
+
+function renderCampaign() {
+  var inv = Object.keys(campaign.inventory).filter(function (k) { return campaign.inventory[k] > 0; });
+  inv.sort(function (a, b) { return RARITIES.indexOf(rarityOf(b)) - RARITIES.indexOf(rarityOf(a)) || itemName(a).localeCompare(itemName(b)); });
+  var html = '<div class="tiles"><div class="tile"><div class="v">' + campaign.trip + '</div><div class="k">trips taken</div></div>' +
+    '<div class="tile"><div class="v">' + inv.reduce(function (a, k) { return a + campaign.inventory[k]; }, 0) + '</div><div class="k">items in the basket</div></div>' +
+    '<div class="tile"><div class="v">' + campaign.coins + '</div><div class="k">coins (from cooking and quests)</div></div>' +
+    '<div class="tile"><div class="v">' + (design.recipes || []).filter(canCook).length + '</div><div class="k">recipes you could cook now</div></div></div>';
+  html += '<div class="box"><h3>Basket</h3>' + (inv.length ? '<div class="inv">' + inv.map(function (k) { return '<span class="it r-' + esc(rarityOf(k)) + '">' + esc(itemName(k)) + " <b>×" + campaign.inventory[k] + "</b></span>"; }).join("") + "</div>" : '<p class="muted">Empty. Go on a trip with "Add finds to the campaign" ticked.</p>') + "</div>";
+
+  html += '<div class="grid2">';
+  // quests
+  html += '<div class="box"><h3>Quests</h3><p class="small muted" style="margin-bottom:8px">Tick a quest to make it active. Quest-locked forage entries only drop while their quest is active.</p>';
+  (design.quests || []).forEach(function (q) {
+    var done = campaign.completedQuests.indexOf(q.id) >= 0;
+    var active = campaign.activeQuests.indexOf(q.id) >= 0;
+    var objs = (q.objectives || []).map(objectiveProgress);
+    var ready = objs.length && objs.every(function (o) { return !o.unknown && o.have >= o.need; });
+    html += '<div class="quest"><label class="check"><input type="checkbox" data-quest="' + esc(q.id) + '"' + (active ? " checked" : "") + (done ? " disabled" : "") + "> <b>" + esc(q.title) + "</b>" + (q.isMain ? ' <span class="tag">main</span>' : "") + (done ? ' <span class="pill-ok">done</span>' : ready && active ? ' <span class="pill-ok">ready to hand in</span>' : "") + "</label>" +
+      '<span class="small muted">' + esc(q.summary) + "</span>" +
+      objs.map(function (o) {
+        var p = Math.min(1, o.need ? o.have / o.need : 0);
+        return '<div class="obj"><span>' + esc(o.label) + '</span><span class="num">' + Math.min(o.have, o.need) + "/" + o.need + '</span><div class="prog" style="grid-column:1/-1"><i style="width:' + (done ? 100 : p * 100) + '%"></i></div></div>';
+      }).join("") +
+      (active && !done ? '<div><button class="btn tiny" type="button" data-complete="' + esc(q.id) + '"' + (ready ? "" : " disabled") + ">Hand in and get rewards</button></div>" : "") + "</div>";
+  });
+  html += "</div>";
+  // recipes
+  html += '<div class="box"><h3>Recipes</h3><ul class="list-plain">' + (design.recipes || []).map(function (r) {
+    var ok = canCook(r), unl = recipeUnlocked(r) || ui.unlockAll, price = Number(r.price) || 0;
+    var lockNote = unl ? "" : price > 0 ? ' <span class="lock">locked · learn for ' + price + " coins</span>" : ' <span class="lock">locked · unlocked by a quest</span>';
+    var actions;
+    if (unl) {
+      actions = (ok ? '<span class="pill-ok">can cook</span>' : '<span class="pill-no">not yet</span>') +
+        '<button class="btn tiny" type="button" data-cook="' + esc(r.id) + '"' + (ok ? "" : " disabled") + ">Cook</button>";
+    } else if (price > 0) {
+      var afford = campaign.coins >= price;
+      actions = '<span class="' + (afford ? "pill-ok" : "pill-no") + '">' + (afford ? "can afford" : campaign.coins + "/" + price + " coins") + "</span>" +
+        '<button class="btn tiny" type="button" data-learn="' + esc(r.id) + '"' + (afford ? "" : " disabled") + ">Learn (" + price + ")</button>";
+    } else {
+      actions = '<span class="pill-no">' + ((r.scraps || []).length ? "find all " + r.scraps.length + " scraps" : "quest reward") + "</span>";
+    }
+    return "<li><span><b>" + esc(r.name) + "</b>" + lockNote + '<br><span class="small muted">' + esc((r.ingredients || []).map(function (g) { return (campaign.inventory[g.item] || 0) + "/" + g.qty + " " + itemName(g.item); }).join(", ")) + " · pays " + (Number(r.coins) || 0) + " coins" + (campaign.cooked[r.id] ? " · cooked " + campaign.cooked[r.id] + "×" : "") + "</span></span>" +
+      '<span class="btn-row">' + actions + "</span></li>";
+  }).join("") + "</ul></div>";
+  // companions & perks
+  html += '<div class="box"><h3>Companions and perks</h3><ul class="list-plain">' + (design.companions || []).map(function (c) {
+    var trips = campaign.companionTrips[c.id] || 0;
+    var tp = findById(design.perks, c.teachesPerk);
+    var unl = c.unlockedByDefault || campaign.unlockedCompanions.indexOf(c.id) >= 0;
+    return "<li><span><b>" + esc(c.name) + "</b>" + (unl ? "" : ' <span class="lock">locked</span>') + '<br><span class="small muted">' + trips + " trip" + (trips === 1 ? "" : "s") + (tp && c.tripsToTeach > 0 ? " · teaches " + esc(tp.name) + " at " + c.tripsToTeach : "") + "</span>" +
+      (tp && c.tripsToTeach > 0 ? '<div class="prog"><i style="width:' + Math.min(100, trips / c.tripsToTeach * 100) + '%"></i></div>' : "") + "</span>" +
+      (tp && campaign.learnedPerks.indexOf(tp.id) >= 0 ? '<span class="pill-ok">perk learned</span>' : "") + "</li>";
+  }).join("") + "</ul>" +
+    '<p class="small" style="margin-top:10px"><b>Learned and unlocked perks:</b> ' + (esc(campaign.learnedPerks.map(function (p) { var pk = findById(design.perks, p); return pk ? pk.name : p; }).join(", ")) || "none yet") + "</p>" +
+    '<p class="small"><b>Unique items found:</b> ' + (esc(campaign.obtained.map(itemName).join(", ")) || "none yet") + "</p></div>";
+  // log
+  html += '<div class="box"><h3>Trip log</h3>' + (campaign.log.length ? '<ul class="list-plain small">' + campaign.log.map(function (l) {
+    return '<li><span><b>Trip ' + l.trip + '</b> <span class="muted">seed <span class="mono">' + l.seed + "</span> · " + esc(l.label) + "</span><br>" + esc(l.finds) + "</span></li>";
+  }).join("") + "</ul>" : '<p class="muted">No trips yet.</p>') + "</div>";
+  html += "</div>";
+  $("campaignOut").innerHTML = html;
+}
+$("campaignOut").addEventListener("change", function (e) {
+  var cb = e.target.closest("[data-quest]"); if (!cb) return;
+  var id = cb.dataset.quest;
+  campaign.activeQuests = campaign.activeQuests.filter(function (q) { return q !== id; });
+  if (cb.checked) campaign.activeQuests.push(id);
+  renderCampaign(); renderEffects(); saveAll();
+});
+$("campaignOut").addEventListener("click", function (e) {
+  var learn = e.target.closest("[data-learn]");
+  if (learn) {
+    var lr = findById(design.recipes, learn.dataset.learn), cost = lr ? Number(lr.price) || 0 : 0;
+    if (lr && cost > 0 && !recipeUnlocked(lr) && campaign.coins >= cost) {
+      campaign.coins -= cost;
+      campaign.unlockedRecipes.push(lr.id);
+      toast("Learned " + lr.name + " for " + cost + " coins.");
+      renderCampaign(); saveAll();
+    }
+    return;
+  }
+  var b = e.target.closest("[data-cook]");
+  if (b) {
+    var r = findById(design.recipes, b.dataset.cook);
+    if (r && canCook(r) && (recipeUnlocked(r) || ui.unlockAll)) {
+      (r.ingredients || []).forEach(function (g) { campaign.inventory[g.item] -= Number(g.qty); });
+      campaign.cooked[r.id] = (campaign.cooked[r.id] || 0) + 1;
+      campaign.coins += Number(r.coins) || 0;
+      toast("Cooked " + r.name + " (+" + (r.coins || 0) + " coins).");
+      renderCampaign(); saveAll();
+    }
+    return;
+  }
+  var c = e.target.closest("[data-complete]");
+  if (c) completeQuest(c.dataset.complete);
+});
+function completeQuest(id) {
+  var q = findById(design.quests, id); if (!q) return;
+  (q.objectives || []).forEach(function (o) { if (o.type === "DeliverItems") campaign.inventory[o.target] = (campaign.inventory[o.target] || 0) - Number(o.qty); });
+  var got = [];
+  (q.rewards || []).forEach(function (rw) {
+    if (rw.type === "Coins") { campaign.coins += Number(rw.qty) || 0; got.push(rw.qty + " coins"); }
+    else if (rw.type === "Item") {
+      campaign.inventory[rw.target] = (campaign.inventory[rw.target] || 0) + (Number(rw.qty) || 1);
+      var it = itemOf(rw.target); if (it && it.unique && campaign.obtained.indexOf(rw.target) < 0) campaign.obtained.push(rw.target);
+      got.push(itemName(rw.target));
+      var taughtByReward = learnFromItem(rw.target);
+      if (taughtByReward) got.push("recipe " + taughtByReward.recipe.name);
+    } else if (rw.type === "UnlockPerk") { if (campaign.learnedPerks.indexOf(rw.target) < 0) campaign.learnedPerks.push(rw.target); var pk = findById(design.perks, rw.target); got.push("perk " + (pk ? pk.name : rw.target)); }
+    else if (rw.type === "UnlockCompanion") { if (campaign.unlockedCompanions.indexOf(rw.target) < 0) campaign.unlockedCompanions.push(rw.target); var cp = findById(design.companions, rw.target); got.push("companion " + (cp ? cp.name : rw.target)); }
+    else if (rw.type === "UnlockRecipe") { if (campaign.unlockedRecipes.indexOf(rw.target) < 0) campaign.unlockedRecipes.push(rw.target); var rc = findById(design.recipes, rw.target); got.push("recipe " + (rc ? rc.name : rw.target)); }
+  });
+  campaign.activeQuests = campaign.activeQuests.filter(function (x) { return x !== id; });
+  campaign.completedQuests.push(id);
+  toast("Finished " + q.title + ". Rewards: " + (got.join(", ") || "none") + ".");
+  renderCampaign(); renderSetup(); saveAll();
+}
+$("resetCampaign").addEventListener("click", function () {
+  armed(this, "Click again to reset", function () { campaign = newCampaign(); renderCampaign(); renderSetup(); saveAll(); toast("Campaign reset."); });
+});
+
+/* =====================================================================
+   DESIGN EDITOR
+   ===================================================================== */
+function schemaErrors(d) {
+  var errs = [];
+  if (!d || typeof d !== "object" || Array.isArray(d)) return ["The file isn't a JSON object."];
+  ["items", "forageTables", "companions", "perks", "focuses"].forEach(function (k) { if (!Array.isArray(d[k])) errs.push('Missing the "' + k + '" list.'); });
+  if (errs.length) return errs;
+  if (!d.forageTables.length) errs.push("There are no forage tables.");
+  d.items.forEach(function (it, i) { if (!it || typeof it.id !== "string" || !it.id) errs.push("Item " + (i + 1) + " has no id."); });
+  d.forageTables.forEach(function (t, i) {
+    if (!t || typeof t.id !== "string") errs.push("Forage table " + (i + 1) + " has no id.");
+    else if (!Array.isArray(t.entries)) errs.push("Forage table " + t.id + ' has no "entries" list.');
+  });
+  ["companions", "perks"].forEach(function (k) {
+    d[k].forEach(function (c, i) {
+      if (!c || typeof c.id !== "string") errs.push(k + " " + (i + 1) + " has no id.");
+      else if (!Array.isArray(c.modifiers)) errs.push(c.id + ' has no "modifiers" list.');
+    });
+  });
+  return errs;
+}
+function normaliseDesign(d) {
+  ["recipes", "npcs", "quests"].forEach(function (k) { if (!Array.isArray(d[k])) d[k] = []; });
+  if (d.version === undefined) d.version = 1;
+  d.items.forEach(function (it) { if (!Array.isArray(it.tags)) it.tags = []; });
+  return d;
+}
+
+function validate(d) {
+  var W = [];
+  var itemIds = {}, tagSet = {}, raritySet = {};
+  function dupCheck(list, label) {
+    var seen = {};
+    (list || []).forEach(function (x) { if (seen[x.id]) W.push(label + ' id "' + x.id + '" is used more than once.'); seen[x.id] = 1; });
+  }
+  (d.items || []).forEach(function (it) {
+    itemIds[it.id] = it; tagsOf(it).forEach(function (t) { tagSet[t] = 1; }); raritySet[it.rarity] = 1;
+    if (RARITIES.indexOf(it.rarity) < 0) W.push(it.id + ': rarity "' + it.rarity + '" isn\'t one of ' + RARITIES.join(", ") + ".");
+    if (CATEGORIES.indexOf(it.category) < 0) W.push(it.id + ': category "' + it.category + '" isn\'t one of ' + CATEGORIES.join(", ") + ".");
+    if (!it.name) W.push(it.id + " has no name.");
+    if (!tagsOf(it).length) W.push((it.name || it.id) + " has no tags, so no modifier can boost it.");
+    if (it.teachesRecipe && !findById(d.recipes, it.teachesRecipe)) W.push((it.name || it.id) + ' teaches unknown recipe "' + it.teachesRecipe + '".');
+    if (it.teachesRecipe && !it.unique) W.push((it.name || it.id) + " teaches a recipe, so it should be unique (it can only be learned once).");
+  });
+  dupCheck(d.items, "Item"); dupCheck(d.companions, "Companion"); dupCheck(d.perks, "Perk"); dupCheck(d.focuses, "Focus");
+  var questIds = {}; (d.quests || []).forEach(function (q) { questIds[q.id] = 1; });
+  (d.forageTables || []).forEach(function (t) {
+    if (!(Number(t.rolls) >= 1)) W.push(t.name + ": rolls should be 1 or more (it will be treated as 1).");
+    (t.entries || []).forEach(function (e, i) {
+      var where = t.name + " line " + (i + 1) + " (" + (itemIds[e.item] ? itemIds[e.item].name : e.item) + ")";
+      if (!itemIds[e.item]) W.push(where + ': unknown item id "' + e.item + '". This line is skipped.');
+      if (!(Number(e.weight) > 0)) W.push(where + ": weight is " + e.weight + ", so it can never drop.");
+      if (Number(e.min) > Number(e.max)) W.push(where + ": min (" + e.min + ") is more than max (" + e.max + ").");
+      if (!Number.isInteger(Number(e.min)) || !Number.isInteger(Number(e.max))) W.push(where + ": min and max should be whole numbers.");
+      if (Number(e.min) < 0) W.push(where + ": min is below 0.");
+      if (TIMES.indexOf(e.time) < 0) W.push(where + ': time "' + e.time + '" should be Any, Day or Night.');
+      if (e.requiresQuest && !questIds[e.requiresQuest]) W.push(where + ': needs unknown quest "' + e.requiresQuest + '".');
+      if (e.requiresCompanion && !findById(d.companions, e.requiresCompanion)) W.push(where + ': needs unknown companion "' + e.requiresCompanion + '".');
+      if (itemIds[e.item] && itemIds[e.item].unique && Number(e.max) > 1) W.push(where + ": unique items always give exactly 1, so max " + e.max + " is ignored.");
+    });
+  });
+  function checkMods(owner, label) {
+    (owner.modifiers || []).forEach(function (m, i) {
+      var where = label + " " + owner.name + ", modifier " + (i + 1);
+      if (MOD_TYPES.indexOf(m.type) < 0) { W.push(where + ': unknown type "' + m.type + '".'); return; }
+      if (m.type === "TagWeight" || m.type === "TagQuantity" || m.type === "BonusRoll") {
+        if (!m.tag) W.push(where + " (" + m.type + ") has no tag.");
+        else if (!tagSet[m.tag]) W.push(where + ': no item has the tag "' + m.tag + '", so it does nothing.');
+      }
+      if (m.type === "RarityWeight") {
+        if (RARITIES.indexOf(m.rarity) < 0) W.push(where + ': rarity "' + m.rarity + '" isn\'t valid.');
+        else if (!raritySet[m.rarity]) W.push(where + ": no item is " + m.rarity + ", so it does nothing.");
+      }
+      var v = Number(m.value);
+      if (!isFinite(v)) W.push(where + ": value isn't a number.");
+      else if ((m.type === "TagWeight" || m.type === "RarityWeight") && v <= 0) W.push(where + ": a weight multiplier of " + v + " stops those items dropping at all.");
+      else if (m.type === "BonusRoll" && (v <= 0 || v > 1)) W.push(where + ": bonus chance should be between 0 and 1 (0.4 = 40%).");
+      else if ((m.type === "ExtraRolls" || m.type === "TagQuantity") && v !== Math.floor(v)) W.push(where + ": " + v + " rounds down to " + Math.floor(v) + ".");
+    });
+  }
+  (d.companions || []).forEach(function (c) {
+    checkMods(c, "Companion");
+    if (c.teachesPerk && !findById(d.perks, c.teachesPerk)) W.push("Companion " + c.name + ' teaches unknown perk "' + c.teachesPerk + '".');
+    if (c.teachesPerk && !(Number(c.tripsToTeach) > 0)) W.push("Companion " + c.name + " teaches a perk but tripsToTeach is " + c.tripsToTeach + ", so it never does.");
+  });
+  (d.perks || []).forEach(function (p) { checkMods(p, "Perk"); });
+  (d.focuses || []).forEach(function (f) {
+    (f.tags || []).forEach(function (t) { if (!tagSet[t]) W.push("Focus " + f.name + ': no item has the tag "' + t + '".'); });
+    if (!(f.tags || []).length) W.push("Focus " + f.name + " has no tags.");
+    if (!(Number(f.multiplier) > 0)) W.push("Focus " + f.name + ": multiplier should be above 0.");
+  });
+  (d.recipes || []).forEach(function (r) { (r.ingredients || []).forEach(function (g) { if (!itemIds[g.item]) W.push("Recipe " + r.name + ': unknown ingredient "' + g.item + '".'); }); });
+  (d.quests || []).forEach(function (q) {
+    (q.objectives || []).forEach(function (o) {
+      if ((o.type === "DeliverItems" || o.type === "HaveItems") && !itemIds[o.target]) W.push("Quest " + q.title + ': unknown item "' + o.target + '".');
+      if (o.type === "CookRecipe" && !findById(d.recipes, o.target)) W.push("Quest " + q.title + ': unknown recipe "' + o.target + '".');
+    });
+  });
+  return W;
+}
+
+function renderWarnings() {
+  var W = validate(design);
+  $("warnBadge").hidden = !W.length; $("warnBadge").textContent = W.length;
+  $("warnings").innerHTML = W.length ? '<ul class="warns">' + W.map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("") + "</ul>" : '<div class="allgood">No problems found in the design data.</div>';
+  $("tagList").innerHTML = allTags().map(function (t) { return '<option value="' + esc(t) + '">'; }).join("");
+}
+
+// field builders
+function fid(path) { return "f-" + path.replace(/\./g, "-"); }
+function tIn(path, val, extra) { return '<input type="text" id="' + fid(path) + '" data-path="' + path + '" data-kind="str" value="' + esc(val) + '"' + (extra || "") + ">"; }
+function nIn(path, val, kind, extra) { return '<input type="number" id="' + fid(path) + '" data-path="' + path + '" data-kind="' + (kind || "num") + '" value="' + esc(val) + '"' + (extra || "") + ">"; }
+function tagsIn(path, val) { return '<input type="text" id="' + fid(path) + '" data-path="' + path + '" data-kind="tags" value="' + esc((val || []).join(", ")) + '" placeholder="tag, tag">'; }
+function cIn(path, val) { return '<input type="checkbox" id="' + fid(path) + '" data-path="' + path + '" data-kind="bool"' + (val ? " checked" : "") + ">"; }
+function sIn(path, val, opts, extra) {
+  var has = opts.some(function (o) { return o.v === val; });
+  return '<select id="' + fid(path) + '" data-path="' + path + '" data-kind="str"' + (extra || "") + ">" + (has ? "" : '<option value="' + esc(val) + '" selected>' + esc(val ? "(unknown) " + val : "(none)") + "</option>") +
+    opts.map(function (o) { return '<option value="' + esc(o.v) + '"' + (o.v === val ? " selected" : "") + ">" + esc(o.l) + "</option>"; }).join("") + "</select>";
+}
+function plain(list) { return list.map(function (x) { return { v: x, l: x }; }); }
+
+var openSecs = { table: true, items: false, companions: true, perks: false, focuses: false };
+function renderDesign() {
+  var d = design;
+  var ti = Math.max(0, d.forageTables.findIndex(function (t) { return t.id === ui.table; }));
+  var t = d.forageTables[ti];
+  var itemOpts = d.items.map(function (i) { return { v: i.id, l: i.name }; });
+  var questOpts = [{ v: "", l: "(none)" }].concat((d.quests || []).map(function (q) { return { v: q.id, l: q.title }; }));
+  var perkOpts = [{ v: "", l: "(none)" }].concat(d.perks.map(function (p) { return { v: p.id, l: p.name }; }));
+  var companionOpts = [{ v: "", l: "(any)" }].concat(d.companions.map(function (c) { return { v: c.id, l: c.name }; }));
+  var recipeOpts = [{ v: "", l: "(none)" }].concat((d.recipes || []).map(function (r) { return { v: r.id, l: r.name }; }));
+  var h = "";
+
+  // forage table
+  h += '<details class="ed-sec" data-sec="table"' + (openSecs.table ? " open" : "") + "><summary>Forage table: " + esc(t.name) + " (" + t.entries.length + " lines)</summary>" +
+    '<div class="form-row" style="margin-bottom:10px"><label>Table name' + tIn("forageTables." + ti + ".name", t.name) + "</label><label>Rolls per trip" + nIn("forageTables." + ti + ".rolls", t.rolls, "int", ' min="1" step="1"') + '</label><span class="small muted">Order matters: rolls walk the list top to bottom, so moving lines changes which seed gives what.</span></div>' +
+    '<div class="tbl-wrap"><table class="ed"><thead><tr><th>#</th><th>Item</th><th>Weight</th><th>Min</th><th>Max</th><th>Time</th><th>Needs quest</th><th>Needs companion</th><th></th></tr></thead><tbody>' +
+    t.entries.map(function (e, i) {
+      var p = "forageTables." + ti + ".entries." + i;
+      return "<tr><td class=\"num\">" + (i + 1) + '</td><td class="mid">' + sIn(p + ".item", e.item, itemOpts) + "</td><td>" + nIn(p + ".weight", e.weight, "num", ' min="0" step="any"') + "</td><td>" + nIn(p + ".min", e.min, "int", ' min="0" step="1"') + "</td><td>" + nIn(p + ".max", e.max, "int", ' min="0" step="1"') +
+        "</td><td>" + sIn(p + ".time", e.time, plain(TIMES)) + '</td><td class="mid">' + sIn(p + ".requiresQuest", e.requiresQuest || "", questOpts) + '</td><td class="mid">' + sIn(p + ".requiresCompanion", e.requiresCompanion || "", companionOpts) +
+        '</td><td class="act"><button class="iconbtn" type="button" data-act="entry-up" data-i="' + i + '" aria-label="Move up">↑</button> <button class="iconbtn" type="button" data-act="entry-down" data-i="' + i + '" aria-label="Move down">↓</button> <button class="iconbtn" type="button" data-act="entry-del" data-i="' + i + '" aria-label="Remove line">✕</button></td></tr>';
+    }).join("") + '</tbody></table></div><div class="btn-row" style="margin-top:10px"><button class="btn tiny" type="button" data-act="entry-add">Add a line</button></div></details>';
+
+  // items
+  h += '<details class="ed-sec" data-sec="items"' + (openSecs.items ? " open" : "") + "><summary>Items (" + d.items.length + ")</summary>" +
+    '<p class="small muted" style="margin-bottom:8px">Changing an id also updates every reference to it (forage lines, recipes, quests). Tags are comma separated.</p>' +
+    '<div class="tbl-wrap"><table class="ed"><thead><tr><th>Id</th><th>Name</th><th>Category</th><th>Rarity</th><th>Tags</th><th>Sell</th><th>Unique</th><th>Teaches recipe</th><th>Description</th><th></th></tr></thead><tbody>' +
+    d.items.map(function (it, i) {
+      var p = "items." + i;
+      return '<tr><td class="mid">' + tIn(p + ".id", it.id, ' data-id="1"') + '</td><td class="mid">' + tIn(p + ".name", it.name) + "</td><td>" + sIn(p + ".category", it.category, plain(CATEGORIES)) + "</td><td>" + sIn(p + ".rarity", it.rarity, plain(RARITIES)) +
+        '</td><td class="mid">' + tagsIn(p + ".tags", it.tags) + "</td><td>" + nIn(p + ".sellValue", it.sellValue, "int", ' min="0" step="1"') + "</td><td>" + cIn(p + ".unique", it.unique) + '</td><td class="mid">' + sIn(p + ".teachesRecipe", it.teachesRecipe || "", recipeOpts) + '</td><td class="wide">' + tIn(p + ".description", it.description) +
+        '</td><td class="act"><button class="iconbtn" type="button" data-act="item-del" data-i="' + i + '" aria-label="Remove item">✕</button></td></tr>';
+    }).join("") + '</tbody></table></div><div class="btn-row" style="margin-top:10px"><button class="btn tiny" type="button" data-act="item-add">Add an item</button></div></details>';
+
+  // companions
+  h += '<details class="ed-sec" data-sec="companions"' + (openSecs.companions ? " open" : "") + "><summary>Companions (" + d.companions.length + ")</summary><div class=\"ed-cards\">" +
+    d.companions.map(function (c, i) { return ownerCard("companions", c, i, perkOpts); }).join("") +
+    '</div><div class="btn-row"><button class="btn tiny" type="button" data-act="companion-add">Add a companion</button><button class="btn tiny" type="button" data-act="invent-companion">Randomise a companion</button></div></details>';
+  // perks
+  h += '<details class="ed-sec" data-sec="perks"' + (openSecs.perks ? " open" : "") + "><summary>Perks (" + d.perks.length + ")</summary><div class=\"ed-cards\">" +
+    d.perks.map(function (p, i) { return ownerCard("perks", p, i, perkOpts); }).join("") +
+    '</div><div class="btn-row"><button class="btn tiny" type="button" data-act="perk-add">Add a perk</button><button class="btn tiny" type="button" data-act="invent-perk">Invent a perk</button></div></details>';
+  // focuses
+  h += '<details class="ed-sec" data-sec="focuses"' + (openSecs.focuses ? " open" : "") + "><summary>Focuses (" + d.focuses.length + ")</summary>" +
+    '<div class="tbl-wrap"><table class="ed"><thead><tr><th>Id</th><th>Name</th><th>Tags</th><th>Multiplier</th><th></th></tr></thead><tbody>' +
+    d.focuses.map(function (f, i) {
+      var p = "focuses." + i;
+      return '<tr><td class="mid">' + tIn(p + ".id", f.id, ' data-id="1"') + '</td><td class="mid">' + tIn(p + ".name", f.name) + '</td><td class="mid">' + tagsIn(p + ".tags", f.tags) + "</td><td>" + nIn(p + ".multiplier", f.multiplier, "num", ' step="any" min="0"') +
+        '</td><td class="act"><button class="iconbtn" type="button" data-act="focus-del" data-i="' + i + '" aria-label="Remove focus">✕</button></td></tr>';
+    }).join("") + '</tbody></table></div><div class="btn-row" style="margin-top:10px"><button class="btn tiny" type="button" data-act="focus-add">Add a focus</button></div></details>';
+  h += '<p class="small muted">Recipes, NPCs and quests are kept as they are and included in the export.</p>';
+  $("editor").innerHTML = h;
+}
+
+function ownerCard(kind, o, i, perkOpts) {
+  var p = kind + "." + i;
+  var h = '<div class="ed-card"><div class="hd"><b>' + esc(o.name || o.id) + '</b><button class="iconbtn" type="button" data-act="' + kind + '-del" data-i="' + i + '">Remove</button></div>' +
+    '<label class="f"><span>Id</span>' + tIn(p + ".id", o.id, ' data-id="1"') + "</label>" +
+    '<label class="f"><span>Name</span>' + tIn(p + ".name", o.name) + "</label>" +
+    '<label class="f"><span>Description</span>' + tIn(p + ".description", o.description) + "</label>" +
+    '<label class="f"><span>Unlocked at start</span><span>' + cIn(p + ".unlockedByDefault", o.unlockedByDefault) + "</span></label>";
+  if (kind === "companions") {
+    h += '<label class="f"><span>Teaches perk</span>' + sIn(p + ".teachesPerk", o.teachesPerk || "", perkOpts) + "</label>" +
+      '<label class="f"><span>After trips</span>' + nIn(p + ".tripsToTeach", o.tripsToTeach, "int", ' min="0" step="1"') + "</label>";
+  }
+  h += '<div class="tbl-wrap"><table class="ed"><thead><tr><th>Modifier</th><th>Tag / rarity</th><th>Value</th><th></th></tr></thead><tbody>' +
+    (o.modifiers || []).map(function (m, j) {
+      var mp = p + ".modifiers." + j;
+      var field = (m.type === "RarityWeight") ? sIn(mp + ".rarity", m.rarity, plain(RARITIES)) :
+        (m.type === "ExtraRolls") ? '<span class="small muted">no tag</span>' :
+          '<input type="text" list="tagList" id="' + fid(mp + ".tag") + '" data-path="' + mp + '.tag" data-kind="str" value="' + esc(m.tag) + '">';
+      return '<tr><td class="mid">' + sIn(mp + ".type", m.type, plain(MOD_TYPES), ' data-modtype="1"') + '</td><td class="mid">' + field + "</td><td>" + nIn(mp + ".value", m.value, "num", ' step="any"') +
+        '</td><td class="act"><button class="iconbtn" type="button" data-act="mod-del" data-owner="' + kind + '" data-i="' + i + '" data-j="' + j + '" aria-label="Remove modifier">✕</button></td></tr>';
+    }).join("") + "</tbody></table></div>" +
+    '<p class="small muted">' + esc(describeMods(o.modifiers)) + "</p>" +
+    '<div><button class="btn tiny" type="button" data-act="mod-add" data-owner="' + kind + '" data-i="' + i + '">Add modifier</button></div></div>';
+  return h;
+}
+
+function getPath(path) { var ks = path.split("."), o = design; for (var i = 0; i < ks.length; i++) o = o[ks[i]]; return o; }
+function setPath(path, v) { var ks = path.split("."), o = design; for (var i = 0; i < ks.length - 1; i++) o = o[ks[i]]; o[ks[ks.length - 1]] = v; }
+function readInput(el) {
+  var k = el.dataset.kind;
+  if (k === "bool") return el.checked;
+  if (k === "num") { var n = parseFloat(el.value); return isFinite(n) ? n : 0; }
+  if (k === "int") { var m = parseInt(el.value, 10); return isFinite(m) ? m : 0; }
+  if (k === "tags") return el.value.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+  return el.value;
+}
+function renameRef(oldId, newId) {
+  (function walk(o) {
+    if (Array.isArray(o)) { for (var i = 0; i < o.length; i++) { if (o[i] === oldId) o[i] = newId; else if (o[i] && typeof o[i] === "object") walk(o[i]); } }
+    else if (o && typeof o === "object") { for (var k in o) { if (o[k] === oldId) o[k] = newId; else if (o[k] && typeof o[k] === "object") walk(o[k]); } }
+  })(design);
+  ["companion", "perk", "focus", "table"].forEach(function (k) { if (ui[k] === oldId) ui[k] = newId; });
+  if (campaign.inventory[oldId] !== undefined) { campaign.inventory[newId] = campaign.inventory[oldId]; delete campaign.inventory[oldId]; }
+  ["obtained", "learnedPerks", "unlockedCompanions", "activeQuests"].forEach(function (k) { campaign[k] = campaign[k].map(function (x) { return x === oldId ? newId : x; }); });
+  if (campaign.companionTrips[oldId] !== undefined) { campaign.companionTrips[newId] = campaign.companionTrips[oldId]; delete campaign.companionTrips[oldId]; }
+}
+var refreshTimer = null;
+function designChanged(rerenderEditor) {
+  if (rerenderEditor) renderDesign();
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(function () {
+    renderWarnings(); renderSetup();
+    if (ui.tab === "odds") renderOdds();
+    if (ui.tab === "campaign") renderCampaign();
+    if (!$("editor").contains(document.activeElement)) renderDesign();
+    saveAll();
+  }, 120);
+}
+$("editor").addEventListener("input", function (e) {
+  var el = e.target; if (!el.dataset || !el.dataset.path || el.dataset.id || el.dataset.modtype) return;
+  setPath(el.dataset.path, readInput(el));
+  designChanged(false);
+});
+$("editor").addEventListener("change", function (e) {
+  var el = e.target; if (!el.dataset || !el.dataset.path) return;
+  var path = el.dataset.path;
+  if (el.dataset.id) {
+    var oldId = getPath(path), newId = el.value.trim();
+    var listName = path.split(".")[0];
+    if (!newId) { el.value = oldId; toast("Ids can't be empty.", true); return; }
+    if (newId !== oldId && findById(design[listName], newId)) { el.value = oldId; toast('"' + newId + '" is already used.', true); return; }
+    if (newId !== oldId) { renameRef(oldId, newId); toast("Renamed " + oldId + " to " + newId + " everywhere."); }
+    designChanged(true);
+    return;
+  }
+  if (el.dataset.modtype) {
+    var mpath = path.replace(/\.type$/, "");
+    var mod = getPath(mpath);
+    mod.type = el.value;
+    if (mod.type === "RarityWeight") { mod.tag = ""; if (RARITIES.indexOf(mod.rarity) < 0) mod.rarity = "Rare"; }
+    else if (mod.type === "ExtraRolls") { mod.tag = ""; mod.rarity = ""; mod.value = Math.max(1, Math.floor(Number(mod.value) || 1)); }
+    else { mod.rarity = ""; if (!mod.tag) mod.tag = allTags()[0] || ""; if (mod.type === "BonusRoll" && !(mod.value > 0 && mod.value <= 1)) mod.value = 0.25; }
+    designChanged(true);
+    return;
+  }
+  setPath(path, readInput(el));
+  designChanged(false);
+});
+$("editor").addEventListener("toggle", function (e) { var s = e.target.closest && e.target.closest("[data-sec]"); if (s) openSecs[s.dataset.sec] = s.open; }, true);
+
+function uniqueId(prefix, list) { var n = 1; while (findById(list, prefix + n)) n++; return prefix + n; }
+document.addEventListener("click", function (e) {
+  var b = e.target.closest("[data-act]"); if (!b) return;
+  var act = b.dataset.act, i = Number(b.dataset.i);
+  var ti = Math.max(0, design.forageTables.findIndex(function (t) { return t.id === ui.table; }));
+  var entries = design.forageTables[ti].entries;
+  switch (act) {
+    case "entry-add": entries.push({ item: (design.items[0] || {}).id || "", weight: 10, min: 1, max: 1, time: "Any", requiresQuest: "", requiresCompanion: "" }); break;
+    case "entry-del": entries.splice(i, 1); break;
+    case "entry-up": if (i > 0) { var a = entries[i]; entries[i] = entries[i - 1]; entries[i - 1] = a; } break;
+    case "entry-down": if (i < entries.length - 1) { var c = entries[i]; entries[i] = entries[i + 1]; entries[i + 1] = c; } break;
+    case "item-add": design.items.push({ id: uniqueId("item.new_", design.items), name: "New item", category: "Ingredient", rarity: "Common", tags: [], sellValue: 1, unique: false, description: "" }); openSecs.items = true; break;
+    case "item-del": toast("Removed " + design.items[i].name + ". Lines that used it now show a warning."); design.items.splice(i, 1); break;
+    case "companions-del": design.companions.splice(i, 1); break;
+    case "perks-del": design.perks.splice(i, 1); break;
+    case "focus-del": design.focuses.splice(i, 1); break;
+    case "companion-add": design.companions.push({ id: uniqueId("companion.new_", design.companions), name: "New companion", description: "", unlockedByDefault: true, modifiers: [], teachesPerk: "", tripsToTeach: 0 }); openSecs.companions = true; break;
+    case "perk-add": design.perks.push({ id: uniqueId("perk.new_", design.perks), name: "New perk", description: "", unlockedByDefault: true, modifiers: [] }); openSecs.perks = true; break;
+    case "focus-add": design.focuses.push({ id: uniqueId("focus.new_", design.focuses), name: "New focus", tags: [], multiplier: 2 }); openSecs.focuses = true; break;
+    case "mod-add": design[b.dataset.owner][i].modifiers.push({ type: "TagWeight", tag: allTags()[0] || "", rarity: "", value: 2 }); break;
+    case "mod-del": design[b.dataset.owner][i].modifiers.splice(Number(b.dataset.j), 1); break;
+    case "invent-companion": inventCompanion(); break;
+    case "invent-perk": inventPerk(); break;
+    default: return;
+  }
+  designChanged(true);
+});
+
+// --- made-up companions and perks ---
+function pickOne(a) { return a[Math.floor(Math.random() * a.length)]; }
+function slug(s) { return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""); }
+var CRITTERS = [
+  ["Tūī", "Sings for its supper and knows where the nectar is."], ["Kererū", "A big, round pigeon that eats more fruit than seems possible."], ["Pīwakawaka", "A fantail that flits after you, snapping up insects."],
+  ["Kiwi", "Probes the leaf litter all night with a long beak."], ["Tuatara", "Ancient and patient. Notices things others miss."], ["Pūkeko", "Bossy, bold and always rummaging."],
+  ["Kākā", "A noisy parrot that tears bark apart for grubs."], ["Kōtare", "A kingfisher with a sharp eye for shiny things."], ["Hoiho", "A penguin a long way from the sea, and curious about everything."],
+  ["Tīeke", "A saddleback that flips over leaves and bark."], ["Kākāpō", "Slow, heavy and lucky. Smells of honey."], ["Huhu beetle", "Lives in rotting logs and knows them all."],
+  ["Ruru chick", "Small, fluffy and wide awake at night."], ["Kārearea", "A falcon that sees everything from above."], ["Hedgehog", "Snuffles through the undergrowth after worms."]
+];
+var PERK_NAMES = ["Nimble claws", "Dew collector", "Lucky tail", "Night owl", "Soft step", "Mossy pockets", "Sharp nose", "Deep pockets", "Sticky feet", "Patient paws", "Forest friend", "Early riser", "Treasure eye", "Quiet feet"];
+function inventTags() {
+  // tags on non-unique items only, so made-up companions don't chase key items like recipe scraps
+  var s = {}; (design.items || []).forEach(function (it) { if (!it.unique) tagsOf(it).forEach(function (t) { s[t] = 1; }); });
+  var list = Object.keys(s).sort();
+  return list.length ? list : allTags();
+}
+function randomMod(tags, allowed) {
+  var type = pickOne(allowed);
+  if (type === "TagWeight") return { type: type, tag: pickOne(tags), rarity: "", value: pickOne([1.5, 2, 2.5, 3]) };
+  if (type === "TagQuantity") return { type: type, tag: pickOne(tags), rarity: "", value: 1 };
+  if (type === "RarityWeight") return { type: type, tag: "", rarity: pickOne(["Uncommon", "Rare"]), value: pickOne([1.5, 2]) };
+  if (type === "ExtraRolls") return { type: type, tag: "", rarity: "", value: 1 };
+  return { type: "BonusRoll", tag: pickOne(tags), rarity: "", value: pickOne([0.15, 0.25, 0.35, 0.5]) };
+}
+function inventCompanion() {
+  var tags = inventTags(); if (!tags.length) { toast("Add some item tags first.", true); return; }
+  var unused = CRITTERS.filter(function (c) { return !design.companions.some(function (x) { return x.name === c[0]; }); });
+  var cr = pickOne(unused.length ? unused : CRITTERS);
+  var first = randomMod(tags, ["TagWeight"]);
+  var mods = [first];
+  var second = pickOne(["TagQuantity", "BonusRoll", "RarityWeight", "none", "TagWeight"]);
+  if (second === "TagQuantity") mods.push({ type: "TagQuantity", tag: first.tag, rarity: "", value: 1 });
+  else if (second !== "none") mods.push(randomMod(tags, [second]));
+  var id = "companion." + slug(cr[0]); if (findById(design.companions, id)) id = uniqueId(id + "_", design.companions);
+  design.companions.push({ id: id, name: cr[0], description: cr[1] + " (Made up in the sandbox.)", unlockedByDefault: true, modifiers: mods, teachesPerk: "", tripsToTeach: 0 });
+  ui.companion = id; openSecs.companions = true;
+  toast("Meet " + cr[0] + ": " + describeMods(mods) + ".");
+}
+function inventPerk() {
+  var tags = inventTags(); if (!tags.length) { toast("Add some item tags first.", true); return; }
+  var unused = PERK_NAMES.filter(function (n) { return !design.perks.some(function (x) { return x.name === n; }); });
+  var name = pickOne(unused.length ? unused : PERK_NAMES);
+  var mods = [randomMod(tags, ["TagWeight", "TagWeight", "TagQuantity", "RarityWeight", "BonusRoll", "ExtraRolls"])];
+  var others = tags.filter(function (t) { return t !== mods[0].tag; });
+  if (others.length && Math.random() < 0.35) mods.push({ type: "TagWeight", tag: pickOne(others), rarity: "", value: 0.5 });
+  var id = "perk." + slug(name); if (findById(design.perks, id)) id = uniqueId(id + "_", design.perks);
+  design.perks.push({ id: id, name: name, description: "Made up in the sandbox: " + describeMods(mods) + ".", unlockedByDefault: true, modifiers: mods });
+  ui.perk = id; openSecs.perks = true;
+  toast("New perk " + name + ": " + describeMods(mods) + ".");
+}
+
+// --- save / share ---
+function designJson() { return JSON.stringify(design, null, 2) + "\n"; }
+$("exportBtn").addEventListener("click", function () {
+  try {
+    var blob = new Blob([designJson()], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "design-data.json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    toast("Exported design-data.json. Put it in Design/ and run Tools > Bush > Import Design Data.");
+  } catch (err) { toast("Download blocked here. Use Copy JSON instead.", true); }
+});
+$("copyBtn").addEventListener("click", function () { copyText(designJson(), "Copied the design JSON."); });
+$("importFile").addEventListener("change", function () {
+  var f = this.files && this.files[0]; if (!f) return;
+  var input = this;
+  var rd = new FileReader();
+  rd.onload = function () {
+    var errs = [], d = null;
+    try { d = JSON.parse(String(rd.result).replace(/^﻿/, "")); } catch (err) { errs.push("This isn't valid JSON: " + err.message); }
+    if (d) errs = errs.concat(schemaErrors(d));
+    if (errs.length) {
+      $("importErrors").innerHTML = '<ul class="warns errs"><li><b>Couldn\'t import ' + esc(f.name) + ".</b> Nothing was changed.</li>" + errs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+      toast("Import failed. See the list on the Design data tab.", true);
+    } else {
+      design = normaliseDesign(d);
+      $("importErrors").innerHTML = "";
+      sanitiseUi(); designChanged(true);
+      var n = validate(design).length;
+      toast("Imported " + f.name + (n ? " with " + n + " warning" + (n === 1 ? "" : "s") + "." : "."));
+    }
+    input.value = "";
+  };
+  rd.onerror = function () { toast("Couldn't read that file.", true); };
+  rd.readAsText(f);
+});
+$("resetDesign").addEventListener("click", function () {
+  armed(this, "Click again to reset", function () { design = clone(DEFAULT_DESIGN); sanitiseUi(); designChanged(true); toast("Design data reset to the built-in defaults."); });
+});
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+window.ForageSandbox = {
+  resolve: resolve,
+  preview: preview,
+  defaultDesign: clone(DEFAULT_DESIGN),
+  currentDesign: function () { return clone(design); },
+  mulberry32: mulberry32
+};
+
+applyTheme();
+sanitiseUi();
+renderSetup();
+renderResult(null);
+renderWarnings();
+renderDesign();
+var startTab = (location.hash || "").replace("#", "");
+showTab(TABS.indexOf(startTab) >= 0 ? startTab : (ui.tab || "expedition"));
+
+// Self-test (console only): compare these against the Unity implementation.
+try {
+  var st1 = resolve(DEFAULT_DESIGN, { table: "table.bush", companion: "companion.weka", perks: ["perk.big_basket"], focus: "focus.bugs", time: "Night" }, { activeQuests: ["quest.main_lost_recipe"], obtained: [] }, 12345);
+  console.log("[ForageSandbox self-test] seed 12345 weka+big_basket+bugs Night " + JSON.stringify(st1));
+  var st2 = resolve(DEFAULT_DESIGN, { table: "table.bush", companion: "companion.kea", perks: [], focus: null, time: "Day" }, { activeQuests: [], obtained: [] }, 1);
+  console.log("[ForageSandbox self-test] seed 1 kea Day " + JSON.stringify(st2));
+} catch (err) { console.error("[ForageSandbox self-test] failed", err); }
+})();
+
+// The page's built-in data changed since this browser's copy was saved: say so, so old data isn't exported over new.
+if (staleDesign) setTimeout(function () {
+  toast("Heads up: the page's built-in design data has changed since you last edited here. Your saved copy is older. Export it if you need your edits, then Reset to defaults to get the new data.", true);
+}, 400);
+</script>
+</body>
+</html>
