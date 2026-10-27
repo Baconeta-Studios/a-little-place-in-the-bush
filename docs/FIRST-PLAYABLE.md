@@ -70,6 +70,7 @@ From the Trello cards *Check click-to-walk feel and edge cases* and *Test first 
 | Gecko > CharacterMover | Speed | Walk speed in units per second (3.5 by default; the safe area is 19.2 wide). |
 | Gecko > CharacterMover | Acceleration Time | Seconds to reach full speed from standing (0.12). 0 starts instantly. |
 | Gecko > CharacterMover | Braking Distance | How far from the end of a walk it starts slowing down (0.4 units). 0 stops dead. |
+| Gecko > PlayerPointerInput | Min Walk Distance | Taps closer than this to a standing gecko (0.5 units) just turn it to look instead of walking. 0 always walks. |
 | Gecko > CharacterMover | Turn Threshold | How sideways a step must be before the gecko turns to face it (0.3). Higher stops it flip-flopping when walking up or down. |
 | Gecko > PlayerPointerInput | Tap Tolerance | How far a tap can miss an interactable and still hit it. |
 | Gecko > PlayerPointerInput | Hold To Steer | Keep walking towards the pointer while held. |

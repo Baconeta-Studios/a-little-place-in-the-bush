@@ -20,6 +20,8 @@ public class PlayerPointerInput : MonoBehaviour
     [Tooltip("Keep walking towards the pointer while the button or finger is held down.")]
     [SerializeField] private bool holdToSteer = true;
     [SerializeField, Min(0.05f)] private float steerInterval = 0.15f;
+    [Tooltip("Taps closer than this (world units) to a standing gecko just turn it to look, rather than shuffling it along.")]
+    [SerializeField, Min(0f)] private float minWalkDistance = 0.5f;
     [Tooltip("Optional marker spawned where the player clicks the floor.")]
     [SerializeField] private GameObject clickMarkerPrefab;
 
@@ -142,6 +144,16 @@ public class PlayerPointerInput : MonoBehaviour
 
     private void WalkTo(Vector2 world, bool showMarker = true)
     {
+        // A tiny shuffle looks twitchy whatever the easing, so a standing gecko just looks that way.
+        if (!_mover.IsMoving && _mover.Pathfinder != null &&
+            _mover.Pathfinder.TryGetNearestWalkable(world, out Vector2 destination) &&
+            Vector2.Distance(destination, _mover.Position) < minWalkDistance)
+        {
+            _interactor.Cancel();
+            _mover.FaceTowards(world);
+            return;
+        }
+
         _interactor.Cancel();
         if (!_mover.MoveTo(world)) return;
         if (showMarker && clickMarkerPrefab) ShowClickMarker(_mover.CurrentPath.Count > 0 ? _mover.CurrentPath[^1] : world);
