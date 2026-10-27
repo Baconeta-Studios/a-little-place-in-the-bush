@@ -23,6 +23,7 @@ Full GDD (Canva): https://www.canva.com/design/DAHY_0K-xoA/AdOWDfjHg6R3XCjFi38QH
 - Template menu and volume test scenes in `Assets/Scenes/Templates/`, kept for reference but disabled in the build list.
 - **Game rules in `Bush.Core`** (`Assets/Scripts/Core`): economy, foraging, cooking and quests, as plain C# with EditMode tests. No UI uses them yet.
 - **Design data**: items, recipes, companions, perks, forage tables, NPCs and a draft main quest in `Design/design-data.json`, imported into ScriptableObjects with **Tools > Bush > Import Design Data**. See [docs/MAIN-QUEST.md](docs/MAIN-QUEST.md).
+- **Build mode (prototype)** in the cafe: place, move, flip and put away furniture and plants, saved between sessions; plus a read-only bag (inventory). See [docs/BUILD-MODE.md](docs/BUILD-MODE.md) to set it up and try it.
 - **Forage sandbox** (`Tools/ForageSandbox/index.html`): a standalone web page for trying out and tuning foraging without Unity. It uses the same rules and gives the same results for the same seed.
 - Template systems: UI state switching, popups (pause/settings/end game/high scores), audio manager with mix groups, scene loader, achievements, Unity Analytics bootstrap, cheat menu, prefab pooling.
 - URP 2D renderer setup.
