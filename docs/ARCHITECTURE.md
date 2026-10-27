@@ -52,73 +52,94 @@ Game code goes into the template's existing folders (there is no separate `_Game
 ```
 Assets/
   Scripts/
-    Core/          Bush.Core.asmdef: GameState, Economy, services, events (no MonoBehaviours)
-    Definitions/   ScriptableObject definition classes + GameDatabase
-    Session/       GameSession, autosave, scene/area flow
-    Camera/        CameraFit
+    Core/          Bush.Core.asmdef (pure C#, no UnityEngine): Model/ (design data), State/ (GameState),
+                   Services/ (Economy, CafeService, QuestService, GameEvents), Foraging/, Design/ (JSON format, validator)
+    Definitions/   ScriptableObject definitions (ItemDefinition...) + GameDatabase
+    Editor/        DesignDataTools (import/export/validate), AreaSceneSetup
+    Session/       AreaTravel, AreaInfo, SpawnPoint (later: GameSession, autosave)
+    Camera/        CameraFit, CameraFollow
     Navigation/    WalkableGrid, IPathfinder, GridPathfinder
-    Player/        ClickToMove, Interactor
-    Interaction/   IInteractable, StandPoint and the stations, NPCs and exits
+    Player/        CharacterMover, Interactor, PlayerPointerInput, InputLock
+    Interaction/   IInteractable, Interactable, StandPoint, InteractionPrompt, AreaExit (later: stations, NPCs)
     Building/      build mode, placement, PlacedObject
     UI/            (template) popups and UI states, plus the game HUD and popups
     Debugging/     (template) cheat menu, plus the game's CheatMenu registrations
     Achievements/ Analytics/ Audio/ HighScores/ Managers/ Utils/   (template)
-  Data/            definition assets: Items/, Recipes/, Companions/, Perks/, ForageTables/, Quests/, Placeables/
+  Data/            definition assets, made by Tools > Bush > Import Design Data: Items/, Recipes/, Companions/,
+                   Perks/, Focuses/, ForageTables/, Npcs/, Quests/ + GameDatabase.asset
+  Input/           BushInput.inputactions (the one Input System asset)
   Scenes/          Cafe, Garden (+ Boot, and Village if kept); template scenes are in Scenes/Templates/
   Images/  Prefabs/  Audio/  Animations/
-  Tests/EditMode/  Bush.Core.Tests.asmdef
+  Tests/EditMode/  Bush.Core.Tests.asmdef (rules); Tests/Editor/ for tests that need game scripts (navigation)
+Design/            design-data.json: the design data the sandbox edits (outside Assets, so Unity ignores it)
+Tools/ForageSandbox/  standalone web page for trying out foraging without Unity
 ```
 
 Scripts in `Assembly-CSharp` sit in the global namespace like the template's (Rider's namespace-from-folder hint is switched off per folder in `Assembly-CSharp.csproj.DotSettings`). Never name a namespace after a Unity type such as `Camera`, because it hides that type from every script in the project.
 
-**Why only one asmdef for the game:** the template scripts (singletons, `PopupManager`, `CheatMenu`, `SceneLoader`) have no assembly definition, so they compile into `Assembly-CSharp`, and an asmdef can't reference `Assembly-CSharp`. `Bush.Core` (in `Assets/Scripts/Core`, so it's a separate assembly even though it sits next to the other scripts) therefore holds only rules and state with no template dependencies, which is exactly the part worth testing. Everything that touches the template stays in `Assembly-CSharp`. Wrapping the template in asmdefs isn't worth the time during the jam.
+**Why only one asmdef for the game:** the template scripts (singletons, `PopupManager`, `CheatMenu`, `SceneLoader`) have no assembly definition, so they compile into `Assembly-CSharp`, and an asmdef can't reference `Assembly-CSharp`. `Bush.Core` (in `Assets/Scripts/Core`, so it's a separate assembly even though it sits next to the other scripts) therefore holds only rules and state with no template dependencies, which is exactly the part worth testing. It goes one step further and has no UnityEngine reference at all (`noEngineReferences`), so its tests also run outside Unity. Everything that touches the template stays in `Assembly-CSharp`. Wrapping the template in asmdefs isn't worth the time during the jam.
+
+Tests that need game scripts (like the navigation tests) live in an `Editor` folder without an asmdef, so they compile into `Assembly-CSharp-Editor`, which can see `Assembly-CSharp` and already references NUnit.
 
 ## 2. Data: definitions with stable IDs
 
-Every definition is a ScriptableObject with a `string id` (e.g. `item.berry`, `recipe.worm_pie`) that never changes, even if the display name or art does. Saves and other data refer to things only by ID.
+Every definition is a ScriptableObject with a `string id` (e.g. `item.berries`, `recipe.worm_pie`) that never changes, even if the display name or art does. Saves and other data refer to things only by ID.
 
-| Definition | Key fields | Seed content (from Miro) |
+Each definition converts to a plain C# model in `Bush.Core` (`ItemDefinition.ToData()` gives an `ItemData`), and `GameDatabase.BuildDesign()` turns the whole database into one `DesignData`. The rules only ever run on `DesignData`, so they can be tested without Unity and the web sandbox can run the exact same rules. The assets keep the Unity-only parts (icons, portraits, prefabs).
+
+| Definition | Key fields | Seed content |
 | --- | --- | --- |
-| `ItemDefinition` | id, displayName, icon, category (Ingredient / Rare / Placeable), tags, sellValue | worms, berries, leaves, bark, silk, shiny things, mushrooms |
-| `RecipeDefinition` | id, ingredients[(itemId, qty)], coinReward, unlockedByDefault | leaf salad, worm pie, berry cake |
-| `CompanionDefinition` | id, name, portrait, perk | kea (beak hammer: +bark), weka (steals: + chance of a shiny), pekapeka (sees in the dark: + insects) |
-| `PerkDefinition` | id, effect type (bonus tag, extra roll, rarity boost), value | |
-| `ForageTable` | weighted entries (itemId, weight, min-max qty, rarity) | |
-| `QuestDefinition` | id, giver NPC id, dialogue lines, objectives[], rewards[], prerequisite quest | one short main chain |
-| `PlaceableDefinition` | itemId, prefab, footprint | a handful of cafe decorations |
+| `ItemDefinition` | id, displayName, icon, category, rarity, tags, sellValue, unique, teachesRecipe | 30 items: leaves, berries, worms, insects, fungi, bark, silk, shinies, 4 recipe scraps, 2 rare encounters |
+| `RecipeDefinition` | ingredients (item, qty), coins, unlockedByDefault, price (coins to learn), scraps | 16 recipes from the Miro list: 3 known at the start, 12 to buy, 1 from the main quest |
+| `CompanionDefinition` | portrait, modifiers, teachesPerk, tripsToTeach, unlockedByDefault | Kea, Weka, Pekapeka (starters); Kunekune pig, Spider (unlocked by quests) |
+| `PerkDefinition` | icon, modifiers, unlockedByDefault | 7 perks: 3 at the start, 3 taught by companions, 1 quest reward |
+| `FocusDefinition` | tags, multiplier | bugs and worms, greens, fruit and flowers, fungi and mud, bark and silk |
+| `ForageTableDefinition` | rolls, entries (item, weight, min, max, time of day, requiresQuest, requiresCompanion) | `table.bush` |
+| `NpcDefinition` | portrait, species | Ruru, Weka, Snail, Wētā |
+| `QuestDefinition` | giver, isMain, prerequisites, objectives, rewards, 4 dialogue lines | 2 main quests + 3 side quests (see [MAIN-QUEST.md](MAIN-QUEST.md)) |
+| `PlaceableDefinition` | item, prefab | none yet (Stage 6) |
 
-A `GameDatabase` asset lists all of them and builds ID lookups at runtime. An editor menu item, **Tools > Bush > Validate Data**, flags duplicate IDs, missing references and recipes or quests that point at item IDs that don't exist. That covers the Trello card *Check item and reward consistency*.
+**Item categories:** `Ingredient` (cooked), `Material` (bark, silk: quests and repairs), `Treasure` (shinies: trades and selling), `KeyItem` (quest items like recipe scraps: can't be cooked or sold), `Placeable` (build mode). They all live in the one inventory; the UI can filter by category, which also covers the GDD's "cafe larder" (see Open decisions). Items marked `unique` can only be owned once, and once collected (owned, or handed in for a quest) they never drop or get rewarded again. Key items can only leave the inventory through a quest hand-in, so a quest item can't be lost, sold or cooked by mistake.
+
+**Where the data comes from:** the seed lives in [`Design/design-data.json`](../Design/design-data.json). **Tools > Bush > Import Design Data** creates or updates the assets in `Assets/Data` from it, matching by ID so icons and prefabs survive; it never deletes anything. **Export Design Data** writes the assets back to JSON, so a designer can tune in the [forage sandbox](../Tools/ForageSandbox/README.md) and the changes come straight back into Unity. **Validate Design Data** flags duplicate IDs, broken references, impossible forage entries and modifiers that can never do anything (the Trello card *Check item and reward consistency*); an EditMode test runs the same checks on `design-data.json`.
+
+**Rare encounters:** an item with `teachesRecipe` set (a unique key item) teaches that recipe the moment the player gets it, from foraging or a reward. The seed has two: *Kiwi's late-night note* (night only, and Pekapeka spots night visitors) teaches glowworm jelly, and *A muddy recipe scribble* (only with the Kunekune pig along) teaches truffle toast. Both recipes can still be bought, so an encounter is a lucky shortcut, not a gate. `Economy` does the unlocking, so it works however the item arrives, and raises `GameEvents.RecipeLearned`.
 
 Per the Miro decision log, crafting placeables is out of scope. Placeables come from quest rewards or are bought with currency.
 
 ## 3. State: one serialisable `GameState`
 
 ```csharp
-[Serializable] public class GameState {
+[Serializable] public class GameState {        // Assets/Scripts/Core/State/GameState.cs
     public int saveVersion;
     public int currency;
-    public List<ItemStack> inventory;        // itemId + qty; definitions stay in data
-    public List<string> unlockedRecipes;
-    public List<QuestProgress> quests;       // questId, state, objective counts, rewardClaimed
-    public List<PlacedObjectData> placed;    // placeableId, position, flipped
-    public PlayerAppearance appearance;      // gecko colour pattern
+    public List<ItemStack> inventory;           // itemId + qty; definitions stay in data
+    public List<string> handedIn;               // unique items handed in for quests (with the inventory: what's collected)
+    public List<string> unlockedRecipes, unlockedPerks, unlockedCompanions;
+    public List<CompanionProgress> companions;  // trips per companion, for learning perks
+    public List<QuestProgress> quests;          // questId, status, event counters, rewardClaimed
+    public List<PlacedObjectData> placed;       // placeableId, position, flipped
+    public bool hasPendingExpedition;           // set on Go, cleared on claim: survives a refresh
+    public PendingExpedition pendingExpedition; // id, seed, a copy of the setup, and the result
     public int day; public float timeOfDay;
 }
 ```
+
+Default unlocks aren't copied into the save: `Unlocks.IsRecipeUnlocked` (and the perk and companion versions) check the design's `unlockedByDefault` flag or the save's list, so a patched build that adds a default reaches existing saves. `GameState.Normalise()` tidies a loaded save (merges duplicate stacks, drops empty ones). The gecko's colour pattern (GDD) is still to add.
 
 Collections are lists rather than dictionaries so that `JsonUtility` can serialise them without adding Newtonsoft. Services build dictionaries from the lists when they load. The GDD's separate "cafe larder" can start as an item category filter on the one inventory, and be split out later only if playtesting shows it's needed.
 
 ## 4. Core services (plain C#)
 
-- **Economy:** the only code that changes inventory or currency. `Has`, `Add`, `TryRemove`, `TrySpend`, plus `TryTransact(costs, rewards)`, which checks everything first and then applies all of it or none of it. Cooking, quest turn-ins, buying and rewards all go through it. Raises `ItemsChanged` / `CurrencyChanged`.
-- **ForagingService:** `Resolve(ExpeditionSetup setup, IRandom rng) → ForageResult`. A pure function of the forage table, companion and perks, plus an injected random source. That makes it testable and lets the cheat menu force results. The GDD's duration ("dims for a few seconds") is purely visual: the result is decided up front and then revealed.
-- **CafeService:** `CanCook(recipe)` (also returns what's missing for the UI) and `Cook(recipe)` via `TryTransact`. Plan Stage 4 deliberately has no customer simulation: serving a dish pays its `coinReward`.
-- **QuestService:** listens to `GameEvents` (items changed, dish cooked, expedition finished, object placed) and updates objective counts. States are `NotStarted → Active → ReadyToClaim → Completed`. `Claim` checks and sets `rewardClaimed` in the same call, so a reward can't be paid twice.
+- **Economy** *(built)*: the only code that changes inventory or currency. `Count`, `Has`, `Add`, `TryRemove`, `AddCurrency`, `TrySpend`, plus `TryTransact(Transaction)`, which checks everything first (repeated costs are totalled) and then applies all of it or none of it. Rejects zero or negative amounts and unknown items, caps unique items at one, and only lets key items go in a quest hand-in (`Transaction.questHandIn`). `TrySell` pays an item's sell value (never for key or unique items). Raises `InventoryChanged` / `CurrencyChanged`.
+- **ForagingService** *(built)*: `Resolve(design, setup, context, seed) → ForageResult`, a pure function following [FORAGING.md](FORAGING.md), plus `Preview` for the setup screen's odds. In the game: `CanBegin`/`Begin` (on Go: checks the companion and perks are unlocked, copies the setup, resolves it and stores the result in the state), `GetPendingResult` (for the results screen) and `Claim` (pays exactly the stored result once, counts the companion trip and teaches its perk). The GDD's "dims for a few seconds" is purely visual: the result is fixed by the seed up front. The same seed gives the same result in the web sandbox.
+- **CafeService** *(built)*: `CanCook(recipe, out missing)` (what's short, for the UI), `Cook(recipe)` via one transaction, `CanLearn`/`Learn(recipe)` to buy a recipe for its price (the GDD's "use what you earn to learn recipes", and so far the only thing coins buy), and `GetScrapProgress(recipe)` for the recipe book. Plan Stage 4 deliberately has no customer simulation: serving a dish pays its coins.
+- **QuestService** *(built)*: `CanStart` (prerequisites), `Start`, `GetStatus`, `GetProgress`, `GetDialogue`, `Claim`, `IsMainStoryComplete` (the win condition). Item objectives (`HaveItems`, `DeliverItems`) are checked against the inventory live; cooking, expeditions, talking and placing are counted from `GameEvents` while the quest is active. Stored states are `NotStarted`, `Active` and `Completed`; `ReadyToClaim` is worked out from the objectives (items are totalled across objectives), so it always means the claim will work, and spending a needed item drops a quest back to Active. Event counters are keyed by objective type and target rather than position, so a patch can reorder objectives. `Claim` hands in `DeliverItems`, pays rewards and unlocks in one transaction and sets `rewardClaimed`, so it can't pay twice; `Claim(id, out error)` says why it didn't.
 - **BuildService:** place / move / remove placeables. Placing takes the item out of the inventory and removing puts it back, both through Economy.
 - **SaveService:** turns `GameState` into JSON with `saveVersion`. On a missing, unreadable or older save it falls back to a fresh state and logs it, rather than crashing. Storage sits behind `ISaveStorage`:
   - **Default:** the existing `Utils.FileUtils` (`persistentDataPath`, which is IndexedDB on WebGL).
   - **Fallback:** PlayerPrefs, if the hosted build doesn't keep the file after a refresh. Verify this on the real host early (Trello: *Test browser storage persistence*).
-- **GameEvents:** a small set of plain C# events. No event bus framework.
+- **GameEvents** *(built)*: a small set of plain C# events (one instance per session, so tests don't share state). No event bus framework.
 
 ## 5. Game layer (MonoBehaviours)
 
@@ -181,11 +202,14 @@ How every area scene is laid out. The Cafe greybox (`Assets/Scenes/Cafe.unity`) 
 
 ## 7. Tests
 
-EditMode tests in `Bush.Core.Tests` cover:
-- the Economy edge cases from Trello list 05: zero or negative quantities, not enough items, `TryTransact` never applying half a change
-- a quest reward can't be claimed twice
-- a save written and loaded again comes back the same, and an unknown or old version falls back to a fresh state
-- `ForagingService` gives the same result for the same seed
+EditMode tests in `Bush.Core.Tests` (`Assets/Tests/EditMode`, 53 tests) cover:
+- the Economy edge cases from Trello list 05: zero or negative quantities, unknown items, not enough items, repeated costs, unique and key items, selling, tidying a save, `TryTransact` never applying half a change
+- foraging: same seed same result, roll counts, day/night and quest-gated entries, unique scraps (once per trip, never after being collected or handed in), each modifier type, the focus counting once, companion-only entries, rare encounters teaching their recipe once, the odds preview, paying out exactly once, double-clicking Go, locked companions, learning a companion's perk
+- quests and cooking: prerequisites, counters only while active, claiming once (and why not), counters surviving reordered objectives, recipe scraps handed in together unlocking the recipe, learning recipes for coins, live default unlocks, dialogue per state
+- design data: the validator, the JSON round trip, and that `Design/design-data.json` loads and validates
+- still to add: a save written and loaded again comes back the same, and an unknown or old version falls back to a fresh state (with SaveService)
+
+Because `Bush.Core` has no UnityEngine reference, these tests can also be compiled and run outside Unity.
 
 Everything else is tested by playing the browser build, as the plan describes.
 
@@ -208,9 +232,11 @@ Everything else is tested by playing the browser build, as the plan describes.
 - **View:** a stage view with depth (see [section 6](#6-world-camera-and-movement)), not a side-scroller.
 - **Folders:** game code goes into the template's existing `Assets/Scripts/...` folders, not a separate `_Game` folder.
 - **Primary platform:** WebGL in desktop browsers for the jam. PC Standalone comes later.
+- **Design data:** rules run on plain C# models in `Bush.Core`; ScriptableObjects are the editing and art layer. `Design/design-data.json` plus the web sandbox are a second way in for designers without Unity.
+- **Quest items:** recipe scraps and other quest items are `KeyItem` items in the same inventory, `unique` so they can't duplicate or drop twice. A recipe made of scraps is unlocked by a quest that hands them in (see [MAIN-QUEST.md](MAIN-QUEST.md)).
 
 ## Open decisions
 
 1. **Village scene:** a separate scene, or NPCs at the cafe for the jam.
-2. **Larder:** one inventory with categories, or a separate larder.
+2. **Larder:** one inventory with categories, or a separate larder. *Built as one inventory with categories for now (a proposal, not final): the UI can show Larder (ingredients), Materials, Treasures and Quest items as tabs. A separate larder would only change the UI and the save layout.*
 3. **Expedition limits:** unlimited, per time of day, or with a cost (Trello card *Decide expedition limits or costs*).
