@@ -13,6 +13,8 @@ public class CharacterMover : MonoBehaviour
     [SerializeField] private Transform visual;
     [Tooltip("Whether the sprite art faces right when its X scale is positive.")]
     [SerializeField] private bool artFacesRight = true;
+    [Tooltip("How sideways a step must be (0-1) before the character turns to face it. Higher stops flip-flopping when walking up or down.")]
+    [SerializeField, Range(0f, 1f)] private float turnThreshold = 0.3f;
     [Tooltip("Optional. Gets a float \"Speed\" and a bool \"Walking\" if it has those parameters.")]
     [SerializeField] private Animator animator;
 
@@ -125,7 +127,9 @@ public class CharacterMover : MonoBehaviour
         {
             Vector2 target = _path[_nextWaypoint];
             float distance = Vector2.Distance(position, target);
-            if (distance > 0.0001f) FaceTowards(target);
+            // Only turn round when clearly heading sideways; walking (nearly) straight up or down
+            // would otherwise flip the sprite back and forth on every tiny wobble in the path.
+            if (distance > 0.0001f && Mathf.Abs(target.x - position.x) > distance * turnThreshold) FaceTowards(target);
 
             if (distance <= step)
             {
