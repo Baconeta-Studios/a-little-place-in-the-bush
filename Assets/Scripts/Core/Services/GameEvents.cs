@@ -14,6 +14,8 @@ namespace Bush.Core
         public event Action<ForageResult> ExpeditionCompleted;
         public event Action<string> TalkedTo;
         public event Action<string> ObjectPlaced;
+        /// <summary>Anything placed, moved, flipped or put away. Carries the area.</summary>
+        public event Action<string> BuildChanged;
         public event Action<string> QuestStarted;
         public event Action<string> QuestCompleted;
         public event Action<string> PerkLearned;
@@ -25,6 +27,7 @@ namespace Bush.Core
         public void RaiseExpeditionCompleted(ForageResult result) => ExpeditionCompleted?.Invoke(result);
         public void RaiseTalkedTo(string npcId) => TalkedTo?.Invoke(npcId);
         public void RaiseObjectPlaced(string placeableItemId) => ObjectPlaced?.Invoke(placeableItemId);
+        public void RaiseBuildChanged(string area) => BuildChanged?.Invoke(area);
         public void RaiseQuestStarted(string questId) => QuestStarted?.Invoke(questId);
         public void RaiseQuestCompleted(string questId) => QuestCompleted?.Invoke(questId);
         public void RaisePerkLearned(string perkId) => PerkLearned?.Invoke(perkId);

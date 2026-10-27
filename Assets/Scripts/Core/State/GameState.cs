@@ -24,6 +24,10 @@ namespace Bush.Core
         public List<CompanionProgress> companions = new();
         public List<QuestProgress> quests = new();
         public List<PlacedObjectData> placed = new();
+        /// <summary>Gives each placed object its own id, so two identical chairs can be told apart.</summary>
+        public int nextPlacedId = 1;
+        /// <summary>Areas whose starting layout has been put down, so it only happens once per save.</summary>
+        public List<string> initialisedAreas = new();
 
         public int expeditionsStarted;
         public int expeditionsCompleted;
@@ -121,10 +125,17 @@ namespace Bush.Core
     [Serializable]
     public class PlacedObjectData
     {
+        public int instanceId;
+        /// <summary>The area (scene) it's in, e.g. Cafe.</summary>
+        public string area;
         public string placeableId;
+        /// <summary>Where its base touches the floor.</summary>
         public float x;
         public float y;
         public bool flipped;
+        /// <summary>Took an item from the inventory when placed, so putting it away gives one back.
+        /// False for the starting layout and for unlimited (prototype) placing.</summary>
+        public bool fromInventory;
     }
 
     [Serializable]

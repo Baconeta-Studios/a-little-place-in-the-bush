@@ -15,6 +15,11 @@ namespace Bush.Core.Tests
         public const string Scrap1 = "item.scrap_1";
         public const string Scrap2 = "item.scrap_2";
         public const string Note = "item.note";
+        public const string ChairItem = "item.chair";
+        public const string FernItem = "item.fern";
+        public const string Chair = "placeable.chair";
+        public const string Fern = "placeable.fern";
+        public const string Area = "Cafe";
 
         public const string Table = "table.test";
         public const string Kea = "companion.kea";
@@ -46,7 +51,11 @@ namespace Bush.Core.Tests
                 Item(Scrap1, ItemCategory.KeyItem, Rarity.Rare, "scrap", unique: true),
                 Item(Scrap2, ItemCategory.KeyItem, Rarity.Rare, "scrap", unique: true),
                 Item(Note, ItemCategory.KeyItem, Rarity.Rare, "encounter", unique: true),
+                Item(ChairItem, ItemCategory.Placeable, Rarity.Common, "furniture"),
+                Item(FernItem, ItemCategory.Placeable, Rarity.Common, "plant"),
             });
+            design.placeables.Add(new PlaceableData { id = Chair, itemId = ChairItem, footprintWidth = 1f, footprintDepth = 0.4f, canFlip = true, category = "Furniture", seats = 1 });
+            design.placeables.Add(new PlaceableData { id = Fern, itemId = FernItem, footprintWidth = 0.8f, footprintDepth = 0.4f, canFlip = false, category = "Plants" });
             design.items.Find(i => i.id == Note).teachesRecipe = SecretPie;
 
             design.forageTables.Add(new ForageTableData
@@ -141,6 +150,7 @@ namespace Bush.Core.Tests
         public readonly Economy economy;
         public readonly CafeService cafe;
         public readonly QuestService quests;
+        public readonly BuildService build;
 
         public TestGame(DesignData design = null)
         {
@@ -149,6 +159,7 @@ namespace Bush.Core.Tests
             economy = new Economy(state, this.design, events);
             cafe = new CafeService(this.design, state, economy, events);
             quests = new QuestService(this.design, state, economy, events);
+            build = new BuildService(this.design, state, economy, events);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Bush.Core
         private Dictionary<string, ForageTableData> _tables;
         private Dictionary<string, NpcData> _npcs;
         private Dictionary<string, QuestData> _quests;
+        private Dictionary<string, PlaceableData> _placeables;
 
         /// <summary>Call after changing the lists. Lookups also build themselves the first time they're used.</summary>
         public void RebuildIndex()
@@ -39,6 +40,7 @@ namespace Bush.Core
             _tables = Index(forageTables, x => x.id);
             _npcs = Index(npcs, x => x.id);
             _quests = Index(quests, x => x.id);
+            _placeables = Index(placeables, x => x.id);
         }
 
         public ItemData GetItem(string id) => Get(ref _items, id);
@@ -49,6 +51,8 @@ namespace Bush.Core
         public ForageTableData GetForageTable(string id) => Get(ref _tables, id);
         public NpcData GetNpc(string id) => Get(ref _npcs, id);
         public QuestData GetQuest(string id) => Get(ref _quests, id);
+        public PlaceableData GetPlaceable(string id) => Get(ref _placeables, id);
+        public PlaceableData GetPlaceableForItem(string itemId) => placeables.Find(p => p.itemId == itemId);
 
         private T Get<T>(ref Dictionary<string, T> lookup, string id) where T : class
         {

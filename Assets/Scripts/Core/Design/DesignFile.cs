@@ -20,6 +20,7 @@ namespace Bush.Core
         public List<Table> forageTables = new();
         public List<Npc> npcs = new();
         public List<Quest> quests = new();
+        public List<Placeable> placeables = new();
 
         [Serializable] public class Item { public string id; public string name; public string category; public string rarity; public List<string> tags = new(); public int sellValue; public bool unique; public string description; public string teachesRecipe; }
         [Serializable] public class Amount { public string item; public int qty; }
@@ -34,6 +35,7 @@ namespace Bush.Core
         [Serializable] public class Objective { public string type; public string target; public int qty; }
         [Serializable] public class Reward { public string type; public string target; public int qty; }
         [Serializable] public class Dialogue { public string offer; public string active; public string ready; public string done; }
+        [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public bool canFlip; public string category; public int seats; }
         [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
 
         /// <summary>Converts to the model. Unknown enum names are reported in <paramref name="errors"/> and fall back to the first value.</summary>
@@ -119,6 +121,17 @@ namespace Bush.Core
                 design.quests.Add(quest);
             }
 
+            if (placeables != null)
+            {
+                foreach (Placeable x in placeables)
+                    design.placeables.Add(new PlaceableData
+                    {
+                        id = x.id, itemId = x.item, placement = Parse(x.placement, PlacementType.Floor, errors, x.id),
+                        footprintWidth = x.footprintWidth, footprintDepth = x.footprintDepth, canFlip = x.canFlip,
+                        category = x.category, seats = x.seats
+                    });
+            }
+
             design.RebuildIndex();
             return design;
         }
@@ -193,6 +206,13 @@ namespace Bush.Core
                     quest.rewards.Add(new Reward { type = reward.type.ToString(), target = reward.target ?? "", qty = reward.qty });
                 file.quests.Add(quest);
             }
+
+            foreach (PlaceableData x in design.placeables)
+                file.placeables.Add(new Placeable
+                {
+                    id = x.id, item = x.itemId, placement = x.placement.ToString(), footprintWidth = x.footprintWidth,
+                    footprintDepth = x.footprintDepth, canFlip = x.canFlip, category = x.category ?? "", seats = x.seats
+                });
 
             return file;
         }
