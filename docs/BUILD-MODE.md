@@ -24,8 +24,9 @@ How it fits together is in [ARCHITECTURE.md](ARCHITECTURE.md) (sections 4 and 5)
   - Green outline: it can go here. Red: it can't, and a label says why.
   - **Place** puts it down. **Flip** mirrors it (not everything can flip). **Cancel** drops it. These buttons float just above the item, clear of your finger.
   - Tap something already placed to pick it up: drag it, **Flip** it, **Done** to put it down, or **Put away** to send it back to the bag.
+  - **Look around:** pinch with two fingers to zoom and drag with two fingers to pan (touch); scroll to zoom towards the pointer and drag with the right or middle button to pan (mouse); or drag on empty ground when you're not holding anything. You can zoom in to 2.5x but not out past the normal view, and never past the edges of the backdrop.
   - Keyboard: Escape cancels or leaves, F flips, Enter places, Delete puts away.
-  - **Done** (top right) leaves build mode. If the gecko ends up inside new furniture it steps out, and if it's been boxed in it's moved back to the spawn point.
+  - **Done** (top right) leaves build mode and the camera eases back to the normal view. If the gecko ends up inside new furniture it steps out, and if it's been boxed in it's moved back to the spawn point.
 - Everything is saved straight away. Reload, or close the tab and come back, and it's all where you left it.
 
 ### Where things can't go
@@ -79,6 +80,10 @@ Placement types other than `Floor` (Wall for windows and fairy lights, Rug, Surf
 - [ ] Entering pauses the game and the gecko ignores clicks. Escape doesn't open the pause menu while building.
 - [ ] Each tray tab shows the right items; tapping one gives a ghost on a free spot.
 - [ ] Dragging is smooth and snaps; on a phone the item sits above your finger.
+- [ ] Zoom: pinch (phone) and scroll (mouse) zoom in to 2.5x and back; scrolling over the tray scrolls the tray, not the camera.
+- [ ] Pan: two-finger drag, right/middle-button drag, and dragging empty ground all move the view, which stops at the backdrop's edges.
+- [ ] Zoomed in, placing, moving and the floating buttons still line up with the item.
+- [ ] Done eases back to the normal view (and the gecko's camera is unchanged afterwards).
 - [ ] Red with the right reason: off the ground, on another item, on the door's stand point, on the spawn point, closing the only path past something.
 - [ ] Place, Flip, Cancel work. Picking up an existing item, moving it, Done, and Put away work.
 - [ ] Tapping the UI (tray, buttons) never moves anything underneath.

@@ -9,7 +9,8 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Build mode: place, move, flip and put away things in a <see cref="BuildArea"/>. Entering pauses
+/// Build mode: place, move, flip and put away things in a <see cref="BuildArea"/>, with pan and
+/// zoom (<see cref="BuildCamera"/>). Entering pauses
 /// the game and stops the gecko taking clicks. Everything works by tap and drag (no hover): tap an
 /// item in the tray to get a ghost, drag it (it snaps to the 0.25 grid and lifts above your finger on
 /// touch), then Place. Tap something already placed to pick it up. The ghost turns red with a reason
@@ -49,11 +50,8 @@ public class BuildMode : MonoBehaviour
     private bool _dragging;
     private Vector2 _dragOffset;
     private float _timeScaleBefore = 1f;
-    private Camera _camera;
-    private Vector3 _cameraRest;
-    private CameraFollow _follow;
-    private bool _followWasEnabled;
-    private Coroutine _cameraMove;
+    private BuildCamera _view;
+    private bool _panningEmptyGround;
 
     public static event Action<bool> ActiveChanged;
 
@@ -113,6 +111,7 @@ public class BuildMode : MonoBehaviour
             if (Time.timeScale == 0f) Time.timeScale = _timeScaleBefore;
             InputLock.Unlock(this);
             SetPauseMenuAllowed(true);
+            if (_view) _view.EndImmediately();
             ActiveChanged?.Invoke(false);
         }
         _point.Disable();
@@ -147,7 +146,9 @@ public class BuildMode : MonoBehaviour
 
         if (!_ui) _ui = BuildUi.Create(this);
         _ui.Show();
-        MoveCameraAboveTray(true);
+        if (!_view) _view = GetComponent<BuildCamera>();
+        if (!_view) _view = gameObject.AddComponent<BuildCamera>();
+        _view.Begin(_area, _ui);
         ActiveChanged?.Invoke(true);
     }
 
@@ -162,7 +163,8 @@ public class BuildMode : MonoBehaviour
         // Next frame: otherwise the same Escape press that left build mode would open the pause menu.
         StartCoroutine(AllowPauseMenuNextFrame());
         _dragging = false;
-        MoveCameraAboveTray(false);
+        _panningEmptyGround = false;
+        if (_view) _view.End();
 
         // Make sure the gecko isn't standing in new furniture or boxed in: if it can't walk to the
         // spawn point any more, it's moved there.
@@ -184,50 +186,6 @@ public class BuildMode : MonoBehaviour
     {
         yield return null;
         SetPauseMenuAllowed(true);
-    }
-
-    /// <summary>
-    /// The tray covers the bottom of the screen, where the floor is, so the camera slides down while
-    /// building to keep the whole floor visible above it. Put back on leaving.
-    /// </summary>
-    private void MoveCameraAboveTray(bool building)
-    {
-        if (building)
-        {
-            _camera = Camera.main;
-            if (!_camera || !_ui) return;
-            _cameraRest = _camera.transform.position;
-            _follow = _camera.GetComponent<CameraFollow>();
-            _followWasEnabled = _follow && _follow.enabled;
-            if (_follow) _follow.enabled = false;
-
-            float trayWorld = _ui.BottomCoverFraction * _camera.orthographicSize * 2f;
-            StartCameraMove(_cameraRest + new Vector3(0f, -trayWorld, 0f));
-        }
-        else if (_camera)
-        {
-            StartCameraMove(_cameraRest);
-            if (_follow) _follow.enabled = _followWasEnabled;
-        }
-    }
-
-    private void StartCameraMove(Vector3 target)
-    {
-        if (_cameraMove != null) StopCoroutine(_cameraMove);
-        _cameraMove = StartCoroutine(MoveCamera(target));
-    }
-
-    private IEnumerator MoveCamera(Vector3 target)
-    {
-        Vector3 from = _camera.transform.position;
-        const float duration = 0.3f;
-        for (float t = 0f; t < duration && _camera; t += Time.unscaledDeltaTime)
-        {
-            _camera.transform.position = Vector3.Lerp(from, target, Mathf.SmoothStep(0f, 1f, t / duration));
-            yield return null;
-        }
-        if (_camera) _camera.transform.position = target;
-        _cameraMove = null;
     }
 
     // ----- Actions (the tray and the floating buttons call these) -----
@@ -387,7 +345,14 @@ public class BuildMode : MonoBehaviour
 
         if (PopupManager.AnyOpen || CheatMenu.IsOpen)
         {
-            _dragging = false;
+            _dragging = _panningEmptyGround = false;
+            return;
+        }
+
+        // Pinch, two-finger pan, scroll and right-drag move the camera, never items.
+        if (_view && _view.HandleGestures())
+        {
+            _dragging = _panningEmptyGround = false;
             return;
         }
 
@@ -399,23 +364,34 @@ public class BuildMode : MonoBehaviour
         if (_click.WasPressedThisFrame())
         {
             if (UiPointer.IsOverUi(screen)) return;
-            OnPress(world);
+            if (!OnPress(world) && _view)
+            {
+                // Nothing there and nothing held: drag to look around.
+                _panningEmptyGround = true;
+                _view.BeginDragPan(screen);
+            }
         }
         else if (_dragging)
         {
             if (!_click.IsPressed()) _dragging = false;
             else SetCandidatePosition(Snap(world + _dragOffset));
         }
+        else if (_panningEmptyGround)
+        {
+            if (!_click.IsPressed()) _panningEmptyGround = false;
+            else _view.DragPan(screen);
+        }
     }
 
-    private void OnPress(Vector2 world)
+    /// <summary>Returns false if the press landed on nothing and nothing is held (so it can pan instead).</summary>
+    private bool OnPress(Vector2 world)
     {
         bool touch = Pointer.current is Touchscreen;
 
         if (_candidate != null && Hits(_candidate.obj, world))
         {
             BeginDrag(world, touch);
-            return;
+            return true;
         }
 
         PlacedObject placed = FindPlacedAt(world);
@@ -423,7 +399,7 @@ public class BuildMode : MonoBehaviour
         {
             Select(placed);
             BeginDrag(world, touch);
-            return;
+            return true;
         }
 
         if (_candidate != null)
@@ -431,7 +407,10 @@ public class BuildMode : MonoBehaviour
             // Tap on open ground: move the held thing there (handy on phones), and keep dragging.
             SetCandidatePosition(Snap(world + (touch ? new Vector2(0f, touchLift) : Vector2.zero)));
             BeginDrag(world, touch);
+            return true;
         }
+
+        return false;
     }
 
     private void BeginDrag(Vector2 world, bool touch)

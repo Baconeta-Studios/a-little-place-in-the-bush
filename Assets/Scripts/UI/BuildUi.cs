@@ -65,6 +65,22 @@ public class BuildUi : MonoBehaviour
         _root.gameObject.SetActive(false);
     }
 
+    /// <summary>How much of the screen's height the top bar covers, from the top: 0-1.</summary>
+    public float TopCoverFraction
+    {
+        get
+        {
+            Canvas.ForceUpdateCanvases();
+            var canvas = (RectTransform)GameUi.Current.Canvas.transform;
+            float canvasHeight = canvas.rect.height;
+            if (canvasHeight <= 0f) return 0.1f;
+            float safeTop = _root.TransformPoint(new Vector3(0f, _root.rect.yMax, 0f)).y;
+            float canvasTop = canvas.TransformPoint(new Vector3(0f, canvas.rect.yMax, 0f)).y;
+            float safeOffset = (canvasTop - safeTop) / canvas.lossyScale.y;
+            return Mathf.Clamp01((safeOffset + 16f + 110f + 10f) / canvasHeight);
+        }
+    }
+
     /// <summary>How much of the screen's height the tray (plus a margin) covers, from the bottom: 0-1.</summary>
     public float BottomCoverFraction
     {
@@ -102,7 +118,7 @@ public class BuildUi : MonoBehaviour
         if (!holding)
         {
             _reason.gameObject.SetActive(false);
-            _hint.text = "Build mode. Tap an item below to place it, or tap something already out to move it.";
+            _hint.text = "Build mode. Tap an item below to place it, or tap something already out to move it. Pinch or scroll to zoom; drag empty ground to look around.";
             return;
         }
 

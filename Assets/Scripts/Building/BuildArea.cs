@@ -29,6 +29,8 @@ public class BuildArea : MonoBehaviour
     [SerializeField] private List<StartingPlacement> startingLayout = new();
     [Tooltip("Placed things must keep at least this far from stand points and spawn points.")]
     [SerializeField, Min(0f)] private float keepClearRadius = 0.35f;
+    [Tooltip("How far the build camera may pan. Uses the size of a child called Backdrop if there is one.")]
+    [SerializeField] private Rect viewBounds = new(-12f, -7.2f, 24f, 14.4f);
 
     private readonly Dictionary<int, PlacedObject> _spawned = new();
     private WalkableGrid _grid;
@@ -42,6 +44,19 @@ public class BuildArea : MonoBehaviour
     public GridPathfinder Pathfinder => _pathfinder ? _pathfinder : _pathfinder = GetComponent<GridPathfinder>();
     public Transform PlacedParent => placedParent ? placedParent : transform;
     public float KeepClearRadius => keepClearRadius;
+
+    /// <summary>What the build camera may show: the backdrop's edges, so you never see past the art.</summary>
+    public Rect ViewBounds
+    {
+        get
+        {
+            Transform backdrop = transform.Find("Backdrop");
+            var renderer = backdrop ? backdrop.GetComponent<SpriteRenderer>() : null;
+            if (!renderer) return viewBounds;
+            Bounds bounds = renderer.bounds;
+            return new Rect(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
+        }
+    }
     public IReadOnlyCollection<PlacedObject> Spawned => _spawned.Values;
     public bool IsLoaded { get; private set; }
 
