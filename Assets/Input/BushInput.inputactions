@@ -1,0 +1,54 @@
+{
+    "name": "BushInput",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "5d0a2f6e-6c1b-4c8e-9a51-2a8f3d7c4b10",
+            "actions": [
+                {
+                    "name": "Point",
+                    "type": "PassThrough",
+                    "id": "9b4e2c71-3f58-4d2a-8e0c-6a1d5b7f2e34",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "c7f13a92-58d4-4b6e-a2f1-0e9d8c3b5a67",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1e8a5d34-7b29-4f6c-b0d3-9c2e4a6f8b12",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f2d9b47-a3c8-4e15-8d7a-b5e0c1f9a234",
+                    "path": "<Pointer>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

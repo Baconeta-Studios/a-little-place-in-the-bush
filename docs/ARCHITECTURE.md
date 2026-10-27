@@ -122,17 +122,20 @@ Collections are lists rather than dictionaries so that `JsonUtility` can seriali
 
 ## 5. Game layer (MonoBehaviours)
 
-- **GameSession** (`EverlastingSingleton`, lives in a `Boot` scene together with the template `PopupCanvas` and audio): creates the services, loads the save, and exposes the services to the scene. It autosaves after an expedition, a dish, a quest claim and leaving build mode, and also on `OnApplicationPause` / tab hidden, because the template already detects that for auto-pause.
-- **Player:** click/tap to walk (per the GDD). `ClickToMove` walks the gecko along a path to the clicked point on the floor, with no jump (see [section 6](#6-world-camera-and-movement)). Clicks on UI are ignored. Clicking an `IInteractable` makes `Interactor` walk the gecko to it and interact on arrival. Prompts and highlights must work without hover, for touch screens.
-- **IInteractable:** `string Prompt`, `bool CanInteract(ctx)`, `void Interact(ctx)`. Every interactive thing uses this one pattern:
+- **GameSession** (`EverlastingSingleton`, created on first use like `AreaTravel`, so there's no Boot scene to load first): creates the services, loads the save, and exposes the services to the scene. Each area scene keeps its own template `PopupCanvas`, because areas are loaded in Single mode, which unloads everything else. It autosaves after an expedition, a dish, a quest claim and leaving build mode, and also on `OnApplicationPause` / tab hidden, because the template already detects that for auto-pause.
+- **Player** *(built)*: click/tap to walk (per the GDD), on the gecko:
+  - `PlayerPointerInput` reads the Gameplay map of `Assets/Input/BushInput.inputactions` (Point + Click; Escape/pause stays in the template's `PauseInput`). It ignores presses on UI, while a popup or the cheat menu is open, and while `InputLock` is held (e.g. during area transitions). Holding the button keeps steering.
+  - `CharacterMover` walks along the path from the area's `IPathfinder`, faces the way it's going (flips the `Visual` child) and stops cleanly. A new click mid-walk replaces the path. Optional Animator parameters `Speed` and `Walking`.
+  - `Interactor` walks to an interactable's stand point and interacts on arrival, but only if the gecko actually got there (a fenced-off stand point refuses instead). Clicking elsewhere on the way cancels it, and a short cooldown stops a double tap using something twice.
+- **IInteractable** *(built)*: `Prompt`, `CanInteract(ctx)`, `Interact(ctx)`, `GetStandPosition(from)`, `SetHovered`, `SetTargeted`. The `Interactable` base class does the common parts (stand points, an `onInteract` UnityEvent, a log line) and `InteractionPrompt` shows a bobbing marker when the gecko is nearby, plus a highlight and the prompt text when hovered (mouse) or being walked to, so it works on touch. Every interactive thing uses this one pattern:
+  - `AreaExit` *(built)*: target scene + spawn id
   - `ExpeditionPath`: the path at the garden's edge, opens forage setup
   - `CafeCounter`: menu / cook
   - `Npc`: dialogue and quests
   - `Mailbox`: mail and quest intros
-  - `AreaExit`: target scene + spawn id
 - **Scenes and areas:**
-  - `Boot` stays loaded the whole time.
-  - Areas are loaded one at a time through the template `SceneLoader` / `SceneReference`. `AreaExit` passes a spawn-point ID.
+  - Areas are loaded one at a time by `AreaTravel` *(built)*: fade out, load, place the gecko on the `SpawnPoint` the `AreaExit` named, fade in, then show the area's name from its `AreaInfo` so it's clear where the player is. Input is locked throughout and a second request is ignored. It creates its own overlay, so it needs no setup. (It uses `SceneManager` with `SceneReference` directly; the template `SceneLoader` is built around additive scenes and display names, which we don't need.)
+  - Getting stuck: the cheat menu has "back to the spawn point" and "return to the cafe", and the template pause menu's Main Menu button loads the first scene in the build list (the cafe, until there's a title screen).
   - The MVP is **Cafe (hub) + Garden**. Village NPCs can stand at the cafe until a separate village scene earns its place (plan Stage 1: add a second area only if needed).
 - **UI:** game popups inherit the template `Popup`:
   - forage setup and forage result
@@ -170,8 +173,10 @@ How every area scene is laid out. The Cafe greybox (`Assets/Scenes/Cafe.unity`) 
 - `Floor/WalkableArea` is a trigger `PolygonCollider2D` outlining where the gecko can walk.
 - `WalkableGrid` splits the World `Grid` into 0.25-unit cells. A cell is walkable if it's inside `WalkableArea` and doesn't overlap an `Obstacle` footprint. It draws green and red gizmos.
 - `GridPathfinder` runs A* over the grid behind an `IPathfinder` interface, so it can be swapped for NavMeshPlus later. Paths are smoothed by line of sight, and clicking a blocked spot walks to the nearest walkable cell.
-- `ClickToMove` uses a `Physics2DRaycaster` on the camera, so clicks on UI never move the gecko. The gecko faces the way it's walking.
-- Interactables have a `StandPoint` child. Clicking one walks the gecko to the stand point and then calls `Interact()`.
+- `PlayerPointerInput` checks the UI first (an EventSystem raycast that only counts `GraphicRaycaster` hits), so clicks on UI never move the gecko. Then it looks for interactable colliders at the point (layer `Interactable`, triggers included), picking the front-most one (lowest on screen) and allowing a small radius for fingers. Anything else walks to the closest reachable point, so clicking the sky or a prop still does something sensible. When a click lands on a prop, near-equal choices go to the gecko's side of it, so it doesn't walk around to the back. This replaces the planned `Physics2DRaycaster` approach, whose hit order between overlapping world colliders depends on renderers and isn't predictable; the camera's `Physics2DRaycaster` isn't needed.
+- Interactables have one or more `StandPoint` children on the floor; the closest one is used. An interactable needs a collider on the `Interactable` layer covering what the player sees (a child called `Click`, separate from its `Obstacle` footprint).
+- `CameraFollow` is for areas bigger than one screen: it follows the gecko and clamps to the area bounds. The cafe fits in the safe area, so it doesn't use it.
+- **Tools > Bush > Set Up Area Scene** adds all of the above to an area scene laid out like the cafe (and a placeholder counter, exit, spawn point and the pause menu if they're missing). See [FIRST-PLAYABLE.md](FIRST-PLAYABLE.md).
 - Build mode must not let the player place something that blocks the path to an exit or a key stand point.
 
 ## 7. Tests
@@ -188,7 +193,7 @@ Everything else is tested by playing the browser build, as the plan describes.
 
 | Plan stage / Trello list | Pieces built |
 | --- | --- |
-| 1 Movement and interaction / 03 | Boot + Cafe scenes, WalkableGrid + GridPathfinder, ClickToMove, Interactor, IInteractable, AreaExit |
+| 1 Movement and interaction / 03 | Cafe scene, WalkableGrid + GridPathfinder, PlayerPointerInput + CharacterMover, Interactor, IInteractable + InteractionPrompt, AreaExit + AreaTravel *(all built; Garden scene still to make)* |
 | 2 Foraging / 04 | Item and forage-table data, ForagingService, companions/perks, forage setup + result popups |
 | 3 Inventory, currency, save / 05 | GameState, Economy, SaveService, inventory UI, reset-save cheat |
 | 4 Recipes and cafe / 06 | RecipeDefinition, CafeService, CafeCounter, menu popup |
