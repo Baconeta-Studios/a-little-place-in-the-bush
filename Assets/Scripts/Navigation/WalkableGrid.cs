@@ -90,9 +90,9 @@ public class WalkableGrid : MonoBehaviour
         GridComponent.GetCellCenterWorld(new Vector3Int(cell.x + _minCell.x, cell.y + _minCell.y, 0));
 
     /// <summary>
-    /// The walkable cell closest to <paramref name="world"/>. Cells within about one cell of the closest
-    /// count as a tie, and ties go to the one nearest <paramref name="preferNear"/> (pass the gecko's
-    /// position), so clicking the base of a prop stops on the gecko's side of it rather than behind it.
+    /// The walkable cell closest to <paramref name="world"/>. Among cells within about one cell of the
+    /// closest, ones on the same side of the point as <paramref name="preferNear"/> (pass the gecko's
+    /// position) win, so clicking the base of a prop stops on the gecko's side of it rather than behind it.
     /// Points far outside the floor (e.g. a tap near the top of a tall phone screen) still work.
     /// </summary>
     public bool TryFindNearestWalkable(Vector2 world, out Vector2Int nearest, Vector2? preferNear = null)
@@ -118,9 +118,12 @@ public class WalkableGrid : MonoBehaviour
         }
         if (best == float.MaxValue) return false;
 
-        // Cells within about a cell of the closest count as a tie; ties go to the one nearest the gecko.
+        // Cells within about a cell of the closest are near enough. Among those, prefer cells on the
+        // same side of the click as the gecko (so it stops in front of a prop, not behind it), then the
+        // one closest to the click.
         float tieMargin = Mathf.Min(CellSize.x, CellSize.y) * 1.1f;
-        float bestScore = float.MaxValue;
+        bool bestOnGeckoSide = false;
+        float bestDistance = float.MaxValue;
         for (int i = 0; i < _walkable.Length; i++)
         {
             if (!_walkable[i]) continue;
@@ -128,10 +131,13 @@ public class WalkableGrid : MonoBehaviour
             Vector2 center = CellToWorld(cell);
             float distance = Vector2.Distance(center, world);
             if (distance > best + tieMargin) continue;
-            float score = preferNear.HasValue ? Vector2.Distance(center, preferNear.Value) : distance;
-            if (score < bestScore)
+
+            bool onGeckoSide = preferNear.HasValue && Vector2.Dot(center - world, preferNear.Value - world) > 0f;
+            bool better = onGeckoSide != bestOnGeckoSide ? onGeckoSide : distance < bestDistance;
+            if (better)
             {
-                bestScore = score;
+                bestOnGeckoSide = onGeckoSide;
+                bestDistance = distance;
                 nearest = cell;
             }
         }
