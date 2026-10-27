@@ -190,6 +190,17 @@ namespace Bush.Core
     public class PlaceableData
     {
         public string id;
+        /// <summary>The inventory item this places (category Placeable).</summary>
         public string itemId;
+        public PlacementType placement;
+        /// <summary>Width of the base that blocks walking, in world units.</summary>
+        public float footprintWidth = 1f;
+        /// <summary>Depth (front to back) of the base that blocks walking, in world units.</summary>
+        public float footprintDepth = 0.4f;
+        public bool canFlip = true;
+        /// <summary>Tray tab, e.g. Furniture, Plants, Decor.</summary>
+        public string category;
+        /// <summary>How many guests can perch on it. Guests come later; quests can already count seats.</summary>
+        public int seats;
     }
 }

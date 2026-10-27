@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using Debugging;
 using UI.Popups;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 /// <summary>
 /// Click or tap to walk and interact (per the GDD). Reads the Gameplay map of BushInput.inputactions.
@@ -26,7 +23,6 @@ public class PlayerPointerInput : MonoBehaviour
     [Tooltip("Optional marker spawned where the player clicks the floor.")]
     [SerializeField] private GameObject clickMarkerPrefab;
 
-    private static readonly List<RaycastResult> UiHits = new();
     private readonly Collider2D[] _overlaps = new Collider2D[16];
 
     private InputActionAsset _actionsCopy;
@@ -95,7 +91,7 @@ public class PlayerPointerInput : MonoBehaviour
 
         bool blocked = InputLock.IsLocked || PopupManager.AnyOpen || CheatMenu.IsOpen;
         Vector2 screen = _point.ReadValue<Vector2>();
-        bool overUi = IsOverUi(screen);
+        bool overUi = UiPointer.IsOverUi(screen);
         Vector2 world = worldCamera.ScreenToWorldPoint(screen);
 
         UpdateHover(blocked || overUi ? null : FindInteractable(world, 0f));
@@ -192,20 +188,6 @@ public class PlayerPointerInput : MonoBehaviour
         if (_hovered is Object old && old) _hovered.SetHovered(false);
         _hovered = hovered;
         _hovered?.SetHovered(true);
-    }
-
-    /// <summary>True if the pointer is over any UI graphic that blocks raycasts (buttons, panels, popups).</summary>
-    private static bool IsOverUi(Vector2 screen)
-    {
-        EventSystem eventSystem = EventSystem.current;
-        if (!eventSystem) return false;
-
-        var data = new PointerEventData(eventSystem) { position = screen };
-        UiHits.Clear();
-        eventSystem.RaycastAll(data, UiHits);
-        foreach (RaycastResult hit in UiHits)
-            if (hit.module is GraphicRaycaster) return true;
-        return false;
     }
 
     private void ShowClickMarker(Vector2 position)

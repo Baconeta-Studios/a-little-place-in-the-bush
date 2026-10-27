@@ -22,6 +22,7 @@ namespace Bush.Core.Tests
             design.perks.Add(new PerkData { id = "perk.bad", modifiers = { new ForageModifier(ModifierType.TagWeight, 2, "nothing_has_this") } });
             design.items.Add(new ItemData { id = "item.bad_note", category = ItemCategory.KeyItem, tags = { "encounter" }, teachesRecipe = "recipe.missing" });
             design.forageTables[0].entries.Add(new ForageEntry { itemId = TestDesign.Leaf, weight = 1, min = 1, max = 1, requiresCompanion = "companion.missing" });
+            design.placeables.Add(new PlaceableData { id = "placeable.bad", itemId = TestDesign.Leaf, footprintWidth = 0, footprintDepth = 1 });
 
             List<string> errors = DesignValidator.Validate(design);
             string all = string.Join("\n", errors);
@@ -33,6 +34,8 @@ namespace Bush.Core.Tests
             StringAssert.Contains("teaches unknown recipe recipe.missing", all);
             StringAssert.Contains("should be unique", all);
             StringAssert.Contains("requires unknown companion companion.missing", all);
+            StringAssert.Contains("item.leaf should have the Placeable category", all);
+            StringAssert.Contains("footprint must be bigger than 0", all);
         }
 
         [Test]
@@ -48,6 +51,9 @@ namespace Bush.Core.Tests
             Assert.AreEqual(EntryTime.Night, copy.GetForageTable(TestDesign.Table).entries[3].time);
             Assert.AreEqual(TestDesign.Weka, copy.GetForageTable(TestDesign.Table).entries[^1].requiresCompanion);
             Assert.AreEqual(TestDesign.SecretPie, copy.GetItem(TestDesign.Note).teachesRecipe);
+            Assert.AreEqual(1, copy.GetPlaceable(TestDesign.Chair).seats);
+            Assert.AreEqual(0.8f, copy.GetPlaceable(TestDesign.Fern).footprintWidth, 1e-6);
+            Assert.IsFalse(copy.GetPlaceable(TestDesign.Fern).canFlip);
 
             // The same seed must give the same expedition after a round trip.
             ExpeditionSetup setup = TestDesign.Setup(TestDesign.Weka, TestDesign.BigBasket, TestDesign.FocusBugs, TimeOfDay.Night);

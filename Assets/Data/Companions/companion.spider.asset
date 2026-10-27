@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85fd738aba0349d68e504aa0fdca750d, type: 3}
+  m_Name: companion.spider
+  m_EditorClassIdentifier: Assembly-CSharp::CompanionDefinition
+  id: companion.spider
+  displayName: Spider
+  description: Spins silk wherever it goes.
+  portrait: {fileID: 0}
+  unlockedByDefault: 0
+  modifiers:
+  - type: 0
+    tag: silk
+    rarity: 0
+    value: 3
+  - type: 1
+    tag: silk
+    rarity: 0
+    value: 1
+  teachesPerk: {fileID: 0}
+  tripsToTeach: 0

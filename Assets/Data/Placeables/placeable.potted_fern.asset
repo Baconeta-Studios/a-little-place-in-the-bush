@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37a3a079e3c24a4ab921797d347118fa, type: 3}
+  m_Name: placeable.potted_fern
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
+  id: placeable.potted_fern
+  displayName: Potted fern
+  description: A happy fern in a clay pot.
+  item: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
+  prefab: {fileID: 6703021867451032119, guid: 6678e1045496388408fc9f9eb1b5e5c8, type: 3}
+  placement: 0
+  footprintSize: {x: 0.8, y: 0.4}
+  canFlip: 1
+  category: Plants
+  seats: 0

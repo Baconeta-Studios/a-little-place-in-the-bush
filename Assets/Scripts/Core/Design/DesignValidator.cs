@@ -22,6 +22,7 @@ namespace Bush.Core
             CheckIds(errors, "forage table", design.forageTables, x => x.id);
             CheckIds(errors, "npc", design.npcs, x => x.id);
             CheckIds(errors, "quest", design.quests, x => x.id);
+            CheckIds(errors, "placeable", design.placeables, x => x.id);
 
             var allTags = new HashSet<string>();
             foreach (ItemData item in design.items)
@@ -186,6 +187,21 @@ namespace Bush.Core
                     }
                 }
             }
+
+            var placedItems = new HashSet<string>();
+            foreach (PlaceableData placeable in design.placeables)
+            {
+                string where = $"placeable {placeable.id}";
+                ItemData item = RequireItem(errors, design, placeable.itemId, where);
+                if (item != null && item.category != ItemCategory.Placeable) errors.Add($"{where}: item {item.id} should have the Placeable category.");
+                if (!placedItems.Add(placeable.itemId ?? "")) errors.Add($"{where}: item {placeable.itemId} is used by two placeables.");
+                if (placeable.footprintWidth <= 0 || placeable.footprintDepth <= 0) errors.Add($"{where}: footprint must be bigger than 0 both ways.");
+                if (placeable.seats < 0) errors.Add($"{where}: seats can't be negative.");
+                if (placeable.placement != PlacementType.Floor) errors.Add($"{where}: only Floor placement works so far ({placeable.placement} is reserved for later).");
+            }
+            foreach (ItemData item in design.items)
+                if (item.category == ItemCategory.Placeable && design.GetPlaceableForItem(item.id) == null)
+                    errors.Add($"Item {item.id} is Placeable but no placeable uses it, so it can't be placed.");
 
             CheckPrerequisiteCycles(errors, design);
             return errors;

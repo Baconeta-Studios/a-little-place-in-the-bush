@@ -1,0 +1,150 @@
+using System;
+using Bush.Core;
+using Debugging;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+/// <summary>
+/// The running game: the design data, the save, and the services that change it (economy, cafe,
+/// quests, building). Created once by a <see cref="GameSessionBootstrap"/> in whichever area scene
+/// starts first, then kept across scene loads. Saves after anything changes, and when the tab is
+/// hidden or the app closes.
+/// </summary>
+[DefaultExecutionOrder(-200)]
+public class GameSession : MonoBehaviour
+{
+    private const string UnlimitedPrefKey = "bush.build.unlimited";
+
+    private SaveService _save;
+    private bool _saveRequested;
+
+    public static GameSession Current { get; private set; }
+    /// <summary>Raised when a session has been created, or rebuilt after a save reset.</summary>
+    public static event Action Ready;
+
+    public GameDatabase Database { get; private set; }
+    public DesignData Design { get; private set; }
+    public GameState State { get; private set; }
+    public GameEvents Events { get; private set; }
+    public Economy Economy { get; private set; }
+    public CafeService Cafe { get; private set; }
+    public QuestService Quests { get; private set; }
+    public BuildService Build { get; private set; }
+
+    public static GameSession Create(GameDatabase database)
+    {
+        if (Current) return Current;
+
+        var root = new GameObject("[GameSession]");
+        DontDestroyOnLoad(root);
+        var session = root.AddComponent<GameSession>();
+        session.Database = database;
+        session.Design = database.BuildDesign();
+        session._save = new SaveService(SaveService.CreateDefaultStorage(), SaveService.CreateDefaultBackupStorage());
+        Current = session;
+        session.StartGame(session._save.Load(session.Design));
+        session.RegisterCheats();
+
+#if UNITY_EDITOR
+        var problems = DesignValidator.Validate(session.Design);
+        if (problems.Count > 0) Debug.LogWarning($"[GameSession] Design data has {problems.Count} problem(s). Run Tools > Bush > Validate Design Data.");
+#endif
+        return session;
+    }
+
+    /// <summary>Saves at the end of this frame (several changes in one frame save once).</summary>
+    public void RequestSave() => _saveRequested = true;
+
+    public void SaveNow()
+    {
+        _saveRequested = false;
+        if (State != null) _save.Save(State);
+    }
+
+    /// <summary>Deletes the save and starts again from scratch, reloading the current scene.</summary>
+    public void ResetSave()
+    {
+        _save.Delete();
+        StartGame(GameState.CreateNew(Design));
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    /// <summary>Prototype mode for building: place anything without owning it. Remembered on this device.</summary>
+    public bool UnlimitedBuildItems
+    {
+        get => Build.UnlimitedItems;
+        set
+        {
+            Build.UnlimitedItems = value;
+            PlayerPrefs.SetInt(UnlimitedPrefKey, value ? 1 : 0);
+            PlayerPrefs.Save();
+            Events.RaiseInventoryChanged(); // refresh trays and counts
+        }
+    }
+
+    private void StartGame(GameState state)
+    {
+        Quests?.Dispose();
+        State = state;
+        Events = new GameEvents();
+        Economy = new Economy(State, Design, Events);
+        Cafe = new CafeService(Design, State, Economy, Events);
+        Quests = new QuestService(Design, State, Economy, Events);
+        Build = new BuildService(Design, State, Economy, Events)
+        {
+            UnlimitedItems = PlayerPrefs.GetInt(UnlimitedPrefKey, 1) == 1 // on by default while prototyping
+        };
+
+        Events.InventoryChanged += RequestSave;
+        Events.CurrencyChanged += _ => RequestSave();
+        Events.BuildChanged += _ => RequestSave();
+        Events.QuestStarted += _ => RequestSave();
+        Events.QuestCompleted += _ => RequestSave();
+        Events.ExpeditionCompleted += _ => RequestSave();
+        Events.RecipeLearned += _ => RequestSave();
+        Events.PerkLearned += _ => RequestSave();
+
+        Ready?.Invoke();
+    }
+
+    private void LateUpdate()
+    {
+        if (_saveRequested) SaveNow();
+    }
+
+    // The tab or app going to the background is the last reliable moment to save on the web and on phones.
+    private void OnApplicationPause(bool paused)
+    {
+        if (paused) SaveNow();
+    }
+
+    private void OnApplicationFocus(bool focused)
+    {
+        if (!focused) SaveNow();
+    }
+
+    private void OnApplicationQuit() => SaveNow();
+
+    private void OnDestroy()
+    {
+        if (Current != this) return;
+        Quests?.Dispose();
+        Current = null;
+    }
+
+    private void RegisterCheats()
+    {
+        CheatMenu.AddToggle("Build: unlimited items", () => UnlimitedBuildItems, v => UnlimitedBuildItems = v, this);
+        CheatMenu.AddButton("Build: give 3 of every placeable", () =>
+        {
+            foreach (PlaceableData placeable in Design.placeables) Economy.Add(placeable.itemId, 3);
+        }, this);
+        CheatMenu.AddButton("Bag: give 5 of every item", () =>
+        {
+            foreach (ItemData item in Design.items) Economy.Add(item.id, item.unique ? 1 : 5);
+        }, this);
+        CheatMenu.AddButton("Bag: give 100 coins", () => Economy.AddCurrency(100), this);
+        CheatMenu.AddButton("Save: save now", SaveNow, this);
+        CheatMenu.AddButton("Save: reset everything (reloads the scene)", ResetSave, this);
+    }
+}

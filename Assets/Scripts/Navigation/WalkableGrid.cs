@@ -19,6 +19,7 @@ public class WalkableGrid : MonoBehaviour
     private Grid _grid;
     private bool[] _walkable;
     private Vector3Int _minCell;
+    private Rect? _temporaryBlock;
 
     public event Action Rebuilt;
 
@@ -75,7 +76,24 @@ public class WalkableGrid : MonoBehaviour
 
     public bool InBounds(Vector2Int cell) => cell.x >= 0 && cell.y >= 0 && cell.x < Width && cell.y < Height;
 
-    public bool IsWalkable(Vector2Int cell) => IsBuilt && InBounds(cell) && _walkable[cell.y * Width + cell.x];
+    public bool IsWalkable(Vector2Int cell) =>
+        IsBuilt && InBounds(cell) && _walkable[cell.y * Width + cell.x] && !IsTemporarilyBlocked(cell);
+
+    /// <summary>
+    /// Treats a rectangle as blocked without touching any colliders, so build mode can ask "would this
+    /// placement cut off a path?" before committing. Pass null to clear it. Always clear it straight after.
+    /// </summary>
+    public void SetTemporaryBlock(Rect? footprint) => _temporaryBlock = footprint;
+
+    private bool IsTemporarilyBlocked(Vector2Int cell)
+    {
+        if (!_temporaryBlock.HasValue) return false;
+        Vector2 center = CellToWorld(cell);
+        Vector2 half = CellSize * 0.5f + Vector2.one * clearance;
+        Rect block = _temporaryBlock.Value;
+        return center.x + half.x > block.xMin && center.x - half.x < block.xMax &&
+               center.y + half.y > block.yMin && center.y - half.y < block.yMax;
+    }
 
     public bool IsWalkable(Vector2 world) => IsWalkable(WorldToCell(world));
 
@@ -112,7 +130,7 @@ public class WalkableGrid : MonoBehaviour
         float best = float.MaxValue;
         for (int i = 0; i < _walkable.Length; i++)
         {
-            if (!_walkable[i]) continue;
+            if (!_walkable[i] || IsTemporarilyBlocked(new Vector2Int(i % Width, i / Width))) continue;
             float distance = Vector2.Distance(CellToWorld(new Vector2Int(i % Width, i / Width)), world);
             if (distance < best) best = distance;
         }
@@ -126,7 +144,7 @@ public class WalkableGrid : MonoBehaviour
         float bestDistance = float.MaxValue;
         for (int i = 0; i < _walkable.Length; i++)
         {
-            if (!_walkable[i]) continue;
+            if (!_walkable[i] || IsTemporarilyBlocked(new Vector2Int(i % Width, i / Width))) continue;
             var cell = new Vector2Int(i % Width, i / Width);
             Vector2 center = CellToWorld(cell);
             float distance = Vector2.Distance(center, world);

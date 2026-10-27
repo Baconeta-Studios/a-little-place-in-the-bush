@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c749d810f3914cbb8b945e5c0c79dfa7, type: 3}
+  m_Name: table.bush
+  m_EditorClassIdentifier: Assembly-CSharp::ForageTableDefinition
+  id: table.bush
+  displayName: The bush
+  description: 
+  rolls: 4
+  entries:
+  - item: {fileID: 11400000, guid: 15c11bb6271bccc41a369397b19055c3, type: 2}
+    weight: 40
+    min: 2
+    max: 4
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: ed9083e8c834f8748a8457451dc540b7, type: 2}
+    weight: 18
+    min: 1
+    max: 3
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 21d252eb39e43484e841df122d459570, type: 2}
+    weight: 12
+    min: 1
+    max: 2
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 0526e4447748bd7489128d4fd6f5f2d2, type: 2}
+    weight: 8
+    min: 1
+    max: 2
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 2ac16a05039756c4cb9e874bfb9fc6d2, type: 2}
+    weight: 25
+    min: 2
+    max: 4
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 07137c6e4c4acdd4ab01e63a34ca6786, type: 2}
+    weight: 8
+    min: 1
+    max: 2
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 10c6829227dd3034993056d291a04c99, type: 2}
+    weight: 6
+    min: 1
+    max: 2
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 7e0846d4372a28c47ae735622485a65a, type: 2}
+    weight: 8
+    min: 1
+    max: 1
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: b89950a3d9d6f6340998bc587546d00e, type: 2}
+    weight: 6
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 4be5aa6e943834c43b16f4c35bd3cb6a, type: 2}
+    weight: 25
+    min: 1
+    max: 3
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: df44f566e3919a64e9ff76f34b6a6ae6, type: 2}
+    weight: 6
+    min: 1
+    max: 1
+    time: 2
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 8096cbf782712f5478b2baecf75838fe, type: 2}
+    weight: 14
+    min: 1
+    max: 2
+    time: 2
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 80c3f9a27f00d324680d999e67636f33, type: 2}
+    weight: 12
+    min: 1
+    max: 2
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: e9f301cc6060e4c4985b84ef29435784, type: 2}
+    weight: 8
+    min: 1
+    max: 2
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: ac7a5df089bde4345b07c92187115f15, type: 2}
+    weight: 4
+    min: 1
+    max: 1
+    time: 2
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: a07aecd8570d619419e001f2df5e27c5, type: 2}
+    weight: 14
+    min: 1
+    max: 3
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 9c2998cfb49b1fd48a691cbafb89d395, type: 2}
+    weight: 2
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: eec1e6b06695ff1499ca7733d1b21be3, type: 2}
+    weight: 10
+    min: 1
+    max: 3
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
+    weight: 15
+    min: 1
+    max: 3
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 5fef92819bc9cd541bc4ace75ef76865, type: 2}
+    weight: 14
+    min: 1
+    max: 2
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 4db78b696f792f1439cc12c1fdd2bc98, type: 2}
+    weight: 4
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: e0d824e56df75774dbf7fd4fc813551c, type: 2}
+    weight: 3
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 3b983ba66cd4b8f46ad0a90c92f9f176, type: 2}
+    weight: 1
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: e2aa67cc0cc56b547a8b2d538de27678, type: 2}
+    weight: 0.4
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 6998e61fb629b984e8ba945fd2ee58b1, type: 2}
+    weight: 12
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 11400000, guid: 68fa2deb035c85346afb899ff0d1d904, type: 2}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 28cf5ba5ec2088e4f858b79b907f0b3b, type: 2}
+    weight: 1.5
+    min: 1
+    max: 1
+    time: 2
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: e63d68e2f5c0d664faccfed2b050a802, type: 2}
+    weight: 2
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}

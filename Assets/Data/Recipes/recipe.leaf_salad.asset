@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9befd161603e4d92adf353f40191839a, type: 3}
+  m_Name: recipe.leaf_salad
+  m_EditorClassIdentifier: Assembly-CSharp::RecipeDefinition
+  id: recipe.leaf_salad
+  displayName: Leaf salad
+  description: Simple, fresh and green.
+  icon: {fileID: 0}
+  ingredients:
+  - item: {fileID: 11400000, guid: 15c11bb6271bccc41a369397b19055c3, type: 2}
+    qty: 3
+  coins: 6
+  unlockedByDefault: 1
+  price: 0
+  scraps: []

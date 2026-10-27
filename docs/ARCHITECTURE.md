@@ -56,13 +56,14 @@ Assets/
                    Services/ (Economy, CafeService, QuestService, GameEvents), Foraging/, Design/ (JSON format, validator)
     Definitions/   ScriptableObject definitions (ItemDefinition...) + GameDatabase
     Editor/        DesignDataTools (import/export/validate), AreaSceneSetup
-    Session/       AreaTravel, AreaInfo, SpawnPoint (later: GameSession, autosave)
+    Session/       GameSession (+ bootstrap), SaveService, AreaTravel, AreaInfo, SpawnPoint
     Camera/        CameraFit, CameraFollow
     Navigation/    WalkableGrid, IPathfinder, GridPathfinder
     Player/        CharacterMover, Interactor, PlayerPointerInput, InputLock
     Interaction/   IInteractable, Interactable, StandPoint, InteractionPrompt, AreaExit (later: stations, NPCs)
-    Building/      build mode, placement, PlacedObject
-    UI/            (template) popups and UI states, plus the game HUD and popups
+    Building/      BuildArea, BuildMode, PlacementValidator, PlacedObject, SeatPoint
+    UI/            (template) popups and UI states, plus GameUi (code-built prototype UI), GameHud, BuildUi,
+                   InventoryPopup (the bag), ItemGridView, UiPointer
     Debugging/     (template) cheat menu, plus the game's CheatMenu registrations
     Achievements/ Analytics/ Audio/ HighScores/ Managers/ Utils/   (template)
   Data/            definition assets, made by Tools > Bush > Import Design Data: Items/, Recipes/, Companions/,
@@ -97,7 +98,7 @@ Each definition converts to a plain C# model in `Bush.Core` (`ItemDefinition.ToD
 | `ForageTableDefinition` | rolls, entries (item, weight, min, max, time of day, requiresQuest, requiresCompanion) | `table.bush` |
 | `NpcDefinition` | portrait, species | Ruru, Weka, Snail, Wētā |
 | `QuestDefinition` | giver, isMain, prerequisites, objectives, rewards, 4 dialogue lines | 2 main quests + 3 side quests (see [MAIN-QUEST.md](MAIN-QUEST.md)) |
-| `PlaceableDefinition` | item, prefab | none yet (Stage 6) |
+| `PlaceableDefinition` | item, prefab, placement type, footprint size, can flip, tray category, seats | chair, cafe table, bench, potted fern, flower barrel, lantern post |
 
 **Item categories:** `Ingredient` (cooked), `Material` (bark, silk: quests and repairs), `Treasure` (shinies: trades and selling), `KeyItem` (quest items like recipe scraps: can't be cooked or sold), `Placeable` (build mode). They all live in the one inventory; the UI can filter by category, which also covers the GDD's "cafe larder" (see Open decisions). Items marked `unique` can only be owned once, and once collected (owned, or handed in for a quest) they never drop or get rewarded again. Key items can only leave the inventory through a quest hand-in, so a quest item can't be lost, sold or cooked by mistake.
 
@@ -135,15 +136,22 @@ Collections are lists rather than dictionaries so that `JsonUtility` can seriali
 - **ForagingService** *(built)*: `Resolve(design, setup, context, seed) → ForageResult`, a pure function following [FORAGING.md](FORAGING.md), plus `Preview` for the setup screen's odds. In the game: `CanBegin`/`Begin` (on Go: checks the companion and perks are unlocked, copies the setup, resolves it and stores the result in the state), `GetPendingResult` (for the results screen) and `Claim` (pays exactly the stored result once, counts the companion trip and teaches its perk). The GDD's "dims for a few seconds" is purely visual: the result is fixed by the seed up front. The same seed gives the same result in the web sandbox.
 - **CafeService** *(built)*: `CanCook(recipe, out missing)` (what's short, for the UI), `Cook(recipe)` via one transaction, `CanLearn`/`Learn(recipe)` to buy a recipe for its price (the GDD's "use what you earn to learn recipes", and so far the only thing coins buy), and `GetScrapProgress(recipe)` for the recipe book. Plan Stage 4 deliberately has no customer simulation: serving a dish pays its coins.
 - **QuestService** *(built)*: `CanStart` (prerequisites), `Start`, `GetStatus`, `GetProgress`, `GetDialogue`, `Claim`, `IsMainStoryComplete` (the win condition). Item objectives (`HaveItems`, `DeliverItems`) are checked against the inventory live; cooking, expeditions, talking and placing are counted from `GameEvents` while the quest is active. Stored states are `NotStarted`, `Active` and `Completed`; `ReadyToClaim` is worked out from the objectives (items are totalled across objectives), so it always means the claim will work, and spending a needed item drops a quest back to Active. Event counters are keyed by objective type and target rather than position, so a patch can reorder objectives. `Claim` hands in `DeliverItems`, pays rewards and unlocks in one transaction and sets `rewardClaimed`, so it can't pay twice; `Claim(id, out error)` says why it didn't.
-- **BuildService:** place / move / remove placeables. Placing takes the item out of the inventory and removing puts it back, both through Economy.
-- **SaveService:** turns `GameState` into JSON with `saveVersion`. On a missing, unreadable or older save it falls back to a fresh state and logs it, rather than crashing. Storage sits behind `ISaveStorage`:
-  - **Default:** the existing `Utils.FileUtils` (`persistentDataPath`, which is IndexedDB on WebGL).
-  - **Fallback:** PlayerPrefs, if the hosted build doesn't keep the file after a refresh. Verify this on the real host early (Trello: *Test browser storage persistence*).
+- **BuildService** *(built)*: `Place`, `Move`, `SetFlipped`, `Remove`, `CountAvailable`, `CountSeats`, `InitialiseArea` (the starting layout, once per save). Placing takes the item from the inventory and putting it away gives it back, both through Economy; things placed for free (the starting layout, or `UnlimitedItems` while prototyping) don't turn into real items. Placed objects have their own ids and belong to an area. Raises `ObjectPlaced` (for `PlaceObject` quests) and `BuildChanged`. *Where* things may go needs physics, so that's checked in the game layer (`PlacementValidator`).
+- **SaveService** *(built, in the game layer because it uses JsonUtility)*: turns `GameState` into JSON with `saveVersion`. A missing, unreadable or newer save starts fresh and logs why rather than crashing; older versions would be upgraded in one place. Storage sits behind `ISaveStorage`:
+  - **Web:** PlayerPrefs, which Unity writes to the browser's IndexedDB and which reliably survives a refresh.
+  - **Everywhere else:** a JSON file via the template's `Utils.FileUtils`.
+  - Still to verify on the real host (Trello: *Test browser storage persistence*).
 - **GameEvents** *(built)*: a small set of plain C# events (one instance per session, so tests don't share state). No event bus framework.
 
 ## 5. Game layer (MonoBehaviours)
 
-- **GameSession** (`EverlastingSingleton`, created on first use like `AreaTravel`, so there's no Boot scene to load first): creates the services, loads the save, and exposes the services to the scene. Each area scene keeps its own template `PopupCanvas`, because areas are loaded in Single mode, which unloads everything else. It autosaves after an expedition, a dish, a quest claim and leaving build mode, and also on `OnApplicationPause` / tab hidden, because the template already detects that for auto-pause.
+- **GameSession** *(built)*: created once by a `GameSessionBootstrap` on `Systems` in whichever area scene starts first (it holds the GameDatabase reference), then kept across scene loads, so there's no Boot scene. It builds the design data, loads the save, creates the services and exposes them (`GameSession.Current`). It saves at the end of any frame where something changed (inventory, coins, building, quests, expeditions, unlocks) and when the tab or app is hidden. Each area scene keeps its own template `PopupCanvas`, because areas load in Single mode. Cheats: unlimited build items, give items and coins, save now, reset the save.
+- **Build mode** *(built, prototype)*: see [BUILD-MODE.md](BUILD-MODE.md).
+  - `BuildArea` (on `World`, cafe only for now) spawns what the save says is placed in this area, puts down the starting layout on a new save, and gives build mode the floor (the walkable floor is the build area), the grid and the spots to keep clear. Areas without one have no Build button.
+  - `BuildMode` pauses the game, locks gecko input, and handles tap and drag (snapped to the 0.25 grid, lifted above the finger on touch, no hover anywhere), Place / Flip / Cancel for new things, and Done / Flip / Put away for things already out.
+  - `PlacementValidator`: on the open ground, not overlapping, not covering a stand point or spawn point, and not cutting off the path from the spawn point to any stand point (tested with a what-if block on the walkable grid before anything is committed).
+  - `PlacedObject` sizes each object's footprint from its definition. `SeatPoint` marks where guests will perch (no guest logic yet).
+- **The bag** *(built, read-only)*: `InventoryPopup`, a template `Popup` with tabs Larder, Materials, Treasures, Satchel and Placeables, coins, and item details. Opened from `GameHud` (top left: coins, Bag, Build). The prototype UI is built in code by `GameUi` (a canvas under the template popups, kept inside the phone's safe area) so nothing needs wiring in scenes; it can be swapped for designed prefabs later.
 - **Player** *(built)*: click/tap to walk (per the GDD), on the gecko:
   - `PlayerPointerInput` reads the Gameplay map of `Assets/Input/BushInput.inputactions` (Point + Click; Escape/pause stays in the template's `PauseInput`). It ignores presses on UI, while a popup or the cheat menu is open, and while `InputLock` is held (e.g. during area transitions). Holding the button keeps steering.
   - `CharacterMover` walks along the path from the area's `IPathfinder`, faces the way it's going (flips the `Visual` child) and stops cleanly. A new click mid-walk replaces the path. Optional Animator parameters `Speed` and `Walking`.
@@ -202,12 +210,15 @@ How every area scene is laid out. The Cafe greybox (`Assets/Scenes/Cafe.unity`) 
 
 ## 7. Tests
 
-EditMode tests in `Bush.Core.Tests` (`Assets/Tests/EditMode`, 53 tests) cover:
+EditMode tests in `Bush.Core.Tests` (`Assets/Tests/EditMode`, 64 tests) cover:
 - the Economy edge cases from Trello list 05: zero or negative quantities, unknown items, not enough items, repeated costs, unique and key items, selling, tidying a save, `TryTransact` never applying half a change
 - foraging: same seed same result, roll counts, day/night and quest-gated entries, unique scraps (once per trip, never after being collected or handed in), each modifier type, the focus counting once, companion-only entries, rare encounters teaching their recipe once, the odds preview, paying out exactly once, double-clicking Go, locked companions, learning a companion's perk
 - quests and cooking: prerequisites, counters only while active, claiming once (and why not), counters surviving reordered objectives, recipe scraps handed in together unlocking the recipe, learning recipes for coins, live default unlocks, dialogue per state
 - design data: the validator, the JSON round trip, and that `Design/design-data.json` loads and validates
-- still to add: a save written and loaded again comes back the same, and an unknown or old version falls back to a fresh state (with SaveService)
+- building: placing and putting away through the inventory, unlimited mode, ids, areas, flipping, seats, the starting layout, `PlaceObject` quests, and the whole game state surviving a JSON round trip
+- still to add: SaveService's fallbacks for a broken, empty or newer save
+
+`Assets/Tests/Editor` (needs Unity's physics) also covers navigation and placement rules: off the floor, overlapping, covering a stand point or the spawn point, blocking the only path, and an object not colliding with itself while being moved.
 
 Because `Bush.Core` has no UnityEngine reference, these tests can also be compiled and run outside Unity.
 
@@ -219,10 +230,10 @@ Everything else is tested by playing the browser build, as the plan describes.
 | --- | --- |
 | 1 Movement and interaction / 03 | Cafe scene, WalkableGrid + GridPathfinder, PlayerPointerInput + CharacterMover, Interactor, IInteractable + InteractionPrompt, AreaExit + AreaTravel *(all built; Garden scene still to make)* |
 | 2 Foraging / 04 | Item and forage-table data, ForagingService, companions/perks, forage setup + result popups |
-| 3 Inventory, currency, save / 05 | GameState, Economy, SaveService, inventory UI, reset-save cheat |
+| 3 Inventory, currency, save / 05 | GameState, Economy, SaveService, GameSession, the bag (read-only), reset-save cheat *(built; using and selling from the bag still to do)* |
 | 4 Recipes and cafe / 06 | RecipeDefinition, CafeService, CafeCounter, menu popup |
 | 5 Quests / 07 | QuestDefinition, QuestService, Npc, dialogue popup, Mailbox |
-| 6 Building / 08 | PlaceableDefinition, BuildService, build mode, placed objects saved |
+| 6 Building / 08 | PlaceableDefinition, BuildService, BuildArea + BuildMode + PlacementValidator, placed objects saved *(prototype built: unlimited items, placeholder art; earning placeables, guests on seats and wall/rug/surface placement still to do)* |
 | 7 Integration / 09-12 | data validation tool, cheat hooks, autosave points, full-loop smoke test |
 
 ## Decisions
@@ -233,6 +244,7 @@ Everything else is tested by playing the browser build, as the plan describes.
 - **Folders:** game code goes into the template's existing `Assets/Scripts/...` folders, not a separate `_Game` folder.
 - **Primary platform:** WebGL in desktop browsers for the jam. PC Standalone comes later.
 - **Design data:** rules run on plain C# models in `Bush.Core`; ScriptableObjects are the editing and art layer. `Design/design-data.json` plus the web sandbox are a second way in for designers without Unity.
+- **Building:** only in the cafe's outdoor space for now; free placement snapped to the 0.25 grid; placed things block walking; enter build mode to place; put away returns things to the bag. Unlimited items while prototyping. Seats are defined now (for quests and progression), guests later. Placement types beyond Floor (windows, fairy lights) later.
 - **Quest items:** recipe scraps and other quest items are `KeyItem` items in the same inventory, `unique` so they can't duplicate or drop twice. A recipe made of scraps is unlocked by a quest that hands them in (see [MAIN-QUEST.md](MAIN-QUEST.md)).
 
 ## Open decisions

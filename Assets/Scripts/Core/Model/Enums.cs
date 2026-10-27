@@ -60,6 +60,18 @@ namespace Bush.Core
         UnlockPerk
     }
 
+    /// <summary>
+    /// Where a placeable can go in build mode. Only Floor works for now; the others are reserved so
+    /// windows, fairy lights, rugs and things on tables can be added later without changing the data.
+    /// </summary>
+    public enum PlacementType
+    {
+        Floor,   // stands on the ground, has a footprint the gecko walks around
+        Wall,    // later: hangs on the cafe front (windows, signs, fairy lights)
+        Rug,     // later: lies flat, walk-over, no footprint
+        Surface  // later: sits on a table or counter
+    }
+
     /// <summary>ReadyToClaim is never stored: it's worked out from the objectives.</summary>
     public enum QuestStatus
     {

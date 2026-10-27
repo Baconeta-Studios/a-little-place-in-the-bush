@@ -133,8 +133,22 @@ public static class DesignDataTools
             foreach (CompanionData x in design.companions) SetBasics(assets.GetOrCreate<CompanionDefinition>(x.id, "Companions"), x.id, x.name, x.description);
             foreach (ForageTableData x in design.forageTables) SetBasics(assets.GetOrCreate<ForageTableDefinition>(x.id, "ForageTables"), x.id, x.name, null);
             foreach (QuestData x in design.quests) SetBasics(assets.GetOrCreate<QuestDefinition>(x.id, "Quests"), x.id, x.title, x.summary);
+            foreach (PlaceableData x in design.placeables)
+            {
+                PlaceableDefinition asset = assets.GetOrCreate<PlaceableDefinition>(x.id, "Placeables");
+                ItemData item = design.GetItem(x.itemId);
+                SetBasics(asset, x.id, item?.name ?? x.id, item?.description);
+                asset.placement = x.placement;
+                asset.footprintSize = new Vector2(x.footprintWidth, x.footprintDepth);
+                asset.canFlip = x.canFlip;
+                asset.category = x.category;
+                asset.seats = x.seats;
+                // The prefab isn't in the file: Tools > Bush > Create Placeholder Placeables makes one if it's missing.
+            }
 
             // Pass 2: everything that refers to other assets.
+            foreach (PlaceableData x in design.placeables)
+                assets.Get<PlaceableDefinition>(x.id).item = assets.Get<ItemDefinition>(x.itemId);
             foreach (ItemData x in design.items)
                 assets.Get<ItemDefinition>(x.id).teachesRecipe = assets.Get<RecipeDefinition>(x.teachesRecipe);
             foreach (RecipeData x in design.recipes)
@@ -198,7 +212,7 @@ public static class DesignDataTools
         database.forageTables = InFileOrder(design.forageTables.Select(x => x.id), FindAll<ForageTableDefinition>(), leftovers);
         database.npcs = InFileOrder(design.npcs.Select(x => x.id), FindAll<NpcDefinition>(), leftovers);
         database.quests = InFileOrder(design.quests.Select(x => x.id), FindAll<QuestDefinition>(), leftovers);
-        database.placeables = Merge(database.placeables, FindAll<PlaceableDefinition>()); // placeables aren't in the file yet
+        database.placeables = InFileOrder(design.placeables.Select(x => x.id), FindAll<PlaceableDefinition>(), leftovers);
         EditorUtility.SetDirty(database);
         AssetDatabase.SaveAssets();
 
@@ -261,6 +275,13 @@ public static class DesignDataTools
 
         foreach (ItemDefinition item in database.items.Where(i => i && !i.icon))
             yield return $"Item {item.id} has no icon yet.";
+
+        foreach (PlaceableDefinition placeable in database.placeables.Where(p => p))
+        {
+            if (!placeable.prefab) yield return $"Placeable {placeable.id} has no prefab (Tools > Bush > Create Placeholder Placeables makes one).";
+            else if (placeable.CountSeatPointsInPrefab() != placeable.seats)
+                yield return $"Placeable {placeable.id} says {placeable.seats} seat(s) but its prefab has {placeable.CountSeatPointsInPrefab()} SeatPoint(s).";
+        }
     }
 
     private static void SetBasics(GameDefinition asset, string id, string displayName, string description)
