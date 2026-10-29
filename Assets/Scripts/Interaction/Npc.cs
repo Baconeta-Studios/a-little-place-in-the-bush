@@ -6,7 +6,9 @@ using UnityEngine;
 /// A character you can talk to. Click them, the gecko walks over, and a conversation opens at the
 /// bottom of the screen (<see cref="DialogueBox"/>): they offer quests, ask how it's going, and take
 /// what you bring. A "!" floats over them when they have a quest to offer, and a "?" when you can
-/// hand one in. Set it up like any interactable: a Collider2D on the Interactable layer and a
+/// hand one in. They're only there while they're visiting (see <see cref="Visitors"/>): story
+/// characters while the story is theirs, random visitors on the days they drop by. Place every
+/// character in the scene where they'd sit; the ones who aren't in today are hidden. Set it up like any interactable: a Collider2D on the Interactable layer and a
 /// StandPoint child, then pick the character's NPC asset.
 /// </summary>
 public class Npc : Interactable
@@ -17,6 +19,9 @@ public class Npc : Interactable
 
     private TextMeshPro _marker;
     private float _nextMarkerCheck;
+    private Renderer[] _renderers;
+    private Collider2D[] _colliders;
+    private bool _present = true;
 
     public NpcDefinition Definition => npc;
     public override string Prompt => npc ? $"Talk to {npc.displayName}" : base.Prompt;
@@ -24,6 +29,8 @@ public class Npc : Interactable
     private void Start()
     {
         if (!npc) Debug.LogWarning($"[Npc] {name} has no NPC asset set.", this);
+        _renderers = GetComponentsInChildren<Renderer>(true);
+        _colliders = GetComponentsInChildren<Collider2D>(true);
 
         var markerObject = new GameObject("QuestMarker");
         markerObject.transform.SetParent(transform, false);
@@ -44,7 +51,8 @@ public class Npc : Interactable
         _nextMarkerCheck = Time.unscaledTime + 0.3f;
         GameSession session = GameSession.Current;
         if (session == null || !npc) return;
-        _marker.text = session.Quests.GetTopic(npc.id).kind switch
+        SetPresent(Visitors.IsPresent(session.Design, session.State, session.Quests, npc.id));
+        _marker.text = !_present ? "" : session.Quests.GetTopic(npc.id).kind switch
         {
             TopicKind.Offer => "!",
             TopicKind.HandIn => "?",
@@ -52,7 +60,18 @@ public class Npc : Interactable
         };
     }
 
-    public override bool CanInteract(in InteractionContext context) => base.CanInteract(context) && npc;
+    public override bool CanInteract(in InteractionContext context) => base.CanInteract(context) && npc && _present;
+
+    public bool IsPresent => _present;
+
+    /// <summary>Shows or hides the character (art and click areas) without disabling this component.</summary>
+    private void SetPresent(bool present)
+    {
+        if (present == _present) return;
+        _present = present;
+        foreach (Renderer r in _renderers) if (r) r.enabled = present;
+        foreach (Collider2D c in _colliders) if (c) c.enabled = present;
+    }
 
     public override void Interact(in InteractionContext context)
     {
