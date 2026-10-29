@@ -177,7 +177,7 @@ namespace Bush.Core.Tests
         {
             Assert.AreEqual(0, CafeStyle.LuckyDayChance(_game.design, _game.state));
 
-            _game.design.GetPlaceable(TestDesign.Fern).cosiness = 30;
+            _game.design.GetPlaceable(TestDesign.Fern).cosiness = 100;
             for (int i = 0; i < 3; i++) Place(TestDesign.Fern, i);
             _game.design.rules = new DayRules { salesPerDay = 1, menuSlots = 1 };
             _game.cafe.AddToMenu(TestDesign.Salad);
@@ -187,7 +187,7 @@ namespace Bush.Core.Tests
                 _game.economy.Add(TestDesign.Leaf, 3);
                 if (_game.cafe.CloseDay().tip > 0) tips++;
             }
-            Assert.That(tips, Is.InRange(25, 55), "About 40% at the cap.");
+            Assert.That(tips, Is.InRange(12, 40), "About 25% at the cap.");
         }
 
         [Test]

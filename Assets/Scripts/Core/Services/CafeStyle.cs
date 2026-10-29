@@ -30,13 +30,16 @@ namespace Bush.Core
 
         /// <summary>"Bare", "Getting there", "Cosy", "Very cosy" or "The cosiest spot in the bush".</summary>
         public static string CosinessLevel(int score) =>
-            score < 8 ? "Bare" : score < 20 ? "Getting there" : score < 40 ? "Cosy" : score < 70 ? "Very cosy" : "The cosiest spot in the bush";
+            score < 15 ? "Bare" : score < 40 ? "Getting there" : score < 80 ? "Cosy" : score < 140 ? "Very cosy" : "The cosiest spot in the bush";
 
-        /// <summary>Random visitors' chances are multiplied by this: 1 for a bare cafe, up to 2.</summary>
-        public static double VisitorBoost(DesignData design, GameState state) => 1 + Math.Min(Cosiness(design, state), 60) / 60.0;
+        /// <summary>
+        /// Random visitors' chances are multiplied by this: 1 for a bare cafe, up to 2 at 150 cosiness.
+        /// Basic furniture adds 1-3 each, so the big boosts need the special things earned later.
+        /// </summary>
+        public static double VisitorBoost(DesignData design, GameState state) => 1 + Math.Min(Cosiness(design, state), 150) / 150.0;
 
-        /// <summary>The chance a day ends with a happy guest's tip: up to 40%.</summary>
-        public static double LuckyDayChance(DesignData design, GameState state) => Math.Min(0.4, Cosiness(design, state) / 125.0);
+        /// <summary>The chance a day ends with a happy guest's tip: up to 25%, at 150 cosiness.</summary>
+        public static double LuckyDayChance(DesignData design, GameState state) => Math.Min(0.25, Cosiness(design, state) / 600.0);
 
         /// <summary>What the sign by the door says.</summary>
         public static CafeDescription Describe(DesignData design, GameState state)

@@ -15,7 +15,7 @@ namespace Bush.Core
         /// <summary>The highest chance a random visitor can have, so nobody is guaranteed.</summary>
         public const double MaxChance = 0.9;
         /// <summary>Added to a visitor's chance while a quest of theirs is under way (so you can hand it in).</summary>
-        public const double QuestBoost = 0.25;
+        public const double QuestBoost = 0.1;
 
         public static bool IsPresent(DesignData design, GameState state, QuestService quests, string npcId)
         {
