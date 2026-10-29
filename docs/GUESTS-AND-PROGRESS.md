@@ -13,7 +13,7 @@ Every character has a **Visits** setting (`visits` in the data):
 | **Always** | Always there. |
 
 - Today's random visitors are rolled **once each morning**, so reloading doesn't change who's in.
-- A **cosier cafe** brings visitors more often (up to twice as often), and someone with a **quest of yours under way** is more likely to come (+25%), so you can hand it in. Nobody's chance goes above 90%.
+- A **cosier cafe** brings visitors more often (up to twice as often, but only at 150 cosiness), and someone with a **quest of yours under way** is a little more likely to come (+10%), so you can hand it in. Nobody's chance goes above 90%.
 - Whoever gives the current story quest is always there.
 - **In the scene:** place every character at their own spot, with the **Npc** component. The ones who aren't visiting today are hidden (their art and click areas switch off), in build mode too, and **don't take up any room**: you can build right over their spot.
 - **Seats:** visiting guests sit on the seats (**SeatPoint**s) of furniture you've placed, as long as the gecko can walk to a spot right beside the seat. Guests keep yesterday's seat if it's still there; the rest take the next free one that isn't right next to another guest (at least 1.1 units apart, `MinGuestSpacing` in `GuestSeating`), so a bench or two chairs side by side seat one guest unless they're spaced out. So more seats make room for more guests, and guests turn up where you've built.
@@ -22,7 +22,7 @@ Every character has a **Visits** setting (`visits` in the data):
 - Untick **Takes Seats** on a character who should always stay at their own spot (Ruru behind the counter, say). For seated guests to look right, put each SeatPoint where a sitting guest's feet would be.
 - Side quests come from any character, so random visitors give side quests when they drop by.
 
-Placeholder visitors, all after *A cafe of my own*: Snail (30%), Wētā (25%), Kererū the recipe trader (30%), and the companions-to-be, who come later and less often: Kea (from day 4, 25%), Weka (from day 6, 25%) and Pekapeka (from day 8, 20%).
+Placeholder visitors, all only once the cafe has furniture (after *Open for guests*), and rarely to begin with: Snail (15%), Wētā (12%), Kererū the recipe trader (15%), and the companions-to-be, who also come later: Kea (from day 4, 12%), Weka (from day 6, 15%) and Pekapeka (from day 8, 10%). A cosier cafe raises these.
 
 ## The recipe shop
 
@@ -39,9 +39,9 @@ A character can sell recipes: list them in `shop`, and each recipe's `price` is 
 
 | Companion | Starter quest | Teaches |
 | --- | --- | --- |
-| Kea | *Kea's dare*: bring 5 bark (Kea visits from day 4, 25%) | Bark know-how |
-| Weka | *Show me your moves*: go foraging 6 times (Weka visits from day 6, 25%) | Shiny sense |
-| Pekapeka | *A bat's breakfast*: serve 6 dishes (Pekapeka visits from day 8, 20%) | Night sight |
+| Kea | *Kea's dare*: bring 5 bark | Bark know-how |
+| Weka | *Show me your moves*: go foraging 6 times | Shiny sense |
+| Pekapeka | *A bat's breakfast*: serve 6 dishes | Night sight |
 | Kunekune | *A very hungry snail* (Snail's quest) | Truffle nose |
 | Spider | *Hollow home* (Wētā's quest) | Silk sense |
 
@@ -68,13 +68,15 @@ For scale: early on a day earns about 10-20 coins.
 ## Cosiness, lucky days and the sign
 
 - Each placeable has a **cosiness** value and a **style** (`garden`, `rustic`, `glow`, `fancy`...). The cafe's cosiness is the total of what's placed, plus 1 for each *different* kind of thing, so variety counts.
-- **More visitors:** random visitors' chances are multiplied by up to 2 as the cafe gets cosier (maxes out at 60).
-- **Lucky days:** when you close, there's a chance (cosiness / 125, up to 40%) a happy guest leaves a tip of about a quarter of the day's takings. More kinds of special events can hook in here later.
+- **Cosy is hard.** Basic furniture is worth 1-3 cosiness each (chairs, tables and benches 1, plants 2, the lantern 3), so the starter furniture makes a *Bare* cafe. The levels are Bare (under 15), Getting there (15), Cosy (40), Very cosy (80) and The cosiest spot in the bush (140). Special furniture earned later (quest rewards, rare finds, combos) should be worth much more: that's where the big numbers come from.
+- **More visitors:** random visitors' chances are multiplied by up to 2, reached at 150 cosiness.
+- **Lucky days:** when you close, there's a chance (cosiness / 600, up to 25%) a happy guest leaves a tip of about a quarter of the day's takings. More kinds of special events can hook in here later.
 - **The sign** on the tree by the door (**CafeSign**) says what kind of cafe you've made, from the biggest style (*A garden cafe*, *A rustic bush cafe*, *A lantern-lit cafe*, *A rather fancy cafe*, or *An eclectic little cafe* when it's an even mix), how cosy it is, and what that does.
 
 ## Setting it up in the cafe
 
 1. **Tools > Bush > Import Design Data.** Brings in the new characters, quests, perks, upgrades and the cosiness values.
+1. **No starting furniture:** select the cafe's **BuildArea** and clear its **Starting Layout** list. Furniture now comes from Ruru's *Somewhere to sit* quest, and build mode places only what you own (the *Build: unlimited items* cheat still turns unlimited on for testing).
 2. **The sign:** an object on the tree by the door with **CafeSign**, its **Layer** on **Interactable**, a **Box Collider 2D** (Is Trigger) and a **StandPoint** child on the floor in front.
 3. **Characters:** for each of Kea, Weka, Pekapeka, Snail, Wētā and Kererū, an object like Ruru's (**Npc** with their NPC asset, Interactable layer, collider, StandPoint), placed where they'd sit. They'll only show on the days they visit.
 4. Play with **Save: reset everything**. Cheats: *Guests: everyone drops by today*, *Guests: reroll today's visitors*, *Forage: befriend every companion and learn every perk*, *Bag: give 100 coins*.
