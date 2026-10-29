@@ -78,14 +78,14 @@ The sandbox also runs thousands of simulated trips for exact averages.
 
 ## In the game (first version)
 
-`ForagePopup` (`Assets/Scripts/UI/ForagePopup.cs`), opened by the **Forage** button on the HUD in areas where `GameHud` has **Forage Button** ticked (the cafe for now). It's deliberately simple:
+`ForagePopup` (`Assets/Scripts/UI/ForagePopup.cs`), opened by walking to a **ForageSpot** in the world (a path into the bush at the side of the cafe). A HUD button is still available for testing: tick **Forage Button** on `GameHud`. It's deliberately simple:
 
-- **Setup:** the place (the first forage table), what to look out for (a focus, or Anything) and Day or Night. "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
+- **Setup:** the place (the first forage table) and what to look out for (a focus, or Anything). It's always daytime for now, and there are a few trips a day (see [CAFE.md](CAFE.md)). "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
 - **Go:** works out and saves the result straight away, then shows "Out foraging..." for a moment.
 - **Results:** what was found, rare finds and recipe encounters called out, then **Collect** (or closing) puts it all in the bag.
 - No companions or perks yet. The rules support them; the screen will add a companion slot and a perk slot later.
 
-**Debugging:** every trip logs its table, focus, time and seed to the Console, and the results show the seed in the editor and development builds. Put the same setup and seed into the web sandbox to get the same result. To open foraging from something in the world later (a garden gate), call `ForagePopup.Show()`.
+**Debugging:** every trip logs its table, focus, time and seed to the Console, and the results show the seed in the editor and development builds. Put the same setup and seed into the web sandbox to get the same result. To open foraging from anything else, call `ForagePopup.Show()`.
 
 ## Open questions
 

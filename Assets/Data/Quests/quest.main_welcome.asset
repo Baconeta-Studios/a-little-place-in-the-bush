@@ -17,7 +17,8 @@ MonoBehaviour:
   description: Ruru wants to see you cook something before she trusts you with the cafe.
   giver: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
   isMain: 1
-  prerequisites: []
+  prerequisites:
+  - {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}
   objectives:
   - type: 2
     target: {fileID: 11400000, guid: fca9e2ef2c795124082e02373b8bd0f6, type: 2}
@@ -28,6 +29,9 @@ MonoBehaviour:
     qty: 20
   - type: 4
     target: {fileID: 11400000, guid: ce6cff61240bd0f4caad33b29bfb8ca6, type: 2}
+    qty: 1
+  - type: 2
+    target: {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
     qty: 1
   offerLine: So you're the one taking over my old cafe? Show me you can make a simple leaf salad.
   activeLine: A leaf salad. Three handfuls of leaves. You can manage that.

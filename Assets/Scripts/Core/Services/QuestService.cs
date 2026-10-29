@@ -186,6 +186,70 @@ namespace Bush.Core
         /// <summary>Quests this NPC gives, in design order.</summary>
         public List<QuestData> GetQuestsFrom(string npcId) => _design.quests.FindAll(q => q.giver == npcId);
 
+        // ----- Talking to characters -----
+
+        /// <summary>
+        /// What a character has to talk about right now, most important first: a quest ready to hand in,
+        /// then a quest to offer (main quests before side quests), then a quest under way, then the last
+        /// quest finished with them, then just a chat.
+        /// </summary>
+        public NpcTopic GetTopic(string npcId)
+        {
+            List<QuestData> theirs = GetQuestsFrom(npcId);
+            QuestData ready = theirs.Find(q => GetStatus(q.id) == QuestStatus.ReadyToClaim);
+            if (ready != null) return new NpcTopic(TopicKind.HandIn, ready.id, ready.dialogue?.ready);
+
+            QuestData offer = theirs.Find(q => q.isMain && CanStart(q.id)) ?? theirs.Find(q => CanStart(q.id));
+            if (offer != null) return new NpcTopic(TopicKind.Offer, offer.id, offer.dialogue?.offer);
+
+            QuestData active = theirs.Find(q => GetStatus(q.id) == QuestStatus.Active);
+            if (active != null) return new NpcTopic(TopicKind.InProgress, active.id, active.dialogue?.active);
+
+            QuestData done = theirs.FindLast(q => GetStatus(q.id) == QuestStatus.Completed);
+            if (done != null) return new NpcTopic(TopicKind.Chat, done.id, done.dialogue?.done);
+
+            return new NpcTopic(TopicKind.Chat, null, null);
+        }
+
+        /// <summary>Starting a conversation: counts as talking to them for any quest that asks for it.</summary>
+        public void BeginConversation(string npcId) => _events.RaiseTalkedTo(npcId);
+
+        /// <summary>
+        /// Accepts a quest offered in conversation. You're talking to the giver as you accept, so that counts
+        /// too: a "come and say hello" quest is ready straight away.
+        /// </summary>
+        public bool Accept(string questId)
+        {
+            if (!Start(questId)) return false;
+            string giver = _design.GetQuest(questId)?.giver;
+            if (!string.IsNullOrEmpty(giver)) _events.RaiseTalkedTo(giver);
+            return true;
+        }
+
+        /// <summary>
+        /// The main story's current step, for the tracker: the first main quest (in design order) that's
+        /// under way or ready, else the next one that can start (talk to its giver). Null when the story is done.
+        /// </summary>
+        public QuestData CurrentMainQuest()
+        {
+            QuestData next = null;
+            foreach (QuestData quest in _design.quests)
+            {
+                if (!quest.isMain) continue;
+                QuestStatus status = GetStatus(quest.id);
+                if (status is QuestStatus.Active or QuestStatus.ReadyToClaim) return quest;
+                if (next == null && CanStart(quest.id)) next = quest;
+            }
+            return next;
+        }
+
+        /// <summary>Side quests under way or ready to hand in, in design order.</summary>
+        public List<QuestData> ActiveSideQuests() =>
+            _design.quests.FindAll(q => !q.isMain && GetStatus(q.id) is QuestStatus.Active or QuestStatus.ReadyToClaim);
+
+        /// <summary>Side quests someone would offer if you talked to them.</summary>
+        public List<QuestData> AvailableSideQuests() => _design.quests.FindAll(q => !q.isMain && CanStart(q.id));
+
         /// <summary>Counters are keyed by objective type and target, not position, so patches can reorder objectives safely.</summary>
         public static string CounterKey(QuestObjective objective) => $"{objective.type}:{objective.target}";
 
@@ -231,6 +295,30 @@ namespace Bush.Core
         private static void AddOnce(List<string> list, string id)
         {
             if (!string.IsNullOrEmpty(id) && !list.Contains(id)) list.Add(id);
+        }
+    }
+
+    public enum TopicKind
+    {
+        /// <summary>Nothing quest-related: a friendly word (or the last quest's "done" line).</summary>
+        Chat,
+        Offer,
+        InProgress,
+        HandIn
+    }
+
+    /// <summary>What a character talks about; <see cref="line"/> may be empty if the data has no line for it.</summary>
+    public readonly struct NpcTopic
+    {
+        public readonly TopicKind kind;
+        public readonly string questId;
+        public readonly string line;
+
+        public NpcTopic(TopicKind kind, string questId, string line)
+        {
+            this.kind = kind;
+            this.questId = questId;
+            this.line = line;
         }
     }
 }

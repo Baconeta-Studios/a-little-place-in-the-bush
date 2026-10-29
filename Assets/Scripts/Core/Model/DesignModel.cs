@@ -38,6 +38,38 @@ namespace Bush.Core
         public bool HasTag(string tag) => !string.IsNullOrEmpty(tag) && tags != null && tags.Contains(tag);
     }
 
+    /// <summary>
+    /// Tuning for the cafe day. The forage trips are the day's clock: each trip is one part of the
+    /// day (morning, midday, afternoon), and when they're used up it's evening. The cafe sells its
+    /// share of the day's dishes for each part it was open, rounded down, so closing early costs sales.
+    /// </summary>
+    [Serializable]
+    public class DayRules
+    {
+        /// <summary>Dishes the cafe sells in a full day, shared across the menu.</summary>
+        public int salesPerDay = 3;
+        /// <summary>How many dishes can be on the menu at once, at the start of the game.</summary>
+        public int menuSlots = 1;
+        /// <summary>Forage trips per day, which are also the parts of the day. 0 means no limit, and no day clock.</summary>
+        public int forageTripsPerDay;
+
+        /// <summary>Dishes in a full day. One place to add progression later (story steps, upgrades, seats).</summary>
+        public int FullDaySales(GameState state) => Math.Max(0, salesPerDay);
+
+        /// <summary>Menu slots now. One place to add progression later (story steps, upgrades), like <see cref="FullDaySales"/>.</summary>
+        public int MenuSlots(GameState state) => Math.Max(1, menuSlots);
+
+        /// <summary>Parts of the day so far (trips taken), up to <see cref="forageTripsPerDay"/>.</summary>
+        public int PartsPassed(GameState state) => forageTripsPerDay <= 0 ? 0 : Math.Min(state.forageTripsToday, forageTripsPerDay);
+
+        /// <summary>Every trip taken: it's evening and closing now isn't early. Always true with no day clock.</summary>
+        public bool IsEvening(GameState state) => forageTripsPerDay <= 0 || state.forageTripsToday >= forageTripsPerDay;
+
+        /// <summary>What the cafe sells if it closes now: its share of the day so far, rounded down.</summary>
+        public int SalesFor(GameState state) =>
+            forageTripsPerDay <= 0 ? FullDaySales(state) : FullDaySales(state) * PartsPassed(state) / forageTripsPerDay;
+    }
+
     [Serializable]
     public class RecipeData
     {

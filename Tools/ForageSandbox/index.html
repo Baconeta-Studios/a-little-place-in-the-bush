@@ -825,6 +825,84 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "unique": true,
       "description": "The kunekune pig rooted up an old tin with a recipe inside, and insisted you keep it.",
       "teachesRecipe": "recipe.truffle_toast"
+    },
+    {
+      "id": "item.chair",
+      "name": "Cafe chair",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 8,
+      "unique": false,
+      "description": "A little wooden chair. One guest can perch here.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.cafe_table",
+      "name": "Cafe table",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "A round table for two.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.bench",
+      "name": "Log bench",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 15,
+      "unique": false,
+      "description": "A split log on stumps. Room for two.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.potted_fern",
+      "name": "Potted fern",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 6,
+      "unique": false,
+      "description": "A happy fern in a clay pot.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.flower_barrel",
+      "name": "Flower barrel",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 10,
+      "unique": false,
+      "description": "An old barrel spilling with flowers.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.lantern_post",
+      "name": "Lantern post",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "A warm glow for the evenings.",
+      "teachesRecipe": ""
     }
   ],
   "recipes": [
@@ -838,7 +916,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "coins": 6,
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "price": 0,
       "scraps": [],
       "description": "Simple, fresh and green."
@@ -857,7 +935,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "coins": 10,
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "price": 0,
       "scraps": [],
       "description": "A hearty bush favourite."
@@ -876,8 +954,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "coins": 14,
-      "unlockedByDefault": true,
-      "price": 0,
+      "unlockedByDefault": false,
+      "price": 15,
       "scraps": [],
       "description": "Sticky, sweet and very pink."
     },
@@ -1713,12 +1791,72 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
   ],
   "quests": [
     {
+      "id": "quest.main_hello",
+      "title": "Hello, Ruru",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [],
+      "summary": "Ruru, who used to run the cafe, wants to meet you. She'll teach you your first recipe.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.ruru",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.leaf_salad",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Oh! A new face in my old cafe. Come and say hello properly.",
+        "active": "Come here, let me have a look at you.",
+        "ready": "Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all it takes.",
+        "done": "A recipe's no good without leaves, mind."
+      }
+    },
+    {
+      "id": "quest.main_gather",
+      "title": "Leaves for the salad",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_hello"
+      ],
+      "summary": "A leaf salad needs 3 leaves. Go foraging in the bush (the path at the side of the cafe) until you have them.",
+      "objectives": [
+        {
+          "type": "HaveItems",
+          "target": "item.leaves",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 5
+        }
+      ],
+      "dialogue": {
+        "offer": "Your larder's empty! Take the path at the side of the cafe into the bush and forage. Look out for greens, and bring back three handfuls of leaves.",
+        "active": "Three handfuls of leaves. Try looking out for greens when you forage.",
+        "ready": "That's plenty of leaves. Keep them, they're for your salad.",
+        "done": "Off you go. The menu board's by the door."
+      }
+    },
+    {
       "id": "quest.main_welcome",
       "title": "A cafe of my own",
       "giver": "npc.ruru",
       "isMain": true,
-      "prerequisites": [],
-      "summary": "Ruru wants to see you cook something before she trusts you with the cafe.",
+      "prerequisites": [
+        "quest.main_gather"
+      ],
+      "summary": "Put leaf salad on the menu board by the cafe door, then close for the day. The cafe cooks and sells what's on the menu at closing time.",
       "objectives": [
         {
           "type": "CookRecipe",
@@ -1736,12 +1874,17 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "UnlockPerk",
           "target": "perk.keen_eye",
           "qty": 1
+        },
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.worm_pie",
+          "qty": 1
         }
       ],
       "dialogue": {
-        "offer": "So you're the one taking over my old cafe? Show me you can make a simple leaf salad.",
-        "active": "A leaf salad. Three handfuls of leaves. You can manage that.",
-        "ready": "Ah, that smells right. You'll do.",
+        "offer": "Now let's see you serve it. Put leaf salad on the menu board by the door. When you close up for the day, the cafe cooks and sells what's on the menu. Close in the evening, after your foraging, and more guests come.",
+        "active": "Leaf salad on the menu board, then close up for the day. Evening's best.",
+        "ready": "Ah, I heard the guests liked your salad. You'll do.",
         "done": "The cafe's in good claws."
       }
     },
@@ -1904,6 +2047,68 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
         "done": "Come by at night. I'm awake then."
       }
+    }
+  ],
+  "placeables": [
+    {
+      "id": "placeable.chair",
+      "item": "item.chair",
+      "placement": "Floor",
+      "footprintWidth": 0.9,
+      "footprintDepth": 0.4,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 1
+    },
+    {
+      "id": "placeable.cafe_table",
+      "item": "item.cafe_table",
+      "placement": "Floor",
+      "footprintWidth": 1.2,
+      "footprintDepth": 0.5,
+      "canFlip": false,
+      "category": "Furniture",
+      "seats": 0
+    },
+    {
+      "id": "placeable.bench",
+      "item": "item.bench",
+      "placement": "Floor",
+      "footprintWidth": 1.8,
+      "footprintDepth": 0.4,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 2
+    },
+    {
+      "id": "placeable.potted_fern",
+      "item": "item.potted_fern",
+      "placement": "Floor",
+      "footprintWidth": 0.8,
+      "footprintDepth": 0.4,
+      "canFlip": true,
+      "category": "Plants",
+      "seats": 0
+    },
+    {
+      "id": "placeable.flower_barrel",
+      "item": "item.flower_barrel",
+      "placement": "Floor",
+      "footprintWidth": 0.9,
+      "footprintDepth": 0.5,
+      "canFlip": true,
+      "category": "Plants",
+      "seats": 0
+    },
+    {
+      "id": "placeable.lantern_post",
+      "item": "item.lantern_post",
+      "placement": "Floor",
+      "footprintWidth": 0.4,
+      "footprintDepth": 0.3,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0
     }
   ]
 }
