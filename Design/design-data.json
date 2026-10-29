@@ -1362,7 +1362,7 @@
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [],
-      "summary": "Placeholder first quest: Ruru welcomes you and teaches you your first recipe. Replace when the tutorial is designed.",
+      "summary": "Ruru, who used to run the cafe, wants to meet you. She'll teach you your first recipe.",
       "objectives": [
         {
           "type": "TalkTo",
@@ -1380,8 +1380,38 @@
       "dialogue": {
         "offer": "Oh! A new face in my old cafe. Come and say hello properly.",
         "active": "Come here, let me have a look at you.",
-        "ready": "Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all.",
-        "done": "Go on, find some leaves."
+        "ready": "Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all it takes.",
+        "done": "A recipe's no good without leaves, mind."
+      }
+    },
+    {
+      "id": "quest.main_gather",
+      "title": "Leaves for the salad",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_hello"
+      ],
+      "summary": "A leaf salad needs 3 leaves. Go foraging in the bush (the path at the side of the cafe) until you have them.",
+      "objectives": [
+        {
+          "type": "HaveItems",
+          "target": "item.leaves",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 5
+        }
+      ],
+      "dialogue": {
+        "offer": "Your larder's empty! Take the path at the side of the cafe into the bush and forage. Look out for greens, and bring back three handfuls of leaves.",
+        "active": "Three handfuls of leaves. Try looking out for greens when you forage.",
+        "ready": "That's plenty of leaves. Keep them, they're for your salad.",
+        "done": "Off you go. The menu board's by the door."
       }
     },
     {
@@ -1390,9 +1420,9 @@
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
-        "quest.main_hello"
+        "quest.main_gather"
       ],
-      "summary": "Ruru wants to see you cook something before she trusts you with the cafe.",
+      "summary": "Put leaf salad on the menu board by the cafe door, then close for the day. The cafe cooks and sells what's on the menu at closing time.",
       "objectives": [
         {
           "type": "CookRecipe",
@@ -1418,9 +1448,9 @@
         }
       ],
       "dialogue": {
-        "offer": "So you're the one taking over my old cafe? Show me you can make a simple leaf salad.",
-        "active": "A leaf salad. Three handfuls of leaves. You can manage that.",
-        "ready": "Ah, that smells right. You'll do.",
+        "offer": "Now let's see you serve it. Put leaf salad on the menu board by the door. When you close up for the day, the cafe cooks and sells what's on the menu. Close in the evening, after your foraging, and more guests come.",
+        "active": "Leaf salad on the menu board, then close up for the day. Evening's best.",
+        "ready": "Ah, I heard the guests liked your salad. You'll do.",
         "done": "The cafe's in good claws."
       }
     },
