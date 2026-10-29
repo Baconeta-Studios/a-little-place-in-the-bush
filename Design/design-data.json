@@ -1501,11 +1501,6 @@
           "type": "Coins",
           "target": "",
           "qty": 5
-        },
-        {
-          "type": "UnlockPerk",
-          "target": "perk.big_basket",
-          "qty": 1
         }
       ],
       "dialogue": {
@@ -1536,11 +1531,6 @@
           "type": "Coins",
           "target": "",
           "qty": 20
-        },
-        {
-          "type": "UnlockPerk",
-          "target": "perk.keen_eye",
-          "qty": 1
         },
         {
           "type": "UnlockRecipe",
@@ -1596,6 +1586,11 @@
           "type": "Coins",
           "target": "",
           "qty": 50
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.keen_eye",
+          "qty": 1
         }
       ],
       "dialogue": {
@@ -1715,6 +1710,11 @@
         {
           "type": "UnlockCompanion",
           "target": "companion.spider",
+          "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.big_basket",
           "qty": 1
         }
       ],

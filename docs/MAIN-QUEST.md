@@ -21,8 +21,8 @@ The opening is a short tutorial chain, one system per step (placeholder text unt
 
 0. **Hello, Ruru** (main, Ruru): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none.
 0. **Leaves for the salad** (main, Ruru): have 3 leaves. Teaches foraging: Ruru sends you down the path into the bush. Rewards 5 coins.
-1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board and closing for the day (the cafe cooks and sells at closing time). Rewards 20 coins, the *Keen eye* perk and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
-2. **The lost recipe** (main, Ruru): hand in scraps 1-4. Rewards the *kawakawa scroll* recipe and 50 coins. Completing it wins the game.
+1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board and closing for the day (the cafe cooks and sells at closing time). Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
+2. **The lost recipe** (main, Ruru): hand in scraps 1-4. Rewards the *kawakawa scroll* recipe, 50 coins and the *Keen eye* perk. Completing it wins the game.
 3. Side quests 2-4 above, each available after quest 1, in any order.
 
 ## How it's built

@@ -42,7 +42,7 @@ A character can sell recipes: list them in `shop`, and each recipe's `price` is 
 
 Weka's trade quest now needs *Show me your moves* first.
 
-**No perks are known at the start.** Besides the companions' perks, they come from quests: *Big basket* from *Leaves for the salad*, *Keen eye* from *A cafe of my own*, *Sweet tooth* from Weka's *A fair trade*, and *Early bird* from the snail's *A very hungry snail*.
+**No perks are known at the start, and none come from the tutorial.** Almost all perks come from trips with companions. The few others are late, hard-won quest rewards: *Keen eye* from the end of the story (*The lost recipe*), *Big basket* from Wētā's *Hollow home*, *Sweet tooth* from Weka's *A fair trade* (after befriending Weka), and *Early bird* from the snail's *A very hungry snail*. Very rare forage finds that teach a perk (like the rare recipe encounters) would be a small rules addition, kept in step with the sandbox.
 
 ## Cafe upgrades
 
