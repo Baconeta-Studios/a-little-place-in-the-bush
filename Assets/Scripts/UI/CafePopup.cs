@@ -11,7 +11,8 @@ using UnityEngine.UI;
 /// recipes you know; tap one to read its ingredients and put it on or take it off the menu. Changes
 /// count straight away. The day's forage trips are its clock (see <see cref="DayRules"/>): once they're
 /// all taken it's evening, and "Close for the day" sells a full day's dishes. Closing before then asks
-/// first, because it sells only the share of the day so far and loses the trips left. Built in code.
+/// first, because it sells only the share of the day so far and loses the trips left. After the day's
+/// summary, starting the next day closes the screen and fades through black. Built in code.
 /// </summary>
 public class CafePopup : Popup
 {
@@ -251,6 +252,16 @@ public class CafePopup : Popup
         GameUi.SetLabel(_nextDay, $"Start day {session.State.day}");
     }
 
+    private void StartNextDay() => Close();
+
+    /// <summary>Leaving the day's summary (the button or Escape) fades through black into the next morning.</summary>
+    public override void Close()
+    {
+        bool fromSummary = _summary && _summary.gameObject.activeSelf;
+        base.Close();
+        if (fromSummary && Session != null) AreaTravel.Instance.PassTime($"Day {Session.State.day}");
+    }
+
     // ----- Building the screen -----
 
     private static string Hex(Color colour) => "#" + ColorUtility.ToHtmlStringRGB(colour);
@@ -331,7 +342,7 @@ public class CafePopup : Popup
         _summaryText = GameUi.AddText(_summary, "", 36f, GameUi.Ink, TextAlignmentOptions.TopLeft, "SummaryText");
         _summaryText.rectTransform.offsetMin = new Vector2(48f, 180f);
         _summaryText.rectTransform.offsetMax = new Vector2(-48f, -140f);
-        _nextDay = GameUi.AddButton(_summary, "Next day", ShowBoard, new Vector2(360f, 110f), GameUi.Moss, GameUi.Cream, 36f);
+        _nextDay = GameUi.AddButton(_summary, "Next day", StartNextDay, new Vector2(360f, 110f), GameUi.Moss, GameUi.Cream, 36f);
         GameUi.Place((RectTransform)_nextDay.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(360f, 110f));
     }
 

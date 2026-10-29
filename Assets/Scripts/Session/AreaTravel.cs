@@ -8,8 +8,9 @@ using Utils;
 /// <summary>
 /// Moves the player between areas: fade out, load the area scene, put the gecko on the right
 /// spawn point, fade in and show the area's name. Input is locked the whole time and a second
-/// request is ignored, so the transition state is always predictable. Created on first use and
-/// kept across scenes, so no setup is needed.
+/// request is ignored, so the transition state is always predictable. Also fades through black when
+/// time passes (<see cref="PassTime"/>, e.g. a new day). Created on first use and kept across scenes,
+/// so no setup is needed.
 /// </summary>
 public class AreaTravel : EverlastingSingleton<AreaTravel>
 {
@@ -20,6 +21,7 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
     private CanvasGroup _fade;
     private CanvasGroup _banner;
     private TMP_Text _bannerText;
+    private TMP_Text _fadeText;
     private Coroutine _nameRoutine;
 
     /// <summary>Scene to return to when the player is stuck. Set by the hub's <see cref="AreaInfo"/>.</summary>
@@ -88,6 +90,33 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
         ShowAreaName();
     }
 
+    /// <summary>
+    /// Fades to black, shows <paramref name="title"/> (e.g. "Day 2") for a moment, then fades back.
+    /// Input is locked throughout. Ignored mid-transition.
+    /// </summary>
+    public bool PassTime(string title)
+    {
+        if (IsTravelling) return false;
+        StartCoroutine(PassTimeRoutine(title));
+        return true;
+    }
+
+    private IEnumerator PassTimeRoutine(string title)
+    {
+        IsTravelling = true;
+        InputLock.Lock(this);
+        if (Interactor.Player) Interactor.Player.Cancel();
+
+        _fadeText.text = title;
+        yield return Fade(_fade, 1f, 0.6f);
+        yield return new WaitForSecondsRealtime(1.2f);
+        yield return Fade(_fade, 0f, 0.7f);
+        _fadeText.text = "";
+
+        InputLock.Unlock(this);
+        IsTravelling = false;
+    }
+
     /// <summary>Shows the current area's name for a moment (also used when the game starts).</summary>
     public void ShowAreaName()
     {
@@ -139,6 +168,18 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
         _fade.alpha = 0f;
         _fade.interactable = true;
         _fade.blocksRaycasts = false;
+
+        // Text on the black, for PassTime ("Day 2").
+        var fadeTextObject = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+        fadeTextObject.transform.SetParent(fadeObject.transform, false);
+        Stretch(fadeTextObject.GetComponent<RectTransform>());
+        _fadeText = fadeTextObject.GetComponent<TextMeshProUGUI>();
+        _fadeText.alignment = TextAlignmentOptions.Center;
+        _fadeText.fontSize = 96f;
+        _fadeText.fontStyle = FontStyles.Bold;
+        _fadeText.color = new Color(1f, 0.98f, 0.92f);
+        _fadeText.raycastTarget = false;
+        _fadeText.text = "";
 
         // Area name banner near the top, inside the safe area.
         var bannerObject = new GameObject("AreaName", typeof(RectTransform), typeof(CanvasGroup));
