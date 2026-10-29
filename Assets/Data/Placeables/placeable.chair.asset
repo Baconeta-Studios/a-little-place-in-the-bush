@@ -22,5 +22,5 @@ MonoBehaviour:
   canFlip: 1
   category: Furniture
   seats: 1
-  cosiness: 2
+  cosiness: 1
   style: rustic

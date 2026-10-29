@@ -22,5 +22,5 @@ MonoBehaviour:
   canFlip: 1
   category: Decor
   seats: 0
-  cosiness: 4
+  cosiness: 3
   style: glow
