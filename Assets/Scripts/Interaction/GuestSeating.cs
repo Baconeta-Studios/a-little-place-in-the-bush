@@ -46,7 +46,7 @@ public class GuestSeating : MonoBehaviour
 
     private void Update()
     {
-        if (Time.unscaledTime < _nextCheck) return;
+        if (Time.unscaledTime < _nextCheck || DayTransition.Holding) return;
         _nextCheck = Time.unscaledTime + 0.5f;
 
         BuildArea area = BuildArea.Current;

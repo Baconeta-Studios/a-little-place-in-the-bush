@@ -71,7 +71,7 @@ public class Npc : Interactable
     private void Update()
     {
         // A few times a second is plenty, and simpler than listening to every event that could change it.
-        if (Time.unscaledTime < _nextMarkerCheck || !_marker) return;
+        if (Time.unscaledTime < _nextMarkerCheck || !_marker || DayTransition.Holding) return;
         _nextMarkerCheck = Time.unscaledTime + 0.3f;
         GameSession session = GameSession.Current;
         if (session == null || !npc) return;

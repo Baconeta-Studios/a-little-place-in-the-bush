@@ -9,6 +9,7 @@ The first version of the core loop: **forage, put dishes on the menu, close for 
 - **The forage trips are the day's clock.** A day has three parts, morning, midday and afternoon, and each forage trip uses one. When the last trip comes back it's evening.
 - **Close for the day** (in the evening) sells a full day's dishes, shared evenly across the menu in order: each sale goes to the next dish that can still be made. Each sale uses that dish's ingredients and pays its coins, and counts as cooking it for quests. Ingredients are only used at this point, so changing the menu costs nothing. If you run out, the sale goes to another dish, or is missed. Then it's the next morning: the day number goes up, forage trips reset, and the menu stays.
 - **Closing early** is allowed but costs you: the cafe sells only its share of the day so far, rounded down (after the morning, 3 x 1/3 = 1 dish; first thing, nothing), and the trips left are lost. The board asks first and says what you'd give up. Like going to bed early in Stardew: fair when you're out of ingredients or waiting for tomorrow, never free.
+- **After the summary** the screen fades to black into the next morning. The rules move to the next day as soon as you close, but the world keeps showing today (guests, seats, quest markers) until the screen is black (`DayTransition`), so nothing changes in view.
 - **Foraging** is always daytime for now. No night yet, and no clock: time moves with your trips. Night comes later, maybe as a choice at evening to stay open for nocturnal guests.
 
 ## Tuning

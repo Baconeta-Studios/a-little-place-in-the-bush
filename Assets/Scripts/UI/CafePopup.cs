@@ -224,6 +224,7 @@ public class CafePopup : Popup
         _confirm.gameObject.SetActive(false);
         GameSession session = Session;
         if (session == null) return;
+        DayTransition.Holding = true; // keep showing today until the fade is black
         DaySummary summary = session.Cafe.CloseDay();
         session.SaveNow();
         Debug.Log($"[Cafe] Day {summary.day} closed: sold {summary.sold}/{summary.salesPlanned} for {summary.coins} coins.");
@@ -261,7 +262,9 @@ public class CafePopup : Popup
     {
         bool fromSummary = _summary && _summary.gameObject.activeSelf;
         base.Close();
-        if (fromSummary && Session != null) AreaTravel.Instance.PassTime($"Day {Session.State.day}");
+        if (!fromSummary) return;
+        if (Session == null || !AreaTravel.Instance.PassTime($"Day {Session.State.day}", () => DayTransition.Holding = false))
+            DayTransition.Holding = false;
     }
 
     // ----- Building the screen -----

@@ -92,16 +92,17 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
 
     /// <summary>
     /// Fades to black, shows <paramref name="title"/> (e.g. "Day 2") for a moment, then fades back.
-    /// Input is locked throughout. Ignored mid-transition.
+    /// <paramref name="atBlack"/> runs while the screen is fully black, for changes that shouldn't be
+    /// seen happening. Input is locked throughout. Ignored mid-transition (returns false).
     /// </summary>
-    public bool PassTime(string title)
+    public bool PassTime(string title, System.Action atBlack = null)
     {
         if (IsTravelling) return false;
-        StartCoroutine(PassTimeRoutine(title));
+        StartCoroutine(PassTimeRoutine(title, atBlack));
         return true;
     }
 
-    private IEnumerator PassTimeRoutine(string title)
+    private IEnumerator PassTimeRoutine(string title, System.Action atBlack)
     {
         IsTravelling = true;
         InputLock.Lock(this);
@@ -109,6 +110,7 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
 
         _fadeText.text = title;
         yield return Fade(_fade, 1f, 0.6f);
+        atBlack?.Invoke();
         yield return new WaitForSecondsRealtime(1.2f);
         yield return Fade(_fade, 0f, 0.7f);
         _fadeText.text = "";
