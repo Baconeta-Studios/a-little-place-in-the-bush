@@ -910,7 +910,7 @@
       "id": "perk.big_basket",
       "name": "Big basket",
       "description": "Room for one more find each trip.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "ExtraRolls",
@@ -924,7 +924,7 @@
       "id": "perk.sweet_tooth",
       "name": "Sweet tooth",
       "description": "Drawn to fruit and nectar.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
@@ -944,7 +944,7 @@
       "id": "perk.early_bird",
       "name": "Early bird",
       "description": "Up before the worms are. More worms, and more of them.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
@@ -1501,6 +1501,11 @@
           "type": "Coins",
           "target": "",
           "qty": 5
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.big_basket",
+          "qty": 1
         }
       ],
       "dialogue": {
@@ -1621,6 +1626,11 @@
           "type": "Item",
           "target": "item.recipe_scrap_2",
           "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.sweet_tooth",
+          "qty": 1
         }
       ],
       "dialogue": {
@@ -1660,6 +1670,11 @@
         {
           "type": "UnlockCompanion",
           "target": "companion.kunekune",
+          "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.early_bird",
           "qty": 1
         }
       ],

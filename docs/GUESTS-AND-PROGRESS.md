@@ -40,7 +40,9 @@ A character can sell recipes: list them in `shop`, and each recipe's `price` is 
 | Kunekune | *A very hungry snail* (Snail's quest) | 30 | Truffle nose |
 | Spider | *Hollow home* (Wētā's quest) | 30 | Silk sense |
 
-Weka's trade quest now needs *Show me your moves* first. Big basket, Sweet tooth and Early bird are still known from the start; say if those should be earned too.
+Weka's trade quest now needs *Show me your moves* first.
+
+**No perks are known at the start.** Besides the companions' perks, they come from quests: *Big basket* from *Leaves for the salad*, *Keen eye* from *A cafe of my own*, *Sweet tooth* from Weka's *A fair trade*, and *Early bird* from the snail's *A very hungry snail*.
 
 ## Cafe upgrades
 
