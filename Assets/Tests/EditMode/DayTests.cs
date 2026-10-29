@@ -16,6 +16,9 @@ namespace Bush.Core.Tests
 
         private void LearnPie() => _game.state.unlockedRecipes.Add(TestDesign.SecretPie);
 
+        /// <summary>Both of the day's trips taken: it's evening, so closing gets a full day's sales.</summary>
+        private void Evening() => _game.state.forageTripsToday = 2;
+
         [Test]
         public void Menu_OnlyTakesKnownRecipes_UpToTheSlots()
         {
@@ -32,6 +35,7 @@ namespace Bush.Core.Tests
         [Test]
         public void CloseDay_SharesSalesEvenly_AndPays()
         {
+            Evening();
             LearnPie();
             _game.cafe.AddToMenu(TestDesign.Salad);
             _game.cafe.AddToMenu(TestDesign.SecretPie);
@@ -54,6 +58,7 @@ namespace Bush.Core.Tests
         [Test]
         public void CloseDay_GivesSalesToWhatCanStillBeMade()
         {
+            Evening();
             LearnPie();
             _game.cafe.AddToMenu(TestDesign.SecretPie);
             _game.cafe.AddToMenu(TestDesign.Salad);
@@ -67,6 +72,7 @@ namespace Bush.Core.Tests
         [Test]
         public void CloseDay_RunningOut_MissesSales()
         {
+            Evening();
             _game.cafe.AddToMenu(TestDesign.Salad);
             _game.economy.Add(TestDesign.Leaf, 4); // one salad
             DaySummary summary = _game.cafe.CloseDay();
@@ -77,6 +83,7 @@ namespace Bush.Core.Tests
         [Test]
         public void PlanSales_MatchesCloseDay_AndChangesNothing()
         {
+            Evening();
             _game.cafe.AddToMenu(TestDesign.Salad);
             _game.economy.Add(TestDesign.Leaf, 7);
             var plan = _game.cafe.PlanSales(out int unsold);
@@ -105,11 +112,51 @@ namespace Bush.Core.Tests
         [Test]
         public void SalesCountAsCooking_ForQuests()
         {
+            Evening();
             _game.quests.Start(TestDesign.Welcome); // cook 1 salad
             _game.cafe.AddToMenu(TestDesign.Salad);
             _game.economy.Add(TestDesign.Leaf, 3);
             _game.cafe.CloseDay();
             Assert.IsTrue(_game.quests.AllObjectivesMet(TestDesign.Welcome));
+        }
+
+        [Test]
+        public void ClosingEarly_SellsTheShareOfTheDaySoFar_RoundedDown()
+        {
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            _game.economy.Add(TestDesign.Leaf, 30);
+
+            Assert.AreEqual(0, _game.design.rules.SalesFor(_game.state), "Closing first thing sells nothing.");
+            _game.state.forageTripsToday = 1;
+            Assert.AreEqual(1, _game.design.rules.SalesFor(_game.state), "Half the day: 3 / 2 rounds down to 1.");
+            Assert.IsFalse(_game.design.rules.IsEvening(_game.state));
+
+            DaySummary summary = _game.cafe.CloseDay();
+            Assert.IsTrue(summary.closedEarly);
+            Assert.AreEqual(1, summary.sold);
+            Assert.AreEqual(3, summary.fullDaySales);
+            Assert.AreEqual(0, summary.Missed, "Missed counts only sales lost to running out.");
+            Assert.AreEqual(0, _game.state.forageTripsToday, "The unused trip is gone.");
+        }
+
+        [Test]
+        public void Evening_SellsAFullDay()
+        {
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            _game.economy.Add(TestDesign.Leaf, 30);
+            Evening();
+            Assert.IsTrue(_game.design.rules.IsEvening(_game.state));
+            DaySummary summary = _game.cafe.CloseDay();
+            Assert.IsFalse(summary.closedEarly);
+            Assert.AreEqual(3, summary.sold);
+        }
+
+        [Test]
+        public void NoDayClock_WithoutAForageLimit()
+        {
+            _game.design.rules.forageTripsPerDay = 0;
+            Assert.IsTrue(_game.design.rules.IsEvening(_game.state));
+            Assert.AreEqual(3, _game.design.rules.SalesFor(_game.state));
         }
 
         [Test]

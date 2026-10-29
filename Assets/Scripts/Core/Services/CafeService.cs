@@ -133,13 +133,20 @@ namespace Bush.Core
         }
 
         /// <summary>
-        /// Ends the day: cooks and sells what <see cref="PlanSales"/> says, moves to the next morning and
-        /// resets the day's forage trips. Each sale counts as cooking the dish, for quests. The menu stays
+        /// Ends the day: cooks and sells what <see cref="PlanSales"/> says (fewer if it's not evening yet:
+        /// see <see cref="DayRules"/>), moves to the next morning and resets the day's forage trips (any
+        /// left are lost). Each sale counts as cooking the dish, for quests. The menu stays
         /// as it was. Save straight after.
         /// </summary>
         public DaySummary CloseDay()
         {
-            var summary = new DaySummary { day = _state.day, salesPlanned = _design.rules.SalesFor(_state) };
+            var summary = new DaySummary
+            {
+                day = _state.day,
+                salesPlanned = _design.rules.SalesFor(_state),
+                fullDaySales = _design.rules.FullDaySales(_state),
+                closedEarly = !_design.rules.IsEvening(_state)
+            };
             foreach (DishSale planned in PlanSales(out _))
             {
                 var dish = new DishSale { recipeId = planned.recipeId };
@@ -188,7 +195,10 @@ namespace Bush.Core
     {
         /// <summary>The day that just ended.</summary>
         public int day;
+        /// <summary>What it could sell when it closed (less than a full day's if it closed early).</summary>
         public int salesPlanned;
+        public int fullDaySales;
+        public bool closedEarly;
         public int sold;
         public int coins;
         public List<DishSale> dishes = new();
