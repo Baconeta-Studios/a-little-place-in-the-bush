@@ -7,7 +7,7 @@ using UnityEngine;
 /// counts if the gecko can walk to a spot right beside it. Guests keep yesterday's seat if it's still
 /// there and free; the rest take the next free seat that isn't right next to another guest (so a
 /// bench seats one, and two chairs side by side seat one, unless they're spaced out). With no seat left, a guest uses their own spot
-/// from the scene, or, if something's been built over it, the nearest open spot. Worked out again
+/// from the scene, or, if it's been built over or another guest is right there, the nearest open spot. Worked out again
 /// each day, whenever someone arrives or leaves, and after building. Guests stay put while building.
 /// Created automatically by the first <see cref="Npc"/> in a scene.
 /// </summary>
@@ -105,8 +105,12 @@ public class GuestSeating : MonoBehaviour
             if (!npc.IsPresent || !npc.TakesSeats)
             {
                 _seatOf.Remove(npc);
-                SendHome(npc, pathfinder, origin);
-                if (npc.IsPresent) occupied.Add(npc.transform.position);
+                if (npc.IsPresent)
+                {
+                    SendHome(npc, pathfinder, origin, occupied);
+                    occupied.Add(npc.transform.position);
+                }
+                else npc.PlaceAt(npc.HomePosition, npc.HomeStand, npc.HomeFacesRight); // hidden: just park them at home
                 continue;
             }
             // Keep yesterday's seat if it's still there and nobody's crowding it.
@@ -131,7 +135,7 @@ public class GuestSeating : MonoBehaviour
             else
             {
                 _seatOf.Remove(npc);
-                SendHome(npc, pathfinder, origin);
+                SendHome(npc, pathfinder, origin, occupied);
                 occupied.Add(npc.transform.position);
             }
         }
@@ -146,21 +150,38 @@ public class GuestSeating : MonoBehaviour
     private static void Sit(Npc npc, (SeatPoint seat, Vector2 stand) spot) =>
         npc.PlaceAt(spot.seat.transform.position, spot.stand, spot.seat.FaceRight);
 
-    /// <summary>Their own spot from the scene, or the nearest open spot if it's been built over.</summary>
-    private static void SendHome(Npc npc, GridPathfinder pathfinder, Vector2 origin)
+    /// <summary>
+    /// Their own spot from the scene, if it's clear: not built over, reachable, and not right next to
+    /// another guest. Otherwise the nearest open spot that is, searching outwards from home.
+    /// </summary>
+    private static void SendHome(Npc npc, GridPathfinder pathfinder, Vector2 origin, List<Vector2> occupied)
     {
         Vector2 home = npc.HomePosition, stand = npc.HomeStand;
-        if (pathfinder)
+        if (!pathfinder || SpotIsClear(home, stand, pathfinder, origin, occupied))
         {
-            bool homeBlocked = Physics2D.OverlapPoint(home, LayerMask.GetMask("Obstacle"));
-            bool standOk = pathfinder.IsWalkable(stand) && pathfinder.IsReachable(origin, stand);
-            if (homeBlocked || !standOk)
+            npc.PlaceAt(home, stand, npc.HomeFacesRight);
+            return;
+        }
+
+        Vector2 standOffset = stand - home;
+        for (float radius = 0.5f; radius <= 6f; radius += 0.5f)
+        {
+            for (int step = 0; step < 16; step++)
             {
-                if (pathfinder.TryGetNearestWalkable(home, out Vector2 open)) home = open;
-                if (pathfinder.TryGetNearestWalkable(stand, out Vector2 openStand) && pathfinder.IsReachable(origin, openStand)) stand = openStand;
-                else stand = home;
+                float angle = step * Mathf.PI * 2f / 16f;
+                Vector2 spot = home + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle) * 0.6f) * radius; // flatter: the floor is wide, not deep
+                Vector2 spotStand = spot + standOffset;
+                if (!pathfinder.IsWalkable(spotStand) && pathfinder.TryGetNearestWalkable(spotStand, out Vector2 nearby)) spotStand = nearby;
+                if (!pathfinder.IsWalkable(spot) || !SpotIsClear(spot, spotStand, pathfinder, origin, occupied)) continue;
+                npc.PlaceAt(spot, spotStand, npc.HomeFacesRight);
+                return;
             }
         }
-        npc.PlaceAt(home, stand, npc.HomeFacesRight);
+        npc.PlaceAt(home, stand, npc.HomeFacesRight); // nowhere better nearby: stay home
     }
+
+    private static bool SpotIsClear(Vector2 spot, Vector2 stand, GridPathfinder pathfinder, Vector2 origin, List<Vector2> occupied) =>
+        !Physics2D.OverlapPoint(spot, LayerMask.GetMask("Obstacle")) &&
+        !occupied.Exists(o => Vector2.Distance(o, spot) < MinGuestSpacing) &&
+        pathfinder.IsWalkable(stand) && pathfinder.IsReachable(origin, stand);
 }
