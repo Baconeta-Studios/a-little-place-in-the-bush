@@ -107,10 +107,12 @@ public class InteractionPrompt : MonoBehaviour
 
         var labelObject = new GameObject("PromptText");
         labelObject.transform.SetParent(root.transform, false);
-        labelObject.transform.localPosition = new Vector3(0f, -0.45f, 0f);
+        // Above the dot (not over it, and not over the character's head), growing upwards.
+        labelObject.transform.localPosition = new Vector3(0f, 0.28f, 0f);
         var text = labelObject.AddComponent<TextMeshPro>();
         text.fontSize = 3f;
-        text.alignment = TextAlignmentOptions.Top;
+        text.alignment = TextAlignmentOptions.Bottom;
+        text.rectTransform.pivot = new Vector2(0.5f, 0f);
         text.color = new Color(1f, 0.96f, 0.85f);
         text.outlineWidth = 0.25f;
         text.outlineColor = new Color32(40, 30, 20, 255);
