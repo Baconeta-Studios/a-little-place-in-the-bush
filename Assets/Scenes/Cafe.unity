@@ -192,6 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f54cb833c6a4dc7a164d2ad4981c87d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameHud
+  forageButton: 1
 --- !u!114 &142429088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,7 +453,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 1.1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1746031119}
@@ -506,8 +507,8 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: a85cc039c8536cb4e850d4cbd8097f6e, type: 3}
-  m_Color: {r: 0.13616933, g: 0.9622642, b: 0.5137068, a: 1}
+  m_Sprite: {fileID: 21300000, guid: b6c6eb8c89ac53e489f484dea81592f4, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1576,16 +1577,17 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -10.897603, y: 1.1515166}
-      - {x: -7.7458076, y: 0.99905586}
-      - {x: -4.5908046, y: -0.08935869}
-      - {x: -1.1696064, y: -0.11596745}
-      - {x: -1.3750014, y: 0.42953184}
-      - {x: 1.5474645, y: 0.6213711}
-      - {x: 2.2660747, y: -0.1693976}
-      - {x: 5.561842, y: 0.23596713}
-      - {x: 6.339536, y: 0.9571155}
-      - {x: 10.532547, y: 0.9795499}
+    - - {x: -10.999048, y: 1.0500711}
+      - {x: -7.948698, y: 1.0370979}
+      - {x: -4.68321, y: -0.27416927}
+      - {x: -2.5112216, y: -0.36178294}
+      - {x: -1.1780069, y: -0.2503754}
+      - {x: -1.2279699, y: 0.38429144}
+      - {x: 1.1855428, y: 0.34992927}
+      - {x: 2.5225055, y: -0.25487447}
+      - {x: 5.9607368, y: 0.16473603}
+      - {x: 6.2488046, y: 0.7605298}
+      - {x: 10.692306, y: 0.73759925}
       - {x: 11.2464285, y: -6.2246428}
       - {x: -11.542142, y: -6.1753564}
   m_UseDelaunayMesh: 1
@@ -1863,6 +1865,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterMover
   speed: 3.5
+  accelerationTime: 0.05
+  brakingDistance: 0.2
   visual: {fileID: 513111149}
   artFacesRight: 1
   turnThreshold: 0.3
@@ -1887,6 +1891,7 @@ MonoBehaviour:
   tapTolerance: 0.25
   holdToSteer: 1
   steerInterval: 0.2
+  minWalkDistance: 0.5
   clickMarkerPrefab: {fileID: 0}
 --- !u!114 &1746031122
 MonoBehaviour:

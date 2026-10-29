@@ -3,11 +3,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The game's HUD buttons, top left: coins, Bag (the read-only inventory), and Build (only in areas
-/// with a <see cref="BuildArea"/>, hidden while building). Put it on Systems in each area scene.
+/// The game's HUD buttons, top left: coins, Bag (the read-only inventory), Forage (where ticked) and
+/// Build (only in areas with a <see cref="BuildArea"/>, hidden while building). Put it on Systems in
+/// each area scene.
 /// </summary>
 public class GameHud : MonoBehaviour
 {
+    [Tooltip("Show a Forage button in this area. For now it's in the cafe; later it can move to the garden.")]
+    [SerializeField] private bool forageButton;
+
     private RectTransform _bar;
     private Button _buildButton;
     private TextMeshProUGUI _coins;
@@ -17,7 +21,7 @@ public class GameHud : MonoBehaviour
     {
         GameUi ui = GameUi.Current;
         _bar = GameUi.NewRect("HudBar", ui.SafeRoot);
-        GameUi.Place(_bar, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(700f, 110f));
+        GameUi.Place(_bar, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(920f, 110f));
         HorizontalLayoutGroup row = GameUi.AddLayout<HorizontalLayoutGroup>(_bar, 14f);
         row.childAlignment = TextAnchor.MiddleLeft;
 
@@ -29,6 +33,7 @@ public class GameHud : MonoBehaviour
         _coins = GameUi.AddText(coins, "", 32f, GameUi.Cream);
 
         GameUi.AddButton(_bar, "Bag", OpenBag, new Vector2(180f, 110f), GameUi.Cream, GameUi.Ink);
+        if (forageButton) GameUi.AddButton(_bar, "Forage", ForagePopup.Show, new Vector2(200f, 110f), GameUi.Bark, GameUi.Cream);
         _buildButton = GameUi.AddButton(_bar, "Build", EnterBuild, new Vector2(200f, 110f), GameUi.Moss, GameUi.Cream);
         _buildButton.gameObject.SetActive(false);
 
