@@ -7,8 +7,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Foraging, kept simple for the first loop: pick a focus (and day or night), press Go, see what you
-/// found, collect it into the bag. Companions and perks aren't offered yet; the rules already support
+/// Foraging, kept simple for the first loop: pick a focus, press Go, see what you found, collect it
+/// into the bag. It's always daytime for now, and there are a few trips a day (see <see cref="DayRules"/>). Companions and perks aren't offered yet; the rules already support
 /// them (see docs/FORAGING.md). The setup shows what you might find, without the odds, and hides rare
 /// things so they stay a surprise. Opened from the HUD (<see cref="GameHud"/>), or call
 /// <see cref="Show"/> from anything else, such as a garden gate. Built in code.
@@ -25,7 +25,6 @@ public class ForagePopup : Popup
     private static ForagePopup _instance;
 
     private string _focusId = "";
-    private TimeOfDay _time = TimeOfDay.Day;
     private Coroutine _trip;
 
     private RectTransform _setup;
@@ -33,7 +32,8 @@ public class ForagePopup : Popup
     private RectTransform _results;
     private TextMeshProUGUI _tableName;
     private RectTransform _focusRow;
-    private RectTransform _timeRow;
+    private TextMeshProUGUI _tripsLeft;
+    private Button _go;
     private ItemGridView _preview;
     private TextMeshProUGUI _previewNote;
     private TextMeshProUGUI _outText;
@@ -95,7 +95,7 @@ public class ForagePopup : Popup
     {
         tableId = TableId(session),
         focusId = _focusId,
-        time = _time
+        time = TimeOfDay.Day // no night yet
         // No companion or perks yet.
     };
 
@@ -123,9 +123,11 @@ public class ForagePopup : Popup
             AddChoice(_focusRow, focus.name, _focusId == id, () => { _focusId = id; RefreshSetup(); });
         }
 
-        Clear(_timeRow);
-        AddChoice(_timeRow, "Day", _time == TimeOfDay.Day, () => { _time = TimeOfDay.Day; RefreshSetup(); });
-        AddChoice(_timeRow, "Night", _time == TimeOfDay.Night, () => { _time = TimeOfDay.Night; RefreshSetup(); });
+        int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
+        _tripsLeft.text = tripsLeft < 0 ? "" : tripsLeft == 0
+            ? $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Berry)}>That's enough foraging for today. Close the cafe for the day to go again tomorrow.</color>"
+            : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
+        _go.interactable = tripsLeft != 0;
 
         // What you might find: the likeliest first, rare things left out so they stay a surprise.
         ExpeditionSetup setup = CurrentSetup(session);
@@ -171,7 +173,7 @@ public class ForagePopup : Popup
         if (trip == null) return;
         session.SaveNow(); // the result is decided now; keep it if the page closes mid-trip
 
-        Debug.Log($"[Forage] Trip {trip.id}: table {setup.tableId}, focus '{setup.focusId}', {setup.time}, seed {seed}. " +
+        Debug.Log($"[Forage] Trip {trip.id} (day {session.State.day}): table {setup.tableId}, focus '{setup.focusId}', {setup.time}, seed {seed}. " +
                   "The web sandbox gives the same result with the same seed.");
         _trip = StartCoroutine(Trip());
     }
@@ -292,22 +294,22 @@ public class ForagePopup : Popup
 
         Line(_setup, "Look out for", 30f, GameUi.InkSoft, -190f, 44f);
         _focusRow = Row(_setup, -240f, 80f);
-        Line(_setup, "When", 30f, GameUi.InkSoft, -340f, 44f);
-        _timeRow = Row(_setup, -390f, 80f);
-        Line(_setup, "You might find", 30f, GameUi.InkSoft, -490f, 44f);
+        Line(_setup, "You might find", 30f, GameUi.InkSoft, -350f, 44f);
 
         RectTransform previewArea = GameUi.NewRect("Preview", _setup);
         previewArea.anchorMin = new Vector2(0f, 0f);
         previewArea.anchorMax = new Vector2(1f, 1f);
         previewArea.offsetMin = new Vector2(24f, 200f);
-        previewArea.offsetMax = new Vector2(-24f, -540f);
+        previewArea.offsetMax = new Vector2(-24f, -400f);
         _preview = ItemGridView.Create(previewArea, true, new Vector2(170f, 190f));
 
         _previewNote = GameUi.AddText(_setup, "", 28f, GameUi.InkSoft, TextAlignmentOptions.Left, "PreviewNote");
-        Anchor(_previewNote.rectTransform, 40f, 130f, -400f, 190f);
+        Anchor(_previewNote.rectTransform, 40f, 110f, -400f, 190f);
+        _tripsLeft = GameUi.AddText(_setup, "", 30f, GameUi.Bark, TextAlignmentOptions.Left, "TripsLeft");
+        Anchor(_tripsLeft.rectTransform, 40f, 30f, -400f, 100f);
 
-        Button go = GameUi.AddButton(_setup, "Go!", Go, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
-        GameUi.Place((RectTransform)go.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
+        _go = GameUi.AddButton(_setup, "Go!", Go, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
+        GameUi.Place((RectTransform)_go.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
 
         // Out: a short pause so it feels like a trip.
         _outText = GameUi.AddText(_out, "Out foraging...", 48f, GameUi.Ink, TextAlignmentOptions.Center, "OutText");
