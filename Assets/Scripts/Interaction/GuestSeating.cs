@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Sits visiting guests on the seats of furniture you've placed (<see cref="SeatPoint"/>). A seat
 /// counts if the gecko can walk to a spot right beside it. Guests keep yesterday's seat if it's still
-/// there and free; the rest take the next free seat. With no seat left, a guest uses their own spot
+/// there and free; the rest take the next free seat that isn't right next to another guest (so a
+/// bench seats one, and two chairs side by side seat one, unless they're spaced out). With no seat left, a guest uses their own spot
 /// from the scene, or, if something's been built over it, the nearest open spot. Worked out again
 /// each day, whenever someone arrives or leaves, and after building. Guests stay put while building.
 /// Created automatically by the first <see cref="Npc"/> in a scene.
@@ -14,6 +15,8 @@ public class GuestSeating : MonoBehaviour
 {
     /// <summary>How far from a seat the gecko's spot beside it can be.</summary>
     private const float MaxStandDistance = 1.25f;
+    /// <summary>Guests don't sit closer together than this (world units), so they don't crowd each other.</summary>
+    private const float MinGuestSpacing = 1.1f;
 
     private static GuestSeating _instance;
 
@@ -95,6 +98,7 @@ public class GuestSeating : MonoBehaviour
         }
 
         var taken = new HashSet<string>();
+        var occupied = new List<Vector2>(); // where guests already are, to keep the rest a little apart
         var waiting = new List<Npc>();
         foreach (Npc npc in npcs)
         {
@@ -102,28 +106,41 @@ public class GuestSeating : MonoBehaviour
             {
                 _seatOf.Remove(npc);
                 SendHome(npc, pathfinder, origin);
+                if (npc.IsPresent) occupied.Add(npc.transform.position);
                 continue;
             }
-            // Keep yesterday's seat if it's still there.
-            if (_seatOf.TryGetValue(npc, out string kept) && seats.ContainsKey(kept) && taken.Add(kept)) Sit(npc, seats[kept]);
+            // Keep yesterday's seat if it's still there and nobody's crowding it.
+            if (_seatOf.TryGetValue(npc, out string kept) && seats.ContainsKey(kept) && !Crowded(seats[kept].seat, occupied) && taken.Add(kept))
+            {
+                Sit(npc, seats[kept]);
+                occupied.Add(seats[kept].seat.transform.position);
+            }
             else waiting.Add(npc);
         }
 
         foreach (Npc npc in waiting)
         {
-            string free = order.FirstOrDefault(k => !taken.Contains(k));
+            string free = order.FirstOrDefault(k => !taken.Contains(k) && !Crowded(seats[k].seat, occupied));
             if (free != null)
             {
                 taken.Add(free);
                 _seatOf[npc] = free;
                 Sit(npc, seats[free]);
+                occupied.Add(seats[free].seat.transform.position);
             }
             else
             {
                 _seatOf.Remove(npc);
                 SendHome(npc, pathfinder, origin);
+                occupied.Add(npc.transform.position);
             }
         }
+    }
+
+    private static bool Crowded(SeatPoint seat, List<Vector2> occupied)
+    {
+        Vector2 position = seat.transform.position;
+        return occupied.Exists(o => Vector2.Distance(o, position) < MinGuestSpacing);
     }
 
     private static void Sit(Npc npc, (SeatPoint seat, Vector2 stand) spot) =>
