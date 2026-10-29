@@ -70,6 +70,7 @@ public static class DesignDataTools
         database.npcs = Merge(database.npcs, FindAll<NpcDefinition>());
         database.quests = Merge(database.quests, FindAll<QuestDefinition>());
         database.placeables = Merge(database.placeables, FindAll<PlaceableDefinition>());
+        database.upgrades = Merge(database.upgrades, FindAll<UpgradeDefinition>());
         EditorUtility.SetDirty(database);
         AssetDatabase.SaveAssets();
         Debug.Log($"[Bush] Database now lists {database.All().Count()} definitions.");
@@ -128,6 +129,17 @@ public static class DesignDataTools
                 NpcDefinition asset = assets.GetOrCreate<NpcDefinition>(x.id, "Npcs");
                 SetBasics(asset, x.id, x.name, x.description);
                 asset.species = x.species;
+                asset.visits = x.visits;
+                asset.visitChance = (float)x.visitChance;
+                asset.firstDay = x.firstDay;
+            }
+            foreach (UpgradeData x in design.rules.upgrades)
+            {
+                UpgradeDefinition asset = assets.GetOrCreate<UpgradeDefinition>(x.id, "Upgrades");
+                SetBasics(asset, x.id, x.name, x.description);
+                asset.effect = x.effect;
+                asset.amount = x.amount;
+                asset.price = x.price;
             }
             foreach (RecipeData x in design.recipes) SetBasics(assets.GetOrCreate<RecipeDefinition>(x.id, "Recipes"), x.id, x.name, x.description);
             foreach (CompanionData x in design.companions) SetBasics(assets.GetOrCreate<CompanionDefinition>(x.id, "Companions"), x.id, x.name, x.description);
@@ -143,6 +155,8 @@ public static class DesignDataTools
                 asset.canFlip = x.canFlip;
                 asset.category = x.category;
                 asset.seats = x.seats;
+                asset.cosiness = x.cosiness;
+                asset.style = x.style;
                 // The prefab isn't in the file: Tools > Bush > Create Placeholder Placeables makes one if it's missing.
             }
 
@@ -167,7 +181,16 @@ public static class DesignDataTools
                 asset.modifiers = x.modifiers.Select(ToEntry).ToList();
                 asset.teachesPerk = assets.Get<PerkDefinition>(x.teachesPerk);
                 asset.tripsToTeach = x.tripsToTeach;
+                asset.tripCost = x.tripCost;
             }
+            foreach (NpcData x in design.npcs)
+            {
+                var asset = assets.Get<NpcDefinition>(x.id);
+                asset.afterQuest = assets.Get<QuestDefinition>(x.afterQuest);
+                asset.shop = x.shop.Select(assets.Get<RecipeDefinition>).Where(r => r).ToList();
+            }
+            foreach (UpgradeData x in design.rules.upgrades)
+                assets.Get<UpgradeDefinition>(x.id).requires = assets.Get<UpgradeDefinition>(x.requires);
             foreach (ForageTableData x in design.forageTables)
             {
                 var asset = assets.Get<ForageTableDefinition>(x.id);
@@ -213,6 +236,7 @@ public static class DesignDataTools
         database.npcs = InFileOrder(design.npcs.Select(x => x.id), FindAll<NpcDefinition>(), leftovers);
         database.quests = InFileOrder(design.quests.Select(x => x.id), FindAll<QuestDefinition>(), leftovers);
         database.placeables = InFileOrder(design.placeables.Select(x => x.id), FindAll<PlaceableDefinition>(), leftovers);
+        database.upgrades = InFileOrder(design.rules.upgrades.Select(x => x.id), FindAll<UpgradeDefinition>(), leftovers);
         EditorUtility.SetDirty(database);
         AssetDatabase.SaveAssets();
 
