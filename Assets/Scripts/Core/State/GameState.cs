@@ -38,6 +38,10 @@ namespace Bush.Core
         public int day = 1;
         /// <summary>0-1 through the current day.</summary>
         public float timeOfDay;
+        /// <summary>Recipe ids on today's menu, in order. Change any time; it's what sells when the day closes.</summary>
+        public List<string> menu = new();
+        /// <summary>Forage trips started today; reset when the day closes.</summary>
+        public int forageTripsToday;
 
         /// <summary>
         /// A fresh game. Default unlocks aren't copied in: <see cref="Unlocks"/> reads them from the design
@@ -57,6 +61,11 @@ namespace Bush.Core
         public void Normalise(DesignData design = null)
         {
             if (design != null) placed.RemoveAll(p => p == null || design.GetPlaceable(p.placeableId) == null);
+            menu ??= new List<string>();
+            var seen = new HashSet<string>();
+            menu.RemoveAll(id => string.IsNullOrEmpty(id) || !seen.Add(id) || (design != null && design.GetRecipe(id) == null));
+            if (day < 1) day = 1;
+            if (forageTripsToday < 0) forageTripsToday = 0;
             foreach (PlacedObjectData p in placed)
                 if (p.instanceId >= nextPlacedId) nextPlacedId = p.instanceId + 1;
 

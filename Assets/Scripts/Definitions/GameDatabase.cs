@@ -20,6 +20,14 @@ public class GameDatabase : ScriptableObject
     public List<QuestDefinition> quests = new();
     public List<PlaceableDefinition> placeables = new();
 
+    [Header("Day loop tuning (not part of the design data file)")]
+    [Tooltip("Dishes the cafe sells when you close for the day, shared across the menu.")]
+    [Min(0)] public int salesPerDay = 3;
+    [Tooltip("How many dishes can be on the menu at once.")]
+    [Min(1)] public int menuSlots = 3;
+    [Tooltip("Forage trips per day. 0 means no limit.")]
+    [Min(0)] public int forageTripsPerDay = 3;
+
     private Dictionary<string, GameDefinition> _byId;
 
     /// <summary>Converts every asset to the plain model the rules run on.</summary>
@@ -35,6 +43,7 @@ public class GameDatabase : ScriptableObject
         foreach (NpcDefinition x in npcs) if (x) design.npcs.Add(x.ToData());
         foreach (QuestDefinition x in quests) if (x) design.quests.Add(x.ToData());
         foreach (PlaceableDefinition x in placeables) if (x) design.placeables.Add(x.ToData());
+        design.rules = new DayRules { salesPerDay = salesPerDay, menuSlots = menuSlots, forageTripsPerDay = forageTripsPerDay };
         design.RebuildIndex();
         return design;
     }

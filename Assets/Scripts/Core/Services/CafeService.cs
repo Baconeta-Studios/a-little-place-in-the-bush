@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 
 namespace Bush.Core
 {
     /// <summary>
-    /// Cooking. Per the production plan there's no customer simulation for the jam: cooking a
-    /// dish uses its ingredients and pays its coins straight away.
+    /// The cafe: learning recipes, the day's menu, and closing for the day. There's no customer
+    /// simulation: the cafe sells a set number of dishes a day (<see cref="DayRules"/>), shared evenly
+    /// across the menu, and each sale cooks the dish (uses its ingredients, pays its coins) when the day
+    /// closes. Until then the menu can change freely.
     /// </summary>
     public class CafeService
     {
@@ -69,6 +72,95 @@ namespace Bush.Core
             return true;
         }
 
+        // ----- The menu -----
+
+        public IReadOnlyList<string> Menu => _state.menu;
+        public bool IsOnMenu(string recipeId) => _state.menu.Contains(recipeId);
+        public bool MenuIsFull => _state.menu.Count >= Math.Max(1, _design.rules.menuSlots);
+
+        /// <summary>Puts a known recipe on today's menu, if there's a free slot.</summary>
+        public bool AddToMenu(string recipeId)
+        {
+            if (_design.GetRecipe(recipeId) == null || !IsUnlocked(recipeId) || IsOnMenu(recipeId) || MenuIsFull) return false;
+            _state.menu.Add(recipeId);
+            _events.RaiseMenuChanged();
+            return true;
+        }
+
+        public bool RemoveFromMenu(string recipeId)
+        {
+            if (!_state.menu.Remove(recipeId)) return false;
+            _events.RaiseMenuChanged();
+            return true;
+        }
+
+        /// <summary>
+        /// What would sell if the day closed now, dish by dish (in menu order), sharing the day's sales
+        /// evenly: each sale goes to the next dish in turn that can still be made from what's left. Doesn't
+        /// change anything. <paramref name="unsold"/> is how many sales were missed for want of ingredients.
+        /// </summary>
+        public List<DishSale> PlanSales(out int unsold)
+        {
+            var plan = new List<DishSale>();
+            var counts = new Dictionary<string, int>();
+            int Have(string itemId) => counts.TryGetValue(itemId, out int n) ? n : counts[itemId] = _economy.Count(itemId);
+
+            foreach (string recipeId in _state.menu)
+                if (_design.GetRecipe(recipeId) != null && IsUnlocked(recipeId)) plan.Add(new DishSale { recipeId = recipeId });
+
+            int sales = _design.rules.SalesFor(_state);
+            int made = 0, next = 0;
+            while (made < sales && plan.Count > 0)
+            {
+                bool any = false;
+                for (int tried = 0; tried < plan.Count && !any; tried++)
+                {
+                    DishSale dish = plan[(next + tried) % plan.Count];
+                    RecipeData recipe = _design.GetRecipe(dish.recipeId);
+                    if (!recipe.ingredients.TrueForAll(i => Have(i.itemId) >= i.qty)) continue;
+                    foreach (ItemAmount ingredient in recipe.ingredients) counts[ingredient.itemId] -= ingredient.qty;
+                    dish.sold++;
+                    dish.coins += recipe.coins;
+                    next = (plan.IndexOf(dish) + 1) % plan.Count;
+                    any = true;
+                }
+                if (!any) break; // nothing left can be made
+                made++;
+            }
+
+            unsold = sales - made;
+            return plan;
+        }
+
+        /// <summary>
+        /// Ends the day: cooks and sells what <see cref="PlanSales"/> says, moves to the next morning and
+        /// resets the day's forage trips. Each sale counts as cooking the dish, for quests. The menu stays
+        /// as it was. Save straight after.
+        /// </summary>
+        public DaySummary CloseDay()
+        {
+            var summary = new DaySummary { day = _state.day, salesPlanned = _design.rules.SalesFor(_state) };
+            foreach (DishSale planned in PlanSales(out _))
+            {
+                var dish = new DishSale { recipeId = planned.recipeId };
+                for (int i = 0; i < planned.sold; i++)
+                {
+                    if (!Cook(planned.recipeId)) break; // can't happen: the plan used the same counts
+                    dish.sold++;
+                    dish.coins += _design.GetRecipe(planned.recipeId).coins;
+                }
+                summary.dishes.Add(dish);
+                summary.sold += dish.sold;
+                summary.coins += dish.coins;
+            }
+
+            _state.day++;
+            _state.forageTripsToday = 0;
+            _state.timeOfDay = 0f;
+            _events.RaiseDayEnded(summary);
+            return summary;
+        }
+
         /// <summary>How many of the recipe's scraps the player has collected (has now or handed in), for the recipe book.</summary>
         public (int found, int total) GetScrapProgress(string recipeId)
         {
@@ -79,5 +171,27 @@ namespace Bush.Core
                 if (_state.IsUniqueCollected(scrap)) found++;
             return (found, recipe.scraps.Count);
         }
+    }
+
+    /// <summary>One dish's sales for the day.</summary>
+    [Serializable]
+    public class DishSale
+    {
+        public string recipeId;
+        public int sold;
+        public int coins;
+    }
+
+    /// <summary>What closing the day did, for the end-of-day screen.</summary>
+    [Serializable]
+    public class DaySummary
+    {
+        /// <summary>The day that just ended.</summary>
+        public int day;
+        public int salesPlanned;
+        public int sold;
+        public int coins;
+        public List<DishSale> dishes = new();
+        public int Missed => Math.Max(0, salesPlanned - sold);
     }
 }

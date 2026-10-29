@@ -38,6 +38,21 @@ namespace Bush.Core
         public bool HasTag(string tag) => !string.IsNullOrEmpty(tag) && tags != null && tags.Contains(tag);
     }
 
+    /// <summary>Tuning for the cafe day: how much sells, how much you can forage.</summary>
+    [Serializable]
+    public class DayRules
+    {
+        /// <summary>Dishes the cafe sells when you close for the day, shared across the menu.</summary>
+        public int salesPerDay = 3;
+        /// <summary>How many dishes can be on the menu at once.</summary>
+        public int menuSlots = 3;
+        /// <summary>Forage trips per day. 0 means no limit.</summary>
+        public int forageTripsPerDay;
+
+        /// <summary>Sales for the current day. One place to add progression later (story steps, upgrades, seats).</summary>
+        public int SalesFor(GameState state) => Math.Max(0, salesPerDay);
+    }
+
     [Serializable]
     public class RecipeData
     {

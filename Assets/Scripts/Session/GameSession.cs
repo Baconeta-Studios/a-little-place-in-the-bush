@@ -103,6 +103,8 @@ public class GameSession : MonoBehaviour
         Events.ExpeditionCompleted += _ => RequestSave();
         Events.RecipeLearned += _ => RequestSave();
         Events.PerkLearned += _ => RequestSave();
+        Events.MenuChanged += RequestSave;
+        Events.DayEnded += _ => RequestSave();
 
         Ready?.Invoke();
     }
@@ -144,6 +146,25 @@ public class GameSession : MonoBehaviour
             foreach (ItemData item in Design.items) Economy.Add(item.id, item.unique ? 1 : 5);
         }, this);
         CheatMenu.AddButton("Bag: give 100 coins", () => Economy.AddCurrency(100), this);
+        CheatMenu.AddButton("Cafe: learn every recipe", () =>
+        {
+            foreach (RecipeData recipe in Design.recipes)
+            {
+                if (Unlocks.IsRecipeUnlocked(Design, State, recipe.id)) continue;
+                State.unlockedRecipes.Add(recipe.id);
+                Events.RaiseRecipeLearned(recipe.id);
+            }
+        }, this);
+        CheatMenu.AddButton("Cafe: close for the day", () =>
+        {
+            DaySummary summary = Cafe.CloseDay();
+            Debug.Log($"[Cheats] Day {summary.day} closed: sold {summary.sold} for {summary.coins} coins.");
+        }, this);
+        CheatMenu.AddButton("Forage: reset today's trips", () =>
+        {
+            State.forageTripsToday = 0;
+            RequestSave();
+        }, this);
         CheatMenu.AddButton("Save: save now", SaveNow, this);
         CheatMenu.AddButton("Save: reset everything (reloads the scene)", ResetSave, this);
     }

@@ -146,6 +146,7 @@ namespace Bush.Core
         {
             error = null;
             if (state.hasPendingExpedition) error = "An expedition is already under way.";
+            else if (TripsLeftToday(design, state) == 0) error = "That's enough foraging for today.";
             else if (design.GetForageTable(setup.tableId) == null) error = $"Unknown forage table '{setup.tableId}'.";
             else if (!string.IsNullOrEmpty(setup.companionId) && !Unlocks.IsCompanionUnlocked(design, state, setup.companionId))
                 error = $"Companion '{setup.companionId}' isn't unlocked.";
@@ -187,6 +188,7 @@ namespace Bush.Core
                     if (!string.IsNullOrEmpty(perkId) && !copy.perkIds.Contains(perkId)) copy.perkIds.Add(perkId);
 
             state.expeditionsStarted++;
+            state.forageTripsToday++;
             state.pendingExpedition = new PendingExpedition
             {
                 id = state.expeditionsStarted,
@@ -196,6 +198,13 @@ namespace Bush.Core
             };
             state.hasPendingExpedition = true;
             return state.pendingExpedition;
+        }
+
+        /// <summary>Trips left today, or -1 for no limit.</summary>
+        public static int TripsLeftToday(DesignData design, GameState state)
+        {
+            int limit = design.rules?.forageTripsPerDay ?? 0;
+            return limit <= 0 ? -1 : Math.Max(0, limit - state.forageTripsToday);
         }
 
         /// <summary>The pending expedition's result, for the results screen. Null if there isn't one.</summary>

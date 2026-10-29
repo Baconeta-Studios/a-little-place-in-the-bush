@@ -18,6 +18,8 @@ namespace Bush.Core
         public List<NpcData> npcs = new();
         public List<QuestData> quests = new();
         public List<PlaceableData> placeables = new();
+        /// <summary>Tuning for the day loop. Set on the GameDatabase asset; defaults here for tests and tools.</summary>
+        public DayRules rules = new();
 
         private Dictionary<string, ItemData> _items;
         private Dictionary<string, RecipeData> _recipes;
