@@ -55,6 +55,7 @@ public class InteractionPrompt : MonoBehaviour
 
         float bob = Mathf.Sin(Time.unscaledTime * 3f) * 0.06f;
         marker.transform.localPosition = _markerBase + new Vector3(0f, bob, 0f);
+        Unflip(marker.transform); // a flipped object would mirror the marker and its text
 
         bool wantText = focused && showPromptText;
         if (_label && _label.gameObject.activeSelf != wantText)
@@ -62,6 +63,15 @@ public class InteractionPrompt : MonoBehaviour
             _label.text = _interactable.Prompt;
             _label.gameObject.SetActive(wantText);
         }
+    }
+
+    /// <summary>Keeps a child the right way round when a parent is flipped (negative X scale).</summary>
+    public static void Unflip(Transform child)
+    {
+        if (child.lossyScale.x >= 0f) return;
+        Vector3 scale = child.localScale;
+        scale.x = -scale.x;
+        child.localScale = scale;
     }
 
     private bool IsPlayerNear()

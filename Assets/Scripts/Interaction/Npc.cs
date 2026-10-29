@@ -76,6 +76,7 @@ public class Npc : Interactable
         GameSession session = GameSession.Current;
         if (session == null || !npc) return;
         SetPresent(Visitors.IsPresent(session.Design, session.State, session.Quests, npc.id));
+        InteractionPrompt.Unflip(_marker.transform); // a flipped character would mirror the ! and ?
         _marker.text = !_present ? "" : session.Quests.GetTopic(npc.id).kind switch
         {
             TopicKind.Offer => "!",
