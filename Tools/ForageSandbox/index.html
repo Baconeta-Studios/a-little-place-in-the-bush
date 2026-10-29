@@ -993,7 +993,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "coins": 10,
       "unlockedByDefault": false,
-      "price": 20,
+      "price": 120,
       "scraps": [],
       "description": "Curly fronds in crispy batter."
     },
@@ -1012,7 +1012,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "coins": 12,
       "unlockedByDefault": false,
-      "price": 25,
+      "price": 150,
       "scraps": [],
       "description": "Earthy and warming."
     },
@@ -1135,7 +1135,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "coins": 12,
       "unlockedByDefault": false,
-      "price": 25,
+      "price": 180,
       "scraps": [],
       "description": "Flaky, buttery, chirpy."
     },
@@ -1221,7 +1221,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "companion.kea",
       "name": "Kea",
       "description": "Uses its beak as a hammer. Finds much more bark.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
@@ -1237,13 +1237,14 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "teachesPerk": "perk.bark_knowhow",
-      "tripsToTeach": 3
+      "tripsToTeach": 5,
+      "tripCost": 0
     },
     {
       "id": "companion.weka",
       "name": "Weka",
       "description": "Always steals stuff. Good chance of bringing back something shiny.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "BonusRoll",
@@ -1259,13 +1260,14 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "teachesPerk": "perk.shiny_sense",
-      "tripsToTeach": 3
+      "tripsToTeach": 5,
+      "tripCost": 0
     },
     {
       "id": "companion.pekapeka",
       "name": "Pekapeka",
       "description": "Sees in the dark and eats insects. Finds more bugs, and spots night visitors.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
@@ -1281,7 +1283,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "teachesPerk": "perk.night_sight",
-      "tripsToTeach": 3
+      "tripsToTeach": 5,
+      "tripCost": 0
     },
     {
       "id": "companion.kunekune",
@@ -1308,8 +1311,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "value": 1.5
         }
       ],
-      "teachesPerk": "",
-      "tripsToTeach": 0
+      "teachesPerk": "perk.truffle_nose",
+      "tripsToTeach": 5,
+      "tripCost": 0
     },
     {
       "id": "companion.spider",
@@ -1330,8 +1334,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "value": 1
         }
       ],
-      "teachesPerk": "",
-      "tripsToTeach": 0
+      "teachesPerk": "perk.silk_sense",
+      "tripsToTeach": 5,
+      "tripCost": 0
     }
   ],
   "perks": [
@@ -1339,7 +1344,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "perk.big_basket",
       "name": "Big basket",
       "description": "Room for one more find each trip.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "ExtraRolls",
@@ -1353,7 +1358,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "perk.sweet_tooth",
       "name": "Sweet tooth",
       "description": "Drawn to fruit and nectar.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
@@ -1373,7 +1378,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "perk.early_bird",
       "name": "Early bird",
       "description": "Up before the worms are. More worms, and more of them.",
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
@@ -1459,6 +1464,40 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "TagWeight",
           "tag": "insect",
           "rarity": "",
+          "value": 1.75
+        }
+      ]
+    },
+    {
+      "id": "perk.truffle_nose",
+      "name": "Truffle nose",
+      "description": "Kunekune taught you to sniff out fungi. A little.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "fungi",
+          "rarity": "Common",
+          "value": 1.5
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Rare",
+          "value": 1.2
+        }
+      ]
+    },
+    {
+      "id": "perk.silk_sense",
+      "name": "Silk sense",
+      "description": "Spider showed you where the silk hangs.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "silk",
+          "rarity": "Common",
           "value": 1.75
         }
       ]
@@ -1768,25 +1807,82 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "npc.ruru",
       "name": "Ruru",
       "species": "Ruru (morepork)",
-      "description": "The old cafe owner. Wise, sleepy by day, and missing her famous recipe."
+      "description": "The old cafe owner. Wise, sleepy by day, and missing her famous recipe.",
+      "visits": "Story",
+      "visitChance": 0,
+      "firstDay": 0,
+      "afterQuest": "",
+      "shop": []
     },
     {
       "id": "npc.weka",
       "name": "Weka",
       "species": "Weka",
-      "description": "Cheeky, always hanging around the cafe, and steals anything shiny."
+      "description": "Cheeky, always hanging around the cafe, and steals anything shiny.",
+      "visits": "Random",
+      "visitChance": 0.25,
+      "firstDay": 6,
+      "afterQuest": "quest.main_set_out",
+      "shop": []
     },
     {
       "id": "npc.snail",
       "name": "Snail",
       "species": "Snail",
-      "description": "Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu."
+      "description": "Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu.",
+      "visits": "Random",
+      "visitChance": 0.25,
+      "firstDay": 0,
+      "afterQuest": "quest.main_set_out",
+      "shop": []
     },
     {
       "id": "npc.weta",
       "name": "Wētā",
       "species": "Wētā",
-      "description": "Nocturnal, lives in a hollow tree trunk that badly needs fixing."
+      "description": "Nocturnal, lives in a hollow tree trunk that badly needs fixing.",
+      "visits": "Random",
+      "visitChance": 0.2,
+      "firstDay": 0,
+      "afterQuest": "quest.main_set_out",
+      "shop": []
+    },
+    {
+      "id": "npc.kea",
+      "name": "Kea",
+      "species": "Kea (mountain parrot)",
+      "description": "Clever, nosy and always up for a dare. Knows every bit of bark in the bush.",
+      "visits": "Random",
+      "visitChance": 0.2,
+      "firstDay": 4,
+      "afterQuest": "quest.main_set_out",
+      "shop": []
+    },
+    {
+      "id": "npc.pekapeka",
+      "name": "Pekapeka",
+      "species": "Pekapeka (bat)",
+      "description": "Shy, hungry, and very good at finding bugs.",
+      "visits": "Random",
+      "visitChance": 0.18,
+      "firstDay": 8,
+      "afterQuest": "quest.main_set_out",
+      "shop": []
+    },
+    {
+      "id": "npc.kereru",
+      "name": "Kererū",
+      "species": "Kererū (wood pigeon)",
+      "description": "A well-fed travelling cook who trades recipes for coins.",
+      "visits": "Random",
+      "visitChance": 0.25,
+      "firstDay": 0,
+      "afterQuest": "quest.main_set_out",
+      "shop": [
+        "recipe.fern_fritters",
+        "recipe.mushroom_soup",
+        "recipe.cricket_croissants"
+      ]
     }
   ],
   "quests": [
@@ -1871,11 +1967,6 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "qty": 20
         },
         {
-          "type": "UnlockPerk",
-          "target": "perk.keen_eye",
-          "qty": 1
-        },
-        {
           "type": "UnlockRecipe",
           "target": "recipe.worm_pie",
           "qty": 1
@@ -1889,12 +1980,82 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       }
     },
     {
+      "id": "quest.main_furnish",
+      "title": "Somewhere to sit",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Ruru has some old furniture in the shed for you.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.ruru",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.chair",
+          "qty": 2
+        },
+        {
+          "type": "Item",
+          "target": "item.cafe_table",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.potted_fern",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "A cafe with nowhere to sit isn't much of a cafe. I've some old bits in the shed. Want them?",
+        "active": "The shed's round the back. Well, I'll fetch them.",
+        "ready": "Here: two chairs, a table, and a fern to make it homely. They're in your bag.",
+        "done": "Set them out and see who drops by."
+      }
+    },
+    {
+      "id": "quest.main_set_out",
+      "title": "Open for guests",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_furnish"
+      ],
+      "summary": "Press Build and set out the chairs, table and fern. Guests sit on chairs you've placed, and a cosier cafe brings them more often.",
+      "objectives": [
+        {
+          "type": "PlaceObject",
+          "target": "",
+          "qty": 4
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "Press Build and set them out however you like. Guests need a chair to sit on, and the cosier it looks, the more often they'll come.",
+        "active": "Set out the chairs, the table and the fern. Press Build.",
+        "ready": "Now that looks like a cafe. Folk will start dropping by, you'll see.",
+        "done": "More things, and nicer things, make it cosier. Cosy brings guests."
+      }
+    },
+    {
       "id": "quest.main_lost_recipe",
       "title": "The lost recipe",
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.main_set_out"
       ],
       "summary": "Ruru's famous kawakawa scroll recipe was torn into four scraps and scattered. Find all four and bring them to her.",
       "objectives": [
@@ -1929,6 +2090,11 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "Coins",
           "target": "",
           "qty": 50
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.keen_eye",
+          "qty": 1
         }
       ],
       "dialogue": {
@@ -1944,7 +2110,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "giver": "npc.weka",
       "isMain": false,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.companion_weka"
       ],
       "summary": "Weka has a recipe scrap and will swap it for a shiny button.",
       "objectives": [
@@ -1958,6 +2124,11 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         {
           "type": "Item",
           "target": "item.recipe_scrap_2",
+          "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.sweet_tooth",
           "qty": 1
         }
       ],
@@ -1999,6 +2170,11 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "UnlockCompanion",
           "target": "companion.kunekune",
           "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.early_bird",
+          "qty": 1
         }
       ],
       "dialogue": {
@@ -2039,6 +2215,11 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "UnlockCompanion",
           "target": "companion.spider",
           "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.big_basket",
+          "qty": 1
         }
       ],
       "dialogue": {
@@ -2046,6 +2227,96 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         "active": "Four bark, two silk. Kea is good at finding bark.",
         "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
         "done": "Come by at night. I'm awake then."
+      }
+    },
+    {
+      "id": "quest.companion_kea",
+      "title": "Kea's dare",
+      "giver": "npc.kea",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Kea dares you to find five bits of bark. Do it, and Kea will come foraging with you.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.bark",
+          "qty": 5
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.kea",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Bet you can't find five bits of bark. Go on. I dare you.",
+        "active": "Five bits of bark. Still waiting!",
+        "ready": "Ha! Not bad for a gecko.",
+        "done": "Fine, I'll come foraging with you. For a few coins. I'm a professional."
+      }
+    },
+    {
+      "id": "quest.companion_weka",
+      "title": "Show me your moves",
+      "giver": "npc.weka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Weka wants to see you forage six times before trusting you as a partner.",
+      "objectives": [
+        {
+          "type": "CompleteExpeditions",
+          "target": "",
+          "qty": 6
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.weka",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "You forage? Prove it. Go out six times, and then we'll talk.",
+        "active": "Six trips. Out in the bush. I'll be counting. Probably.",
+        "ready": "Not bad. Not bad at all.",
+        "done": "Take me along any time. I'll find the shiny things."
+      }
+    },
+    {
+      "id": "quest.companion_pekapeka",
+      "title": "A bat's breakfast",
+      "giver": "npc.pekapeka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Pekapeka is too shy to order. Serve six dishes of anything and they'll warm to you.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "",
+          "qty": 6
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.pekapeka",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Um. Hello. I'm... just looking. Do you, um, serve food here?",
+        "active": "I'll just... wait here. Until there's lots of food.",
+        "ready": "That was delicious. Thank you.",
+        "done": "If you ever go out looking for bugs... I could come?"
       }
     }
   ],
@@ -2058,7 +2329,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "footprintDepth": 0.4,
       "canFlip": true,
       "category": "Furniture",
-      "seats": 1
+      "seats": 1,
+      "cosiness": 1,
+      "style": "rustic"
     },
     {
       "id": "placeable.cafe_table",
@@ -2068,7 +2341,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "footprintDepth": 0.5,
       "canFlip": false,
       "category": "Furniture",
-      "seats": 0
+      "seats": 0,
+      "cosiness": 1,
+      "style": "rustic"
     },
     {
       "id": "placeable.bench",
@@ -2078,7 +2353,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "footprintDepth": 0.4,
       "canFlip": true,
       "category": "Furniture",
-      "seats": 2
+      "seats": 2,
+      "cosiness": 1,
+      "style": "rustic"
     },
     {
       "id": "placeable.potted_fern",
@@ -2088,7 +2365,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "footprintDepth": 0.4,
       "canFlip": true,
       "category": "Plants",
-      "seats": 0
+      "seats": 0,
+      "cosiness": 2,
+      "style": "garden"
     },
     {
       "id": "placeable.flower_barrel",
@@ -2098,7 +2377,9 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "footprintDepth": 0.5,
       "canFlip": true,
       "category": "Plants",
-      "seats": 0
+      "seats": 0,
+      "cosiness": 2,
+      "style": "garden"
     },
     {
       "id": "placeable.lantern_post",
@@ -2108,7 +2389,74 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "footprintDepth": 0.3,
       "canFlip": true,
       "category": "Decor",
-      "seats": 0
+      "seats": 0,
+      "cosiness": 3,
+      "style": "glow"
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "upgrade.menu_2",
+      "name": "A second menu slot",
+      "description": "Put two dishes on the menu.",
+      "effect": "MenuSlot",
+      "amount": 1,
+      "price": 150,
+      "requires": ""
+    },
+    {
+      "id": "upgrade.sales_1",
+      "name": "A busier cafe",
+      "description": "One more dish sold a day.",
+      "effect": "DailySale",
+      "amount": 1,
+      "price": 200,
+      "requires": ""
+    },
+    {
+      "id": "upgrade.trip_1",
+      "name": "An early start",
+      "description": "One more forage trip a day.",
+      "effect": "ForageTrip",
+      "amount": 1,
+      "price": 300,
+      "requires": ""
+    },
+    {
+      "id": "upgrade.perk_2",
+      "name": "A perk pouch",
+      "description": "Take two perks foraging at once. They stack.",
+      "effect": "PerkSlot",
+      "amount": 1,
+      "price": 350,
+      "requires": ""
+    },
+    {
+      "id": "upgrade.menu_3",
+      "name": "A third menu slot",
+      "description": "Put three dishes on the menu.",
+      "effect": "MenuSlot",
+      "amount": 1,
+      "price": 450,
+      "requires": "upgrade.menu_2"
+    },
+    {
+      "id": "upgrade.sales_2",
+      "name": "A bustling cafe",
+      "description": "Another dish sold a day.",
+      "effect": "DailySale",
+      "amount": 1,
+      "price": 600,
+      "requires": "upgrade.sales_1"
+    },
+    {
+      "id": "upgrade.sales_3",
+      "name": "The talk of the bush",
+      "description": "Yet another dish sold a day.",
+      "effect": "DailySale",
+      "amount": 1,
+      "price": 900,
+      "requires": "upgrade.sales_2"
     }
   ]
 }

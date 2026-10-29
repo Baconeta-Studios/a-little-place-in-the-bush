@@ -224,6 +224,7 @@ public class CafePopup : Popup
         _confirm.gameObject.SetActive(false);
         GameSession session = Session;
         if (session == null) return;
+        DayTransition.Holding = true; // keep showing today until the fade is black
         DaySummary summary = session.Cafe.CloseDay();
         session.SaveNow();
         Debug.Log($"[Cafe] Day {summary.day} closed: sold {summary.sold}/{summary.salesPlanned} for {summary.coins} coins.");
@@ -245,6 +246,8 @@ public class CafePopup : Popup
             text.Append(session.State.menu.Count == 0
                 ? "The menu was empty, so nothing sold today.\n"
                 : "There weren't enough ingredients to make anything today.\n");
+        if (summary.tip > 0)
+            text.Append($"<color={Hex(GameUi.Moss)}>A guest loved how cosy it was and left a {summary.tip} coin tip!</color>\n");
         text.Append($"\n<b>{summary.coins} coins</b> today.");
         if (summary.sold > 0 && summary.Missed > 0)
             text.Append($"\n<color={Hex(GameUi.Berry)}>{summary.Missed} hungry guests went without: forage for more ingredients.</color>");
@@ -259,7 +262,9 @@ public class CafePopup : Popup
     {
         bool fromSummary = _summary && _summary.gameObject.activeSelf;
         base.Close();
-        if (fromSummary && Session != null) AreaTravel.Instance.PassTime($"Day {Session.State.day}");
+        if (!fromSummary) return;
+        if (Session == null || !AreaTravel.Instance.PassTime($"Day {Session.State.day}", () => DayTransition.Holding = false))
+            DayTransition.Holding = false;
     }
 
     // ----- Building the screen -----
@@ -285,6 +290,8 @@ public class CafePopup : Popup
         _title = Title(_board);
         Button close = GameUi.AddButton(_board, "Close", Close, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
         GameUi.Place((RectTransform)close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
+        Button upgrades = GameUi.AddButton(_board, "Upgrades", UpgradesPopup.Show, new Vector2(230f, 84f), GameUi.Cream, GameUi.Ink);
+        GameUi.Place((RectTransform)upgrades.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-232f, -24f), new Vector2(230f, 84f));
 
         RectTransform menuBox = GameUi.NewRect("Menu", _board);
         menuBox.anchorMin = new Vector2(0f, 1f);
@@ -351,7 +358,7 @@ public class CafePopup : Popup
         TextMeshProUGUI title = GameUi.AddText(parent, "", 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
         title.fontStyle = FontStyles.Bold;
         title.rectTransform.offsetMin = new Vector2(40f, 0f);
-        title.rectTransform.offsetMax = new Vector2(-260f, -28f);
+        title.rectTransform.offsetMax = new Vector2(-500f, -28f);
         return title;
     }
 }

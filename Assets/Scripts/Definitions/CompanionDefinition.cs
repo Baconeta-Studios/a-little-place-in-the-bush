@@ -26,10 +26,13 @@ public class CompanionDefinition : GameDefinition
     [Tooltip("Perk the player learns after enough trips together. Leave empty for none.")]
     public PerkDefinition teachesPerk;
     public int tripsToTeach = 3;
+    [Tooltip("Coins to take them on a trip. They can go once a day.")]
+    [Min(0)] public int tripCost;
 
     public CompanionData ToData() => new()
     {
         id = id, name = displayName, description = description, unlockedByDefault = unlockedByDefault,
-        modifiers = Definitions.ToData(modifiers), teachesPerk = Definitions.Id(teachesPerk), tripsToTeach = tripsToTeach
+        modifiers = Definitions.ToData(modifiers), teachesPerk = Definitions.Id(teachesPerk), tripsToTeach = tripsToTeach,
+        tripCost = tripCost
     };
 }

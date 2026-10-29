@@ -13,7 +13,8 @@ using UnityEngine.SceneManagement;
 [DefaultExecutionOrder(-200)]
 public class GameSession : MonoBehaviour
 {
-    private const string UnlimitedPrefKey = "bush.build.unlimited";
+    // A new key, so everyone starts with it off now that furniture comes from quests.
+    private const string UnlimitedPrefKey = "bush.build.unlimited.v2";
 
     private SaveService _save;
     private bool _saveRequested;
@@ -86,13 +87,14 @@ public class GameSession : MonoBehaviour
     {
         Quests?.Dispose();
         State = state;
+        if (State.luckSeed == 0) State.luckSeed = (uint)UnityEngine.Random.Range(1, int.MaxValue);
         Events = new GameEvents();
         Economy = new Economy(State, Design, Events);
         Cafe = new CafeService(Design, State, Economy, Events);
         Quests = new QuestService(Design, State, Economy, Events);
         Build = new BuildService(Design, State, Economy, Events)
         {
-            UnlimitedItems = PlayerPrefs.GetInt(UnlimitedPrefKey, 1) == 1 // on by default while prototyping
+            UnlimitedItems = PlayerPrefs.GetInt(UnlimitedPrefKey, 0) == 1 // off: you place what you own (a cheat turns it on)
         };
 
         Events.InventoryChanged += RequestSave;
@@ -104,6 +106,7 @@ public class GameSession : MonoBehaviour
         Events.RecipeLearned += _ => RequestSave();
         Events.PerkLearned += _ => RequestSave();
         Events.MenuChanged += RequestSave;
+        Events.UpgradeBought += _ => RequestSave();
         Events.DayEnded += _ => RequestSave();
 
         Ready?.Invoke();
@@ -160,9 +163,31 @@ public class GameSession : MonoBehaviour
             DaySummary summary = Cafe.CloseDay();
             Debug.Log($"[Cheats] Day {summary.day} closed: sold {summary.sold} for {summary.coins} coins.");
         }, this);
+        CheatMenu.AddButton("Guests: everyone drops by today", () =>
+        {
+            State.visitorsDay = State.day;
+            State.visitorsToday = Design.npcs.FindAll(n => n.visits == VisitType.Random).ConvertAll(n => n.id);
+            RequestSave();
+        }, this);
+        CheatMenu.AddButton("Guests: reroll today's visitors", () =>
+        {
+            Visitors.RollToday(Design, State);
+            Debug.Log($"[Cheats] Today's visitors: {string.Join(", ", State.visitorsToday)}");
+            RequestSave();
+        }, this);
+        CheatMenu.AddButton("Forage: befriend every companion and learn every perk", () =>
+        {
+            foreach (CompanionData companion in Design.companions)
+                if (!State.unlockedCompanions.Contains(companion.id)) State.unlockedCompanions.Add(companion.id);
+            foreach (PerkData perk in Design.perks)
+                if (!State.unlockedPerks.Contains(perk.id)) State.unlockedPerks.Add(perk.id);
+            State.companionsUsedToday.Clear();
+            RequestSave();
+        }, this);
         CheatMenu.AddButton("Forage: reset today's trips", () =>
         {
             State.forageTripsToday = 0;
+            State.companionsUsedToday.Clear();
             RequestSave();
         }, this);
         CheatMenu.AddButton("Save: save now", SaveNow, this);

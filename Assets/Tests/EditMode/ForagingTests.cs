@@ -195,11 +195,13 @@ namespace Bush.Core.Tests
             ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 1u);
             Assert.IsNull(ForagingService.Claim(game.design, game.state, game.economy, game.events).learnedPerkId);
 
+            game.state.companionsUsedToday.Clear(); // a new day: Kea has rested
             ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 2u);
             Assert.AreEqual(TestDesign.BarkSense, ForagingService.Claim(game.design, game.state, game.economy, game.events).learnedPerkId);
             Assert.AreEqual(TestDesign.BarkSense, learned);
             Assert.Contains(TestDesign.BarkSense, game.state.unlockedPerks);
 
+            game.state.companionsUsedToday.Clear(); // a new day: Kea has rested
             ForagingService.Begin(game.design, game.state, TestDesign.Setup(TestDesign.Kea), 3u);
             Assert.IsNull(ForagingService.Claim(game.design, game.state, game.economy, game.events).learnedPerkId, "A perk is only learned once.");
         }

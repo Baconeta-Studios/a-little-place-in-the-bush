@@ -54,6 +54,7 @@ namespace Bush.Core
         public NpcData GetNpc(string id) => Get(ref _npcs, id);
         public QuestData GetQuest(string id) => Get(ref _quests, id);
         public PlaceableData GetPlaceable(string id) => Get(ref _placeables, id);
+        public UpgradeData GetUpgrade(string id) => rules?.GetUpgrade(id);
         public PlaceableData GetPlaceableForItem(string itemId) => placeables.Find(p => p.itemId == itemId);
 
         private T Get<T>(ref Dictionary<string, T> lookup, string id) where T : class

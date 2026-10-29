@@ -141,12 +141,26 @@ namespace Bush.Core
 
         // ----- Running an expedition in the game (changes state) -----
 
-        /// <summary>Whether this setup can be sent: the table and focus exist, and the companion and perks are unlocked.</summary>
+        /// <summary>Coins to take this setup's companion along.</summary>
+        public static int TripCost(DesignData design, ExpeditionSetup setup) => design.GetCompanion(setup.companionId)?.tripCost ?? 0;
+
+        /// <summary>A companion who's been out today is tired until tomorrow.</summary>
+        public static bool IsTired(GameState state, string companionId) => state.companionsUsedToday.Contains(companionId);
+
+        /// <summary>
+        /// Whether this setup can be sent: the table and focus exist, the companion is unlocked, rested and
+        /// affordable, and the perks are unlocked and fit the perk slots.
+        /// </summary>
         public static bool CanBegin(DesignData design, GameState state, ExpeditionSetup setup, out string error)
         {
             error = null;
+            CompanionData companion = design.GetCompanion(setup.companionId);
+            int perkCount = setup.perkIds == null ? 0 : new HashSet<string>(setup.perkIds.FindAll(p => !string.IsNullOrEmpty(p))).Count;
             if (state.hasPendingExpedition) error = "An expedition is already under way.";
             else if (TripsLeftToday(design, state) == 0) error = "That's enough foraging for today.";
+            else if (companion != null && IsTired(state, companion.id)) error = $"{companion.name} is tired. Try again tomorrow.";
+            else if (companion != null && state.currency < companion.tripCost) error = $"Taking {companion.name} costs {companion.tripCost} coins.";
+            else if (perkCount > design.rules.PerkSlots(state)) error = $"Only {design.rules.PerkSlots(state)} perk(s) can come along.";
             else if (design.GetForageTable(setup.tableId) == null) error = $"Unknown forage table '{setup.tableId}'.";
             else if (!string.IsNullOrEmpty(setup.companionId) && !Unlocks.IsCompanionUnlocked(design, state, setup.companionId))
                 error = $"Companion '{setup.companionId}' isn't unlocked.";
@@ -170,7 +184,8 @@ namespace Bush.Core
         /// after. Returns null if the setup isn't allowed (<paramref name="force"/> skips the unlock
         /// checks, for cheats). Pressing Go twice returns the expedition already under way.
         /// </summary>
-        public static PendingExpedition Begin(DesignData design, GameState state, ExpeditionSetup setup, uint seed, bool force = false)
+        public static PendingExpedition Begin(DesignData design, GameState state, ExpeditionSetup setup, uint seed, bool force = false,
+            Economy economy = null)
         {
             if (state.hasPendingExpedition) return state.pendingExpedition;
             if (!force && !CanBegin(design, state, setup, out _)) return null;
@@ -189,6 +204,12 @@ namespace Bush.Core
 
             state.expeditionsStarted++;
             state.forageTripsToday++;
+            if (!string.IsNullOrEmpty(copy.companionId))
+            {
+                if (!state.companionsUsedToday.Contains(copy.companionId)) state.companionsUsedToday.Add(copy.companionId);
+                int cost = TripCost(design, copy);
+                if (cost > 0 && !(economy?.TrySpend(cost) ?? false)) state.currency = Math.Max(0, state.currency - cost);
+            }
             state.pendingExpedition = new PendingExpedition
             {
                 id = state.expeditionsStarted,
@@ -200,10 +221,51 @@ namespace Bush.Core
             return state.pendingExpedition;
         }
 
+        /// <summary>
+        /// Luck protection (<see cref="DayRules.luckProtectedQuest"/>): while that quest is under way, returns
+        /// the first seed from <paramref name="seed"/> on whose trip the player finds everything its
+        /// Have/Deliver objectives still need. Otherwise, or if no seed nearby does it, returns
+        /// <paramref name="seed"/> unchanged. The trip is still an ordinary seeded trip, so the sandbox
+        /// gives the same result for the seed it logs.
+        /// </summary>
+        public static uint LuckySeed(DesignData design, GameState state, ExpeditionSetup setup, uint seed, int tries = 2000)
+        {
+            QuestData quest = design.GetQuest(design.rules?.luckProtectedQuest);
+            if (quest == null || !state.IsQuestActive(quest.id)) return seed;
+
+            var needs = new Dictionary<string, int>();
+            foreach (QuestObjective objective in quest.objectives)
+            {
+                if (objective.type != ObjectiveType.HaveItems && objective.type != ObjectiveType.DeliverItems) continue;
+                int have = 0;
+                foreach (ItemStack stack in state.inventory)
+                    if (stack.itemId == objective.target) have += stack.qty;
+                needs.TryGetValue(objective.target, out int already);
+                int still = Math.Max(1, objective.qty) - have - already;
+                if (still > 0) needs[objective.target] = already + still;
+            }
+            if (needs.Count == 0) return seed;
+
+            var context = new GameStateForageContext(state);
+            for (uint i = 0; i < tries; i++)
+            {
+                uint candidate = unchecked(seed + i);
+                ForageResult result = Resolve(design, setup, context, candidate);
+                bool enough = true;
+                foreach (KeyValuePair<string, int> need in needs)
+                {
+                    ItemStack found = result.stacks.Find(s => s.itemId == need.Key);
+                    if (found == null || found.qty < need.Value) { enough = false; break; }
+                }
+                if (enough) return candidate;
+            }
+            return seed;
+        }
+
         /// <summary>Trips left today, or -1 for no limit.</summary>
         public static int TripsLeftToday(DesignData design, GameState state)
         {
-            int limit = design.rules?.forageTripsPerDay ?? 0;
+            int limit = design.rules?.TripsPerDay(state) ?? 0;
             return limit <= 0 ? -1 : Math.Max(0, limit - state.forageTripsToday);
         }
 

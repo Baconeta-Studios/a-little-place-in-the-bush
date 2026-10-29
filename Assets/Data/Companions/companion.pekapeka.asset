@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Pekapeka
   description: Sees in the dark and eats insects. Finds more bugs, and spots night visitors.
   portrait: {fileID: 0}
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   modifiers:
   - type: 0
     tag: insect
@@ -27,4 +27,5 @@ MonoBehaviour:
     rarity: 0
     value: 2
   teachesPerk: {fileID: 11400000, guid: 7484b90502491544d91d6c6f4b00cb63, type: 2}
-  tripsToTeach: 3
+  tripsToTeach: 5
+  tripCost: 0

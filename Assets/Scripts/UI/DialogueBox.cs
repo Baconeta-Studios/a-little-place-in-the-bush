@@ -85,7 +85,8 @@ public class DialogueBox : Popup
 
             case TopicKind.InProgress:
                 Say(Line(topic.line, "How's it going?"), Objectives(quest));
-                Replies(("Bye", Close));
+                if (HasShop) Replies(("Recipes", OpenShop), ("Bye", Close));
+                else Replies(("Bye", Close));
                 break;
 
             case TopicKind.HandIn:
@@ -95,10 +96,19 @@ public class DialogueBox : Popup
                 break;
 
             default:
-                Say(Line(topic.line, $"{NpcName} gives you a friendly nod."), null);
-                Replies(("Bye", Close));
+                Say(Line(topic.line, HasShop ? "Care to look at my recipes?" : $"{NpcName} gives you a friendly nod."), null);
+                if (HasShop) Replies(("Recipes", OpenShop), ("Bye", Close));
+                else Replies(("Bye", Close));
                 break;
         }
+    }
+
+    private bool HasShop => Session.Design.GetNpc(_npc.id)?.shop.Count > 0;
+
+    private void OpenShop()
+    {
+        Close();
+        RecipeShopPopup.Show(_npc);
     }
 
     private void Accept(string questId)

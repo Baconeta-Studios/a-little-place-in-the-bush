@@ -23,5 +23,5 @@ MonoBehaviour:
     qty: 1
   coins: 10
   unlockedByDefault: 0
-  price: 20
+  price: 120
   scraps: []

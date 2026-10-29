@@ -19,6 +19,7 @@ public class GameDatabase : ScriptableObject
     public List<NpcDefinition> npcs = new();
     public List<QuestDefinition> quests = new();
     public List<PlaceableDefinition> placeables = new();
+    public List<UpgradeDefinition> upgrades = new();
 
     [Header("Day loop tuning (not part of the design data file)")]
     [Tooltip("Dishes the cafe sells when you close for the day, shared across the menu.")]
@@ -27,6 +28,10 @@ public class GameDatabase : ScriptableObject
     [Min(1)] public int menuSlots = 1;
     [Tooltip("Forage trips per day. 0 means no limit.")]
     [Min(0)] public int forageTripsPerDay = 3;
+    [Tooltip("Perks that can come along on one trip, at the start. Upgrades can add more.")]
+    [Min(0)] public int perkSlots = 1;
+    [Tooltip("Luck protection: while this quest is under way, a forage trip always finds what its item objectives still need.")]
+    public QuestDefinition luckProtectedQuest;
 
     private Dictionary<string, GameDefinition> _byId;
 
@@ -43,7 +48,9 @@ public class GameDatabase : ScriptableObject
         foreach (NpcDefinition x in npcs) if (x) design.npcs.Add(x.ToData());
         foreach (QuestDefinition x in quests) if (x) design.quests.Add(x.ToData());
         foreach (PlaceableDefinition x in placeables) if (x) design.placeables.Add(x.ToData());
-        design.rules = new DayRules { salesPerDay = salesPerDay, menuSlots = menuSlots, forageTripsPerDay = forageTripsPerDay };
+        design.rules = new DayRules { salesPerDay = salesPerDay, menuSlots = menuSlots, forageTripsPerDay = forageTripsPerDay, perkSlots = perkSlots,
+            luckProtectedQuest = luckProtectedQuest ? luckProtectedQuest.id : "" };
+        foreach (UpgradeDefinition x in upgrades) if (x) design.rules.upgrades.Add(x.ToData());
         design.RebuildIndex();
         return design;
     }
@@ -69,6 +76,7 @@ public class GameDatabase : ScriptableObject
         foreach (var x in npcs) yield return x;
         foreach (var x in quests) yield return x;
         foreach (var x in placeables) yield return x;
+        foreach (var x in upgrades) yield return x;
     }
 
     private void BuildLookup()

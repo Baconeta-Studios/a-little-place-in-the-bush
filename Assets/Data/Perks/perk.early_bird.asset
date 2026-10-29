@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Early bird
   description: Up before the worms are. More worms, and more of them.
   icon: {fileID: 0}
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   modifiers:
   - type: 0
     tag: worm

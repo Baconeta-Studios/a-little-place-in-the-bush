@@ -31,6 +31,26 @@ namespace Bush.Core
         Night
     }
 
+    /// <summary>When a character is at the cafe.</summary>
+    public enum VisitType
+    {
+        /// <summary>Always there.</summary>
+        Always,
+        /// <summary>There while they give the current story quest; they move on when the story moves on.</summary>
+        Story,
+        /// <summary>Drops by on some days (visitChance), more often in a cosier cafe.</summary>
+        Random
+    }
+
+    /// <summary>What a cafe upgrade improves.</summary>
+    public enum UpgradeEffect
+    {
+        MenuSlot,
+        DailySale,
+        ForageTrip,
+        PerkSlot
+    }
+
     /// <summary>See docs/FORAGING.md for what each modifier does.</summary>
     public enum ModifierType
     {

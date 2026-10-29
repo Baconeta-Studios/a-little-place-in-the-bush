@@ -33,6 +33,9 @@ MonoBehaviour:
   - type: 3
     target: {fileID: 11400000, guid: 4a3116d55d123c84ebb2c53c7813a3a5, type: 2}
     qty: 1
+  - type: 4
+    target: {fileID: 11400000, guid: 9115dc7932850fd479a362b8aa76fad9, type: 2}
+    qty: 1
   offerLine: '*rubs hind legs* My trunk is full of holes. Four bark and two silk would fix it. I''ll give you a scrap I found inside.'
   activeLine: Four bark, two silk. Kea is good at finding bark.
   readyLine: Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.

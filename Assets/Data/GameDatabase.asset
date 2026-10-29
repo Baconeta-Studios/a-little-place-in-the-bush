@@ -80,6 +80,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 60bea418e4879934eac3fbf86a585243, type: 2}
   - {fileID: 11400000, guid: 60b58b42b8e016b44851d94e8860d2c9, type: 2}
   - {fileID: 11400000, guid: 7484b90502491544d91d6c6f4b00cb63, type: 2}
+  - {fileID: 11400000, guid: 75efc3bf40af69f4ea80f344c21e362a, type: 2}
+  - {fileID: 11400000, guid: 23cfe9a29ecffb946b4f0bcd2881a0f0, type: 2}
   focuses:
   - {fileID: 11400000, guid: 42872b7af8b89354081eed48877847af, type: 2}
   - {fileID: 11400000, guid: 9df036d906d09f4488a2162ce325efd9, type: 2}
@@ -93,13 +95,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
   - {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
   - {fileID: 11400000, guid: b558caa69688ba5439b48ee795767966, type: 2}
+  - {fileID: 11400000, guid: 4e97348bcbbd19e41935c1d8c2edac72, type: 2}
+  - {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
+  - {fileID: 11400000, guid: 9e437eedccaaa7544befad1ac425d94d, type: 2}
   quests:
   - {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}
+  - {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}
   - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  - {fileID: 11400000, guid: fdfffad10a858fa48a6acde403b4a441, type: 2}
+  - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
   - {fileID: 11400000, guid: 68fa2deb035c85346afb899ff0d1d904, type: 2}
   - {fileID: 11400000, guid: 883796afaccf8cc47be41ab8b17209fb, type: 2}
   - {fileID: 11400000, guid: 4f817d13caacfa34384265157e7d2d3b, type: 2}
   - {fileID: 11400000, guid: 487995c2d0832d94d8dea9c7432ca529, type: 2}
+  - {fileID: 11400000, guid: b385a3dec2267134a85a80cfbbd5ebb4, type: 2}
+  - {fileID: 11400000, guid: f4c62688f3178dc49a9f377b0470380b, type: 2}
+  - {fileID: 11400000, guid: f4dedde8b4da8e6458ba0821d36c9014, type: 2}
   placeables:
   - {fileID: 11400000, guid: 3798fb6a33eed9c45a1b3d1d26ca2c13, type: 2}
   - {fileID: 11400000, guid: df58b5943dbe9984da5027e05ebf7458, type: 2}
@@ -107,6 +118,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0b4d4f252873a4f4db75996db4e17819, type: 2}
   - {fileID: 11400000, guid: 1fe74d0315ea2f442b0e0e20e3b784cb, type: 2}
   - {fileID: 11400000, guid: 3df59951eda77c642a5e1d788dbaf31d, type: 2}
-  salesPerDay: 3
-  menuSlots: 3
-  forageTripsPerDay: 3
+  upgrades:
+  - {fileID: 11400000, guid: 0dc42b32bd84fef4eac1edc24dc2b6d9, type: 2}
+  - {fileID: 11400000, guid: bbbe6bf176503aa42b984c45b0352d60, type: 2}
+  - {fileID: 11400000, guid: 5892fd496fae56b4f9e02429d5fbb8df, type: 2}
+  - {fileID: 11400000, guid: b35c0f42c8f3acd4f84a13d2539a91b3, type: 2}
+  - {fileID: 11400000, guid: 3c61314f58cc1ce4e9392a8d75c8a904, type: 2}
+  - {fileID: 11400000, guid: 3da75e34bd858b249ae353c5c4d58045, type: 2}
+  - {fileID: 11400000, guid: ad970f13d43eb4743a2fb6501c34c3cb, type: 2}
+  salesPerDay: 2
+  menuSlots: 1
+  forageTripsPerDay: 2
+  perkSlots: 1
+  luckProtectedQuest: {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}

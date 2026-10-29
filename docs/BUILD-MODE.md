@@ -40,7 +40,7 @@ The ghost goes red, with a reason, if it would:
 
 ### Unlimited items (prototype)
 
-Build mode starts in unlimited mode: every placeable shows "free" and placing doesn't use anything up. Turn it off with the cheat menu's *Build: unlimited items* toggle to try the real rules: placing takes one from the bag, putting away gives it back. Things placed for free don't turn into real items when put away, but the starting furniture does (it's yours), so nothing that came with the cafe is ever lost. *Build: give 3 of every placeable* stocks the bag for that.
+Build mode uses the real rules: placing takes one from the bag, putting away gives it back. The tray only shows what's in your bag (and only the tabs that have something), so things you haven't found stay a surprise and the tray stays short as the list grows. The cafe starts empty, and Ruru's *Somewhere to sit* quest gives the first furniture. For testing, the cheat menu's *Build: unlimited items* toggle makes every placeable free to place. Things placed for free don't turn into real items when put away, but the starting furniture does (it's yours), so nothing that came with the cafe is ever lost. *Build: give 3 of every placeable* stocks the bag for that.
 
 ### Cheats (` or F1, or triple-tap the top-left corner on a phone)
 

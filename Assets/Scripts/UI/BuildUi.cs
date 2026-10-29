@@ -176,9 +176,11 @@ public class BuildUi : MonoBehaviour
     {
         GameSession session = GameSession.Current;
         if (session == null) return;
+        // Only tabs with something you can place in them.
         var categories = new List<string> { AllTab };
         foreach (PlaceableDefinition placeable in session.Database.placeables)
-            if (placeable && !string.IsNullOrEmpty(placeable.category) && !categories.Contains(placeable.category)) categories.Add(placeable.category);
+            if (placeable && IsShown(session, placeable) && !string.IsNullOrEmpty(placeable.category) && !categories.Contains(placeable.category))
+                categories.Add(placeable.category);
         if (!categories.Contains(_tab)) _tab = AllTab;
 
         for (int i = _tabs.childCount - 1; i >= 0; i--) Destroy(_tabs.GetChild(i).gameObject);
@@ -199,6 +201,7 @@ public class BuildUi : MonoBehaviour
         foreach (PlaceableDefinition placeable in session.Database.placeables.Where(p => p))
         {
             if (_tab != AllTab && placeable.category != _tab) continue;
+            if (!IsShown(session, placeable)) continue;
             int available = session.Build.CountAvailable(placeable.id);
             bool unlimited = session.Build.UnlimitedItems;
             Sprite icon = ItemGridView.IconFor(placeable.item, placeable, out Color tint);
@@ -214,8 +217,18 @@ public class BuildUi : MonoBehaviour
                 onClick = () => _mode.StartPlacing(chosen)
             });
         }
+        if (cards.Count == 0)
+            cards.Add(new ItemCard { key = "none", title = "Nothing to place yet", badge = "", dimmed = true, iconTint = GameUi.InkSoft });
         _tray.SetItems(cards);
     }
+
+    /// <summary>
+    /// The tray only shows what's in your bag, so unknown and rare things stay a surprise and the tray
+    /// stays short as the list of placeables grows. (Placed things come back when put away.)
+    /// Everything shows in unlimited mode, for testing.
+    /// </summary>
+    private static bool IsShown(GameSession session, PlaceableDefinition placeable) =>
+        session.Build.UnlimitedItems || session.Build.CountAvailable(placeable.id) > 0;
 
     // ----- Layout -----
 

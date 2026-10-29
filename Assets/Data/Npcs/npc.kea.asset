@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3c7008a6e664dc3858e44fb1c9b1db5, type: 3}
+  m_Name: npc.kea
+  m_EditorClassIdentifier: Assembly-CSharp::NpcDefinition
+  id: npc.kea
+  displayName: Kea
+  description: Clever, nosy and always up for a dare. Knows every bit of bark in the bush.
+  portrait: {fileID: 0}
+  species: Kea (mountain parrot)
+  visits: 2
+  visitChance: 0.2
+  firstDay: 4
+  afterQuest: {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  shop: []

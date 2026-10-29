@@ -7,8 +7,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Foraging, kept simple for the first loop: pick a focus, press Go, see what you found, collect it
-/// into the bag. It's always daytime for now, and there are a few trips a day (see <see cref="DayRules"/>). Companions and perks aren't offered yet; the rules already support
+/// Foraging: pick a focus, a companion (each can go once a day, for a few coins) and perks (as many as
+/// the perk slots allow), press Go, see what you found, collect it into the bag. It's always daytime for now, and there are a few trips a day (see <see cref="DayRules"/>). Companions and perks aren't offered yet; the rules already support
 /// them (see docs/FORAGING.md). The setup shows what you might find, without the odds, and hides rare
 /// things so they stay a surprise. Opened from the HUD (<see cref="GameHud"/>), or call
 /// <see cref="Show"/> from anything else, such as a garden gate. Built in code.
@@ -25,6 +25,8 @@ public class ForagePopup : Popup
     private static ForagePopup _instance;
 
     private string _focusId = "";
+    private string _companionId = "";
+    private readonly List<string> _perkIds = new();
     private Coroutine _trip;
 
     private RectTransform _setup;
@@ -32,6 +34,10 @@ public class ForagePopup : Popup
     private RectTransform _results;
     private TextMeshProUGUI _tableName;
     private RectTransform _focusRow;
+    private RectTransform _companionRow;
+    private RectTransform _perkRow;
+    private TextMeshProUGUI _perkLabel;
+    private TextMeshProUGUI _companionLabel;
     private TextMeshProUGUI _tripsLeft;
     private Button _go;
     private ItemGridView _preview;
@@ -95,8 +101,9 @@ public class ForagePopup : Popup
     {
         tableId = TableId(session),
         focusId = _focusId,
+        companionId = _companionId,
+        perkIds = new List<string>(_perkIds),
         time = TimeOfDay.Day // no night yet
-        // No companion or perks yet.
     };
 
     // ----- Setup -----
@@ -123,11 +130,60 @@ public class ForagePopup : Popup
             AddChoice(_focusRow, focus.name, _focusId == id, () => { _focusId = id; RefreshSetup(); });
         }
 
+        // Who comes along: companions you've befriended, each once a day for a few coins.
+        Clear(_companionRow);
+        if (session.Design.GetCompanion(_companionId) == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId)) _companionId = "";
+        AddChoice(_companionRow, "Just me", _companionId == "", () => { _companionId = ""; RefreshSetup(); });
+        foreach (CompanionData companion in session.Design.companions)
+        {
+            if (!Unlocks.IsCompanionUnlocked(session.Design, session.State, companion.id)) continue;
+            string id = companion.id;
+            bool tired = ForagingService.IsTired(session.State, id);
+            string label = tired ? $"{companion.name} (tired)" : companion.tripCost > 0 ? $"{companion.name}, {companion.tripCost}c" : companion.name;
+            Button choice = AddChoice(_companionRow, label, _companionId == id, () => { _companionId = id; RefreshSetup(); });
+            choice.interactable = !tired;
+        }
+
+        // Perks: learned from companions; as many as the slots allow, and they stack.
+        Clear(_perkRow);
+        int slots = session.Design.rules.PerkSlots(session.State);
+        _perkIds.RemoveAll(id => !Unlocks.IsPerkUnlocked(session.Design, session.State, id));
+        while (_perkIds.Count > slots) _perkIds.RemoveAt(_perkIds.Count - 1);
+        bool anyPerks = false;
+        foreach (PerkData perk in session.Design.perks)
+        {
+            if (!Unlocks.IsPerkUnlocked(session.Design, session.State, perk.id)) continue;
+            anyPerks = true;
+            string id = perk.id;
+            bool on = _perkIds.Contains(id);
+            AddChoice(_perkRow, perk.name, on, () =>
+            {
+                if (_perkIds.Contains(id)) _perkIds.Remove(id);
+                else if (_perkIds.Count < slots) _perkIds.Add(id);
+                else if (slots == 1) { _perkIds.Clear(); _perkIds.Add(id); } // one slot: swap
+                RefreshSetup();
+            });
+        }
+        string soft = ColorUtility.ToHtmlStringRGB(GameUi.InkSoft);
+        var chosenPerks = new List<ForageModifier>();
+        foreach (string id in _perkIds) chosenPerks.AddRange(session.Design.GetPerk(id)?.modifiers ?? new List<ForageModifier>());
+        _perkLabel.text = !anyPerks ? "Perks: none yet. Companions teach them after many trips together."
+            : _perkIds.Count == 0 ? $"Perks (0/{slots})  <color=#{soft}>Tap one to take it along.</color>"
+            : $"Perks ({_perkIds.Count}/{slots})  <color=#{soft}>{ModifierText.Describe(chosenPerks)}</color>";
+
+        CompanionData chosen = session.Design.GetCompanion(_companionId);
+        _companionLabel.text = chosen == null ? $"Take along  <color=#{soft}>Going alone is free.</color>"
+            : $"Take along  <color=#{soft}>{chosen.name}: {ModifierText.Describe(chosen.modifiers)}. " +
+              $"{(chosen.tripCost > 0 ? $"{chosen.tripCost} coins, " : "")}once a day.</color>";
+
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
-        _tripsLeft.text = tripsLeft < 0 ? "" : tripsLeft == 0
-            ? $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Berry)}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
-            : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
-        _go.interactable = tripsLeft != 0;
+        bool canGo = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out string whyNot);
+        string berry = ColorUtility.ToHtmlStringRGB(GameUi.Berry);
+        _tripsLeft.text = tripsLeft == 0
+            ? $"<color=#{berry}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
+            : !canGo ? $"<color=#{berry}>{whyNot}</color>"
+            : tripsLeft < 0 ? "" : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
+        _go.interactable = canGo;
 
         // What you might find: the likeliest first, rare things left out so they stay a surprise.
         ExpeditionSetup setup = CurrentSetup(session);
@@ -169,11 +225,13 @@ public class ForagePopup : Popup
         }
 
         var seed = (uint)Random.Range(int.MinValue, int.MaxValue);
-        PendingExpedition trip = ForagingService.Begin(session.Design, session.State, setup, seed);
+        seed = ForagingService.LuckySeed(session.Design, session.State, setup, seed); // the tutorial's leaves
+        PendingExpedition trip = ForagingService.Begin(session.Design, session.State, setup, seed, false, session.Economy);
         if (trip == null) return;
         session.SaveNow(); // the result is decided now; keep it if the page closes mid-trip
 
-        Debug.Log($"[Forage] Trip {trip.id} (day {session.State.day}): table {setup.tableId}, focus '{setup.focusId}', {setup.time}, seed {seed}. " +
+        Debug.Log($"[Forage] Trip {trip.id} (day {session.State.day}): table {setup.tableId}, focus '{setup.focusId}', " +
+                  $"companion '{setup.companionId}', perks [{string.Join(", ", setup.perkIds)}], {setup.time}, seed {seed}. " +
                   "The web sandbox gives the same result with the same seed.");
         _trip = StartCoroutine(Trip());
     }
@@ -226,6 +284,16 @@ public class ForagePopup : Popup
             if (recipe != null && !Unlocks.IsRecipeUnlocked(session.Design, session.State, recipe.id))
                 notes.Add($"<b>{item.name}</b> will teach you a recipe: {recipe.name}.");
         }
+        // A companion about to teach their perk (Claim does it).
+        CompanionData companion = session.Design.GetCompanion(session.State.pendingExpedition.setup.companionId);
+        PerkData perk = companion != null ? session.Design.GetPerk(companion.teachesPerk) : null;
+        if (perk != null && !Unlocks.IsPerkUnlocked(session.Design, session.State, perk.id))
+        {
+            int trips = session.State.GetOrAddCompanion(companion.id).trips + 1;
+            notes.Add(trips >= companion.tripsToTeach
+                ? $"<b>{companion.name} has taught you a perk: {perk.name}!</b> You can use it without them now."
+                : $"Trips with {companion.name}: {trips} of {companion.tripsToTeach} before they teach you {perk.name}.");
+        }
         if (ForagingService.TripsLeftToday(session.Design, session.State) == 0)
             notes.Add("The sun's going down. Head back to the cafe to close up for the day.");
         if (Debug.isDebugBuild) notes.Add($"<size=70%><color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>seed {result.seed}</color></size>");
@@ -262,9 +330,9 @@ public class ForagePopup : Popup
         return new ItemCard { key = item.id, title = item.name, badge = badge, icon = icon, iconTint = tint };
     }
 
-    private static void AddChoice(RectTransform row, string label, bool selected, UnityEngine.Events.UnityAction onClick)
+    private static Button AddChoice(RectTransform row, string label, bool selected, UnityEngine.Events.UnityAction onClick)
     {
-        GameUi.AddButton(row, label, onClick, new Vector2(210f, 76f),
+        return GameUi.AddButton(row, label, onClick, new Vector2(210f, 76f),
             selected ? GameUi.Moss : GameUi.Cream, selected ? GameUi.Cream : GameUi.Ink, 28f);
     }
 
@@ -296,14 +364,18 @@ public class ForagePopup : Popup
 
         Line(_setup, "Look out for", 30f, GameUi.InkSoft, -190f, 44f);
         _focusRow = Row(_setup, -240f, 80f);
-        Line(_setup, "You might find", 30f, GameUi.InkSoft, -350f, 44f);
+        _companionLabel = Line(_setup, "Take along", 30f, GameUi.InkSoft, -330f, 44f);
+        _companionRow = Row(_setup, -374f, 76f);
+        _perkLabel = Line(_setup, "Perks", 30f, GameUi.InkSoft, -460f, 44f);
+        _perkRow = Row(_setup, -504f, 76f);
+        Line(_setup, "You might find", 30f, GameUi.InkSoft, -590f, 44f);
 
         RectTransform previewArea = GameUi.NewRect("Preview", _setup);
         previewArea.anchorMin = new Vector2(0f, 0f);
         previewArea.anchorMax = new Vector2(1f, 1f);
-        previewArea.offsetMin = new Vector2(24f, 200f);
-        previewArea.offsetMax = new Vector2(-24f, -400f);
-        _preview = ItemGridView.Create(previewArea, true, new Vector2(170f, 190f));
+        previewArea.offsetMin = new Vector2(24f, 190f);
+        previewArea.offsetMax = new Vector2(-24f, -636f);
+        _preview = ItemGridView.Create(previewArea, true, new Vector2(150f, 160f));
 
         _previewNote = GameUi.AddText(_setup, "", 28f, GameUi.InkSoft, TextAlignmentOptions.Left, "PreviewNote");
         Anchor(_previewNote.rectTransform, 40f, 110f, -400f, 190f);

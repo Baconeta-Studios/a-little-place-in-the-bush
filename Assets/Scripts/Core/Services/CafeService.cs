@@ -163,11 +163,51 @@ namespace Bush.Core
                 summary.coins += dish.coins;
             }
 
+            // A lucky day: the cosier the cafe, the likelier a happy guest leaves a tip.
+            if (summary.sold > 0)
+            {
+                var dice = new Mulberry32(Visitors.DailySeed(_state, 1));
+                if (dice.NextDouble() < CafeStyle.LuckyDayChance(_design, _state))
+                {
+                    summary.tip = Math.Max(3, summary.coins / 4);
+                    _economy.AddCurrency(summary.tip);
+                    summary.coins += summary.tip;
+                }
+            }
+
             _state.day++;
             _state.forageTripsToday = 0;
             _state.timeOfDay = 0f;
+            _state.companionsUsedToday.Clear();
+            Visitors.RollToday(_design, _state);
             _events.RaiseDayEnded(summary);
             return summary;
+        }
+
+        // ----- Upgrades -----
+
+        public bool HasUpgrade(string upgradeId) => _state.upgrades.Contains(upgradeId);
+
+        /// <summary>Whether it can be bought now; <paramref name="reason"/> says why not (already owned, needs another first, too dear).</summary>
+        public bool CanBuyUpgrade(string upgradeId, out string reason)
+        {
+            reason = null;
+            UpgradeData upgrade = _design.GetUpgrade(upgradeId);
+            if (upgrade == null) reason = "Unknown upgrade.";
+            else if (HasUpgrade(upgradeId)) reason = "Already done.";
+            else if (!string.IsNullOrEmpty(upgrade.requires) && !HasUpgrade(upgrade.requires))
+                reason = $"Needs {_design.GetUpgrade(upgrade.requires)?.name ?? upgrade.requires} first.";
+            else if (_economy.Currency < upgrade.price) reason = $"{upgrade.price} coins.";
+            return reason == null;
+        }
+
+        public bool BuyUpgrade(string upgradeId)
+        {
+            if (!CanBuyUpgrade(upgradeId, out _)) return false;
+            if (!_economy.TrySpend(_design.GetUpgrade(upgradeId).price)) return false;
+            _state.upgrades.Add(upgradeId);
+            _events.RaiseUpgradeBought(upgradeId);
+            return true;
         }
 
         /// <summary>How many of the recipe's scraps the player has collected (has now or handed in), for the recipe book.</summary>
@@ -204,6 +244,8 @@ namespace Bush.Core
         public int sold;
         public int coins;
         public List<DishSale> dishes = new();
+        /// <summary>A tip from a lucky day (already in <see cref="coins"/>). 0 for none.</summary>
+        public int tip;
         public int Missed => Math.Max(0, salesPlanned - sold);
     }
 }

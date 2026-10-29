@@ -18,7 +18,7 @@ MonoBehaviour:
   giver: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
   isMain: 0
   prerequisites:
-  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  - {fileID: 11400000, guid: f4c62688f3178dc49a9f377b0470380b, type: 2}
   objectives:
   - type: 1
     target: {fileID: 11400000, guid: 4db78b696f792f1439cc12c1fdd2bc98, type: 2}
@@ -26,6 +26,9 @@ MonoBehaviour:
   rewards:
   - type: 0
     target: {fileID: 11400000, guid: 34c49c2eae8d1a64ab82f5921e7fc0c7, type: 2}
+    qty: 1
+  - type: 4
+    target: {fileID: 11400000, guid: 2be23f12fcba36f48b487c76f5d5cba3, type: 2}
     qty: 1
   offerLine: Paper? Oh, THIS paper. It's not stolen, it's... found. One shiny button and it's yours.
   activeLine: A button. A shiny one.

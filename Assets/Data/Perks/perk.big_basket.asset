@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Big basket
   description: Room for one more find each trip.
   icon: {fileID: 0}
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   modifiers:
   - type: 3
     tag: 

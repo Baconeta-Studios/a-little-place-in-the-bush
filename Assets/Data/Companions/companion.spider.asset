@@ -26,5 +26,6 @@ MonoBehaviour:
     tag: silk
     rarity: 0
     value: 1
-  teachesPerk: {fileID: 0}
-  tripsToTeach: 0
+  teachesPerk: {fileID: 11400000, guid: 23cfe9a29ecffb946b4f0bcd2881a0f0, type: 2}
+  tripsToTeach: 5
+  tripCost: 0

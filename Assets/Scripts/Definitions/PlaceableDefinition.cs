@@ -23,11 +23,16 @@ public class PlaceableDefinition : GameDefinition
     public string category = "Furniture";
     [Tooltip("How many guests can perch on it. Should match the SeatPoints in the prefab.")]
     [Min(0)] public int seats;
+    [Tooltip("How much it adds to the cafe's cosiness (more visitors, more lucky days).")]
+    [Min(0)] public int cosiness = 1;
+    [Tooltip("Its look, for the cafe sign: garden, rustic, glow, fancy...")]
+    public string style;
 
     public PlaceableData ToData() => new()
     {
         id = id, itemId = Definitions.Id(item), placement = placement, footprintWidth = footprintSize.x,
-        footprintDepth = footprintSize.y, canFlip = canFlip, category = category, seats = seats
+        footprintDepth = footprintSize.y, canFlip = canFlip, category = category, seats = seats,
+        cosiness = cosiness, style = style
     };
 
     /// <summary>The seat points in the prefab, for checking against <see cref="seats"/>.</summary>

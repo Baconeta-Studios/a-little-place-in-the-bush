@@ -17,3 +17,8 @@ MonoBehaviour:
   description: Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu.
   portrait: {fileID: 0}
   species: Snail
+  visits: 2
+  visitChance: 0.25
+  firstDay: 0
+  afterQuest: {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  shop: []

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.companion_kea
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.companion_kea
+  displayName: Kea's dare
+  description: Kea dares you to find five bits of bark. Do it, and Kea will come foraging with you.
+  giver: {fileID: 11400000, guid: 4e97348bcbbd19e41935c1d8c2edac72, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  objectives:
+  - type: 1
+    target: {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
+    qty: 5
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: 7d1adf87ad8dd694994ada244cd9bb2d, type: 2}
+    qty: 1
+  offerLine: Bet you can't find five bits of bark. Go on. I dare you.
+  activeLine: Five bits of bark. Still waiting!
+  readyLine: Ha! Not bad for a gecko.
+  doneLine: Fine, I'll come foraging with you. For a few coins. I'm a professional.

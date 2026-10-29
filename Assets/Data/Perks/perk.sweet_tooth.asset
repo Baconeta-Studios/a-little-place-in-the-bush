@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Sweet tooth
   description: Drawn to fruit and nectar.
   icon: {fileID: 0}
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   modifiers:
   - type: 0
     tag: fruit
