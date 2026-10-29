@@ -903,6 +903,34 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "unique": false,
       "description": "A warm glow for the evenings.",
       "teachesRecipe": ""
+    },
+    {
+      "id": "item.note_weka",
+      "name": "Weka's pinched menu card",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "encounter",
+        "shiny"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "Weka 'found' a shiny old menu card on your trip together. It has the beetlejuice recipe on the back, and Weka wants it back.",
+      "teachesRecipe": "recipe.beetlejuice"
+    },
+    {
+      "id": "item.note_tui",
+      "name": "Tūī's golden song",
+      "category": "KeyItem",
+      "rarity": "Legendary",
+      "tags": [
+        "encounter",
+        "nectar"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "A tūī in the flowering pōhutukawa sang you a song, and somehow the song was a recipe.",
+      "teachesRecipe": "recipe.pohutukawa_biscuits"
     }
   ],
   "recipes": [
@@ -1798,6 +1826,24 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "time": "Any",
           "requiresQuest": "",
           "requiresCompanion": "companion.kunekune"
+        },
+        {
+          "item": "item.note_weka",
+          "weight": 0.8,
+          "min": 1,
+          "max": 1,
+          "time": "Day",
+          "requiresQuest": "",
+          "requiresCompanion": "companion.weka"
+        },
+        {
+          "item": "item.note_tui",
+          "weight": 0.35,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
         }
       ]
     }
