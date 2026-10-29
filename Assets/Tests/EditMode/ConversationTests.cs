@@ -101,7 +101,7 @@ namespace Bush.Core.Tests
         public void QuestText_IsReadable()
         {
             QuestData welcome = _game.design.GetQuest(TestDesign.Welcome);
-            Assert.AreEqual("Cook Salad", QuestText.Objective(_game.design, welcome.objectives[0]));
+            Assert.AreEqual("Serve Salad at the cafe", QuestText.Objective(_game.design, welcome.objectives[0]));
             Assert.AreEqual("20 coins", QuestText.Reward(_game.design, welcome.rewards[0]));
             Assert.AreEqual("New recipe: Secret pie",
                 QuestText.Reward(_game.design, new QuestReward { type = RewardType.UnlockRecipe, target = TestDesign.SecretPie }));

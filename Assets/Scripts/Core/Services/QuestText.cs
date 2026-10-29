@@ -11,8 +11,9 @@ namespace Bush.Core
                 case ObjectiveType.HaveItems: return $"Have {Amount(design, objective.target, qty)}";
                 case ObjectiveType.DeliverItems: return $"Bring {Amount(design, objective.target, qty)}";
                 case ObjectiveType.CookRecipe:
-                    string dish = string.IsNullOrEmpty(objective.target) ? "anything" : design.GetRecipe(objective.target)?.name ?? objective.target;
-                    return qty == 1 ? $"Cook {dish}" : $"Cook {dish} {qty} times";
+                    // Dishes are cooked when the cafe sells them at closing time, so say what the player does.
+                    string dish = string.IsNullOrEmpty(objective.target) ? "any dish" : design.GetRecipe(objective.target)?.name ?? objective.target;
+                    return qty == 1 ? $"Serve {dish} at the cafe" : $"Serve {dish} at the cafe {qty} times";
                 case ObjectiveType.CompleteExpeditions: return qty == 1 ? "Go foraging" : $"Go foraging {qty} times";
                 case ObjectiveType.TalkTo: return $"Talk to {design.GetNpc(objective.target)?.name ?? objective.target}";
                 case ObjectiveType.PlaceObject:

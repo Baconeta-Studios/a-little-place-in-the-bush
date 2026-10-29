@@ -55,7 +55,7 @@ Quests live in [`Design/design-data.json`](../Design/design-data.json) under `qu
 | --- | --- | --- |
 | `HaveItems` | item id | Checked against the bag; nothing is taken. |
 | `DeliverItems` | item id | Taken from the bag when you hand the quest in. |
-| `CookRecipe` | recipe id, or empty for any | Dishes sold when the cafe closes count. |
+| `CookRecipe` | recipe id, or empty for any | Shown as "Serve ... at the cafe": dishes count when the cafe sells them at closing time. |
 | `CompleteExpeditions` | (unused) | Forage trips. |
 | `TalkTo` | npc id | Talking to them while the quest is under way. |
 | `PlaceObject` | placeable item id, or empty for any | Placing furniture in build mode. |
