@@ -9,8 +9,9 @@ using UnityEngine.UI;
 /// <summary>
 /// The cafe's menu board, behind the cafe door (<see cref="CafeSpot"/>). Shows today's menu and the
 /// recipes you know; tap one to read its ingredients and put it on or take it off the menu. Changes
-/// count straight away. "Close for the day" sells the day's dishes (see <see cref="CafeService"/>)
-/// and shows what sold before the next morning. Built in code.
+/// count straight away. The day's forage trips are its clock (see <see cref="DayRules"/>): once they're
+/// all taken it's evening, and "Close for the day" sells a full day's dishes. Closing before then asks
+/// first, because it sells only the share of the day so far and loses the trips left. Built in code.
 /// </summary>
 public class CafePopup : Popup
 {
@@ -26,6 +27,9 @@ public class CafePopup : Popup
     private TextMeshProUGUI _empty;
     private TextMeshProUGUI _details;
     private Button _menuButton;
+    private Button _closeDay;
+    private RectTransform _confirm;
+    private TextMeshProUGUI _confirmText;
     private TextMeshProUGUI _summaryTitle;
     private TextMeshProUGUI _summaryText;
     private Button _nextDay;
@@ -85,6 +89,7 @@ public class CafePopup : Popup
     {
         _board.gameObject.SetActive(true);
         _summary.gameObject.SetActive(false);
+        _confirm.gameObject.SetActive(false);
         Refresh();
     }
 
@@ -95,18 +100,25 @@ public class CafePopup : Popup
         CafeService cafe = session.Cafe;
         DesignData design = session.Design;
 
-        _title.text = $"The cafe, day {session.State.day}";
+        DayRules rules = design.rules;
+        string part = PartOfDay(rules, session.State);
+        _title.text = $"The cafe, day {session.State.day}" + (part != null ? $": {part}" : "");
+        bool evening = rules.IsEvening(session.State);
+        GameUi.SetLabel(_closeDay, evening ? "Close for the day" : "Close early");
 
         // Today's menu, with what would sell if you closed now.
         List<DishSale> plan = cafe.PlanSales(out int unsold);
         int slots = Mathf.Max(1, design.rules.menuSlots);
-        var menu = new StringBuilder($"<b>Today's menu</b>  <color={Hex(GameUi.InkSoft)}>({cafe.Menu.Count}/{slots})  " +
-                                     $"The cafe sells {design.rules.SalesFor(session.State)} dishes a day.</color>\n");
+        int now = rules.SalesFor(session.State), full = rules.FullDaySales(session.State);
+        string sales = evening ? $"The cafe sells {full} dishes today." : $"Sells {now} dishes if you close now, {full} by evening.";
+        var menu = new StringBuilder($"<b>Today's menu</b>  <color={Hex(GameUi.InkSoft)}>({cafe.Menu.Count}/{slots})  {sales}</color>\n");
         if (cafe.Menu.Count == 0) menu.Append($"<color={Hex(GameUi.InkSoft)}>Nothing yet. Pick a recipe below.</color>");
         foreach (DishSale dish in plan)
         {
             RecipeData recipe = design.GetRecipe(dish.recipeId);
-            string sells = dish.sold > 0 ? $"sells {dish.sold}" : $"<color={Hex(GameUi.Berry)}>missing ingredients</color>";
+            string sells = dish.sold > 0 ? $"sells {dish.sold}"
+                : now == 0 ? "nothing yet"
+                : $"<color={Hex(GameUi.Berry)}>missing ingredients</color>";
             menu.Append($"{recipe.name} <color={Hex(GameUi.InkSoft)}>({sells})</color>     ");
         }
         if (cafe.Menu.Count > 0 && unsold > 0)
@@ -178,8 +190,37 @@ public class CafePopup : Popup
 
     // ----- Closing for the day -----
 
+    /// <summary>"morning", "midday", "afternoon" or "evening" for a 3-trip day; null with no day clock.</summary>
+    private static string PartOfDay(DayRules rules, GameState state)
+    {
+        if (rules.forageTripsPerDay <= 0) return null;
+        if (rules.IsEvening(state)) return "evening";
+        if (rules.forageTripsPerDay == 3) return new[] { "morning", "midday", "afternoon" }[rules.PartsPassed(state)];
+        return $"part {rules.PartsPassed(state) + 1} of {rules.forageTripsPerDay}";
+    }
+
+    private void OnCloseDayPressed()
+    {
+        GameSession session = Session;
+        if (session == null) return;
+        DayRules rules = session.Design.rules;
+        if (rules.IsEvening(session.State))
+        {
+            CloseForTheDay();
+            return;
+        }
+
+        int now = rules.SalesFor(session.State), full = rules.FullDaySales(session.State);
+        int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
+        _confirmText.text = $"<b>Close early?</b>\n\nIt's only {PartOfDay(rules, session.State)}. " +
+                            $"The cafe would sell {now} of today's {full} dishes, " +
+                            $"and you'd lose {tripsLeft} forage trip{(tripsLeft == 1 ? "" : "s")}.";
+        _confirm.gameObject.SetActive(true);
+    }
+
     private void CloseForTheDay()
     {
+        _confirm.gameObject.SetActive(false);
         GameSession session = Session;
         if (session == null) return;
         DaySummary summary = session.Cafe.CloseDay();
@@ -197,7 +238,9 @@ public class CafePopup : Popup
             RecipeData recipe = session.Design.GetRecipe(dish.recipeId);
             text.Append($"{recipe?.name ?? dish.recipeId} x{dish.sold}   <color={Hex(GameUi.Moss)}>+{dish.coins} coins</color>\n");
         }
-        if (summary.sold == 0)
+        if (summary.closedEarly)
+            text.Append($"You closed early, so only {summary.salesPlanned} of {summary.fullDaySales} guests came.\n");
+        if (summary.sold == 0 && summary.salesPlanned > 0)
             text.Append(session.State.menu.Count == 0
                 ? "The menu was empty, so nothing sold today.\n"
                 : "There weren't enough ingredients to make anything today.\n");
@@ -264,8 +307,24 @@ public class CafePopup : Popup
         _menuButton = GameUi.AddButton(details, "Add to menu", ToggleSelected, new Vector2(270f, 96f), GameUi.Moss, GameUi.Cream, 30f);
         GameUi.Place((RectTransform)_menuButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-16f, 0f), new Vector2(270f, 96f));
 
-        Button closeDay = GameUi.AddButton(_board, "Close for the day", CloseForTheDay, new Vector2(360f, 126f), GameUi.Bark, GameUi.Cream, 32f);
-        GameUi.Place((RectTransform)closeDay.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-24f, 24f), new Vector2(360f, 126f));
+        _closeDay = GameUi.AddButton(_board, "Close for the day", OnCloseDayPressed, new Vector2(360f, 126f), GameUi.Bark, GameUi.Cream, 32f);
+        GameUi.Place((RectTransform)_closeDay.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-24f, 24f), new Vector2(360f, 126f));
+
+        // Close early? A box over the board.
+        _confirm = GameUi.NewRect("ConfirmEarly", _board);
+        GameUi.Stretch(_confirm);
+        GameUi.AddPanel(_confirm, new Color(0.08f, 0.07f, 0.05f, 0.5f), false);
+        RectTransform box = GameUi.NewRect("Box", _confirm);
+        GameUi.Place(box, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(900f, 460f));
+        GameUi.AddPanel(box, GameUi.Cream);
+        _confirmText = GameUi.AddText(box, "", 34f, GameUi.Ink, TextAlignmentOptions.Top, "Text");
+        _confirmText.rectTransform.offsetMin = new Vector2(40f, 150f);
+        _confirmText.rectTransform.offsetMax = new Vector2(-40f, -36f);
+        Button stay = GameUi.AddButton(box, "Stay open", () => _confirm.gameObject.SetActive(false), new Vector2(300f, 100f), GameUi.Moss, GameUi.Cream);
+        GameUi.Place((RectTransform)stay.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(-16f, 32f), new Vector2(300f, 100f));
+        Button closeAnyway = GameUi.AddButton(box, "Close anyway", CloseForTheDay, new Vector2(300f, 100f), GameUi.Bark, GameUi.Cream);
+        GameUi.Place((RectTransform)closeAnyway.transform, new Vector2(0.5f, 0f), new Vector2(0f, 0f), new Vector2(16f, 32f), new Vector2(300f, 100f));
+        _confirm.gameObject.SetActive(false);
 
         // Summary: what sold, then the next morning.
         _summaryTitle = Title(_summary);

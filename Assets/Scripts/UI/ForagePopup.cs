@@ -125,7 +125,7 @@ public class ForagePopup : Popup
 
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
         _tripsLeft.text = tripsLeft < 0 ? "" : tripsLeft == 0
-            ? $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Berry)}>That's enough foraging for today. Close the cafe for the day to go again tomorrow.</color>"
+            ? $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Berry)}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
             : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
         _go.interactable = tripsLeft != 0;
 
@@ -226,6 +226,8 @@ public class ForagePopup : Popup
             if (recipe != null && !Unlocks.IsRecipeUnlocked(session.Design, session.State, recipe.id))
                 notes.Add($"<b>{item.name}</b> will teach you a recipe: {recipe.name}.");
         }
+        if (ForagingService.TripsLeftToday(session.Design, session.State) == 0)
+            notes.Add("The sun's going down. Head back to the cafe to close up for the day.");
         if (Debug.isDebugBuild) notes.Add($"<size=70%><color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>seed {result.seed}</color></size>");
         _resultsNote.text = string.Join("\n", notes);
     }
