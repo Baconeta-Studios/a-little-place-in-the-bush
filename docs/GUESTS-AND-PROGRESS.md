@@ -15,7 +15,11 @@ Every character has a **Visits** setting (`visits` in the data):
 - Today's random visitors are rolled **once each morning**, so reloading doesn't change who's in.
 - A **cosier cafe** brings visitors more often (up to twice as often), and someone with a **quest of yours under way** is more likely to come (+25%), so you can hand it in. Nobody's chance goes above 90%.
 - Whoever gives the current story quest is always there.
-- **In the scene:** place every character where they'd sit, with the **Npc** component. The ones who aren't visiting today are hidden (their art and click areas switch off).
+- **In the scene:** place every character at their own spot, with the **Npc** component. The ones who aren't visiting today are hidden (their art and click areas switch off), in build mode too, and **don't take up any room**: you can build right over their spot.
+- **Seats:** visiting guests sit on the seats (**SeatPoint**s) of furniture you've placed, as long as the gecko can walk to a spot right beside the seat. Guests keep yesterday's seat if it's still there; the rest take the next free one. So more seats make room for more guests, and guests turn up where you've built.
+- **No free seat:** they use their own spot. If something's been built over it, or the gecko can't reach it, they stand at the nearest open spot instead, so they can always be talked to.
+- Seats are worked out again each morning, when someone arrives or leaves, and after building. In build mode, guests who are here stay put and keep their spot clear; if you move the chair someone's on, they find a new seat when you're done.
+- Untick **Takes Seats** on a character who should always stay at their own spot (Ruru behind the counter, say). For seated guests to look right, put each SeatPoint where a sitting guest's feet would be.
 - Side quests come from any character, so random visitors give side quests when they drop by.
 
 Placeholder visitors: Weka (35%), Snail (30%), Wētā (25%), Kea (40%), Pekapeka (30%) and Kererū the recipe trader (30%), all after *A cafe of my own*.

@@ -1,9 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Where a guest will perch on a placeable (a chair has one, a bench two), and which way they face.
-/// Guests aren't in yet: for now these only count seats, which quests and progression can use.
-/// Put them as children of the placeable prefab's root (not inside Visual).
+/// Where a guest perches on a placeable (a chair has one, a bench two), and which way they face.
+/// Visiting guests sit on free seats the gecko can reach (<see cref="GuestSeating"/>). Put them as
+/// children of the placeable prefab's root (not inside Visual), at the height a guest's feet should be.
 /// </summary>
 public class SeatPoint : MonoBehaviour
 {

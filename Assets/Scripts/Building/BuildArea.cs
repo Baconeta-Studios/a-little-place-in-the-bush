@@ -129,6 +129,8 @@ public class BuildArea : MonoBehaviour
         {
             Transform owner = stand.transform.parent;
             if (owner && owner.GetComponentInParent<PlacedObject>()) continue; // placed things don't protect themselves
+            Npc guest = stand.GetComponentInParent<Npc>();
+            if (guest && !guest.IsPresent) continue; // guests who aren't in today don't take up room
             if (!IsInThisArea(stand.transform.position)) continue;
             yield return (stand.transform.position, owner ? $"the {Friendly(owner.name).ToLowerInvariant()}" : "a stand point");
         }
