@@ -452,8 +452,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 463117132}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.98, y: -1.53, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.15197353, w: 0.9883846}
+  m_LocalPosition: {x: -10.9, y: -0.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -461,7 +461,7 @@ Transform:
   - {fileID: 630258606}
   - {fileID: 582256416}
   m_Father: {fileID: 1662966968}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -17.483}
 --- !u!114 &463117134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -476,7 +476,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPrompt
   marker: {fileID: 0}
   markerOffset: {x: 1, y: 1.25}
-  showDistance: 2
+  showDistance: 6
   showPromptText: 1
   highlightColor: {r: 1, g: 0.7777778, b: 0, a: 1}
   highlightAmount: 0.35
@@ -1079,13 +1079,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 624205944}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.35, y: 1, z: 0}
-  m_LocalScale: {x: 4, y: 0.5, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.0757555, w: 0.99712646}
+  m_LocalPosition: {x: -0.6, y: 0.46, z: 0}
+  m_LocalScale: {x: 4, y: 1.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 463117133}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 8.689}
 --- !u!212 &624205946
 SpriteRenderer:
   serializedVersion: 3
@@ -1436,7 +1436,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 21ea9db6a0c47ea4eb7ea423a03759e9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0ff4884474b106849b0fe7e46f2d98a8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1543,7 +1543,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 5.4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1751,9 +1751,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPrompt
   marker: {fileID: 0}
   markerOffset: {x: 0, y: 1.6}
-  showDistance: 3.5
+  showDistance: 6
   showPromptText: 1
-  highlightColor: {r: 1, g: 0.9, b: 0.55, a: 1}
+  highlightColor: {r: 1, g: 0.80516815, b: 0.103773475, a: 1}
   highlightAmount: 0.35
 --- !u!114 &1583681207
 MonoBehaviour:
@@ -2007,7 +2007,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1628903854}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2483,8 +2483,8 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1583681205}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &2094330302
-BoxCollider2D:
+--- !u!60 &2094330302
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2513,22 +2513,40 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 1.75}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.4, y: 3.5}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.33289707, y: 5.148083}
+      - {x: 0.3785384, y: 5.6657624}
+      - {x: 0.70303273, y: 6.2248893}
+      - {x: 0.53243273, y: 6.333085}
+      - {x: -0.7630032, y: 4.4317255}
+      - {x: -1.628231, y: 3.8206544}
+      - {x: -1.787494, y: 3.3580985}
+      - {x: -1.6624655, y: 2.9257264}
+      - {x: -1.0204998, y: 1.914302}
+      - {x: -1.215919, y: 0.89537835}
+      - {x: -1.1393872, y: 0.09268099}
+      - {x: 0.33801597, y: 0.044456363}
+      - {x: 0.93496084, y: 0.087853014}
+      - {x: 1.8069636, y: 0.026932001}
+      - {x: 1.4461297, y: 1.373364}
+      - {x: 1.5202171, y: 2.819643}
+      - {x: 0.849797, y: 4.1134815}
+  m_UseDelaunayMesh: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
