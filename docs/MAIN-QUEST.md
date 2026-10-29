@@ -17,7 +17,8 @@ Each scrap comes from a different part of the game, so the main quest pulls the 
 
 Quest chain:
 
-1. **A cafe of my own** (main, Ruru): cook a leaf salad. Rewards 20 coins and the *Keen eye* perk. Unlocks everything below.
+0. **Hello, Ruru** (main, Ruru, placeholder): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none. Stands in for the real tutorial opening until it's designed.
+1. **A cafe of my own** (main, Ruru): cook a leaf salad (selling one at close-up counts). Rewards 20 coins, the *Keen eye* perk and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
 2. **The lost recipe** (main, Ruru): hand in scraps 1-4. Rewards the *kawakawa scroll* recipe and 50 coins. Completing it wins the game.
 3. Side quests 2-4 above, each available after quest 1, in any order.
 

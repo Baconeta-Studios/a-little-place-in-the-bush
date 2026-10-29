@@ -80,7 +80,7 @@ The sandbox also runs thousands of simulated trips for exact averages.
 
 `ForagePopup` (`Assets/Scripts/UI/ForagePopup.cs`), opened by walking to a **ForageSpot** in the world (a path into the bush at the side of the cafe). A HUD button is still available for testing: tick **Forage Button** on `GameHud`. It's deliberately simple:
 
-- **Setup:** the place (the first forage table), what to look out for (a focus, or Anything) and Day or Night. "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
+- **Setup:** the place (the first forage table) and what to look out for (a focus, or Anything). It's always daytime for now, and there are a few trips a day (see [CAFE.md](CAFE.md)). "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
 - **Go:** works out and saves the result straight away, then shows "Out foraging..." for a moment.
 - **Results:** what was found, rare finds and recipe encounters called out, then **Collect** (or closing) puts it all in the bag.
 - No companions or perks yet. The rules support them; the screen will add a companion slot and a perk slot later.
