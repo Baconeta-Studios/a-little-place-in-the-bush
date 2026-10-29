@@ -37,6 +37,7 @@ public class ForagePopup : Popup
     private RectTransform _companionRow;
     private RectTransform _perkRow;
     private TextMeshProUGUI _perkLabel;
+    private TextMeshProUGUI _companionLabel;
     private TextMeshProUGUI _tripsLeft;
     private Button _go;
     private ItemGridView _preview;
@@ -163,7 +164,17 @@ public class ForagePopup : Popup
                 RefreshSetup();
             });
         }
-        _perkLabel.text = anyPerks ? $"Perks ({_perkIds.Count}/{slots})" : "Perks: none yet. Companions teach them after a few trips together.";
+        string soft = ColorUtility.ToHtmlStringRGB(GameUi.InkSoft);
+        var chosenPerks = new List<ForageModifier>();
+        foreach (string id in _perkIds) chosenPerks.AddRange(session.Design.GetPerk(id)?.modifiers ?? new List<ForageModifier>());
+        _perkLabel.text = !anyPerks ? "Perks: none yet. Companions teach them after many trips together."
+            : _perkIds.Count == 0 ? $"Perks (0/{slots})  <color=#{soft}>Tap one to take it along.</color>"
+            : $"Perks ({_perkIds.Count}/{slots})  <color=#{soft}>{ModifierText.Describe(chosenPerks)}</color>";
+
+        CompanionData chosen = session.Design.GetCompanion(_companionId);
+        _companionLabel.text = chosen == null ? $"Take along  <color=#{soft}>Going alone is free.</color>"
+            : $"Take along  <color=#{soft}>{chosen.name}: {ModifierText.Describe(chosen.modifiers)}. " +
+              $"{(chosen.tripCost > 0 ? $"{chosen.tripCost} coins, " : "")}once a day.</color>";
 
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
         bool canGo = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out string whyNot);
@@ -352,7 +363,7 @@ public class ForagePopup : Popup
 
         Line(_setup, "Look out for", 30f, GameUi.InkSoft, -190f, 44f);
         _focusRow = Row(_setup, -240f, 80f);
-        Line(_setup, "Take along", 30f, GameUi.InkSoft, -330f, 44f);
+        _companionLabel = Line(_setup, "Take along", 30f, GameUi.InkSoft, -330f, 44f);
         _companionRow = Row(_setup, -374f, 76f);
         _perkLabel = Line(_setup, "Perks", 30f, GameUi.InkSoft, -460f, 44f);
         _perkRow = Row(_setup, -504f, 76f);

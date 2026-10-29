@@ -113,6 +113,18 @@ namespace Bush.Core.Tests
             Assert.IsTrue(ForagingService.CanBegin(_game.design, _game.state, setup, out _), "Perks stack with a second slot.");
         }
 
+        [Test]
+        public void ModifierText_IsReadable()
+        {
+            CompanionData kea = _game.design.GetCompanion(TestDesign.Kea);
+            Assert.IsNotEmpty(ModifierText.Describe(kea.modifiers));
+            Assert.AreEqual("more bark (x3)", ModifierText.Describe(new ForageModifier(ModifierType.TagWeight, 3, "bark", Rarity.Common)));
+            Assert.AreEqual("+1 bark each find", ModifierText.Describe(new ForageModifier(ModifierType.TagQuantity, 1, "bark", Rarity.Common)));
+            Assert.AreEqual("40% chance of a bonus shiny find", ModifierText.Describe(new ForageModifier(ModifierType.BonusRoll, 0.4, "shiny", Rarity.Common)));
+            Assert.AreEqual("+1 find per trip", ModifierText.Describe(new ForageModifier(ModifierType.ExtraRolls, 1, "", Rarity.Common)));
+            Assert.AreEqual("nothing special", ModifierText.Describe(new System.Collections.Generic.List<ForageModifier>()));
+        }
+
         // ----- Upgrades -----
 
         [Test]
