@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.companion_pekapeka
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.companion_pekapeka
+  displayName: A bat's breakfast
+  description: Pekapeka is too shy to order. Serve two dishes of anything and they'll warm to you.
+  giver: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  objectives:
+  - type: 2
+    target: {fileID: 0}
+    qty: 2
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: afc7dbd6a5c9d68498cd8de5500df9ff, type: 2}
+    qty: 1
+  offerLine: Um. Hello. I'm... just looking. Do you, um, serve food here?
+  activeLine: I'll just... wait here. Until there's food.
+  readyLine: That was delicious. Thank you.
+  doneLine: If you ever go out looking for bugs... I could come?

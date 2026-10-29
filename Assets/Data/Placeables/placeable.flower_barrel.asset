@@ -22,3 +22,5 @@ MonoBehaviour:
   canFlip: 1
   category: Plants
   seats: 0
+  cosiness: 4
+  style: garden

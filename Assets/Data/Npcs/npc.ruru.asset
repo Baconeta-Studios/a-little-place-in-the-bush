@@ -17,3 +17,8 @@ MonoBehaviour:
   description: The old cafe owner. Wise, sleepy by day, and missing her famous recipe.
   portrait: {fileID: 0}
   species: Ruru (morepork)
+  visits: 1
+  visitChance: 0
+  firstDay: 0
+  afterQuest: {fileID: 0}
+  shop: []

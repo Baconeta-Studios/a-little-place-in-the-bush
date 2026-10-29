@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Weka
   description: Always steals stuff. Good chance of bringing back something shiny.
   portrait: {fileID: 0}
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   modifiers:
   - type: 4
     tag: shiny
@@ -27,4 +27,5 @@ MonoBehaviour:
     rarity: 0
     value: 1.5
   teachesPerk: {fileID: 11400000, guid: 60b58b42b8e016b44851d94e8860d2c9, type: 2}
-  tripsToTeach: 3
+  tripsToTeach: 5
+  tripCost: 10

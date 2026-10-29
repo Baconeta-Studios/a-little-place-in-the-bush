@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Kea
   description: Uses its beak as a hammer. Finds much more bark.
   portrait: {fileID: 0}
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   modifiers:
   - type: 0
     tag: bark
@@ -27,4 +27,5 @@ MonoBehaviour:
     rarity: 0
     value: 1
   teachesPerk: {fileID: 11400000, guid: 60bea418e4879934eac3fbf86a585243, type: 2}
-  tripsToTeach: 3
+  tripsToTeach: 5
+  tripCost: 5

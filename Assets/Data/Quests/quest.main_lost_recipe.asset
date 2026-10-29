@@ -39,6 +39,9 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 50
+  - type: 4
+    target: {fileID: 11400000, guid: ce6cff61240bd0f4caad33b29bfb8ca6, type: 2}
+    qty: 1
   offerLine: My kawakawa scroll recipe... the wind took it, and it tore into four. One blew into the bush. I'd bet that weka has another.
   activeLine: Any luck with the scraps? Try the bush, and ask around the neighbours.
   readyLine: All four! Let me piece them together...

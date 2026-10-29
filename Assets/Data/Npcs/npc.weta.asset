@@ -17,3 +17,8 @@ MonoBehaviour:
   description: Nocturnal, lives in a hollow tree trunk that badly needs fixing.
   portrait: {fileID: 0}
   species: "W\u0113t\u0101"
+  visits: 2
+  visitChance: 0.25
+  firstDay: 0
+  afterQuest: {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  shop: []
