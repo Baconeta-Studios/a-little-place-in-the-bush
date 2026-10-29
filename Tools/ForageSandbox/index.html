@@ -1820,8 +1820,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "species": "Weka",
       "description": "Cheeky, always hanging around the cafe, and steals anything shiny.",
       "visits": "Random",
-      "visitChance": 0.35,
-      "firstDay": 0,
+      "visitChance": 0.25,
+      "firstDay": 6,
       "afterQuest": "quest.main_welcome",
       "shop": []
     },
@@ -1853,8 +1853,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "species": "Kea (mountain parrot)",
       "description": "Clever, nosy and always up for a dare. Knows every bit of bark in the bush.",
       "visits": "Random",
-      "visitChance": 0.4,
-      "firstDay": 0,
+      "visitChance": 0.25,
+      "firstDay": 4,
       "afterQuest": "quest.main_welcome",
       "shop": []
     },
@@ -1864,8 +1864,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "species": "Pekapeka (bat)",
       "description": "Shy, hungry, and very good at finding bugs.",
       "visits": "Random",
-      "visitChance": 0.3,
-      "firstDay": 0,
+      "visitChance": 0.2,
+      "firstDay": 8,
       "afterQuest": "quest.main_welcome",
       "shop": []
     },
@@ -2167,12 +2167,12 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "prerequisites": [
         "quest.main_welcome"
       ],
-      "summary": "Kea dares you to find some bark. Do it, and Kea will come foraging with you.",
+      "summary": "Kea dares you to find five bits of bark. Do it, and Kea will come foraging with you.",
       "objectives": [
         {
           "type": "DeliverItems",
           "target": "item.bark",
-          "qty": 2
+          "qty": 5
         }
       ],
       "rewards": [
@@ -2183,8 +2183,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "dialogue": {
-        "offer": "Bet you can't find two bits of bark. Go on. I dare you.",
-        "active": "Two bits of bark. Still waiting!",
+        "offer": "Bet you can't find five bits of bark. Go on. I dare you.",
+        "active": "Five bits of bark. Still waiting!",
         "ready": "Ha! Not bad for a gecko.",
         "done": "Fine, I'll come foraging with you. For a few coins. I'm a professional."
       }
@@ -2197,12 +2197,12 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "prerequisites": [
         "quest.main_welcome"
       ],
-      "summary": "Weka wants to see you forage before trusting you as a partner.",
+      "summary": "Weka wants to see you forage six times before trusting you as a partner.",
       "objectives": [
         {
           "type": "CompleteExpeditions",
           "target": "",
-          "qty": 2
+          "qty": 6
         }
       ],
       "rewards": [
@@ -2213,8 +2213,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "dialogue": {
-        "offer": "You forage? Prove it. Go out twice, and then we'll talk.",
-        "active": "Twice. Out in the bush. I'll be watching. Probably.",
+        "offer": "You forage? Prove it. Go out six times, and then we'll talk.",
+        "active": "Six trips. Out in the bush. I'll be counting. Probably.",
         "ready": "Not bad. Not bad at all.",
         "done": "Take me along any time. I'll find the shiny things."
       }
@@ -2227,12 +2227,12 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "prerequisites": [
         "quest.main_welcome"
       ],
-      "summary": "Pekapeka is too shy to order. Serve two dishes of anything and they'll warm to you.",
+      "summary": "Pekapeka is too shy to order. Serve six dishes of anything and they'll warm to you.",
       "objectives": [
         {
           "type": "CookRecipe",
           "target": "",
-          "qty": 2
+          "qty": 6
         }
       ],
       "rewards": [
@@ -2244,7 +2244,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "dialogue": {
         "offer": "Um. Hello. I'm... just looking. Do you, um, serve food here?",
-        "active": "I'll just... wait here. Until there's food.",
+        "active": "I'll just... wait here. Until there's lots of food.",
         "ready": "That was delicious. Thank you.",
         "done": "If you ever go out looking for bugs... I could come?"
       }

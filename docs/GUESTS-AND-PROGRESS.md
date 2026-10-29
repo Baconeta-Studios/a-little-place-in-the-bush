@@ -22,7 +22,7 @@ Every character has a **Visits** setting (`visits` in the data):
 - Untick **Takes Seats** on a character who should always stay at their own spot (Ruru behind the counter, say). For seated guests to look right, put each SeatPoint where a sitting guest's feet would be.
 - Side quests come from any character, so random visitors give side quests when they drop by.
 
-Placeholder visitors: Weka (35%), Snail (30%), Wētā (25%), Kea (40%), Pekapeka (30%) and Kererū the recipe trader (30%), all after *A cafe of my own*.
+Placeholder visitors, all after *A cafe of my own*: Snail (30%), Wētā (25%), Kererū the recipe trader (30%), and the companions-to-be, who come later and less often: Kea (from day 4, 25%), Weka (from day 6, 25%) and Pekapeka (from day 8, 20%).
 
 ## The recipe shop
 
@@ -34,13 +34,14 @@ A character can sell recipes: list them in `shop`, and each recipe's `price` is 
 - **Once a day each:** a companion who's been out is tired until tomorrow.
 - **Trips cost coins** (`tripCost`): early companions are cheap, better ones dearer.
 - **After 5 trips together** (`tripsToTeach`), they teach their **perk**: a weaker version of what they do, which you can take foraging without them.
+- **The forage screen says what they do:** pick a companion or perk and the line above it reads, for example, "Kea: more bark (x3), +1 bark each find. 5 coins, once a day."
 - **Perks stack:** take as many as you have **perk slots** (1 to start; the *perk pouch* upgrade adds one).
 
 | Companion | Starter quest | Trip cost | Teaches |
 | --- | --- | --- | --- |
-| Kea | *Kea's dare*: bring 2 bark | 5 | Bark know-how |
-| Weka | *Show me your moves*: go foraging twice | 10 | Shiny sense |
-| Pekapeka | *A bat's breakfast*: serve 2 dishes | 15 | Night sight |
+| Kea | *Kea's dare*: bring 5 bark (Kea visits from day 4, 25%) | 5 | Bark know-how |
+| Weka | *Show me your moves*: go foraging 6 times (Weka visits from day 6, 25%) | 10 | Shiny sense |
+| Pekapeka | *A bat's breakfast*: serve 6 dishes (Pekapeka visits from day 8, 20%) | 15 | Night sight |
 | Kunekune | *A very hungry snail* (Snail's quest) | 30 | Truffle nose |
 | Spider | *Hollow home* (Wētā's quest) | 30 | Silk sense |
 
