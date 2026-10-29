@@ -125,6 +125,31 @@ namespace Bush.Core.Tests
             Assert.AreEqual("nothing special", ModifierText.Describe(new System.Collections.Generic.List<ForageModifier>()));
         }
 
+        [Test]
+        public void LuckProtection_FindsWhatTheQuestNeeds()
+        {
+            _game.design.quests.Add(new QuestData
+            {
+                id = "quest.leaves", title = "Leaves", giver = TestDesign.Ruru,
+                objectives = { new QuestObjective { type = ObjectiveType.HaveItems, target = TestDesign.Leaf, qty = 6 } }
+            });
+            _game.design.RebuildIndex();
+            ExpeditionSetup setup = TestDesign.Setup();
+            Assert.AreEqual(77u, ForagingService.LuckySeed(_game.design, _game.state, setup, 77u), "Off until it's set up.");
+
+            _game.design.rules.luckProtectedQuest = "quest.leaves";
+            Assert.AreEqual(77u, ForagingService.LuckySeed(_game.design, _game.state, setup, 77u), "Only while the quest is under way.");
+
+            _game.state.quests.Add(new QuestProgress { questId = "quest.leaves", status = QuestStatus.Active });
+            _game.economy.Add(TestDesign.Leaf, 1);
+            uint seed = ForagingService.LuckySeed(_game.design, _game.state, setup, 77u);
+            ForageResult result = ForagingService.Resolve(_game.design, setup, new GameStateForageContext(_game.state), seed);
+            Assert.GreaterOrEqual(result.stacks.Find(s => s.itemId == TestDesign.Leaf)?.qty ?? 0, 5, "Finds the 5 still needed.");
+
+            _game.economy.Add(TestDesign.Leaf, 5);
+            Assert.AreEqual(77u, ForagingService.LuckySeed(_game.design, _game.state, setup, 77u), "Nothing needed once you have them.");
+        }
+
         // ----- Upgrades -----
 
         [Test]

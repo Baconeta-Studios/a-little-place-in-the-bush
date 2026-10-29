@@ -68,6 +68,11 @@ namespace Bush.Core
         public int forageTripsPerDay;
         /// <summary>Perks that can be taken on one trip, at the start.</summary>
         public int perkSlots = 1;
+        /// <summary>
+        /// Luck protection: while this quest is under way, a forage trip is guaranteed to find what its
+        /// item objectives still need (the tutorial's "3 leaves"). Empty for none.
+        /// </summary>
+        public string luckProtectedQuest;
         /// <summary>The cafe upgrades on offer, in shop order. They add to the numbers above.</summary>
         public List<UpgradeData> upgrades = new();
 

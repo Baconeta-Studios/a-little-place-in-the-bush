@@ -221,6 +221,47 @@ namespace Bush.Core
             return state.pendingExpedition;
         }
 
+        /// <summary>
+        /// Luck protection (<see cref="DayRules.luckProtectedQuest"/>): while that quest is under way, returns
+        /// the first seed from <paramref name="seed"/> on whose trip the player finds everything its
+        /// Have/Deliver objectives still need. Otherwise, or if no seed nearby does it, returns
+        /// <paramref name="seed"/> unchanged. The trip is still an ordinary seeded trip, so the sandbox
+        /// gives the same result for the seed it logs.
+        /// </summary>
+        public static uint LuckySeed(DesignData design, GameState state, ExpeditionSetup setup, uint seed, int tries = 2000)
+        {
+            QuestData quest = design.GetQuest(design.rules?.luckProtectedQuest);
+            if (quest == null || !state.IsQuestActive(quest.id)) return seed;
+
+            var needs = new Dictionary<string, int>();
+            foreach (QuestObjective objective in quest.objectives)
+            {
+                if (objective.type != ObjectiveType.HaveItems && objective.type != ObjectiveType.DeliverItems) continue;
+                int have = 0;
+                foreach (ItemStack stack in state.inventory)
+                    if (stack.itemId == objective.target) have += stack.qty;
+                needs.TryGetValue(objective.target, out int already);
+                int still = Math.Max(1, objective.qty) - have - already;
+                if (still > 0) needs[objective.target] = already + still;
+            }
+            if (needs.Count == 0) return seed;
+
+            var context = new GameStateForageContext(state);
+            for (uint i = 0; i < tries; i++)
+            {
+                uint candidate = unchecked(seed + i);
+                ForageResult result = Resolve(design, setup, context, candidate);
+                bool enough = true;
+                foreach (KeyValuePair<string, int> need in needs)
+                {
+                    ItemStack found = result.stacks.Find(s => s.itemId == need.Key);
+                    if (found == null || found.qty < need.Value) { enough = false; break; }
+                }
+                if (enough) return candidate;
+            }
+            return seed;
+        }
+
         /// <summary>Trips left today, or -1 for no limit.</summary>
         public static int TripsLeftToday(DesignData design, GameState state)
         {

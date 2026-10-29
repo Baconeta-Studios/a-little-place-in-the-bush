@@ -225,6 +225,7 @@ public class ForagePopup : Popup
         }
 
         var seed = (uint)Random.Range(int.MinValue, int.MaxValue);
+        seed = ForagingService.LuckySeed(session.Design, session.State, setup, seed); // the tutorial's leaves
         PendingExpedition trip = ForagingService.Begin(session.Design, session.State, setup, seed, false, session.Economy);
         if (trip == null) return;
         session.SaveNow(); // the result is decided now; keep it if the page closes mid-trip

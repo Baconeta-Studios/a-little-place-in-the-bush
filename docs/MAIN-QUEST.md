@@ -20,7 +20,7 @@ Quest chain:
 The opening is a short tutorial chain, one system per step (placeholder text until the real opening is written):
 
 0. **Hello, Ruru** (main, Ruru): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none.
-0. **Leaves for the salad** (main, Ruru): have 3 leaves. Teaches foraging: Ruru sends you down the path into the bush. Rewards 5 coins.
+0. **Leaves for the salad** (main, Ruru): have 3 leaves. Teaches foraging: Ruru sends you down the path into the bush. **Luck protection:** while it's under way, a trip always finds the leaves you still need (the quest is set as *Luck Protected Quest* on the GameDatabase; the trip's seed is picked so it does, and the logged seed still reproduces it in the sandbox). Rewards 5 coins.
 1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board and closing for the day (the cafe cooks and sells at closing time). Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
 1. **Somewhere to sit** (main, Ruru): talk to Ruru. She gives you two chairs, a table and a fern from her shed (the cafe starts empty).
 1. **Open for guests** (main, Ruru): place 4 things in build mode. Teaches building, and that guests sit on chairs you've placed and come more often to a cosier cafe. Rewards 20 coins. Visitors only start dropping by after this.
