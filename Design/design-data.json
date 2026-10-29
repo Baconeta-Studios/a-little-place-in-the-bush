@@ -482,7 +482,7 @@
         }
       ],
       "coins": 6,
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "price": 0,
       "scraps": [],
       "description": "Simple, fresh and green."
@@ -501,7 +501,7 @@
         }
       ],
       "coins": 10,
-      "unlockedByDefault": true,
+      "unlockedByDefault": false,
       "price": 0,
       "scraps": [],
       "description": "A hearty bush favourite."
@@ -520,8 +520,8 @@
         }
       ],
       "coins": 14,
-      "unlockedByDefault": true,
-      "price": 0,
+      "unlockedByDefault": false,
+      "price": 15,
       "scraps": [],
       "description": "Sticky, sweet and very pink."
     },
@@ -1357,11 +1357,41 @@
   ],
   "quests": [
     {
+      "id": "quest.main_hello",
+      "title": "Hello, Ruru",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [],
+      "summary": "Placeholder first quest: Ruru welcomes you and teaches you your first recipe. Replace when the tutorial is designed.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.ruru",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.leaf_salad",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Oh! A new face in my old cafe. Come and say hello properly.",
+        "active": "Come here, let me have a look at you.",
+        "ready": "Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all.",
+        "done": "Go on, find some leaves."
+      }
+    },
+    {
       "id": "quest.main_welcome",
       "title": "A cafe of my own",
       "giver": "npc.ruru",
       "isMain": true,
-      "prerequisites": [],
+      "prerequisites": [
+        "quest.main_hello"
+      ],
       "summary": "Ruru wants to see you cook something before she trusts you with the cafe.",
       "objectives": [
         {
@@ -1379,6 +1409,11 @@
         {
           "type": "UnlockPerk",
           "target": "perk.keen_eye",
+          "qty": 1
+        },
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.worm_pie",
           "qty": 1
         }
       ],
