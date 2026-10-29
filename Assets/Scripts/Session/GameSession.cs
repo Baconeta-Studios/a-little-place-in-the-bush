@@ -13,7 +13,8 @@ using UnityEngine.SceneManagement;
 [DefaultExecutionOrder(-200)]
 public class GameSession : MonoBehaviour
 {
-    private const string UnlimitedPrefKey = "bush.build.unlimited";
+    // A new key, so everyone starts with it off now that furniture comes from quests.
+    private const string UnlimitedPrefKey = "bush.build.unlimited.v2";
 
     private SaveService _save;
     private bool _saveRequested;
@@ -93,7 +94,7 @@ public class GameSession : MonoBehaviour
         Quests = new QuestService(Design, State, Economy, Events);
         Build = new BuildService(Design, State, Economy, Events)
         {
-            UnlimitedItems = PlayerPrefs.GetInt(UnlimitedPrefKey, 1) == 1 // on by default while prototyping
+            UnlimitedItems = PlayerPrefs.GetInt(UnlimitedPrefKey, 0) == 1 // off: you place what you own (a cheat turns it on)
         };
 
         Events.InventoryChanged += RequestSave;
