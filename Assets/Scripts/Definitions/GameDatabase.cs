@@ -23,8 +23,8 @@ public class GameDatabase : ScriptableObject
     [Header("Day loop tuning (not part of the design data file)")]
     [Tooltip("Dishes the cafe sells when you close for the day, shared across the menu.")]
     [Min(0)] public int salesPerDay = 3;
-    [Tooltip("How many dishes can be on the menu at once.")]
-    [Min(1)] public int menuSlots = 3;
+    [Tooltip("How many dishes can be on the menu at once, at the start of the game.")]
+    [Min(1)] public int menuSlots = 1;
     [Tooltip("Forage trips per day. 0 means no limit.")]
     [Min(0)] public int forageTripsPerDay = 3;
 

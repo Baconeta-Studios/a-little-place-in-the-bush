@@ -64,6 +64,7 @@ namespace Bush.Core
             menu ??= new List<string>();
             var seen = new HashSet<string>();
             menu.RemoveAll(id => string.IsNullOrEmpty(id) || !seen.Add(id) || (design != null && design.GetRecipe(id) == null));
+            if (design != null && menu.Count > design.rules.MenuSlots(this)) menu.RemoveRange(design.rules.MenuSlots(this), menu.Count - design.rules.MenuSlots(this));
             if (day < 1) day = 1;
             if (forageTripsToday < 0) forageTripsToday = 0;
             foreach (PlacedObjectData p in placed)

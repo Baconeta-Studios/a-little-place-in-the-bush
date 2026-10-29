@@ -76,7 +76,7 @@ namespace Bush.Core
 
         public IReadOnlyList<string> Menu => _state.menu;
         public bool IsOnMenu(string recipeId) => _state.menu.Contains(recipeId);
-        public bool MenuIsFull => _state.menu.Count >= Math.Max(1, _design.rules.menuSlots);
+        public bool MenuIsFull => _state.menu.Count >= _design.rules.MenuSlots(_state);
 
         /// <summary>Puts a known recipe on today's menu, if there's a free slot.</summary>
         public bool AddToMenu(string recipeId)
@@ -105,8 +105,10 @@ namespace Bush.Core
             var counts = new Dictionary<string, int>();
             int Have(string itemId) => counts.TryGetValue(itemId, out int n) ? n : counts[itemId] = _economy.Count(itemId);
 
+            // Only as many dishes as there are slots (a save from before the slots shrank may have more).
+            int slots = _design.rules.MenuSlots(_state);
             foreach (string recipeId in _state.menu)
-                if (_design.GetRecipe(recipeId) != null && IsUnlocked(recipeId)) plan.Add(new DishSale { recipeId = recipeId });
+                if (plan.Count < slots && _design.GetRecipe(recipeId) != null && IsUnlocked(recipeId)) plan.Add(new DishSale { recipeId = recipeId });
 
             int sales = _design.rules.SalesFor(_state);
             int made = 0, next = 0;

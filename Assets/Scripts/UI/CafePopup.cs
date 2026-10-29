@@ -108,7 +108,7 @@ public class CafePopup : Popup
 
         // Today's menu, with what would sell if you closed now.
         List<DishSale> plan = cafe.PlanSales(out int unsold);
-        int slots = Mathf.Max(1, design.rules.menuSlots);
+        int slots = design.rules.MenuSlots(session.State);
         int now = rules.SalesFor(session.State), full = rules.FullDaySales(session.State);
         string sales = evening ? $"The cafe sells {full} dishes today." : $"Sells {now} dishes if you close now, {full} by evening.";
         var menu = new StringBuilder($"<b>Today's menu</b>  <color={Hex(GameUi.InkSoft)}>({cafe.Menu.Count}/{slots})  {sales}</color>\n");

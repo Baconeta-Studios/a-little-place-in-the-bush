@@ -182,6 +182,30 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void OneSlot_OneDishADay()
+        {
+            _game.design.rules.menuSlots = 1;
+            LearnPie();
+            Assert.IsTrue(_game.cafe.AddToMenu(TestDesign.Salad));
+            Assert.IsFalse(_game.cafe.AddToMenu(TestDesign.SecretPie), "Only one slot.");
+            Assert.IsTrue(_game.cafe.MenuIsFull);
+        }
+
+        [Test]
+        public void FewerSlots_TrimsAnOldMenu()
+        {
+            _game.state.menu.AddRange(new[] { TestDesign.Salad, TestDesign.SecretPie });
+            LearnPie();
+            _game.design.rules.menuSlots = 1;
+            _game.economy.Add(TestDesign.Berry, 10);
+            _game.economy.Add(TestDesign.Bug, 10);
+            Evening();
+            Assert.AreEqual(1, _game.cafe.PlanSales(out _).Count, "Only the first slot sells.");
+            _game.state.Normalise(_game.design);
+            CollectionAssert.AreEqual(new[] { TestDesign.Salad }, _game.state.menu);
+        }
+
+        [Test]
         public void Normalise_TidiesTheMenu()
         {
             _game.state.menu.AddRange(new[] { TestDesign.Salad, TestDesign.Salad, "recipe.gone", "" });

@@ -48,13 +48,16 @@ namespace Bush.Core
     {
         /// <summary>Dishes the cafe sells in a full day, shared across the menu.</summary>
         public int salesPerDay = 3;
-        /// <summary>How many dishes can be on the menu at once.</summary>
-        public int menuSlots = 3;
+        /// <summary>How many dishes can be on the menu at once, at the start of the game.</summary>
+        public int menuSlots = 1;
         /// <summary>Forage trips per day, which are also the parts of the day. 0 means no limit, and no day clock.</summary>
         public int forageTripsPerDay;
 
         /// <summary>Dishes in a full day. One place to add progression later (story steps, upgrades, seats).</summary>
         public int FullDaySales(GameState state) => Math.Max(0, salesPerDay);
+
+        /// <summary>Menu slots now. One place to add progression later (story steps, upgrades), like <see cref="FullDaySales"/>.</summary>
+        public int MenuSlots(GameState state) => Math.Max(1, menuSlots);
 
         /// <summary>Parts of the day so far (trips taken), up to <see cref="forageTripsPerDay"/>.</summary>
         public int PartsPassed(GameState state) => forageTripsPerDay <= 0 ? 0 : Math.Min(state.forageTripsToday, forageTripsPerDay);

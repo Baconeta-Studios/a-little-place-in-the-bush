@@ -18,7 +18,7 @@ On the **GameDatabase** asset (`Assets/Data/GameDatabase.asset`), under *Day loo
 | Setting | Default | What it does |
 | --- | --- | --- |
 | Sales Per Day | 3 | Dishes sold in a full day. `DayRules.FullDaySales` is where progression (story, upgrades, seats) can raise it later. |
-| Menu Slots | 3 | How many dishes can be on the menu at once. |
+| Menu Slots | 1 | How many dishes can be on the menu at once, at the start. `DayRules.MenuSlots` is where progression (story steps, upgrades) can add more later. |
 | Forage Trips Per Day | 3 | Also the parts of the day. 0 means no limit and no day clock (closing always sells a full day). |
 
 **Balance check** (from the current design data, day trips with no focus): a trip finds about 8 items, about 24 a day. That's roughly 2 leaf salads' worth of leaves a day, and under 1 a day of most other dishes. So 3 sales a day already needs a mix of dishes or a focused trip, and foraging isn't too generous yet. Watch for stockpiling over several days; spoiling ingredients or more sales per day are the levers if it gets too easy. The forage sandbox shows exact yields.
