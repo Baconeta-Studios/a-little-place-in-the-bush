@@ -18,7 +18,7 @@ MonoBehaviour:
   portrait: {fileID: 0}
   species: Weka
   visits: 2
-  visitChance: 0.35
-  firstDay: 0
+  visitChance: 0.25
+  firstDay: 6
   afterQuest: {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
   shop: []

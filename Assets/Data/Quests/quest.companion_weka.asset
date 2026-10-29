@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.companion_weka
   displayName: Show me your moves
-  description: Weka wants to see you forage before trusting you as a partner.
+  description: Weka wants to see you forage six times before trusting you as a partner.
   giver: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
   isMain: 0
   prerequisites:
@@ -22,12 +22,12 @@ MonoBehaviour:
   objectives:
   - type: 3
     target: {fileID: 0}
-    qty: 2
+    qty: 6
   rewards:
   - type: 3
     target: {fileID: 11400000, guid: 3ca94a1faab314c40a2bb162f40137bc, type: 2}
     qty: 1
-  offerLine: You forage? Prove it. Go out twice, and then we'll talk.
-  activeLine: Twice. Out in the bush. I'll be watching. Probably.
+  offerLine: You forage? Prove it. Go out six times, and then we'll talk.
+  activeLine: Six trips. Out in the bush. I'll be counting. Probably.
   readyLine: Not bad. Not bad at all.
   doneLine: Take me along any time. I'll find the shiny things.

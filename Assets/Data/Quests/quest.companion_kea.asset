@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.companion_kea
   displayName: Kea's dare
-  description: Kea dares you to find some bark. Do it, and Kea will come foraging with you.
+  description: Kea dares you to find five bits of bark. Do it, and Kea will come foraging with you.
   giver: {fileID: 11400000, guid: 4e97348bcbbd19e41935c1d8c2edac72, type: 2}
   isMain: 0
   prerequisites:
@@ -22,12 +22,12 @@ MonoBehaviour:
   objectives:
   - type: 1
     target: {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
-    qty: 2
+    qty: 5
   rewards:
   - type: 3
     target: {fileID: 11400000, guid: 7d1adf87ad8dd694994ada244cd9bb2d, type: 2}
     qty: 1
-  offerLine: Bet you can't find two bits of bark. Go on. I dare you.
-  activeLine: Two bits of bark. Still waiting!
+  offerLine: Bet you can't find five bits of bark. Go on. I dare you.
+  activeLine: Five bits of bark. Still waiting!
   readyLine: Ha! Not bad for a gecko.
   doneLine: Fine, I'll come foraging with you. For a few coins. I'm a professional.
