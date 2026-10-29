@@ -23,6 +23,26 @@ namespace Bush.Core
             CheckIds(errors, "npc", design.npcs, x => x.id);
             CheckIds(errors, "quest", design.quests, x => x.id);
             CheckIds(errors, "placeable", design.placeables, x => x.id);
+            CheckIds(errors, "upgrade", design.rules.upgrades, x => x.id);
+
+            foreach (NpcData npc in design.npcs)
+            {
+                if (npc.visits == VisitType.Random && npc.visitChance <= 0) errors.Add($"NPC {npc.id} visits at random but has a visitChance of {npc.visitChance}, so never comes.");
+                if (!string.IsNullOrEmpty(npc.afterQuest) && design.GetQuest(npc.afterQuest) == null) errors.Add($"NPC {npc.id} waits for unknown quest {npc.afterQuest}.");
+                foreach (string recipeId in npc.shop)
+                {
+                    RecipeData recipe = design.GetRecipe(recipeId);
+                    if (recipe == null) errors.Add($"NPC {npc.id} sells unknown recipe {recipeId}.");
+                    else if (recipe.price <= 0) errors.Add($"NPC {npc.id} sells recipe {recipeId}, but it has no price.");
+                }
+            }
+
+            foreach (UpgradeData upgrade in design.rules.upgrades)
+            {
+                if (upgrade.price <= 0) errors.Add($"Upgrade {upgrade.id} has no price.");
+                if (!string.IsNullOrEmpty(upgrade.requires) && design.GetUpgrade(upgrade.requires) == null)
+                    errors.Add($"Upgrade {upgrade.id} needs unknown upgrade {upgrade.requires}.");
+            }
 
             var allTags = new HashSet<string>();
             foreach (ItemData item in design.items)

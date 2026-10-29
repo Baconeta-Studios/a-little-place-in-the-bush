@@ -141,12 +141,26 @@ namespace Bush.Core
 
         // ----- Running an expedition in the game (changes state) -----
 
-        /// <summary>Whether this setup can be sent: the table and focus exist, and the companion and perks are unlocked.</summary>
+        /// <summary>Coins to take this setup's companion along.</summary>
+        public static int TripCost(DesignData design, ExpeditionSetup setup) => design.GetCompanion(setup.companionId)?.tripCost ?? 0;
+
+        /// <summary>A companion who's been out today is tired until tomorrow.</summary>
+        public static bool IsTired(GameState state, string companionId) => state.companionsUsedToday.Contains(companionId);
+
+        /// <summary>
+        /// Whether this setup can be sent: the table and focus exist, the companion is unlocked, rested and
+        /// affordable, and the perks are unlocked and fit the perk slots.
+        /// </summary>
         public static bool CanBegin(DesignData design, GameState state, ExpeditionSetup setup, out string error)
         {
             error = null;
+            CompanionData companion = design.GetCompanion(setup.companionId);
+            int perkCount = setup.perkIds == null ? 0 : new HashSet<string>(setup.perkIds.FindAll(p => !string.IsNullOrEmpty(p))).Count;
             if (state.hasPendingExpedition) error = "An expedition is already under way.";
             else if (TripsLeftToday(design, state) == 0) error = "That's enough foraging for today.";
+            else if (companion != null && IsTired(state, companion.id)) error = $"{companion.name} is tired. Try again tomorrow.";
+            else if (companion != null && state.currency < companion.tripCost) error = $"Taking {companion.name} costs {companion.tripCost} coins.";
+            else if (perkCount > design.rules.PerkSlots(state)) error = $"Only {design.rules.PerkSlots(state)} perk(s) can come along.";
             else if (design.GetForageTable(setup.tableId) == null) error = $"Unknown forage table '{setup.tableId}'.";
             else if (!string.IsNullOrEmpty(setup.companionId) && !Unlocks.IsCompanionUnlocked(design, state, setup.companionId))
                 error = $"Companion '{setup.companionId}' isn't unlocked.";
@@ -170,7 +184,8 @@ namespace Bush.Core
         /// after. Returns null if the setup isn't allowed (<paramref name="force"/> skips the unlock
         /// checks, for cheats). Pressing Go twice returns the expedition already under way.
         /// </summary>
-        public static PendingExpedition Begin(DesignData design, GameState state, ExpeditionSetup setup, uint seed, bool force = false)
+        public static PendingExpedition Begin(DesignData design, GameState state, ExpeditionSetup setup, uint seed, bool force = false,
+            Economy economy = null)
         {
             if (state.hasPendingExpedition) return state.pendingExpedition;
             if (!force && !CanBegin(design, state, setup, out _)) return null;
@@ -189,6 +204,12 @@ namespace Bush.Core
 
             state.expeditionsStarted++;
             state.forageTripsToday++;
+            if (!string.IsNullOrEmpty(copy.companionId))
+            {
+                if (!state.companionsUsedToday.Contains(copy.companionId)) state.companionsUsedToday.Add(copy.companionId);
+                int cost = TripCost(design, copy);
+                if (cost > 0 && !(economy?.TrySpend(cost) ?? false)) state.currency = Math.Max(0, state.currency - cost);
+            }
             state.pendingExpedition = new PendingExpedition
             {
                 id = state.expeditionsStarted,
@@ -203,7 +224,7 @@ namespace Bush.Core
         /// <summary>Trips left today, or -1 for no limit.</summary>
         public static int TripsLeftToday(DesignData design, GameState state)
         {
-            int limit = design.rules?.forageTripsPerDay ?? 0;
+            int limit = design.rules?.TripsPerDay(state) ?? 0;
             return limit <= 0 ? -1 : Math.Max(0, limit - state.forageTripsToday);
         }
 

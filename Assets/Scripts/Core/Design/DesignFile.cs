@@ -21,21 +21,23 @@ namespace Bush.Core
         public List<Npc> npcs = new();
         public List<Quest> quests = new();
         public List<Placeable> placeables = new();
+        public List<Upgrade> upgrades = new();
 
         [Serializable] public class Item { public string id; public string name; public string category; public string rarity; public List<string> tags = new(); public int sellValue; public bool unique; public string description; public string teachesRecipe; }
         [Serializable] public class Amount { public string item; public int qty; }
         [Serializable] public class Recipe { public string id; public string name; public List<Amount> ingredients = new(); public int coins; public bool unlockedByDefault; public int price; public List<string> scraps = new(); public string description; }
         [Serializable] public class Modifier { public string type; public string tag; public string rarity; public double value; }
-        [Serializable] public class Companion { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); public string teachesPerk; public int tripsToTeach; }
+        [Serializable] public class Companion { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); public string teachesPerk; public int tripsToTeach; public int tripCost; }
         [Serializable] public class Perk { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); }
         [Serializable] public class Focus { public string id; public string name; public List<string> tags = new(); public double multiplier; }
         [Serializable] public class Entry { public string item; public double weight; public int min; public int max; public string time; public string requiresQuest; public string requiresCompanion; }
         [Serializable] public class Table { public string id; public string name; public int rolls; public List<Entry> entries = new(); }
-        [Serializable] public class Npc { public string id; public string name; public string species; public string description; }
+        [Serializable] public class Npc { public string id; public string name; public string species; public string description; public string visits; public double visitChance; public int firstDay; public string afterQuest; public List<string> shop = new(); }
         [Serializable] public class Objective { public string type; public string target; public int qty; }
         [Serializable] public class Reward { public string type; public string target; public int qty; }
         [Serializable] public class Dialogue { public string offer; public string active; public string ready; public string done; }
-        [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public bool canFlip; public string category; public int seats; }
+        [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public bool canFlip; public string category; public int seats; public int cosiness; public string style; }
+        [Serializable] public class Upgrade { public string id; public string name; public string description; public string effect; public int amount; public int price; public string requires; }
         [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
 
         /// <summary>Converts to the model. Unknown enum names are reported in <paramref name="errors"/> and fall back to the first value.</summary>
@@ -68,7 +70,8 @@ namespace Bush.Core
                 design.companions.Add(new CompanionData
                 {
                     id = x.id, name = x.name, description = x.description, unlockedByDefault = x.unlockedByDefault,
-                    modifiers = ToModifiers(x.modifiers, errors, x.id), teachesPerk = x.teachesPerk, tripsToTeach = x.tripsToTeach
+                    modifiers = ToModifiers(x.modifiers, errors, x.id), teachesPerk = x.teachesPerk, tripsToTeach = x.tripsToTeach,
+                    tripCost = x.tripCost
                 });
 
             foreach (Perk x in perks)
@@ -95,7 +98,13 @@ namespace Bush.Core
             }
 
             foreach (Npc x in npcs)
-                design.npcs.Add(new NpcData { id = x.id, name = x.name, species = x.species, description = x.description });
+                design.npcs.Add(new NpcData
+                {
+                    id = x.id, name = x.name, species = x.species, description = x.description,
+                    visits = string.IsNullOrEmpty(x.visits) ? VisitType.Always : Parse(x.visits, VisitType.Always, errors, x.id),
+                    visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "",
+                    shop = new List<string>(x.shop ?? new List<string>())
+                });
 
             foreach (Quest x in quests)
             {
@@ -128,7 +137,17 @@ namespace Bush.Core
                     {
                         id = x.id, itemId = x.item, placement = Parse(x.placement, PlacementType.Floor, errors, x.id),
                         footprintWidth = x.footprintWidth, footprintDepth = x.footprintDepth, canFlip = x.canFlip,
-                        category = x.category, seats = x.seats
+                        category = x.category, seats = x.seats, cosiness = x.cosiness, style = x.style ?? ""
+                    });
+            }
+
+            if (upgrades != null)
+            {
+                foreach (Upgrade x in upgrades)
+                    design.rules.upgrades.Add(new UpgradeData
+                    {
+                        id = x.id, name = x.name, description = x.description, effect = Parse(x.effect, UpgradeEffect.MenuSlot, errors, x.id),
+                        amount = x.amount < 1 ? 1 : x.amount, price = x.price, requires = x.requires ?? ""
                     });
             }
 
@@ -163,7 +182,8 @@ namespace Bush.Core
                 file.companions.Add(new Companion
                 {
                     id = x.id, name = x.name, description = x.description, unlockedByDefault = x.unlockedByDefault,
-                    modifiers = FromModifiers(x.modifiers), teachesPerk = x.teachesPerk, tripsToTeach = x.tripsToTeach
+                    modifiers = FromModifiers(x.modifiers), teachesPerk = x.teachesPerk, tripsToTeach = x.tripsToTeach,
+                    tripCost = x.tripCost
                 });
 
             foreach (PerkData x in design.perks)
@@ -190,7 +210,11 @@ namespace Bush.Core
             }
 
             foreach (NpcData x in design.npcs)
-                file.npcs.Add(new Npc { id = x.id, name = x.name, species = x.species, description = x.description });
+                file.npcs.Add(new Npc
+                {
+                    id = x.id, name = x.name, species = x.species, description = x.description, visits = x.visits.ToString(),
+                    visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "", shop = new List<string>(x.shop)
+                });
 
             foreach (QuestData x in design.quests)
             {
@@ -211,7 +235,15 @@ namespace Bush.Core
                 file.placeables.Add(new Placeable
                 {
                     id = x.id, item = x.itemId, placement = x.placement.ToString(), footprintWidth = x.footprintWidth,
-                    footprintDepth = x.footprintDepth, canFlip = x.canFlip, category = x.category ?? "", seats = x.seats
+                    footprintDepth = x.footprintDepth, canFlip = x.canFlip, category = x.category ?? "", seats = x.seats,
+                    cosiness = x.cosiness, style = x.style ?? ""
+                });
+
+            foreach (UpgradeData x in design.rules.upgrades)
+                file.upgrades.Add(new Upgrade
+                {
+                    id = x.id, name = x.name, description = x.description, effect = x.effect.ToString(), amount = x.amount,
+                    price = x.price, requires = x.requires ?? ""
                 });
 
             return file;

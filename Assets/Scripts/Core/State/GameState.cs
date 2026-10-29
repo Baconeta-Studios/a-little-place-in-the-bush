@@ -42,6 +42,16 @@ namespace Bush.Core
         public List<string> menu = new();
         /// <summary>Forage trips started today; reset when the day closes.</summary>
         public int forageTripsToday;
+        /// <summary>Companions who've been out today (they're tired until tomorrow).</summary>
+        public List<string> companionsUsedToday = new();
+        /// <summary>Cafe upgrades bought.</summary>
+        public List<string> upgrades = new();
+        /// <summary>Seeds the daily dice (visitors, lucky days) so a reload doesn't reroll them. Set once per save.</summary>
+        public uint luckSeed;
+        /// <summary>The day <see cref="visitorsToday"/> was rolled for.</summary>
+        public int visitorsDay;
+        /// <summary>Random visitors at the cafe today.</summary>
+        public List<string> visitorsToday = new();
 
         /// <summary>
         /// A fresh game. Default unlocks aren't copied in: <see cref="Unlocks"/> reads them from the design
@@ -67,6 +77,9 @@ namespace Bush.Core
             if (design != null && menu.Count > design.rules.MenuSlots(this)) menu.RemoveRange(design.rules.MenuSlots(this), menu.Count - design.rules.MenuSlots(this));
             if (day < 1) day = 1;
             if (forageTripsToday < 0) forageTripsToday = 0;
+            companionsUsedToday ??= new List<string>();
+            upgrades ??= new List<string>();
+            visitorsToday ??= new List<string>();
             foreach (PlacedObjectData p in placed)
                 if (p.instanceId >= nextPlacedId) nextPlacedId = p.instanceId + 1;
 
