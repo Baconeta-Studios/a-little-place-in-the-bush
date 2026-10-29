@@ -1386,9 +1386,9 @@
       "species": "Weka",
       "description": "Cheeky, always hanging around the cafe, and steals anything shiny.",
       "visits": "Random",
-      "visitChance": 0.25,
+      "visitChance": 0.15,
       "firstDay": 6,
-      "afterQuest": "quest.main_welcome",
+      "afterQuest": "quest.main_set_out",
       "shop": []
     },
     {
@@ -1397,9 +1397,9 @@
       "species": "Snail",
       "description": "Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu.",
       "visits": "Random",
-      "visitChance": 0.3,
+      "visitChance": 0.15,
       "firstDay": 0,
-      "afterQuest": "quest.main_welcome",
+      "afterQuest": "quest.main_set_out",
       "shop": []
     },
     {
@@ -1408,9 +1408,9 @@
       "species": "Wētā",
       "description": "Nocturnal, lives in a hollow tree trunk that badly needs fixing.",
       "visits": "Random",
-      "visitChance": 0.25,
+      "visitChance": 0.12,
       "firstDay": 0,
-      "afterQuest": "quest.main_welcome",
+      "afterQuest": "quest.main_set_out",
       "shop": []
     },
     {
@@ -1419,9 +1419,9 @@
       "species": "Kea (mountain parrot)",
       "description": "Clever, nosy and always up for a dare. Knows every bit of bark in the bush.",
       "visits": "Random",
-      "visitChance": 0.25,
+      "visitChance": 0.12,
       "firstDay": 4,
-      "afterQuest": "quest.main_welcome",
+      "afterQuest": "quest.main_set_out",
       "shop": []
     },
     {
@@ -1430,9 +1430,9 @@
       "species": "Pekapeka (bat)",
       "description": "Shy, hungry, and very good at finding bugs.",
       "visits": "Random",
-      "visitChance": 0.2,
+      "visitChance": 0.1,
       "firstDay": 8,
-      "afterQuest": "quest.main_welcome",
+      "afterQuest": "quest.main_set_out",
       "shop": []
     },
     {
@@ -1441,9 +1441,9 @@
       "species": "Kererū (wood pigeon)",
       "description": "A well-fed travelling cook who trades recipes for coins.",
       "visits": "Random",
-      "visitChance": 0.3,
+      "visitChance": 0.15,
       "firstDay": 0,
-      "afterQuest": "quest.main_welcome",
+      "afterQuest": "quest.main_set_out",
       "shop": [
         "recipe.fern_fritters",
         "recipe.mushroom_soup",
@@ -1546,12 +1546,82 @@
       }
     },
     {
+      "id": "quest.main_furnish",
+      "title": "Somewhere to sit",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "summary": "Ruru has some old furniture in the shed for you.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.ruru",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.chair",
+          "qty": 2
+        },
+        {
+          "type": "Item",
+          "target": "item.cafe_table",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.potted_fern",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "A cafe with nowhere to sit isn't much of a cafe. I've some old bits in the shed. Want them?",
+        "active": "The shed's round the back. Well, I'll fetch them.",
+        "ready": "Here: two chairs, a table, and a fern to make it homely. They're in your bag.",
+        "done": "Set them out and see who drops by."
+      }
+    },
+    {
+      "id": "quest.main_set_out",
+      "title": "Open for guests",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_furnish"
+      ],
+      "summary": "Press Build and set out the chairs, table and fern. Guests sit on chairs you've placed, and a cosier cafe brings them more often.",
+      "objectives": [
+        {
+          "type": "PlaceObject",
+          "target": "",
+          "qty": 4
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "Press Build and set them out however you like. Guests need a chair to sit on, and the cosier it looks, the more often they'll come.",
+        "active": "Set out the chairs, the table and the fern. Press Build.",
+        "ready": "Now that looks like a cafe. Folk will start dropping by, you'll see.",
+        "done": "More things, and nicer things, make it cosier. Cosy brings guests."
+      }
+    },
+    {
       "id": "quest.main_lost_recipe",
       "title": "The lost recipe",
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.main_set_out"
       ],
       "summary": "Ruru's famous kawakawa scroll recipe was torn into four scraps and scattered. Find all four and bring them to her.",
       "objectives": [
@@ -1826,7 +1896,7 @@
       "canFlip": true,
       "category": "Furniture",
       "seats": 1,
-      "cosiness": 2,
+      "cosiness": 1,
       "style": "rustic"
     },
     {
@@ -1838,7 +1908,7 @@
       "canFlip": false,
       "category": "Furniture",
       "seats": 0,
-      "cosiness": 2,
+      "cosiness": 1,
       "style": "rustic"
     },
     {
@@ -1850,7 +1920,7 @@
       "canFlip": true,
       "category": "Furniture",
       "seats": 2,
-      "cosiness": 3,
+      "cosiness": 1,
       "style": "rustic"
     },
     {
@@ -1862,7 +1932,7 @@
       "canFlip": true,
       "category": "Plants",
       "seats": 0,
-      "cosiness": 3,
+      "cosiness": 2,
       "style": "garden"
     },
     {
@@ -1874,7 +1944,7 @@
       "canFlip": true,
       "category": "Plants",
       "seats": 0,
-      "cosiness": 4,
+      "cosiness": 2,
       "style": "garden"
     },
     {
@@ -1886,7 +1956,7 @@
       "canFlip": true,
       "category": "Decor",
       "seats": 0,
-      "cosiness": 4,
+      "cosiness": 3,
       "style": "glow"
     }
   ],
