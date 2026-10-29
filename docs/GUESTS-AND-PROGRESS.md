@@ -32,18 +32,18 @@ A character can sell recipes: list them in `shop`, and each recipe's `price` is 
 
 - **You start with no companions.** Each is befriended through their **starter quest** (a quest with an `UnlockCompanion` reward), which comes before that character's other side quests.
 - **Once a day each:** a companion who's been out is tired until tomorrow.
-- **Trips cost coins** (`tripCost`): early companions are cheap, better ones dearer.
+- **Trips are free.** (A `tripCost` in coins is supported but set to 0 for everyone.)
 - **After 5 trips together** (`tripsToTeach`), they teach their **perk**: a weaker version of what they do, which you can take foraging without them.
-- **The forage screen says what they do:** pick a companion or perk and the line above it reads, for example, "Kea: more bark (x3), +1 bark each find. 5 coins, once a day."
+- **The forage screen says what they do:** pick a companion or perk and the line above it reads, for example, "Kea: more bark (x3), +1 bark each find. Once a day."
 - **Perks stack:** take as many as you have **perk slots** (1 to start; the *perk pouch* upgrade adds one).
 
-| Companion | Starter quest | Trip cost | Teaches |
-| --- | --- | --- | --- |
-| Kea | *Kea's dare*: bring 5 bark (Kea visits from day 4, 25%) | 5 | Bark know-how |
-| Weka | *Show me your moves*: go foraging 6 times (Weka visits from day 6, 25%) | 10 | Shiny sense |
-| Pekapeka | *A bat's breakfast*: serve 6 dishes (Pekapeka visits from day 8, 20%) | 15 | Night sight |
-| Kunekune | *A very hungry snail* (Snail's quest) | 30 | Truffle nose |
-| Spider | *Hollow home* (Wētā's quest) | 30 | Silk sense |
+| Companion | Starter quest | Teaches |
+| --- | --- | --- |
+| Kea | *Kea's dare*: bring 5 bark (Kea visits from day 4, 25%) | Bark know-how |
+| Weka | *Show me your moves*: go foraging 6 times (Weka visits from day 6, 25%) | Shiny sense |
+| Pekapeka | *A bat's breakfast*: serve 6 dishes (Pekapeka visits from day 8, 20%) | Night sight |
+| Kunekune | *A very hungry snail* (Snail's quest) | Truffle nose |
+| Spider | *Hollow home* (Wētā's quest) | Silk sense |
 
 Weka's trade quest now needs *Show me your moves* first.
 

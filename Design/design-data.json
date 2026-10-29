@@ -804,7 +804,7 @@
       ],
       "teachesPerk": "perk.bark_knowhow",
       "tripsToTeach": 5,
-      "tripCost": 5
+      "tripCost": 0
     },
     {
       "id": "companion.weka",
@@ -827,7 +827,7 @@
       ],
       "teachesPerk": "perk.shiny_sense",
       "tripsToTeach": 5,
-      "tripCost": 10
+      "tripCost": 0
     },
     {
       "id": "companion.pekapeka",
@@ -850,7 +850,7 @@
       ],
       "teachesPerk": "perk.night_sight",
       "tripsToTeach": 5,
-      "tripCost": 15
+      "tripCost": 0
     },
     {
       "id": "companion.kunekune",
@@ -879,7 +879,7 @@
       ],
       "teachesPerk": "perk.truffle_nose",
       "tripsToTeach": 5,
-      "tripCost": 30
+      "tripCost": 0
     },
     {
       "id": "companion.spider",
@@ -902,7 +902,7 @@
       ],
       "teachesPerk": "perk.silk_sense",
       "tripsToTeach": 5,
-      "tripCost": 30
+      "tripCost": 0
     }
   ],
   "perks": [
