@@ -94,6 +94,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
   - {fileID: 11400000, guid: b558caa69688ba5439b48ee795767966, type: 2}
   quests:
+  - {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}
   - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
   - {fileID: 11400000, guid: 68fa2deb035c85346afb899ff0d1d904, type: 2}
   - {fileID: 11400000, guid: 883796afaccf8cc47be41ab8b17209fb, type: 2}
@@ -106,3 +107,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0b4d4f252873a4f4db75996db4e17819, type: 2}
   - {fileID: 11400000, guid: 1fe74d0315ea2f442b0e0e20e3b784cb, type: 2}
   - {fileID: 11400000, guid: 3df59951eda77c642a5e1d788dbaf31d, type: 2}
+  salesPerDay: 3
+  menuSlots: 3
+  forageTripsPerDay: 3
