@@ -70,6 +70,7 @@ For scale: early on a day earns about 10-20 coins.
 - Each placeable has a **cosiness** value and a **style** (`garden`, `rustic`, `glow`, `fancy`...). The cafe's cosiness is the total of what's placed, plus 1 for each *different* kind of thing, so variety counts.
 - **Cosy is hard.** Basic furniture is worth 1-3 cosiness each (chairs, tables and benches 1, plants 2, the lantern 3), so the starter furniture makes a *Bare* cafe. The levels are Bare (under 15), Getting there (15), Cosy (40), Very cosy (80) and The cosiest spot in the bush (140). Special furniture earned later (quest rewards, rare finds, combos) should be worth much more: that's where the big numbers come from.
 - **More visitors:** random visitors' chances are multiplied by up to 2, reached at 150 cosiness.
+- **Day events** (see [DAY-EVENTS.md](DAY-EVENTS.md)) also come more often, and rarer, in a cosier cafe.
 - **Lucky days:** when you close, there's a chance (cosiness / 600, up to 25%) a happy guest leaves a tip of about a quarter of the day's takings. More kinds of special events can hook in here later.
 - **The sign** on the tree by the door (**CafeSign**) says what kind of cafe you've made, from the biggest style (*A garden cafe*, *A rustic bush cafe*, *A lantern-lit cafe*, *A rather fancy cafe*, or *An eclectic little cafe* when it's an even mix), how cosy it is, and what that does.
 

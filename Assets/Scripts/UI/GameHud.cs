@@ -120,7 +120,7 @@ public class GameHud : MonoBehaviour
         string next;
         QuestStatus status = session.Quests.GetStatus(main.id);
         string giver = QuestLogPopup.NpcName(session.Design, main.giver);
-        if (status == QuestStatus.NotStarted) next = $"Talk to {giver}";
+        if (status == QuestStatus.NotStarted) next = $"Talk to {giver}{Visitors.WhenAbout(session.Design, session.State, main.giver)}";
         else if (status == QuestStatus.ReadyToClaim) next = $"Go and see {giver}";
         else
         {

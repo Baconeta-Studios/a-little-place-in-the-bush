@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba03d9e8d1a4345bf23a396c5e81db9, type: 3}
+  m_Name: event.familiar_face
+  m_EditorClassIdentifier: Assembly-CSharp::DayEventDefinition
+  id: event.familiar_face
+  displayName: A familiar face
+  description: 
+  line: Someone you know is on their way.
+  effect: A guest with a quest of yours under way is sure to drop by.
+  weight: 2
+  rarity: 0
+  minCosiness: 0
+  needsNight: 0
+  forage: []
+  forageAt: 2
+  peek: []
+  peekLonger: 0
+  extraSales: 0
+  critic: 0
+  familiarFace: 1
+  gift: []

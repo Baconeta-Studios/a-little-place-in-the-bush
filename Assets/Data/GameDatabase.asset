@@ -129,9 +129,27 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3c61314f58cc1ce4e9392a8d75c8a904, type: 2}
   - {fileID: 11400000, guid: 3da75e34bd858b249ae353c5c4d58045, type: 2}
   - {fileID: 11400000, guid: ad970f13d43eb4743a2fb6501c34c3cb, type: 2}
+  dayEvents:
+  - {fileID: 11400000, guid: a64fc08422dc7a247b7da3dbc8a057a7, type: 2}
+  - {fileID: 11400000, guid: 3196730c2e6f80441b96d990b1ae26e1, type: 2}
+  - {fileID: 11400000, guid: 1f6e9478f14e91d4a9a24cae42c23158, type: 2}
+  - {fileID: 11400000, guid: 8eb5eaf50a36b694894f9c12389fb358, type: 2}
+  - {fileID: 11400000, guid: ae50a66044134dd4380d6353c21969db, type: 2}
+  - {fileID: 11400000, guid: 91084eb984ebf1f449e330347ef8463e, type: 2}
+  - {fileID: 11400000, guid: ec8f1b94936d836448a4def94c3fa1e7, type: 2}
+  - {fileID: 11400000, guid: a385eb0871022da49ae15ff7356b7483, type: 2}
+  - {fileID: 11400000, guid: 72c0bf46893732c4bb82c450cb94b4f3, type: 2}
   salesPerDay: 2
   menuSlots: 1
   forageTripsPerDay: 2
   perkSlots: 1
   nightTrips: 1
+  dayEventTuning:
+    chance: 0.3
+    chanceFromCosiness: 0.3
+    rarerFromCosiness: 1
+    cosinessForFullBoost: 150
+    exclusiveChance: 0.05
+    exclusiveFromCosiness: 0.3
+    firstDay: 3
   luckProtectedQuest: {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}

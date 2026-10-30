@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba03d9e8d1a4345bf23a396c5e81db9, type: 3}
+  m_Name: event.doorstep
+  m_EditorClassIdentifier: Assembly-CSharp::DayEventDefinition
+  id: event.doorstep
+  displayName: Left on the doorstep
+  description: 
+  line: There's something on the doorstep this morning.
+  effect: A gift, straight into your bag. Sometimes something special.
+  weight: 2
+  rarity: 1
+  minCosiness: 0
+  needsNight: 0
+  forage: []
+  forageAt: 2
+  peek: []
+  peekLonger: 0
+  extraSales: 0
+  critic: 0
+  familiarFace: 0
+  gift:
+  - item: {fileID: 11400000, guid: 15c11bb6271bccc41a369397b19055c3, type: 2}
+    qty: 3
+    weight: 3
+    exclusive: 0
+  - item: {fileID: 11400000, guid: 2ac16a05039756c4cb9e874bfb9fc6d2, type: 2}
+    qty: 3
+    weight: 3
+    exclusive: 0
+  - item: {fileID: 11400000, guid: a07aecd8570d619419e001f2df5e27c5, type: 2}
+    qty: 2
+    weight: 2
+    exclusive: 0
+  - item: {fileID: 11400000, guid: 07137c6e4c4acdd4ab01e63a34ca6786, type: 2}
+    qty: 2
+    weight: 2
+    exclusive: 0
+  - item: {fileID: 11400000, guid: 4db78b696f792f1439cc12c1fdd2bc98, type: 2}
+    qty: 1
+    weight: 1
+    exclusive: 0
+  - item: {fileID: 11400000, guid: b56afdc5703376f4a9469240776a12ae, type: 2}
+    qty: 1
+    weight: 2
+    exclusive: 1
+  - item: {fileID: 11400000, guid: 065a04bfe78f599439857d2ad6df4b8a, type: 2}
+    qty: 1
+    weight: 2
+    exclusive: 1
+  - item: {fileID: 11400000, guid: 62cc489b5161ff24886a92c9f5f906ad, type: 2}
+    qty: 1
+    weight: 1
+    exclusive: 1
+  - item: {fileID: 11400000, guid: e2aa67cc0cc56b547a8b2d538de27678, type: 2}
+    qty: 1
+    weight: 1
+    exclusive: 1

@@ -39,6 +39,9 @@ One place for what's been decided, what's been set aside for later, and what's s
 - **Cosy is hard on purpose:** basic furniture adds very little, so the big cosiness (and its rewards: more visitors, lucky-day tips) comes from special things earned later.
 - **The sign** by the door describes what kind of cafe you've made.
 
+**Day events**
+- **Something nice most mornings** (never bad): forage bonuses, a busy day, a food critic, a familiar face, a meteor shower, a gift on the doorstep. Announced at dawn, shown under the day dial. A cosier cafe means more events, rarer events, and more exclusive doorstep gifts, so there's a reason to keep making it cosier. All tunable in the Inspector. ([DAY-EVENTS.md](DAY-EVENTS.md))
+
 **Upgrades and coins**
 - **Coins buy progress:** cafe upgrades (pricey, pricier down the list) and a handful of recipes. Most of the cool stuff comes from quests, rare finds and combos, not shops.
 

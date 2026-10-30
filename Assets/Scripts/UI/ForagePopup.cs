@@ -42,6 +42,8 @@ public class ForagePopup : Popup
     private TextMeshProUGUI _companionLabel;
     private TextMeshProUGUI _tripsLeft;
     private Button _go;
+    /// <summary>Go was pressed with an empty menu and the warning shown: the next press goes anyway.</summary>
+    private bool _emptyMenuWarned;
     private ItemGridView _preview;
     private TextMeshProUGUI _previewNote;
     private TextMeshProUGUI _outText;
@@ -110,13 +112,15 @@ public class ForagePopup : Popup
         focusId = _focusId,
         companionId = _companionId,
         perkIds = new List<string>(_perkIds),
-        time = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day
+        time = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day,
+        eventId = DayEvents.Today(session.Design, session.State)?.id ?? ""
     };
 
     // ----- Setup -----
 
     private void ShowSetup()
     {
+        _emptyMenuWarned = false;
         SetStep(_setup);
         RefreshSetup();
     }
@@ -128,6 +132,10 @@ public class ForagePopup : Popup
 
         ForageTableData table = session.Design.GetForageTable(TableId(session));
         _tableName.text = table != null ? table.name : "Nowhere to forage (no forage table in the design data)";
+        DayEventData today = DayEvents.Today(session.Design, session.State);
+        TimeOfDay now = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day;
+        if (today != null && (DayEvents.ForageModifiersFor(session.Design, today.id, now).Count > 0 || today.peekLonger || today.peek.Count > 0))
+            _tableName.text += $"   <color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
 
         Clear(_focusRow);
         AddChoice(_focusRow, "Anything", _focusId == "", () => { _focusId = ""; RefreshSetup(); });
@@ -196,6 +204,9 @@ public class ForagePopup : Popup
             : tripsLeft < 0 ? "" : session.State.isNight ? "One trip tonight. Night brings different finds."
             : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
         _go.interactable = canGo;
+        GameUi.SetLabel(_go, _emptyMenuWarned ? "Go anyway" : "Go!");
+        if (_emptyMenuWarned && canGo)
+            _tripsLeft.text = $"<color=#{berry}>Your menu's empty, so the cafe won't serve anyone while you're out. Set it at the cafe door, or go anyway.</color>";
 
         // What you might find: the likeliest first, rare things left out so they stay a surprise.
         ExpeditionSetup setup = CurrentSetup(session);
@@ -239,6 +250,17 @@ public class ForagePopup : Popup
             return;
         }
 
+        // By day, with recipes known but nothing on the menu, the cafe would serve nobody: say so once.
+        bool emptyMenu = !session.State.isNight && session.Design.rules.TripsPerDay(session.State) > 0 && session.State.menu.Count == 0 &&
+                         session.Design.recipes.Exists(r => session.Cafe.IsUnlocked(r.id));
+        if (emptyMenu && !_emptyMenuWarned)
+        {
+            _emptyMenuWarned = true;
+            RefreshSetup();
+            return;
+        }
+        _emptyMenuWarned = false;
+
         var seed = (uint)Random.Range(int.MinValue, int.MaxValue);
         seed = ForagingService.LuckySeed(session.Design, session.State, setup, seed); // the tutorial's leaves
         PendingExpedition trip = ForagingService.Begin(session.Design, session.State, setup, seed, false, session.Economy);
@@ -266,6 +288,8 @@ public class ForagePopup : Popup
         uint seed = session != null && session.State.hasPendingExpedition ? session.State.pendingExpedition.seed : 0u;
         int bush = (int)(seed % 3u);
         float rustleAt = 0.7f + (seed >> 4) % 9 * 0.1f; // a different moment each trip
+        bool stillAir = session != null && DayEvents.Today(session.Design, session.State)?.peekLonger == true;
+        float rustleFor = stillAir ? RustleSeconds * 2f : RustleSeconds;
         _tappedBush = -1;
         _skipped = false;
         _bonus = null;
@@ -279,7 +303,7 @@ public class ForagePopup : Popup
 
             if (!resolved)
             {
-                bool rustling = t >= rustleAt && t < rustleAt + RustleSeconds;
+                bool rustling = t >= rustleAt && t < rustleAt + rustleFor;
                 _bushes[bush].localRotation = Quaternion.Euler(0f, 0f, rustling ? Mathf.Sin(t * 40f) * 7f : 0f);
                 if (rustling && _peekNote.text != "Something's rustling!") _peekNote.text = "Something's rustling!";
 
@@ -290,7 +314,7 @@ public class ForagePopup : Popup
                     _peekNote.text = $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>Got something!</b></color>";
                     resolved = true;
                 }
-                else if (t >= rustleAt + RustleSeconds)
+                else if (t >= rustleAt + rustleFor)
                 {
                     ForagingService.MissPeekABoo(session.State);
                     _peekNote.text = "It got away.";

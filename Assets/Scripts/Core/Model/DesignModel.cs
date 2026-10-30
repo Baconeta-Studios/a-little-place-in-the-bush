@@ -38,6 +38,72 @@ namespace Bush.Core
         public bool HasTag(string tag) => !string.IsNullOrEmpty(tag) && tags != null && tags.Contains(tag);
     }
 
+    /// <summary>One thing that can be left on the doorstep.</summary>
+    [Serializable]
+    public class GiftEntry
+    {
+        public string itemId;
+        public int qty = 1;
+        public double weight = 1;
+        /// <summary>Something special (rare furniture, a treasure): only given on an "exclusive" roll, which cosiness makes likelier.</summary>
+        public bool exclusive;
+    }
+
+    /// <summary>A nice thing about today, announced in the morning (see <see cref="DayEvents"/>).</summary>
+    [Serializable]
+    public class DayEventData
+    {
+        public string id;
+        public string name;
+        /// <summary>The morning announcement, e.g. "Something glints in the bush today."</summary>
+        public string line;
+        /// <summary>What it does, in a few words, for the HUD and screens.</summary>
+        public string effect;
+        /// <summary>How likely, against the other events.</summary>
+        public double weight = 1;
+        /// <summary>Rarer events get likelier as the cafe gets cosier.</summary>
+        public Rarity rarity;
+        /// <summary>Only happens once the cafe is at least this cosy.</summary>
+        public int minCosiness;
+        /// <summary>Only once night is unlocked (for night events).</summary>
+        public bool needsNight;
+
+        /// <summary>Added to forage trips today (at <see cref="forageAt"/>).</summary>
+        public List<ForageModifier> forage = new();
+        public ActiveTime forageAt = ActiveTime.Both;
+        /// <summary>Added to the peek-a-boo find today, which also rustles for longer.</summary>
+        public List<ForageModifier> peek = new();
+        public bool peekLonger;
+        /// <summary>Extra dishes the cafe sells today.</summary>
+        public int extraSales;
+        /// <summary>The first dish sold today pays double.</summary>
+        public bool critic;
+        /// <summary>A guest with a quest of yours under way is guaranteed to drop by.</summary>
+        public bool familiarFace;
+        /// <summary>Something left on the doorstep: one of these.</summary>
+        public List<GiftEntry> gift = new();
+    }
+
+    /// <summary>How often day events happen, and how cosiness helps.</summary>
+    [Serializable]
+    public class DayEventSettings
+    {
+        /// <summary>The chance of an event on a given morning, in a bare cafe.</summary>
+        public double chance = 0.3;
+        /// <summary>Added to that chance at full cosiness (see <see cref="cosinessForFullBoost"/>).</summary>
+        public double chanceFromCosiness = 0.3;
+        /// <summary>At full cosiness, rarer events' weights are multiplied by 1 + this x their rarity step (uncommon 1, rare 2, legendary 3).</summary>
+        public double rarerFromCosiness = 1;
+        /// <summary>The cosiness at which the boosts are full.</summary>
+        public int cosinessForFullBoost = 150;
+        /// <summary>The chance a doorstep gift is something exclusive, in a bare cafe.</summary>
+        public double exclusiveChance = 0.05;
+        /// <summary>Added to that at full cosiness.</summary>
+        public double exclusiveFromCosiness = 0.3;
+        /// <summary>No events before this day (the tutorial).</summary>
+        public int firstDay = 3;
+    }
+
     /// <summary>A cafe upgrade, bought once with coins. <see cref="requires"/> makes a ladder (second slot before third).</summary>
     [Serializable]
     public class UpgradeData
@@ -77,6 +143,14 @@ namespace Bush.Core
         public string luckProtectedQuest;
         /// <summary>The cafe upgrades on offer, in shop order. They add to the numbers above.</summary>
         public List<UpgradeData> upgrades = new();
+        /// <summary>The day events (see <see cref="DayEvents"/>).</summary>
+        public List<DayEventData> dayEvents = new();
+        public DayEventSettings events = new();
+
+        public DayEventData GetEvent(string id) => string.IsNullOrEmpty(id) ? null : dayEvents.Find(e => e.id == id);
+
+        /// <summary>Today's event, if it's been rolled for today.</summary>
+        public DayEventData TodaysEvent(GameState state) => state.eventDay == state.day ? GetEvent(state.todayEvent) : null;
 
         /// <summary>The total of an effect from upgrades the player owns.</summary>
         public int Bonus(GameState state, UpgradeEffect effect)
@@ -95,7 +169,8 @@ namespace Bush.Core
         public int PerkSlots(GameState state) => Math.Max(0, perkSlots + Bonus(state, UpgradeEffect.PerkSlot));
 
         /// <summary>Dishes in a full day. One place to add progression later (story steps, upgrades, seats).</summary>
-        public int FullDaySales(GameState state) => Math.Max(0, salesPerDay + Bonus(state, UpgradeEffect.DailySale));
+        public int FullDaySales(GameState state) =>
+            Math.Max(0, salesPerDay + Bonus(state, UpgradeEffect.DailySale) + (TodaysEvent(state)?.extraSales ?? 0));
 
         /// <summary>Menu slots now. One place to add progression later (story steps, upgrades), like <see cref="FullDaySales"/>.</summary>
         public int MenuSlots(GameState state) => Math.Max(1, menuSlots + Bonus(state, UpgradeEffect.MenuSlot));

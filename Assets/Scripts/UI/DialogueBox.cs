@@ -136,8 +136,12 @@ public class DialogueBox : Popup
         Say(Line(quest.dialogue?.done, "Thank you!"), rewards.Length > 0 ? "<b>You got</b>\n" + rewards : null);
 
         // Straight on to what's next with them (the next story step, say), or goodbye.
+        // Straight on to what's next with them, unless they're off now (a night owl after unlocking night:
+        // the next step waits until you find them at night).
         TopicKind next = Session.Quests.GetTopic(_npc.id).kind;
-        if (next is TopicKind.Offer or TopicKind.HandIn) Replies(("Anything else?", ShowTopic), ("Bye", Close));
+        NpcData data = Session.Design.GetNpc(_npc.id);
+        bool stillAbout = data == null || Visitors.AboutNow(data, Session.State);
+        if (stillAbout && next is TopicKind.Offer or TopicKind.HandIn) Replies(("Anything else?", ShowTopic), ("Bye", Close));
         else Replies(("Bye", Close));
     }
 

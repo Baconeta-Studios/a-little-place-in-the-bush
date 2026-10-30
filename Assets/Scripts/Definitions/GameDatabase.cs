@@ -20,6 +20,8 @@ public class GameDatabase : ScriptableObject
     public List<QuestDefinition> quests = new();
     public List<PlaceableDefinition> placeables = new();
     public List<UpgradeDefinition> upgrades = new();
+    [Tooltip("Day events: edit each one in the Inspector. Tools > Bush > Create Default Day Events makes the starting set.")]
+    public List<DayEventDefinition> dayEvents = new();
 
     [Header("Day loop tuning (not part of the design data file)")]
     [Tooltip("Dishes the cafe sells when you close for the day, shared across the menu.")]
@@ -32,6 +34,9 @@ public class GameDatabase : ScriptableObject
     [Min(0)] public int perkSlots = 1;
     [Tooltip("Forage trips at night, once night is unlocked.")]
     [Min(0)] public int nightTrips = 1;
+    [Header("Day events (how often, and how cosiness helps)")]
+    public DayEventSettings dayEventTuning = new();
+
     [Tooltip("Luck protection: while this quest is under way, a forage trip always finds what its item objectives still need.")]
     public QuestDefinition luckProtectedQuest;
 
@@ -53,6 +58,8 @@ public class GameDatabase : ScriptableObject
         design.rules = new DayRules { salesPerDay = salesPerDay, menuSlots = menuSlots, forageTripsPerDay = forageTripsPerDay, perkSlots = perkSlots, nightTrips = nightTrips,
             luckProtectedQuest = luckProtectedQuest ? luckProtectedQuest.id : "" };
         foreach (UpgradeDefinition x in upgrades) if (x) design.rules.upgrades.Add(x.ToData());
+        foreach (DayEventDefinition x in dayEvents) if (x) design.rules.dayEvents.Add(x.ToData());
+        design.rules.events = dayEventTuning ?? new DayEventSettings();
         design.RebuildIndex();
         return design;
     }
@@ -79,6 +86,7 @@ public class GameDatabase : ScriptableObject
         foreach (var x in quests) yield return x;
         foreach (var x in placeables) yield return x;
         foreach (var x in upgrades) yield return x;
+        foreach (var x in dayEvents) yield return x;
     }
 
     private void BuildLookup()

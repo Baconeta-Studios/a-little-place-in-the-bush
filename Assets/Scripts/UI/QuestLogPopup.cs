@@ -88,7 +88,7 @@ public class QuestLogPopup : Popup
 
         if (status == QuestStatus.NotStarted)
         {
-            text.Append($"Talk to {from} to begin.\n");
+            text.Append($"Talk to {from}{Visitors.WhenAbout(session.Design, session.State, quest.giver)} to begin.\n");
             return;
         }
         for (int i = 0; i < quest.objectives.Count; i++)

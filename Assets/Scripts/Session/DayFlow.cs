@@ -9,7 +9,21 @@ public static class DayFlow
     public static void FadeInto(string title)
     {
         DayTransition.Holding = true;
-        if (!AreaTravel.Instance.PassTime(title, CatchUp)) CatchUp();
+        if (!AreaTravel.Instance.PassTime(title, CatchUp, MorningNews())) CatchUp();
+    }
+
+    /// <summary>This morning's event and doorstep gift, for under the day's title. Empty at night or with no event.</summary>
+    public static string MorningNews()
+    {
+        GameSession session = GameSession.Current;
+        if (session == null || session.State.isNight) return "";
+        Bush.Core.DayEventData today = Bush.Core.DayEvents.Today(session.Design, session.State);
+        if (today == null) return "";
+        string news = today.line;
+        Bush.Core.ItemData gift = session.Design.GetItem(session.State.giftItem);
+        if (gift != null)
+            news += session.State.giftExclusive ? $"\nSomething special: {gift.name}!" : $"\n{session.State.giftQty} x {gift.name}, in your bag.";
+        return news;
     }
 
     public static void GoToBed()

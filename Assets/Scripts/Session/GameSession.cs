@@ -186,6 +186,16 @@ public class GameSession : MonoBehaviour
             State.companionsUsedToday.Clear();
             RequestSave();
         }, this);
+        CheatMenu.AddButton("Day event: next one (cycles)", () =>
+        {
+            var events = Design.rules.dayEvents;
+            if (events.Count == 0) { Debug.Log("[Cheats] No day events. Tools > Bush > Create Default Day Events."); return; }
+            int index = events.FindIndex(e => e.id == State.todayEvent);
+            DayEventData next = events[(index + 1) % events.Count];
+            DayEvents.Force(Design, State, Economy, next.id);
+            Debug.Log($"[Cheats] Today: {next.name}. {next.effect}" + (State.giftItem != "" ? $" Gift: {State.giftItem}{(State.giftExclusive ? " (exclusive)" : "")}" : ""));
+            RequestSave();
+        }, this);
         CheatMenu.AddButton("Night: unlock night time", () =>
         {
             State.nightUnlocked = true;

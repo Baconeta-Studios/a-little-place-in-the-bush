@@ -173,7 +173,16 @@ namespace Bush.Core
             {
                 if (!Cook(planned.recipeId)) break; // can't happen: the plan used the same counts
                 dish.sold++;
-                dish.coins += _design.GetRecipe(planned.recipeId).coins;
+                int coins = _design.GetRecipe(planned.recipeId).coins;
+                dish.coins += coins;
+                if (_design.rules.TodaysEvent(_state)?.critic == true && !_state.criticDone)
+                {
+                    // The food critic: the first dish sold today pays double.
+                    _state.criticDone = true;
+                    _economy.AddCurrency(coins);
+                    dish.coins += coins;
+                    dish.critic = true;
+                }
             }
             Tally(into, dish);
         }
@@ -181,11 +190,12 @@ namespace Bush.Core
         private static void Tally(List<DishSale> into, DishSale dish)
         {
             DishSale existing = into.Find(d => d.recipeId == dish.recipeId);
-            if (existing == null) into.Add(new DishSale { recipeId = dish.recipeId, sold = dish.sold, coins = dish.coins });
+            if (existing == null) into.Add(new DishSale { recipeId = dish.recipeId, sold = dish.sold, coins = dish.coins, critic = dish.critic });
             else
             {
                 existing.sold += dish.sold;
                 existing.coins += dish.coins;
+                existing.critic |= dish.critic;
             }
         }
 
@@ -277,6 +287,7 @@ namespace Bush.Core
             _state.servedWhileOut.Clear();
             _state.timeOfDay = 0f;
             _state.companionsUsedToday.Clear();
+            DayEvents.RollToday(_design, _state, _economy);
             Visitors.RollToday(_design, _state);
             _events.RaiseMorningStarted();
         }
@@ -326,6 +337,8 @@ namespace Bush.Core
         public string recipeId;
         public int sold;
         public int coins;
+        /// <summary>The food critic ate this one (it paid double).</summary>
+        public bool critic;
     }
 
     /// <summary>What closing the day did, for the end-of-day screen.</summary>

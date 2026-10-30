@@ -31,6 +31,8 @@ public class CafePopup : Popup
     private Button _closeDay;
     private RectTransform _confirm;
     private TextMeshProUGUI _confirmText;
+    private Button _confirmStay;
+    private Button _confirmGo;
     private TextMeshProUGUI _summaryTitle;
     private TextMeshProUGUI _summaryText;
     private Button _nextDay;
@@ -117,9 +119,16 @@ public class CafePopup : Popup
             soldToday += dish.sold;
             coinsToday += dish.coins;
         }
-        string sales = session.State.isNight || evening || rules.TripsPerDay(session.State) <= 0
-            ? $"Sold today: {soldToday} ({coinsToday} coins)."
-            : $"Serves {now} while you're out on your next trip. Sold today: {soldToday} ({coinsToday} coins).";
+        string sales = session.State.isNight
+            ? "The cafe's closed for the night. The menu here is for tomorrow."
+            : evening && rules.TripsPerDay(session.State) > 0
+                ? $"Today's service is done: {soldToday} sold ({coinsToday} coins). Menu changes now are for tomorrow."
+                : rules.TripsPerDay(session.State) <= 0
+                    ? $"Sold today: {soldToday} ({coinsToday} coins)."
+                    : $"Serves {now} while you're out on your next trip. Sold today: {soldToday} ({coinsToday} coins).";
+        DayEventData today = DayEvents.Today(design, session.State);
+        if (today != null && (today.extraSales > 0 || (today.critic && !session.State.criticDone)))
+            sales += $" <color={Hex(GameUi.Moss)}>{today.name}: {today.effect}</color>";
         var menu = new StringBuilder($"<b>Today's menu</b>  <color={Hex(GameUi.InkSoft)}>({cafe.Menu.Count}/{slots})  {sales}</color>\n");
         if (cafe.Menu.Count == 0) menu.Append($"<color={Hex(GameUi.InkSoft)}>Nothing yet. Pick a recipe below.</color>");
         foreach (DishSale dish in plan)
@@ -220,19 +229,27 @@ public class CafePopup : Popup
             return;
         }
         DayRules rules = session.Design.rules;
-        if (rules.IsEvening(session.State))
+        bool evening = rules.IsEvening(session.State);
+        bool emptyMenu = session.State.menu.Count == 0 && HasAnyRecipe(session);
+        if (evening && !emptyMenu)
         {
             CloseForTheDay();
             return;
         }
 
-        int now = rules.SalesFor(session.State), full = rules.FullDaySales(session.State);
+        // Ask first: closing early, or with nothing on the menu for tomorrow.
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
-        _confirmText.text = $"<b>Close early?</b>\n\nIt's only {PartOfDay(rules, session.State)}. " +
-                            $"The cafe serves while you forage, so closing now means no more guests today, " +
-                            $"and you'd lose {tripsLeft} forage trip{(tripsLeft == 1 ? "" : "s")}.";
+        string menuNote = emptyMenu ? "There's nothing on the menu for tomorrow. Pick a dish first, or the morning's guests will go hungry." : "";
+        _confirmText.text = evening
+            ? $"<b>Close for the day?</b>\n\n{menuNote}"
+            : $"<b>Close early?</b>\n\nIt's only {PartOfDay(rules, session.State)}. " +
+              $"The cafe serves while you forage, so closing now means no more guests today, " +
+              $"and you'd lose {tripsLeft} forage trip{(tripsLeft == 1 ? "" : "s")}." + (emptyMenu ? $"\n{menuNote}" : "");
+        GameUi.SetLabel(_confirmStay, emptyMenu ? "Set the menu" : "Stay open");
         _confirm.gameObject.SetActive(true);
     }
+
+    private static bool HasAnyRecipe(GameSession session) => session.Design.recipes.Exists(r => session.Cafe.IsUnlocked(r.id));
 
     private void CloseForTheDay()
     {
@@ -253,7 +270,8 @@ public class CafePopup : Popup
         {
             if (dish.sold == 0) continue;
             RecipeData recipe = session.Design.GetRecipe(dish.recipeId);
-            text.Append($"{recipe?.name ?? dish.recipeId} x{dish.sold}   <color={Hex(GameUi.Moss)}>+{dish.coins} coins</color>\n");
+            text.Append($"{recipe?.name ?? dish.recipeId} x{dish.sold}   <color={Hex(GameUi.Moss)}>+{dish.coins} coins</color>" +
+                        (dish.critic ? $"  <color={Hex(GameUi.InkSoft)}>(the food critic loved it: double!)</color>" : "") + "\n");
         }
         if (summary.closedEarly)
             text.Append("You closed early, so fewer guests came today.\n");
@@ -355,6 +373,7 @@ public class CafePopup : Popup
         _confirmText.rectTransform.offsetMin = new Vector2(40f, 150f);
         _confirmText.rectTransform.offsetMax = new Vector2(-40f, -36f);
         Button stay = GameUi.AddButton(box, "Stay open", () => _confirm.gameObject.SetActive(false), new Vector2(300f, 100f), GameUi.Moss, GameUi.Cream);
+        _confirmStay = stay;
         GameUi.Place((RectTransform)stay.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f), new Vector2(-16f, 32f), new Vector2(300f, 100f));
         Button closeAnyway = GameUi.AddButton(box, "Close anyway", CloseForTheDay, new Vector2(300f, 100f), GameUi.Bark, GameUi.Cream);
         GameUi.Place((RectTransform)closeAnyway.transform, new Vector2(0.5f, 0f), new Vector2(0f, 0f), new Vector2(16f, 32f), new Vector2(300f, 100f));
