@@ -24,6 +24,7 @@ Full GDD (Canva): https://www.canva.com/design/DAHY_0K-xoA/AdOWDfjHg6R3XCjFi38QH
 - **Game rules in `Bush.Core`** (`Assets/Scripts/Core`): economy, foraging, the cafe day, quests, visitors, building, upgrades and cosiness, as plain C# with EditMode tests (about 105).
 - **Design data**: items, recipes, companions, perks, focuses, forage tables, characters, quests, placeables and upgrades in `Design/design-data.json`, imported into ScriptableObjects with **Tools > Bush > Import Design Data**. The placeholder story is in [docs/MAIN-QUEST.md](docs/MAIN-QUEST.md).
 - **Foraging**: walk to the path at the side of the cafe, pick what to look out for, a companion and perks, and go. See [docs/FORAGING.md](docs/FORAGING.md).
+- **Day events**: most mornings bring something nice (a shiny day, a food critic, a gift on the doorstep...), likelier and rarer in a cosier cafe. See [docs/DAY-EVENTS.md](docs/DAY-EVENTS.md).
 - **Night and the day dial**: after Ruru's *After dark* quest, closing the cafe leads into a calm night with nocturnal guests and a night forage trip; a day dial on the HUD and day/dusk/night lighting. See [docs/NIGHT.md](docs/NIGHT.md).
 - **Guests, companions, upgrades and cosiness**: characters who visit on some days, companions to befriend, cafe upgrades, and a sign that describes your cafe. See [docs/GUESTS-AND-PROGRESS.md](docs/GUESTS-AND-PROGRESS.md).
 - **Quests and characters**: talk to characters in a dialogue box, accept and hand in quests, a quest log and a story tracker. See [docs/QUESTS.md](docs/QUESTS.md) to add quests and characters.
