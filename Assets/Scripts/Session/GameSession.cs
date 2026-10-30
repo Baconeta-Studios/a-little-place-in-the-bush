@@ -107,6 +107,8 @@ public class GameSession : MonoBehaviour
         Events.PerkLearned += _ => RequestSave();
         Events.MenuChanged += RequestSave;
         Events.UpgradeBought += _ => RequestSave();
+        Events.NightStarted += RequestSave;
+        Events.MorningStarted += RequestSave;
         Events.DayEnded += _ => RequestSave();
 
         Ready?.Invoke();
@@ -184,9 +186,16 @@ public class GameSession : MonoBehaviour
             State.companionsUsedToday.Clear();
             RequestSave();
         }, this);
+        CheatMenu.AddButton("Night: unlock night time", () =>
+        {
+            State.nightUnlocked = true;
+            RequestSave();
+        }, this);
+        CheatMenu.AddButton("Night: go to bed (next morning)", () => Cafe.GoToBed(), this);
         CheatMenu.AddButton("Forage: reset today's trips", () =>
         {
             State.forageTripsToday = 0;
+            State.nightTripsToday = 0;
             State.companionsUsedToday.Clear();
             RequestSave();
         }, this);

@@ -105,7 +105,7 @@ public class CafePopup : Popup
         string part = PartOfDay(rules, session.State);
         _title.text = $"The cafe, day {session.State.day}" + (part != null ? $": {part}" : "");
         bool evening = rules.IsEvening(session.State);
-        GameUi.SetLabel(_closeDay, evening ? "Close for the day" : "Close early");
+        GameUi.SetLabel(_closeDay, session.State.isNight ? "Go to bed" : evening ? "Close for the day" : "Close early");
 
         // Today's menu, with what would sell if you closed now.
         List<DishSale> plan = cafe.PlanSales(out int unsold);
@@ -194,6 +194,7 @@ public class CafePopup : Popup
     /// <summary>"morning", "midday", "afternoon" or "evening" for a 3-trip day; null with no day clock.</summary>
     private static string PartOfDay(DayRules rules, GameState state)
     {
+        if (state.isNight) return "night";
         if (rules.forageTripsPerDay <= 0) return null;
         if (rules.IsEvening(state)) return "evening";
         if (rules.forageTripsPerDay == 3) return new[] { "morning", "midday", "afternoon" }[rules.PartsPassed(state)];
@@ -204,6 +205,12 @@ public class CafePopup : Popup
     {
         GameSession session = Session;
         if (session == null) return;
+        if (session.State.isNight)
+        {
+            base.Close();
+            DayFlow.GoToBed();
+            return;
+        }
         DayRules rules = session.Design.rules;
         if (rules.IsEvening(session.State))
         {
@@ -252,7 +259,8 @@ public class CafePopup : Popup
         if (summary.sold > 0 && summary.Missed > 0)
             text.Append($"\n<color={Hex(GameUi.Berry)}>{summary.Missed} hungry guests went without: forage for more ingredients.</color>");
         _summaryText.text = text.ToString();
-        GameUi.SetLabel(_nextDay, $"Start day {session.State.day}");
+        if (summary.nightFalls) text.Append("\n\nThe sun's going down. The bush comes alive at night.");
+        GameUi.SetLabel(_nextDay, summary.nightFalls ? "Into the night" : $"Start day {session.State.day}");
     }
 
     private void StartNextDay() => Close();
@@ -263,8 +271,8 @@ public class CafePopup : Popup
         bool fromSummary = _summary && _summary.gameObject.activeSelf;
         base.Close();
         if (!fromSummary) return;
-        if (Session == null || !AreaTravel.Instance.PassTime($"Day {Session.State.day}", () => DayTransition.Holding = false))
-            DayTransition.Holding = false;
+        if (Session == null) DayTransition.Holding = false;
+        else DayFlow.FadeInto(Session.State.isNight ? "Night" : $"Day {Session.State.day}");
     }
 
     // ----- Building the screen -----

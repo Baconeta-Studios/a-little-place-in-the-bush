@@ -103,7 +103,7 @@ public class ForagePopup : Popup
         focusId = _focusId,
         companionId = _companionId,
         perkIds = new List<string>(_perkIds),
-        time = TimeOfDay.Day // no night yet
+        time = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day
     };
 
     // ----- Setup -----
@@ -180,9 +180,12 @@ public class ForagePopup : Popup
         bool canGo = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out string whyNot);
         string berry = ColorUtility.ToHtmlStringRGB(GameUi.Berry);
         _tripsLeft.text = tripsLeft == 0
-            ? $"<color=#{berry}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
+            ? session.State.isNight
+                ? $"<color=#{berry}>That's tonight's trip done. Go to bed, and forage again tomorrow.</color>"
+                : $"<color=#{berry}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
             : !canGo ? $"<color=#{berry}>{whyNot}</color>"
-            : tripsLeft < 0 ? "" : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
+            : tripsLeft < 0 ? "" : session.State.isNight ? "One trip tonight. Night brings different finds."
+            : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
         _go.interactable = canGo;
 
         // What you might find: the likeliest first, rare things left out so they stay a surprise.

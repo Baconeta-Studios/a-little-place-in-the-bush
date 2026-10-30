@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 /// <summary>
 /// The game's HUD, hidden while building. Top left: coins, Bag (the read-only inventory), Quests,
-/// Forage (where ticked) and Build (only in areas with a <see cref="BuildArea"/>). Top right: the quest
-/// tracker, the main story's current step; tap it for the quest log. Put it on Systems in each area scene.
+/// Forage (where ticked), Build (only in areas with a <see cref="BuildArea"/>) and, at night, Go to bed.
+/// Top right: the day dial (<see cref="DayDial"/>) and the quest tracker, the main story's current
+/// step; tap it for the quest log. Also sets up the day and night lighting. Put it on Systems in each area scene.
 /// </summary>
 public class GameHud : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class GameHud : MonoBehaviour
     private TextMeshProUGUI _coins;
     private InventoryPopup _bag;
     private RectTransform _tracker;
+    private DayDial _dial;
+    private Button _bedButton;
     private TextMeshProUGUI _trackerText;
     private float _nextTrackerRefresh;
 
@@ -25,7 +28,7 @@ public class GameHud : MonoBehaviour
     {
         GameUi ui = GameUi.Current;
         _bar = GameUi.NewRect("HudBar", ui.SafeRoot);
-        GameUi.Place(_bar, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(1120f, 110f));
+        GameUi.Place(_bar, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(1360f, 110f));
         HorizontalLayoutGroup row = GameUi.AddLayout<HorizontalLayoutGroup>(_bar, 14f);
         row.childAlignment = TextAnchor.MiddleLeft;
 
@@ -41,6 +44,13 @@ public class GameHud : MonoBehaviour
         if (forageButton) GameUi.AddButton(_bar, "Forage", ForagePopup.Show, new Vector2(200f, 110f), GameUi.Bark, GameUi.Cream);
         _buildButton = GameUi.AddButton(_bar, "Build", EnterBuild, new Vector2(200f, 110f), GameUi.Moss, GameUi.Cream);
         _buildButton.gameObject.SetActive(false);
+        _bedButton = GameUi.AddButton(_bar, "Go to bed", DayFlow.GoToBed, new Vector2(230f, 110f), GameUi.PanelDark, GameUi.Cream);
+        _bedButton.gameObject.SetActive(false);
+
+        // The day dial, top right, left of the quest tracker.
+        _dial = DayDial.Create(ui.SafeRoot);
+        GameUi.Place((RectTransform)_dial.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f - 560f - 24f, -20f), new Vector2(140f, 140f));
+        DayNightLighting.Ensure();
 
         // The quest tracker: a small card, top right. The whole card opens the quest log.
         _tracker = GameUi.NewRect("QuestTracker", ui.SafeRoot);
@@ -67,6 +77,7 @@ public class GameHud : MonoBehaviour
         if (_bar) Destroy(_bar.gameObject);
         if (_bag) Destroy(_bag.gameObject);
         if (_tracker) Destroy(_tracker.gameObject);
+        if (_dial) Destroy(_dial.gameObject);
     }
 
     private void Update()
@@ -75,6 +86,8 @@ public class GameHud : MonoBehaviour
         BuildArea area = BuildArea.Current;
         bool canBuild = area && area.IsLoaded && !IsBuilding(area);
         if (_buildButton && _buildButton.gameObject.activeSelf != canBuild) _buildButton.gameObject.SetActive(canBuild);
+        bool night = GameSession.Current != null && GameSession.Current.State.isNight && !DayTransition.Holding;
+        if (_bedButton && _bedButton.gameObject.activeSelf != night) _bedButton.gameObject.SetActive(night);
 
         // A few times a second is plenty for the tracker, and simpler than listening to every event.
         if (Time.unscaledTime >= _nextTrackerRefresh)
@@ -127,6 +140,7 @@ public class GameHud : MonoBehaviour
     {
         if (_bar) _bar.gameObject.SetActive(!building);
         if (_tracker) _tracker.gameObject.SetActive(!building);
+        if (_dial) _dial.gameObject.SetActive(!building);
     }
 
     private void OpenBag()
