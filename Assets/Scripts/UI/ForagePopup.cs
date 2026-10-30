@@ -21,7 +21,7 @@ public class ForagePopup : Popup
 {
     private const float TripSeconds = 3.2f;
     /// <summary>How long a bush rustles: tap it in time to grab what's in it.</summary>
-    private const float RustleSeconds = 1.0f;
+    private const float RustleSeconds = 0.5f;
     private const int MaxPreviewItems = 8;
 
     private static ForagePopup _instance;
