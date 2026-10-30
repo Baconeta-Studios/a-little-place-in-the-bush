@@ -19,6 +19,8 @@ MonoBehaviour:
   isMain: 1
   prerequisites:
   - {fileID: 11400000, guid: fdfffad10a858fa48a6acde403b4a441, type: 2}
+  nextDay: 0
+  minDay: 0
   objectives:
   - type: 5
     target: {fileID: 0}

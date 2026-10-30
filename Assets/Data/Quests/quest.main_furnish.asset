@@ -18,7 +18,9 @@ MonoBehaviour:
   giver: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
   isMain: 1
   prerequisites:
-  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  - {fileID: 11400000, guid: 389153578eedaaf419fbed858a8cd3e8, type: 2}
+  nextDay: 0
+  minDay: 0
   objectives:
   - type: 4
     target: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
