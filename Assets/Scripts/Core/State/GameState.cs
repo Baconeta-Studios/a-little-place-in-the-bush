@@ -42,6 +42,16 @@ namespace Bush.Core
         public List<string> menu = new();
         /// <summary>Forage trips started today; reset when the day closes.</summary>
         public int forageTripsToday;
+        /// <summary>Parts of today the cafe has served (it serves while you're out foraging).</summary>
+        public int partsServed;
+        /// <summary>What the cafe has sold today, dish by dish, for the day's summary.</summary>
+        public List<DishSale> soldToday = new();
+        /// <summary>Sales today that couldn't be made for want of ingredients.</summary>
+        public int missedToday;
+        /// <summary>Whose turn it is on the menu next, so sales share out evenly across the day.</summary>
+        public int menuTurn;
+        /// <summary>What sold while you were out on the latest trip, for its results screen.</summary>
+        public List<DishSale> servedWhileOut = new();
         /// <summary>Night time has been unlocked (a quest reward): closing the cafe leads into the night.</summary>
         public bool nightUnlocked;
         /// <summary>It's night: the cafe's closed, nocturnal guests are about, and Go to bed starts the next day.</summary>
@@ -84,6 +94,8 @@ namespace Bush.Core
             if (day < 1) day = 1;
             if (forageTripsToday < 0) forageTripsToday = 0;
             companionsUsedToday ??= new List<string>();
+            soldToday ??= new List<DishSale>();
+            servedWhileOut ??= new List<DishSale>();
             upgrades ??= new List<string>();
             visitorsToday ??= new List<string>();
             foreach (PlacedObjectData p in placed)
@@ -183,5 +195,7 @@ namespace Bush.Core
         public ExpeditionSetup setup = new();
         /// <summary>Worked out once when Go is pressed, so the results shown are exactly what gets paid.</summary>
         public ForageResult result = new();
+        /// <summary>The peek-a-boo bonus has been grabbed (or missed): one chance per trip.</summary>
+        public bool peekABooDone;
     }
 }

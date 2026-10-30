@@ -248,6 +248,37 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void PeekABoo_AddsOneBonusFind_OnceAndOnTopOfTheTrip()
+        {
+            var game = new TestGame();
+            Assert.IsNull(ForagingService.PeekABooFind(game.design, game.state), "No trip, nothing to find.");
+
+            PendingExpedition trip = ForagingService.Begin(game.design, game.state, TestDesign.Setup(), 42u);
+            int before = trip.result.TotalItems();
+            ForageRoll peek = ForagingService.PeekABooFind(game.design, game.state);
+            Assert.IsNotNull(peek);
+            Assert.AreEqual(peek.itemId, ForagingService.PeekABooFind(game.design, game.state).itemId, "Same seed, same find.");
+
+            ForageRoll taken = ForagingService.TakePeekABoo(game.design, game.state);
+            Assert.AreEqual(peek.itemId, taken.itemId);
+            Assert.AreEqual(before + taken.qty, trip.result.TotalItems());
+            Assert.IsNull(ForagingService.TakePeekABoo(game.design, game.state), "Once per trip.");
+
+            ExpeditionClaim claim = ForagingService.Claim(game.design, game.state, game.economy, game.events);
+            Assert.AreEqual(before + taken.qty, claim.result.TotalItems(), "Claim pays the bonus too.");
+        }
+
+        [Test]
+        public void PeekABoo_Missed_IsGone()
+        {
+            var game = new TestGame();
+            ForagingService.Begin(game.design, game.state, TestDesign.Setup(), 42u);
+            ForagingService.MissPeekABoo(game.state);
+            Assert.IsNull(ForagingService.PeekABooFind(game.design, game.state));
+            Assert.IsNull(ForagingService.TakePeekABoo(game.design, game.state));
+        }
+
+        [Test]
         public void Focus_CountsOncePerItem()
         {
             DesignData design = TestDesign.Create();

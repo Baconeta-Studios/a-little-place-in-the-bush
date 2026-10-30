@@ -106,9 +106,25 @@ namespace Bush.Core
         /// <summary>Every trip taken: it's evening and closing now isn't early. Always true with no day clock.</summary>
         public bool IsEvening(GameState state) => TripsPerDay(state) <= 0 || state.forageTripsToday >= TripsPerDay(state);
 
-        /// <summary>What the cafe sells if it closes now: its share of the day so far, rounded down.</summary>
+        /// <summary>The day's share of dishes by now: its share for each part of the day so far, rounded down.</summary>
         public int SalesFor(GameState state) =>
             TripsPerDay(state) <= 0 ? FullDaySales(state) : FullDaySales(state) * PartsPassed(state) / TripsPerDay(state);
+
+        /// <summary>
+        /// Dishes served during part <paramref name="part"/> (1 for the morning) of the day. The parts add up to
+        /// a full day, spread as evenly as whole dishes allow (3 dishes over 3 parts: 1 each).
+        /// </summary>
+        public int SalesForPart(GameState state, int part)
+        {
+            int parts = TripsPerDay(state);
+            if (parts <= 0) return FullDaySales(state);
+            if (part < 1 || part > parts) return 0;
+            return FullDaySales(state) * part / parts - FullDaySales(state) * (part - 1) / parts;
+        }
+
+        /// <summary>Dishes the cafe will serve during the next part of the day (while you're out on the next trip).</summary>
+        public int NextPartSales(GameState state) =>
+            TripsPerDay(state) <= 0 ? FullDaySales(state) : SalesForPart(state, PartsPassed(state) + 1);
     }
 
     [Serializable]

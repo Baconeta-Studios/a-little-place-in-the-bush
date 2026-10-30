@@ -1,6 +1,6 @@
-# Main quest and quest items (draft)
+# Main quest and quest items (placeholder story)
 
-A first pass at the main story and the "quest items" it needs, so the data and code can be built ahead of the writing. Everything here is placeholder content in [`Design/design-data.json`](../Design/design-data.json): rename, rewrite and re-tune freely.
+A first pass at the main story and the "quest items" it needs, so the data and code can be built ahead of the writing. **The real narrative, characters and quest list will replace this**; the structure (a main chain, side quests, quest items, rewards that unlock recipes, companions, perks, furniture and night) is what carries over. Everything here is placeholder content in [`Design/design-data.json`](../Design/design-data.json): rename, rewrite and re-tune freely.
 
 ## The idea: The lost recipe
 
@@ -21,7 +21,7 @@ The opening is a short tutorial chain, one system per step (placeholder text unt
 
 0. **Hello, Ruru** (main, Ruru): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none.
 0. **Leaves for the salad** (main, Ruru): have 3 leaves. Teaches foraging: Ruru sends you down the path into the bush. **Luck protection:** while it's under way, a trip always finds the leaves you still need (the quest is set as *Luck Protected Quest* on the GameDatabase; the trip's seed is picked so it does, and the logged seed still reproduces it in the sandbox). Rewards 5 coins.
-1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board and closing for the day (the cafe cooks and sells at closing time). Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
+1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board, and that the cafe serves while you're out foraging. Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
 1. **Somewhere to sit** (main, Ruru): talk to Ruru. She gives you two chairs, a table and a fern from her shed (the cafe starts empty).
 1. **Open for guests** (main, Ruru): place 4 things in build mode. Teaches building, and that guests sit on chairs you've placed and come more often to a cosier cafe. Rewards 20 coins. Visitors only start dropping by after this.
 1. **After dark** (main, Ruru): serve 3 dishes. Unlocks night time: after closing, a calm night with nocturnal guests and one night forage trip (see [NIGHT.md](NIGHT.md)).

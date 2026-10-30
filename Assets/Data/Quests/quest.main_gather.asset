@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.main_gather
   displayName: Leaves for the salad
-  description: A leaf salad needs 3 leaves. Go foraging in the bush (the path at the side of the cafe) until you have them.
+  description: 'A leaf salad needs 3 leaves. Take the path at the side of the cafe into the bush. On the forage screen, choose Greens under Look out for: you find more of whatever you look out for.'
   giver: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
   isMain: 1
   prerequisites:
@@ -27,7 +27,7 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 5
-  offerLine: Your larder's empty! Take the path at the side of the cafe into the bush and forage. Look out for greens, and bring back three handfuls of leaves.
-  activeLine: Three handfuls of leaves. Try looking out for greens when you forage.
-  readyLine: That's plenty of leaves. Keep them, they're for your salad.
+  offerLine: 'Your larder''s empty! Take the path at the side of the cafe into the bush. Here''s a trick: decide what you''re looking out for before you go. Choose Greens, and you''ll find far more leaves.'
+  activeLine: 'Three handfuls of leaves. Remember: look out for Greens, and they''ll practically jump into your basket.'
+  readyLine: See? Look out for something, and you'll find more of it. Keep the leaves, they're for your salad.
   doneLine: Off you go. The menu board's by the door.

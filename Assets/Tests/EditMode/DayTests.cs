@@ -66,7 +66,7 @@ namespace Bush.Core.Tests
             // No pie ingredients: all 3 sales go to salad.
             DaySummary summary = _game.cafe.CloseDay();
             Assert.AreEqual(3, summary.dishes.Find(d => d.recipeId == TestDesign.Salad).sold);
-            Assert.AreEqual(0, summary.dishes.Find(d => d.recipeId == TestDesign.SecretPie).sold);
+            Assert.IsNull(summary.dishes.Find(d => d.recipeId == TestDesign.SecretPie), "Dishes that didn't sell aren't listed.");
         }
 
         [Test]
@@ -81,16 +81,69 @@ namespace Bush.Core.Tests
         }
 
         [Test]
-        public void PlanSales_MatchesCloseDay_AndChangesNothing()
+        public void PlanSales_ShowsTheNextPart_AndChangesNothing()
         {
-            Evening();
             _game.cafe.AddToMenu(TestDesign.Salad);
             _game.economy.Add(TestDesign.Leaf, 7);
             var plan = _game.cafe.PlanSales(out int unsold);
-            Assert.AreEqual(2, plan[0].sold);
-            Assert.AreEqual(1, unsold);
+            Assert.AreEqual(1, plan[0].sold, "The morning's share: 3 dishes over 2 parts, 1 now.");
+            Assert.AreEqual(0, unsold);
             Assert.AreEqual(7, _game.economy.Count(TestDesign.Leaf));
-            Assert.AreEqual(2, _game.cafe.CloseDay().sold);
+        }
+
+        [Test]
+        public void TheCafeServes_WhileYouForage()
+        {
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            _game.economy.Add(TestDesign.Leaf, 30);
+            Assert.AreEqual(0, _game.cafe.ServeWhileOut().Count, "Nothing before the first trip.");
+
+            _game.state.forageTripsToday = 1; // set off on the morning trip
+            var morning = _game.cafe.ServeWhileOut();
+            Assert.AreEqual(1, morning[0].sold);
+            Assert.AreEqual(5, _game.economy.Currency, "Paid straight away.");
+            Assert.AreEqual(1, _game.state.servedWhileOut[0].sold, "Kept for the trip's results.");
+            Assert.AreEqual(0, _game.cafe.ServeWhileOut().Count, "Each part is served once.");
+
+            _game.state.forageTripsToday = 2;
+            Assert.AreEqual(2, _game.cafe.ServeWhileOut()[0].sold, "The afternoon's share.");
+
+            DaySummary summary = _game.cafe.CloseDay();
+            Assert.AreEqual(3, summary.sold, "Closing tallies the day; it doesn't sell more.");
+            Assert.AreEqual(15, summary.coins);
+            Assert.AreEqual(15, _game.economy.Currency);
+        }
+
+        [Test]
+        public void MenuChanges_CountFromTheNextPart_AndTurnsCarryOn()
+        {
+            LearnPie();
+            _game.design.rules = new DayRules { salesPerDay = 3, menuSlots = 2, forageTripsPerDay = 3 };
+            _game.economy.Add(TestDesign.Leaf, 30);
+            _game.economy.Add(TestDesign.Berry, 10);
+            _game.economy.Add(TestDesign.Bug, 5);
+
+            _game.state.forageTripsToday = 1;
+            Assert.AreEqual(0, _game.cafe.ServeWhileOut().Count, "Empty menu in the morning: nothing sells.");
+            Assert.AreEqual(1, _game.state.missedToday);
+
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            _game.cafe.AddToMenu(TestDesign.SecretPie);
+            _game.state.forageTripsToday = 2;
+            Assert.AreEqual(TestDesign.Salad, _game.cafe.ServeWhileOut()[0].recipeId);
+            _game.state.forageTripsToday = 3;
+            Assert.AreEqual(TestDesign.SecretPie, _game.cafe.ServeWhileOut()[0].recipeId, "Turns carry on across the day, so both dishes sell.");
+        }
+
+        [Test]
+        public void NoServingAtNight()
+        {
+            _game.state.nightUnlocked = true;
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            _game.economy.Add(TestDesign.Leaf, 30);
+            _game.cafe.CloseDay();
+            _game.state.nightTripsToday = 1;
+            Assert.AreEqual(0, _game.cafe.ServeWhileOut().Count);
         }
 
         [Test]
