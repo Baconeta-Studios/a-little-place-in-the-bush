@@ -1567,7 +1567,7 @@
         "offer": "Your larder's empty! Take the path at the side of the cafe into the bush. Here's a trick: decide what you're looking out for before you go. Choose Greens, and you'll find far more leaves.",
         "active": "Three handfuls of leaves. Remember: look out for Greens, and they'll practically jump into your basket.",
         "ready": "See? Look out for something, and you'll find more of it. Keep the leaves, they're for your salad.",
-        "done": "Off you go. The menu board's by the door."
+        "done": "Off you go. You set the menu at the cafe door."
       },
       "nextDay": false,
       "minDay": 0
@@ -1580,7 +1580,7 @@
       "prerequisites": [
         "quest.main_gather"
       ],
-      "summary": "Put leaf salad on the menu board by the cafe door, then go foraging. The cafe serves what's on the menu while you're out.",
+      "summary": "Go to the cafe door and put leaf salad on the menu, then go foraging. The cafe serves what's on the menu while you're out.",
       "objectives": [
         {
           "type": "CookRecipe",
@@ -1601,8 +1601,8 @@
         }
       ],
       "dialogue": {
-        "offer": "Now let's see you serve it. Put leaf salad on the menu board by the door, then head out foraging. I'll mind the cafe while you're gone, and the guests will eat whatever's on the menu.",
-        "active": "Leaf salad on the menu board, then off you go foraging. The guests will do the rest.",
+        "offer": "Now let's see you serve it. Go to the cafe door and put leaf salad on the menu, then head out foraging. I'll mind the cafe while you're gone, and the guests will eat whatever's on the menu.",
+        "active": "Leaf salad on the menu at the cafe door, then off you go foraging. The guests will do the rest.",
         "ready": "Ah, I heard the guests liked your salad. You'll do.",
         "done": "The cafe's in good claws."
       },
@@ -1619,7 +1619,7 @@
       ],
       "nextDay": false,
       "minDay": 0,
-      "summary": "When the day's foraging is done, close the cafe for the day at the menu board by the door.",
+      "summary": "When the day's foraging is done, go to the cafe door and close for the day.",
       "objectives": [
         {
           "type": "CloseDay",
@@ -1635,8 +1635,8 @@
         }
       ],
       "dialogue": {
-        "offer": "That's a good first day. When you've done your foraging, go to the menu board by the door and close up for the day. Come and see me in the morning.",
-        "active": "When your foraging's done, close up at the menu board by the door. Rest up.",
+        "offer": "That's a good first day. When you've done your foraging, go to the cafe door and close up for the day. Come and see me in the morning.",
+        "active": "When your foraging's done, close up at the cafe door. Rest up.",
         "ready": "Morning! You closed up nicely. Every day goes like that: menu, forage, close.",
         "done": "A cafe's a lot of little days."
       }
