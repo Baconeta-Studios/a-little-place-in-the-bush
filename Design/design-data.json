@@ -1546,7 +1546,7 @@
       "prerequisites": [
         "quest.main_hello"
       ],
-      "summary": "A leaf salad needs 3 leaves. Go foraging in the bush (the path at the side of the cafe) until you have them.",
+      "summary": "A leaf salad needs 3 leaves. Take the path at the side of the cafe into the bush. On the forage screen, choose Greens under Look out for: you find more of whatever you look out for.",
       "objectives": [
         {
           "type": "HaveItems",
@@ -1562,9 +1562,9 @@
         }
       ],
       "dialogue": {
-        "offer": "Your larder's empty! Take the path at the side of the cafe into the bush and forage. Look out for greens, and bring back three handfuls of leaves.",
-        "active": "Three handfuls of leaves. Try looking out for greens when you forage.",
-        "ready": "That's plenty of leaves. Keep them, they're for your salad.",
+        "offer": "Your larder's empty! Take the path at the side of the cafe into the bush. Here's a trick: decide what you're looking out for before you go. Choose Greens, and you'll find far more leaves.",
+        "active": "Three handfuls of leaves. Remember: look out for Greens, and they'll practically jump into your basket.",
+        "ready": "See? Look out for something, and you'll find more of it. Keep the leaves, they're for your salad.",
         "done": "Off you go. The menu board's by the door."
       }
     },

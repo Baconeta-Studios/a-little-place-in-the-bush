@@ -213,7 +213,10 @@ public class ForagePopup : Popup
         }
         _preview.SetItems(cards);
 
-        _previewNote.text = (chosenFocus != null ? $"Looking out for {chosenFocus.name.ToLowerInvariant()}: those turn up more. " : "") +
+        // Teaches the focus: until you pick one, say what it does.
+        _previewNote.text = (chosenFocus != null
+                                ? $"Looking out for {chosenFocus.name.ToLowerInvariant()}: those turn up more (marked \"more\"). "
+                                : "Tip: choose something to look out for, and you'll find more of it. ") +
                             (anyRare ? "Something rare might turn up too." : "");
     }
 
