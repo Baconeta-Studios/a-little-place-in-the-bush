@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb1ffe09847a4ad6b3fec74071f10727, type: 3}
+  m_Name: item.note_tui
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: item.note_tui
+  displayName: "T\u016B\u012B's golden song"
+  description: "A t\u016B\u012B in the flowering p\u014Dhutukawa sang you a song, and somehow the song was a recipe."
+  icon: {fileID: 0}
+  category: 3
+  rarity: 3
+  tags:
+  - encounter
+  - nectar
+  sellValue: 0
+  unique: 1
+  teachesRecipe: {fileID: 11400000, guid: 5adb08a7524ff884996b4e6cff4c3cd4, type: 2}
