@@ -23,6 +23,8 @@ namespace Bush.Core
         public event Action<DaySummary> DayEnded;
         public event Action MenuChanged;
         public event Action<string> UpgradeBought;
+        public event Action NightStarted;
+        public event Action MorningStarted;
 
         public void RaiseInventoryChanged() => InventoryChanged?.Invoke();
         public void RaiseCurrencyChanged(int currency) => CurrencyChanged?.Invoke(currency);
@@ -38,5 +40,7 @@ namespace Bush.Core
         public void RaiseDayEnded(DaySummary summary) => DayEnded?.Invoke(summary);
         public void RaiseMenuChanged() => MenuChanged?.Invoke();
         public void RaiseUpgradeBought(string upgradeId) => UpgradeBought?.Invoke(upgradeId);
+        public void RaiseNightStarted() => NightStarted?.Invoke();
+        public void RaiseMorningStarted() => MorningStarted?.Invoke();
     }
 }

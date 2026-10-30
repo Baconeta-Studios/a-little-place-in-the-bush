@@ -32,7 +32,7 @@ namespace Bush.Core
         [Serializable] public class Focus { public string id; public string name; public List<string> tags = new(); public double multiplier; }
         [Serializable] public class Entry { public string item; public double weight; public int min; public int max; public string time; public string requiresQuest; public string requiresCompanion; }
         [Serializable] public class Table { public string id; public string name; public int rolls; public List<Entry> entries = new(); }
-        [Serializable] public class Npc { public string id; public string name; public string species; public string description; public string visits; public double visitChance; public int firstDay; public string afterQuest; public List<string> shop = new(); }
+        [Serializable] public class Npc { public string id; public string name; public string species; public string description; public string visits; public double visitChance; public int firstDay; public string afterQuest; public string activeAt; public List<string> shop = new(); }
         [Serializable] public class Objective { public string type; public string target; public int qty; }
         [Serializable] public class Reward { public string type; public string target; public int qty; }
         [Serializable] public class Dialogue { public string offer; public string active; public string ready; public string done; }
@@ -103,6 +103,7 @@ namespace Bush.Core
                     id = x.id, name = x.name, species = x.species, description = x.description,
                     visits = string.IsNullOrEmpty(x.visits) ? VisitType.Always : Parse(x.visits, VisitType.Always, errors, x.id),
                     visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "",
+                    activeAt = string.IsNullOrEmpty(x.activeAt) ? ActiveTime.Day : Parse(x.activeAt, ActiveTime.Day, errors, x.id),
                     shop = new List<string>(x.shop ?? new List<string>())
                 });
 
@@ -213,7 +214,8 @@ namespace Bush.Core
                 file.npcs.Add(new Npc
                 {
                     id = x.id, name = x.name, species = x.species, description = x.description, visits = x.visits.ToString(),
-                    visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "", shop = new List<string>(x.shop)
+                    visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "", activeAt = x.activeAt.ToString(),
+                    shop = new List<string>(x.shop)
                 });
 
             foreach (QuestData x in design.quests)

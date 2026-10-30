@@ -147,6 +147,7 @@ namespace Bush.Core
                     case RewardType.UnlockRecipe: AddOnce(_state.unlockedRecipes, reward.target); break;
                     case RewardType.UnlockCompanion: AddOnce(_state.unlockedCompanions, reward.target); break;
                     case RewardType.UnlockPerk: AddOnce(_state.unlockedPerks, reward.target); break;
+                    case RewardType.UnlockNight: _state.nightUnlocked = true; break;
                 }
             }
 

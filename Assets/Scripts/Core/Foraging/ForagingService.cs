@@ -157,7 +157,7 @@ namespace Bush.Core
             CompanionData companion = design.GetCompanion(setup.companionId);
             int perkCount = setup.perkIds == null ? 0 : new HashSet<string>(setup.perkIds.FindAll(p => !string.IsNullOrEmpty(p))).Count;
             if (state.hasPendingExpedition) error = "An expedition is already under way.";
-            else if (TripsLeftToday(design, state) == 0) error = "That's enough foraging for today.";
+            else if (TripsLeftToday(design, state) == 0) error = state.isNight ? "That's enough for tonight. Time for bed." : "That's enough foraging for today.";
             else if (companion != null && IsTired(state, companion.id)) error = $"{companion.name} is tired. Try again tomorrow.";
             else if (companion != null && state.currency < companion.tripCost) error = $"Taking {companion.name} costs {companion.tripCost} coins.";
             else if (perkCount > design.rules.PerkSlots(state)) error = $"Only {design.rules.PerkSlots(state)} perk(s) can come along.";
@@ -203,7 +203,8 @@ namespace Bush.Core
                     if (!string.IsNullOrEmpty(perkId) && !copy.perkIds.Contains(perkId)) copy.perkIds.Add(perkId);
 
             state.expeditionsStarted++;
-            state.forageTripsToday++;
+            if (state.isNight) state.nightTripsToday++;
+            else state.forageTripsToday++;
             if (!string.IsNullOrEmpty(copy.companionId))
             {
                 if (!state.companionsUsedToday.Contains(copy.companionId)) state.companionsUsedToday.Add(copy.companionId);
@@ -265,6 +266,7 @@ namespace Bush.Core
         /// <summary>Trips left today, or -1 for no limit.</summary>
         public static int TripsLeftToday(DesignData design, GameState state)
         {
+            if (state.isNight) return Math.Max(0, (design.rules?.nightTrips ?? 1) - state.nightTripsToday);
             int limit = design.rules?.TripsPerDay(state) ?? 0;
             return limit <= 0 ? -1 : Math.Max(0, limit - state.forageTripsToday);
         }

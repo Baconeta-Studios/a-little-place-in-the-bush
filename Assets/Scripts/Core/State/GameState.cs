@@ -42,6 +42,12 @@ namespace Bush.Core
         public List<string> menu = new();
         /// <summary>Forage trips started today; reset when the day closes.</summary>
         public int forageTripsToday;
+        /// <summary>Night time has been unlocked (a quest reward): closing the cafe leads into the night.</summary>
+        public bool nightUnlocked;
+        /// <summary>It's night: the cafe's closed, nocturnal guests are about, and Go to bed starts the next day.</summary>
+        public bool isNight;
+        /// <summary>Forage trips started tonight.</summary>
+        public int nightTripsToday;
         /// <summary>Companions who've been out today (they're tired until tomorrow).</summary>
         public List<string> companionsUsedToday = new();
         /// <summary>Cafe upgrades bought.</summary>

@@ -53,6 +53,21 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void NocturnalGuests_OnlyComeOutAtNight()
+        {
+            NpcData weka = _game.design.GetNpc(Weka);
+            weka.visits = VisitType.Always;
+            weka.activeAt = ActiveTime.Night;
+            Assert.IsFalse(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka));
+            _game.state.isNight = true;
+            Assert.IsTrue(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka));
+            weka.activeAt = ActiveTime.Day;
+            Assert.IsFalse(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka), "Day guests go home at night.");
+            weka.activeAt = ActiveTime.Both;
+            Assert.IsTrue(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka));
+        }
+
+        [Test]
         public void RandomVisitors_WaitForTheirDayAndQuest()
         {
             NpcData weka = _game.design.GetNpc(Weka);

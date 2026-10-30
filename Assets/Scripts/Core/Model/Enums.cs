@@ -42,6 +42,14 @@ namespace Bush.Core
         Random
     }
 
+    /// <summary>When a character is about: by day, by night (nocturnal), or both.</summary>
+    public enum ActiveTime
+    {
+        Day,
+        Night,
+        Both
+    }
+
     /// <summary>What a cafe upgrade improves.</summary>
     public enum UpgradeEffect
     {
@@ -77,7 +85,9 @@ namespace Bush.Core
         Coins,
         UnlockRecipe,
         UnlockCompanion,
-        UnlockPerk
+        UnlockPerk,
+        /// <summary>Night time: after closing the cafe, a calm night with nocturnal guests and a night forage trip. Target unused.</summary>
+        UnlockNight
     }
 
     /// <summary>
