@@ -68,6 +68,13 @@ namespace Bush.Core
                 double roll = dice.NextDouble(); // always drawn, so adding one visitor doesn't reshuffle the rest
                 if (roll < ChanceToday(design, state, npc)) state.visitorsToday.Add(npc.id);
             }
+
+            // A familiar face: someone with a quest of yours under way is sure to come.
+            if (design.rules.TodaysEvent(state)?.familiarFace == true)
+            {
+                string face = DayEvents.FamiliarFace(design, state);
+                if (face != null && !state.visitorsToday.Contains(face)) state.visitorsToday.Add(face);
+            }
         }
 
         public static void EnsureRolled(DesignData design, GameState state)

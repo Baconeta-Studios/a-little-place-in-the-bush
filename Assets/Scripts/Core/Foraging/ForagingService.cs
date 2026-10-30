@@ -136,6 +136,7 @@ namespace Bush.Core
                 }
             }
 
+            modifiers.AddRange(DayEvents.ForageModifiersFor(design, setup.eventId, setup.time)); // today's event, last
             return modifiers;
         }
 
@@ -207,6 +208,7 @@ namespace Bush.Core
                 companionId = setup.companionId,
                 focusId = setup.focusId,
                 time = setup.time,
+                eventId = setup.eventId,
                 perkIds = new List<string>()
             };
             if (setup.perkIds != null)
@@ -300,6 +302,8 @@ namespace Bush.Core
             if (table == null) return null;
 
             List<ForageModifier> modifiers = CollectModifiers(design, pending.setup);
+            DayEventData dayEvent = design.rules?.GetEvent(pending.setup.eventId);
+            if (dayEvent != null) modifiers.AddRange(dayEvent.peek); // e.g. still air: something good in the bush
             List<Candidate> eligible = GetEligible(design, table, pending.setup, new GameStateForageContext(state), modifiers,
                 design.GetFocus(pending.setup.focusId));
             var foundUniques = new HashSet<string>();

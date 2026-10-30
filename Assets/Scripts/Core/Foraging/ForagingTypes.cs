@@ -14,6 +14,8 @@ namespace Bush.Core
         /// <summary>Empty for no focus.</summary>
         public string focusId;
         public TimeOfDay time;
+        /// <summary>Today's day event, if it changes foraging (see DayEvents). Empty for none; the sandbox leaves it empty.</summary>
+        public string eventId;
     }
 
     /// <summary>What the resolver needs to know about the player's progress.</summary>

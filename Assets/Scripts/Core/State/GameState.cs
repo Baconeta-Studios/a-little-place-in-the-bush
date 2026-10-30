@@ -62,6 +62,17 @@ namespace Bush.Core
         public List<string> companionsUsedToday = new();
         /// <summary>Cafe upgrades bought.</summary>
         public List<string> upgrades = new();
+        /// <summary>Today's event id (see DayEvents), for <see cref="eventDay"/>. Empty for none.</summary>
+        public string todayEvent = "";
+        public int eventDay;
+        /// <summary>Yesterday's event, so the same one doesn't come two days running.</summary>
+        public string lastEvent = "";
+        /// <summary>The food critic has had their (double-paying) dish today.</summary>
+        public bool criticDone;
+        /// <summary>What was left on the doorstep this morning (already in the bag), for the announcement.</summary>
+        public string giftItem = "";
+        public int giftQty;
+        public bool giftExclusive;
         /// <summary>Seeds the daily dice (visitors, lucky days) so a reload doesn't reroll them. Set once per save.</summary>
         public uint luckSeed;
         /// <summary>The day <see cref="visitorsToday"/> was rolled for.</summary>
