@@ -107,23 +107,31 @@ public class CafePopup : Popup
         bool evening = rules.IsEvening(session.State);
         GameUi.SetLabel(_closeDay, session.State.isNight ? "Go to bed" : evening ? "Close for the day" : "Close early");
 
-        // Today's menu, with what would sell if you closed now.
+        // Today's menu, with what the cafe will serve while you're out on the next trip.
         List<DishSale> plan = cafe.PlanSales(out int unsold);
         int slots = design.rules.MenuSlots(session.State);
-        int now = rules.SalesFor(session.State), full = rules.FullDaySales(session.State);
-        string sales = evening ? $"The cafe sells {full} dishes today." : $"Sells {now} dishes if you close now, {full} by evening.";
+        int now = rules.NextPartSales(session.State);
+        int soldToday = 0, coinsToday = 0;
+        foreach (DishSale dish in session.State.soldToday)
+        {
+            soldToday += dish.sold;
+            coinsToday += dish.coins;
+        }
+        string sales = session.State.isNight || evening || rules.TripsPerDay(session.State) <= 0
+            ? $"Sold today: {soldToday} ({coinsToday} coins)."
+            : $"Serves {now} while you're out on your next trip. Sold today: {soldToday} ({coinsToday} coins).";
         var menu = new StringBuilder($"<b>Today's menu</b>  <color={Hex(GameUi.InkSoft)}>({cafe.Menu.Count}/{slots})  {sales}</color>\n");
         if (cafe.Menu.Count == 0) menu.Append($"<color={Hex(GameUi.InkSoft)}>Nothing yet. Pick a recipe below.</color>");
         foreach (DishSale dish in plan)
         {
             RecipeData recipe = design.GetRecipe(dish.recipeId);
-            string sells = dish.sold > 0 ? $"sells {dish.sold}"
-                : now == 0 ? "nothing yet"
+            string sells = dish.sold > 0 ? $"next trip: {dish.sold}"
+                : now == 0 || evening || session.State.isNight ? "on the menu"
                 : $"<color={Hex(GameUi.Berry)}>missing ingredients</color>";
             menu.Append($"{recipe.name} <color={Hex(GameUi.InkSoft)}>({sells})</color>     ");
         }
         if (cafe.Menu.Count > 0 && unsold > 0)
-            menu.Append($"\n<color={Hex(GameUi.Berry)}>Not enough ingredients for {unsold} of today's sales.</color>");
+            menu.Append($"\n<color={Hex(GameUi.Berry)}>Not enough ingredients for {unsold} of the next trip's guests.</color>");
         _menuText.text = menu.ToString();
 
         // The recipes you know.
@@ -221,7 +229,7 @@ public class CafePopup : Popup
         int now = rules.SalesFor(session.State), full = rules.FullDaySales(session.State);
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
         _confirmText.text = $"<b>Close early?</b>\n\nIt's only {PartOfDay(rules, session.State)}. " +
-                            $"The cafe would sell {now} of today's {full} dishes, " +
+                            $"The cafe serves while you forage, so closing now means no more guests today, " +
                             $"and you'd lose {tripsLeft} forage trip{(tripsLeft == 1 ? "" : "s")}.";
         _confirm.gameObject.SetActive(true);
     }
@@ -248,7 +256,7 @@ public class CafePopup : Popup
             text.Append($"{recipe?.name ?? dish.recipeId} x{dish.sold}   <color={Hex(GameUi.Moss)}>+{dish.coins} coins</color>\n");
         }
         if (summary.closedEarly)
-            text.Append($"You closed early, so only {summary.salesPlanned} of {summary.fullDaySales} guests came.\n");
+            text.Append("You closed early, so fewer guests came today.\n");
         if (summary.sold == 0 && summary.salesPlanned > 0)
             text.Append(session.State.menu.Count == 0
                 ? "The menu was empty, so nothing sold today.\n"

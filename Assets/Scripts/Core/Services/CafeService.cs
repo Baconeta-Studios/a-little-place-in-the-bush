@@ -6,8 +6,10 @@ namespace Bush.Core
     /// <summary>
     /// The cafe: learning recipes, the day's menu, and closing for the day. There's no customer
     /// simulation: the cafe sells a set number of dishes a day (<see cref="DayRules"/>), shared evenly
-    /// across the menu, and each sale cooks the dish (uses its ingredients, pays its coins) when the day
-    /// closes. Until then the menu can change freely.
+    /// across the menu and across the day. It serves each part of the day's share while you're out on that
+    /// part's forage trip (<see cref="ServeWhileOut"/>): each sale cooks the dish (uses its ingredients,
+    /// pays its coins) with what's in the larder as you head out. Menu changes count from the next part.
+    /// Closing for the day tallies it all up. (With no day clock, it all sells at closing instead.)
     /// </summary>
     public class CafeService
     {
@@ -94,12 +96,15 @@ namespace Bush.Core
             return true;
         }
 
+        /// <summary>What the cafe would serve during the next part of the day, from what's in the larder now. Changes nothing.</summary>
+        public List<DishSale> PlanSales(out int unsold) => PlanSales(_design.rules.NextPartSales(_state), _state.menuTurn, out unsold, out _);
+
         /// <summary>
-        /// What would sell if the day closed now, dish by dish (in menu order), sharing the day's sales
-        /// evenly: each sale goes to the next dish in turn that can still be made from what's left. Doesn't
+        /// <paramref name="sales"/> dishes, dish by dish (in menu order), shared evenly: each sale goes to the
+        /// next dish in turn (from <paramref name="turn"/>) that can still be made from what's left. Doesn't
         /// change anything. <paramref name="unsold"/> is how many sales were missed for want of ingredients.
         /// </summary>
-        public List<DishSale> PlanSales(out int unsold)
+        private List<DishSale> PlanSales(int sales, int turn, out int unsold, out int nextTurn)
         {
             var plan = new List<DishSale>();
             var counts = new Dictionary<string, int>();
@@ -110,8 +115,7 @@ namespace Bush.Core
             foreach (string recipeId in _state.menu)
                 if (plan.Count < slots && _design.GetRecipe(recipeId) != null && IsUnlocked(recipeId)) plan.Add(new DishSale { recipeId = recipeId });
 
-            int sales = _design.rules.SalesFor(_state);
-            int made = 0, next = 0;
+            int made = 0, next = plan.Count > 0 ? Math.Abs(turn) % plan.Count : 0;
             while (made < sales && plan.Count > 0)
             {
                 bool any = false;
@@ -131,7 +135,58 @@ namespace Bush.Core
             }
 
             unsold = sales - made;
+            nextTurn = next;
             return plan;
+        }
+
+        /// <summary>
+        /// Serves the parts of the day that have begun but not been served: call when a forage trip sets off
+        /// (that trip is the part). Cooks each sale, keeps the day's tally, and returns what sold, which is also
+        /// kept in <see cref="GameState.servedWhileOut"/> for the trip's results. Nothing at night, or with no
+        /// day clock (then it all sells at closing).
+        /// </summary>
+        public List<DishSale> ServeWhileOut()
+        {
+            var served = new List<DishSale>();
+            _state.servedWhileOut = served;
+            if (_state.isNight || _design.rules.TripsPerDay(_state) <= 0) return served;
+
+            while (_state.partsServed < _design.rules.PartsPassed(_state))
+            {
+                _state.partsServed++;
+                int sales = _design.rules.SalesForPart(_state, _state.partsServed);
+                List<DishSale> plan = PlanSales(sales, _state.menuTurn, out int unsold, out int nextTurn);
+                _state.menuTurn = nextTurn;
+                _state.missedToday += unsold;
+                foreach (DishSale planned in plan) Sell(planned, served);
+            }
+            foreach (DishSale dish in served) Tally(_state.soldToday, dish);
+            return served;
+        }
+
+        /// <summary>Cooks a planned dish's sales and adds them to <paramref name="into"/>.</summary>
+        private void Sell(DishSale planned, List<DishSale> into)
+        {
+            if (planned.sold <= 0) return; // dishes that didn't sell aren't listed
+            var dish = new DishSale { recipeId = planned.recipeId };
+            for (int i = 0; i < planned.sold; i++)
+            {
+                if (!Cook(planned.recipeId)) break; // can't happen: the plan used the same counts
+                dish.sold++;
+                dish.coins += _design.GetRecipe(planned.recipeId).coins;
+            }
+            Tally(into, dish);
+        }
+
+        private static void Tally(List<DishSale> into, DishSale dish)
+        {
+            DishSale existing = into.Find(d => d.recipeId == dish.recipeId);
+            if (existing == null) into.Add(new DishSale { recipeId = dish.recipeId, sold = dish.sold, coins = dish.coins });
+            else
+            {
+                existing.sold += dish.sold;
+                existing.coins += dish.coins;
+            }
         }
 
         /// <summary>
@@ -150,19 +205,27 @@ namespace Bush.Core
                 fullDaySales = _design.rules.FullDaySales(_state),
                 closedEarly = !_design.rules.IsEvening(_state)
             };
-            foreach (DishSale planned in PlanSales(out _))
+
+            if (_design.rules.TripsPerDay(_state) <= 0)
             {
-                var dish = new DishSale { recipeId = planned.recipeId };
-                for (int i = 0; i < planned.sold; i++)
-                {
-                    if (!Cook(planned.recipeId)) break; // can't happen: the plan used the same counts
-                    dish.sold++;
-                    dish.coins += _design.GetRecipe(planned.recipeId).coins;
-                }
-                summary.dishes.Add(dish);
+                // No day clock: the whole day sells now.
+                List<DishSale> plan = PlanSales(summary.fullDaySales, _state.menuTurn, out int unsold, out _);
+                _state.missedToday += unsold;
+                foreach (DishSale planned in plan) Sell(planned, _state.soldToday);
+            }
+            else
+            {
+                ServeWhileOut(); // any part begun but not served yet (normally none)
+            }
+
+            // The day's tally: everything served while you were out.
+            foreach (DishSale dish in _state.soldToday)
+            {
+                summary.dishes.Add(new DishSale { recipeId = dish.recipeId, sold = dish.sold, coins = dish.coins });
                 summary.sold += dish.sold;
                 summary.coins += dish.coins;
             }
+            summary.salesPlanned = summary.sold + _state.missedToday;
 
             // A lucky day: the cosier the cafe, the likelier a happy guest leaves a tip.
             if (summary.sold > 0)
@@ -207,6 +270,11 @@ namespace Bush.Core
             _state.day++;
             _state.forageTripsToday = 0;
             _state.nightTripsToday = 0;
+            _state.partsServed = 0;
+            _state.soldToday.Clear();
+            _state.missedToday = 0;
+            _state.menuTurn = 0;
+            _state.servedWhileOut.Clear();
             _state.timeOfDay = 0f;
             _state.companionsUsedToday.Clear();
             Visitors.RollToday(_design, _state);
@@ -266,7 +334,7 @@ namespace Bush.Core
     {
         /// <summary>The day that just ended.</summary>
         public int day;
-        /// <summary>What it could sell when it closed (less than a full day's if it closed early).</summary>
+        /// <summary>Sales the parts of the day it was open for asked for: sold plus missed (less than a full day's if it closed early).</summary>
         public int salesPlanned;
         public int fullDaySales;
         public bool closedEarly;
