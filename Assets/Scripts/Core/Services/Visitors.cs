@@ -41,6 +41,14 @@ namespace Bush.Core
             _ => !state.isNight
         };
 
+        /// <summary>" tonight" or " tomorrow" if this character isn't about at this time of day (for "Talk to Ruru tonight"), else "".</summary>
+        public static string WhenAbout(DesignData design, GameState state, string npcId)
+        {
+            NpcData npc = design.GetNpc(npcId);
+            if (npc == null || AboutNow(npc, state)) return "";
+            return state.isNight ? " tomorrow" : " tonight";
+        }
+
         /// <summary>Everyone at the cafe now, in design order.</summary>
         public static List<string> Present(DesignData design, GameState state, QuestService quests) =>
             design.npcs.FindAll(n => IsPresent(design, state, quests, n.id)).ConvertAll(n => n.id);
