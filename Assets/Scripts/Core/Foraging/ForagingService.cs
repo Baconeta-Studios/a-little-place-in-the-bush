@@ -282,6 +282,56 @@ namespace Bush.Core
             return limit <= 0 ? -1 : Math.Max(0, limit - state.forageTripsToday);
         }
 
+        // ----- Peek-a-boo: a bonus find to grab while out foraging -----
+
+        /// <summary>Mixed into the trip's seed for its peek-a-boo find, so the main result isn't touched.</summary>
+        public const uint PeekABooSalt = 0x9E3779B9u;
+
+        /// <summary>
+        /// What peeks out of the bushes on the pending trip: one extra roll from the same pool (same setup,
+        /// focus, companion and perks), from its own seed so the trip's main result is unchanged. Null if
+        /// there's no trip, it's been had already, or nothing can be found.
+        /// </summary>
+        public static ForageRoll PeekABooFind(DesignData design, GameState state)
+        {
+            if (!state.hasPendingExpedition || state.pendingExpedition.peekABooDone) return null;
+            PendingExpedition pending = state.pendingExpedition;
+            ForageTableData table = design.GetForageTable(pending.setup.tableId);
+            if (table == null) return null;
+
+            List<ForageModifier> modifiers = CollectModifiers(design, pending.setup);
+            List<Candidate> eligible = GetEligible(design, table, pending.setup, new GameStateForageContext(state), modifiers,
+                design.GetFocus(pending.setup.focusId));
+            var foundUniques = new HashSet<string>();
+            foreach (ItemStack stack in pending.result.stacks) foundUniques.Add(stack.itemId); // a unique already found can't peek out too
+            return Roll(eligible, null, foundUniques, modifiers, new Mulberry32(unchecked(pending.seed ^ PeekABooSalt)), true);
+        }
+
+        /// <summary>
+        /// Grabbed it: adds the peek-a-boo find to the pending trip, so Claim pays it with the rest. Once per
+        /// trip; missing it (<see cref="MissPeekABoo"/>) uses the chance up too. Returns what was added.
+        /// </summary>
+        public static ForageRoll TakePeekABoo(DesignData design, GameState state)
+        {
+            ForageRoll roll = PeekABooFind(design, state);
+            if (state.hasPendingExpedition) state.pendingExpedition.peekABooDone = true;
+            if (roll == null) return null;
+
+            ForageResult result = state.pendingExpedition.result;
+            result.rolls.Add(roll);
+            ItemStack stack = result.stacks.Find(s => s.itemId == roll.itemId);
+            if (stack == null) result.stacks.Add(new ItemStack(roll.itemId, roll.qty));
+            else stack.qty += roll.qty;
+            ItemData item = design.GetItem(roll.itemId);
+            if (item != null && item.rarity >= Rarity.Rare && !result.rareFinds.Contains(roll.itemId)) result.rareFinds.Add(roll.itemId);
+            return roll;
+        }
+
+        public static void MissPeekABoo(GameState state)
+        {
+            if (state.hasPendingExpedition) state.pendingExpedition.peekABooDone = true;
+        }
+
         /// <summary>The pending expedition's result, for the results screen. Null if there isn't one.</summary>
         public static ForageResult GetPendingResult(GameState state) =>
             state.hasPendingExpedition ? state.pendingExpedition.result : null;
