@@ -42,6 +42,8 @@ public class ForagePopup : Popup
     private TextMeshProUGUI _companionLabel;
     private TextMeshProUGUI _tripsLeft;
     private Button _go;
+    /// <summary>Go was pressed with an empty menu and the warning shown: the next press goes anyway.</summary>
+    private bool _emptyMenuWarned;
     private ItemGridView _preview;
     private TextMeshProUGUI _previewNote;
     private TextMeshProUGUI _outText;
@@ -118,6 +120,7 @@ public class ForagePopup : Popup
 
     private void ShowSetup()
     {
+        _emptyMenuWarned = false;
         SetStep(_setup);
         RefreshSetup();
     }
@@ -201,6 +204,9 @@ public class ForagePopup : Popup
             : tripsLeft < 0 ? "" : session.State.isNight ? "One trip tonight. Night brings different finds."
             : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
         _go.interactable = canGo;
+        GameUi.SetLabel(_go, _emptyMenuWarned ? "Go anyway" : "Go!");
+        if (_emptyMenuWarned && canGo)
+            _tripsLeft.text = $"<color=#{berry}>Your menu's empty, so the cafe won't serve anyone while you're out. Set it at the cafe door, or go anyway.</color>";
 
         // What you might find: the likeliest first, rare things left out so they stay a surprise.
         ExpeditionSetup setup = CurrentSetup(session);
@@ -243,6 +249,17 @@ public class ForagePopup : Popup
             Debug.LogWarning($"[Forage] Can't go: {error}");
             return;
         }
+
+        // By day, with recipes known but nothing on the menu, the cafe would serve nobody: say so once.
+        bool emptyMenu = !session.State.isNight && session.Design.rules.TripsPerDay(session.State) > 0 && session.State.menu.Count == 0 &&
+                         session.Design.recipes.Exists(r => session.Cafe.IsUnlocked(r.id));
+        if (emptyMenu && !_emptyMenuWarned)
+        {
+            _emptyMenuWarned = true;
+            RefreshSetup();
+            return;
+        }
+        _emptyMenuWarned = false;
 
         var seed = (uint)Random.Range(int.MinValue, int.MaxValue);
         seed = ForagingService.LuckySeed(session.Design, session.State, setup, seed); // the tutorial's leaves
