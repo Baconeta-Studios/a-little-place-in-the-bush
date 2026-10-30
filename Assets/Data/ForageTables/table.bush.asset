@@ -206,3 +206,17 @@ MonoBehaviour:
     time: 0
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
+  - item: {fileID: 11400000, guid: 5f7e7d9b5fd169940ba55b21ba95bf02, type: 2}
+    weight: 0.8
+    min: 1
+    max: 1
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 11400000, guid: 3ca94a1faab314c40a2bb162f40137bc, type: 2}
+  - item: {fileID: 11400000, guid: b3d05536aadf3354d8a1d03b4db623e1, type: 2}
+    weight: 0.35
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
