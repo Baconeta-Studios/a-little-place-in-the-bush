@@ -230,7 +230,7 @@ public class CafePopup : Popup
         }
         DayRules rules = session.Design.rules;
         bool evening = rules.IsEvening(session.State);
-        bool emptyMenu = session.State.menu.Count == 0 && HasAnyRecipe(session);
+        bool emptyMenu = session.State.menu.Count == 0 && session.Cafe.CanCookAnything();
         if (evening && !emptyMenu)
         {
             CloseForTheDay();
@@ -248,8 +248,6 @@ public class CafePopup : Popup
         GameUi.SetLabel(_confirmStay, emptyMenu ? "Set the menu" : "Stay open");
         _confirm.gameObject.SetActive(true);
     }
-
-    private static bool HasAnyRecipe(GameSession session) => session.Design.recipes.Exists(r => session.Cafe.IsUnlocked(r.id));
 
     private void CloseForTheDay()
     {

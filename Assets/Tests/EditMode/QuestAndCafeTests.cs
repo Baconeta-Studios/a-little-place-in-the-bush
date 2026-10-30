@@ -26,6 +26,14 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void CanCookAnything_NeedsARecipeAndItsIngredients()
+        {
+            Assert.IsFalse(_game.cafe.CanCookAnything(), "Salad is known, but there are no leaves.");
+            _game.economy.Add(TestDesign.Leaf, 3);
+            Assert.IsTrue(_game.cafe.CanCookAnything());
+        }
+
+        [Test]
         public void CanCook_ReportsWhatsMissing()
         {
             _game.economy.Add(TestDesign.Leaf, 1);
