@@ -183,6 +183,7 @@ public static class DesignDataTools
                 asset.teachesPerk = assets.Get<PerkDefinition>(x.teachesPerk);
                 asset.tripsToTeach = x.tripsToTeach;
                 asset.tripCost = x.tripCost;
+                asset.activeAt = x.activeAt;
             }
             foreach (NpcData x in design.npcs)
             {

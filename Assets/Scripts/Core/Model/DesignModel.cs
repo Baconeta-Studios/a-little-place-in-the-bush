@@ -169,6 +169,8 @@ namespace Bush.Core
         public int tripsToTeach;
         /// <summary>Coins to take them on a trip. They can go once a day (they get tired).</summary>
         public int tripCost;
+        /// <summary>When they'll come foraging: by day, at night (nocturnal), or either, though still only once a day.</summary>
+        public ActiveTime activeAt;
     }
 
     [Serializable]

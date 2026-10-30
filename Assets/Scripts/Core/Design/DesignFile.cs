@@ -27,7 +27,7 @@ namespace Bush.Core
         [Serializable] public class Amount { public string item; public int qty; }
         [Serializable] public class Recipe { public string id; public string name; public List<Amount> ingredients = new(); public int coins; public bool unlockedByDefault; public int price; public List<string> scraps = new(); public string description; }
         [Serializable] public class Modifier { public string type; public string tag; public string rarity; public double value; }
-        [Serializable] public class Companion { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); public string teachesPerk; public int tripsToTeach; public int tripCost; }
+        [Serializable] public class Companion { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); public string teachesPerk; public int tripsToTeach; public int tripCost; public string activeAt; }
         [Serializable] public class Perk { public string id; public string name; public string description; public bool unlockedByDefault; public List<Modifier> modifiers = new(); }
         [Serializable] public class Focus { public string id; public string name; public List<string> tags = new(); public double multiplier; }
         [Serializable] public class Entry { public string item; public double weight; public int min; public int max; public string time; public string requiresQuest; public string requiresCompanion; }
@@ -71,7 +71,8 @@ namespace Bush.Core
                 {
                     id = x.id, name = x.name, description = x.description, unlockedByDefault = x.unlockedByDefault,
                     modifiers = ToModifiers(x.modifiers, errors, x.id), teachesPerk = x.teachesPerk, tripsToTeach = x.tripsToTeach,
-                    tripCost = x.tripCost
+                    tripCost = x.tripCost,
+                    activeAt = string.IsNullOrEmpty(x.activeAt) ? ActiveTime.Day : Parse(x.activeAt, ActiveTime.Day, errors, x.id)
                 });
 
             foreach (Perk x in perks)
@@ -184,7 +185,7 @@ namespace Bush.Core
                 {
                     id = x.id, name = x.name, description = x.description, unlockedByDefault = x.unlockedByDefault,
                     modifiers = FromModifiers(x.modifiers), teachesPerk = x.teachesPerk, tripsToTeach = x.tripsToTeach,
-                    tripCost = x.tripCost
+                    tripCost = x.tripCost, activeAt = x.activeAt.ToString()
                 });
 
             foreach (PerkData x in design.perks)

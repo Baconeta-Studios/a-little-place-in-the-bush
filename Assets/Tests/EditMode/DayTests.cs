@@ -243,6 +243,28 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void Companions_ForageByDayOrNight_ButOnlyOnce()
+        {
+            CompanionData kea = _game.design.GetCompanion(TestDesign.Kea);
+            CompanionData weka = _game.design.GetCompanion(TestDesign.Weka);
+            kea.activeAt = ActiveTime.Night;
+            weka.activeAt = ActiveTime.Both;
+            _game.state.nightUnlocked = true;
+
+            Assert.IsFalse(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(TestDesign.Kea), out string error));
+            StringAssert.Contains("night", error);
+            ForagingService.Begin(_game.design, _game.state, TestDesign.Setup(TestDesign.Weka), 1u);
+            ForagingService.Claim(_game.design, _game.state, _game.economy, _game.events);
+
+            _game.state.forageTripsToday = 2;
+            _game.cafe.CloseDay(); // into the night
+            Assert.IsTrue(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(TestDesign.Kea, time: TimeOfDay.Night), out _), "Kea's nocturnal.");
+            Assert.IsFalse(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(TestDesign.Weka, time: TimeOfDay.Night), out error),
+                "Weka went out today, so not tonight too.");
+            StringAssert.Contains("tired", error);
+        }
+
+        [Test]
         public void NightUnlock_IsAQuestReward()
         {
             _game.design.quests.Find(q => q.id == TestDesign.Welcome).rewards.Add(new QuestReward { type = RewardType.UnlockNight });

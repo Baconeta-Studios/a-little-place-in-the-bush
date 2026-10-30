@@ -132,11 +132,13 @@ public class ForagePopup : Popup
 
         // Who comes along: companions you've befriended, each once a day for a few coins.
         Clear(_companionRow);
-        if (session.Design.GetCompanion(_companionId) == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId)) _companionId = "";
+        CompanionData kept = session.Design.GetCompanion(_companionId);
+        if (kept == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId) || !ForagingService.IsAboutNow(session.State, kept)) _companionId = "";
         AddChoice(_companionRow, "Just me", _companionId == "", () => { _companionId = ""; RefreshSetup(); });
         foreach (CompanionData companion in session.Design.companions)
         {
             if (!Unlocks.IsCompanionUnlocked(session.Design, session.State, companion.id)) continue;
+            if (!ForagingService.IsAboutNow(session.State, companion)) continue; // day companions sleep at night, and the other way round
             string id = companion.id;
             bool tired = ForagingService.IsTired(session.State, id);
             string label = tired ? $"{companion.name} (tired)" : companion.tripCost > 0 ? $"{companion.name}, {companion.tripCost}c" : companion.name;
