@@ -132,6 +132,7 @@ public static class DesignDataTools
                 asset.visits = x.visits;
                 asset.visitChance = (float)x.visitChance;
                 asset.firstDay = x.firstDay;
+                asset.activeAt = x.activeAt;
             }
             foreach (UpgradeData x in design.rules.upgrades)
             {
