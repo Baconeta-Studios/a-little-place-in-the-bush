@@ -4,7 +4,7 @@ Something nice about today, announced in the morning. Never bad. A cosier cafe m
 
 ## In the game
 
-- Each morning (from day 3, after the tutorial) there's a good chance of one event. It's announced under the day's title as the screen fades in (*"Day 6. Rain overnight. The mushrooms will be out."*), shown in gold under the day dial (tap the dial for what it does), and called out where it matters: the forage screen for forage events, the menu board for the cafe ones.
+- Each morning (from day 3, after the tutorial) there's a chance of one event: about 1 morning in 3 in a bare cafe, up to 3 in 5 in a very cosy one. It's announced under the day's title as the screen fades in (*"Day 6. Rain overnight. The mushrooms will be out."*), shown in gold under the day dial (tap the dial for what it does), and called out where it matters: the forage screen for forage events, the menu board for the cafe ones.
 - The same event never comes two days running. Rolled once per day from the save's daily dice, so reloading doesn't change it.
 
 | Event | Rarity | What it does |
@@ -32,8 +32,8 @@ New events: right-click in the folder, **Create > Bush > Day Event**, then add i
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Chance | 0.5 | Chance of an event on a morning, in a bare cafe. |
-| Chance From Cosiness | 0.35 | Added at full cosiness (so up to 85%). |
+| Chance | 0.3 | Chance of an event on a morning, in a bare cafe. |
+| Chance From Cosiness | 0.3 | Added at full cosiness (so up to 60%). |
 | Rarer From Cosiness | 1 | At full cosiness, an event's weight is multiplied by 1 + this x its rarity step (uncommon 1, rare 2, legendary 3). |
 | Cosiness For Full Boost | 150 | The cosiness where all the boosts are full. |
 | Exclusive Chance | 0.05 | Chance a doorstep gift is exclusive, in a bare cafe. |

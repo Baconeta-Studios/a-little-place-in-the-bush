@@ -89,9 +89,9 @@ namespace Bush.Core
     public class DayEventSettings
     {
         /// <summary>The chance of an event on a given morning, in a bare cafe.</summary>
-        public double chance = 0.5;
+        public double chance = 0.3;
         /// <summary>Added to that chance at full cosiness (see <see cref="cosinessForFullBoost"/>).</summary>
-        public double chanceFromCosiness = 0.35;
+        public double chanceFromCosiness = 0.3;
         /// <summary>At full cosiness, rarer events' weights are multiplied by 1 + this x their rarity step (uncommon 1, rare 2, legendary 3).</summary>
         public double rarerFromCosiness = 1;
         /// <summary>The cosiness at which the boosts are full.</summary>
