@@ -7,7 +7,7 @@
 - **Night is earned, not forced.** Until Ruru's *After dark* quest (serve 3 dishes, after *Open for guests*) closing goes straight to the next morning, as before. Her reward unlocks night (`UnlockNight`, a quest reward type).
 - Once unlocked, the day's summary ends with **Into the night**: the screen fades to black and back to the cafe at night.
 - **Night is calm.** The cafe's closed (no sales). Nocturnal guests are about, and you get **one night forage trip**, which finds night things (Kiwi's note, glowworms). **Go to bed** (on the HUD, or the cafe door) fades into the next morning; you can go to bed straight away.
-- **Who's about:** each character has **Active At**: Day, Night or Both. Day guests go home at night; nocturnal ones only come out at night. Placeholder: Ruru (a morepork) is about both, Wētā and Pekapeka are nocturnal, everyone else is a day guest.
+- **Who's about:** each character has **Active At**: Day, Night or Both. Day guests go home at night; nocturnal ones only come out at night. **Day until night** is for night owls who keep day hours for you at first: Ruru (a morepork) is about by day through the tutorial, and once *After dark* unlocks night she's only about at night, so the story moves into the night. Wētā and Pekapeka are nocturnal; everyone else is a day guest.
 - **Companions** have **Active At** too. Day companions only forage by day and nocturnal ones only at night; "both" can go either, but still only once a day, so going by day means they're tired that night. Placeholder: Kea and Kunekune by day, Pekapeka (a bat) at night, Weka and Spider either.
 - Nothing changes in view while a day ends: guests and lighting switch while the screen is black (`DayTransition`, `DayFlow`).
 

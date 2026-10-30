@@ -33,8 +33,13 @@ namespace Bush.Core
         }
 
         /// <summary>Day characters by day, nocturnal ones at night, "both" any time.</summary>
-        public static bool AboutNow(NpcData npc, GameState state) =>
-            npc.activeAt == ActiveTime.Both || (npc.activeAt == ActiveTime.Night) == state.isNight;
+        public static bool AboutNow(NpcData npc, GameState state) => npc.activeAt switch
+        {
+            ActiveTime.Both => true,
+            ActiveTime.Night => state.isNight,
+            ActiveTime.DayUntilNight => state.nightUnlocked ? state.isNight : !state.isNight,
+            _ => !state.isNight
+        };
 
         /// <summary>Everyone at the cafe now, in design order.</summary>
         public static List<string> Present(DesignData design, GameState state, QuestService quests) =>

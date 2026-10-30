@@ -65,6 +65,15 @@ namespace Bush.Core.Tests
             Assert.IsFalse(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka), "Day guests go home at night.");
             weka.activeAt = ActiveTime.Both;
             Assert.IsTrue(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka));
+
+            // A night owl who keeps day hours until night is unlocked.
+            weka.activeAt = ActiveTime.DayUntilNight;
+            _game.state.isNight = false;
+            Assert.IsTrue(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka));
+            _game.state.nightUnlocked = true;
+            Assert.IsFalse(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka), "Night owl now: not by day.");
+            _game.state.isNight = true;
+            Assert.IsTrue(Visitors.IsPresent(_game.design, _game.state, _game.quests, Weka));
         }
 
         [Test]

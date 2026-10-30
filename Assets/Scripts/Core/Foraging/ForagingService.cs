@@ -145,8 +145,13 @@ namespace Bush.Core
         public static int TripCost(DesignData design, ExpeditionSetup setup) => design.GetCompanion(setup.companionId)?.tripCost ?? 0;
 
         /// <summary>Day companions forage by day, nocturnal ones at night, "both" either (but only once a day).</summary>
-        public static bool IsAboutNow(GameState state, CompanionData companion) =>
-            companion.activeAt == ActiveTime.Both || (companion.activeAt == ActiveTime.Night) == state.isNight;
+        public static bool IsAboutNow(GameState state, CompanionData companion) => companion.activeAt switch
+        {
+            ActiveTime.Both => true,
+            ActiveTime.Night => state.isNight,
+            ActiveTime.DayUntilNight => state.nightUnlocked ? state.isNight : !state.isNight,
+            _ => !state.isNight
+        };
 
         /// <summary>A companion who's been out today (by day or night) is tired until the next morning.</summary>
         public static bool IsTired(GameState state, string companionId) => state.companionsUsedToday.Contains(companionId);

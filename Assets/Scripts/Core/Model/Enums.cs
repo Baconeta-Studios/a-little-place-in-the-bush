@@ -47,7 +47,9 @@ namespace Bush.Core
     {
         Day,
         Night,
-        Both
+        Both,
+        /// <summary>By day until night is unlocked, then only at night (a night owl who keeps day hours for you at first).</summary>
+        DayUntilNight
     }
 
     /// <summary>What a cafe upgrade improves.</summary>
