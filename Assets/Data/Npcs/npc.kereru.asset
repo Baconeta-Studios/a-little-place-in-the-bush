@@ -21,6 +21,7 @@ MonoBehaviour:
   visitChance: 0.25
   firstDay: 0
   afterQuest: {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  activeAt: 0
   shop:
   - {fileID: 11400000, guid: 2f958f2b8540b814ca9cd070c75dfbbc, type: 2}
   - {fileID: 11400000, guid: ca8b00c001dff5a4f84f5636ce326935, type: 2}
