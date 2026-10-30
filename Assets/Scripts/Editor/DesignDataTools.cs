@@ -71,6 +71,7 @@ public static class DesignDataTools
         database.quests = Merge(database.quests, FindAll<QuestDefinition>());
         database.placeables = Merge(database.placeables, FindAll<PlaceableDefinition>());
         database.upgrades = Merge(database.upgrades, FindAll<UpgradeDefinition>());
+        database.dayEvents = Merge(database.dayEvents, FindAll<DayEventDefinition>());
         EditorUtility.SetDirty(database);
         AssetDatabase.SaveAssets();
         Debug.Log($"[Bush] Database now lists {database.All().Count()} definitions.");
