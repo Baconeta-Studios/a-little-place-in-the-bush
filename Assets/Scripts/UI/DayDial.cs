@@ -71,7 +71,8 @@ public class DayDial : MonoBehaviour
         }
 
         _day.text = $"<size=55%>Day</size>\n{state.day}";
-        _label.text = PartName(state, rules, trips);
+        DayEventData today = DayEvents.Today(session.Design, state);
+        _label.text = PartName(state, rules, trips) + (today != null ? $"\n<size=80%><color=#{ColorUtility.ToHtmlStringRGB(new Color(1f, 0.85f, 0.45f))}>{today.name}</color></size>" : "");
     }
 
     private static string PartName(GameState state, DayRules rules, int trips)
@@ -118,6 +119,8 @@ public class DayDial : MonoBehaviour
             ? left > 0 ? "Night. One forage trip tonight, then bed." : "Night. Time for bed."
             : session.Design.rules.IsEvening(state) ? "Evening. Close the cafe for the day."
             : $"{left} forage trip{(left == 1 ? "" : "s")} left today.";
+        DayEventData today = DayEvents.Today(session.Design, state);
+        if (today != null) hint += $"\n{today.name}: {today.effect}";
         Debug.Log($"[Day] {hint}");
         _label.text = hint;
         _nextRefresh = Time.unscaledTime + 3f; // leave the hint up for a moment

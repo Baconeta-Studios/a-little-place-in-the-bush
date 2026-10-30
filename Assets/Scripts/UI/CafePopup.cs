@@ -120,6 +120,9 @@ public class CafePopup : Popup
         string sales = session.State.isNight || evening || rules.TripsPerDay(session.State) <= 0
             ? $"Sold today: {soldToday} ({coinsToday} coins)."
             : $"Serves {now} while you're out on your next trip. Sold today: {soldToday} ({coinsToday} coins).";
+        DayEventData today = DayEvents.Today(design, session.State);
+        if (today != null && (today.extraSales > 0 || (today.critic && !session.State.criticDone)))
+            sales += $" <color={Hex(GameUi.Moss)}>{today.name}: {today.effect}</color>";
         var menu = new StringBuilder($"<b>Today's menu</b>  <color={Hex(GameUi.InkSoft)}>({cafe.Menu.Count}/{slots})  {sales}</color>\n");
         if (cafe.Menu.Count == 0) menu.Append($"<color={Hex(GameUi.InkSoft)}>Nothing yet. Pick a recipe below.</color>");
         foreach (DishSale dish in plan)
@@ -253,7 +256,8 @@ public class CafePopup : Popup
         {
             if (dish.sold == 0) continue;
             RecipeData recipe = session.Design.GetRecipe(dish.recipeId);
-            text.Append($"{recipe?.name ?? dish.recipeId} x{dish.sold}   <color={Hex(GameUi.Moss)}>+{dish.coins} coins</color>\n");
+            text.Append($"{recipe?.name ?? dish.recipeId} x{dish.sold}   <color={Hex(GameUi.Moss)}>+{dish.coins} coins</color>" +
+                        (dish.critic ? $"  <color={Hex(GameUi.InkSoft)}>(the food critic loved it: double!)</color>" : "") + "\n");
         }
         if (summary.closedEarly)
             text.Append("You closed early, so fewer guests came today.\n");

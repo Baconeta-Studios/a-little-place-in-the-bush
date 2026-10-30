@@ -95,23 +95,23 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
     /// <paramref name="atBlack"/> runs while the screen is fully black, for changes that shouldn't be
     /// seen happening. Input is locked throughout. Ignored mid-transition (returns false).
     /// </summary>
-    public bool PassTime(string title, System.Action atBlack = null)
+    public bool PassTime(string title, System.Action atBlack = null, string subtitle = null)
     {
         if (IsTravelling) return false;
-        StartCoroutine(PassTimeRoutine(title, atBlack));
+        StartCoroutine(PassTimeRoutine(title, atBlack, subtitle));
         return true;
     }
 
-    private IEnumerator PassTimeRoutine(string title, System.Action atBlack)
+    private IEnumerator PassTimeRoutine(string title, System.Action atBlack, string subtitle)
     {
         IsTravelling = true;
         InputLock.Lock(this);
         if (Interactor.Player) Interactor.Player.Cancel();
 
-        _fadeText.text = title;
+        _fadeText.text = string.IsNullOrEmpty(subtitle) ? title : $"{title}\n<size=40%><i>{subtitle}</i></size>";
         yield return Fade(_fade, 1f, 0.6f);
         atBlack?.Invoke();
-        yield return new WaitForSecondsRealtime(1.2f);
+        yield return new WaitForSecondsRealtime(string.IsNullOrEmpty(subtitle) ? 1.2f : 2.4f); // time to read the morning's news
         yield return Fade(_fade, 0f, 0.7f);
         _fadeText.text = "";
 
