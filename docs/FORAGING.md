@@ -83,7 +83,8 @@ The sandbox also runs thousands of simulated trips for exact averages.
 - **Setup:** the place (the first forage table), what to **look out for** (a focus, or Anything), who to **take along** (companions you've befriended who are about at this time of day and not tired) and **perks** (as many as your perk slots). The lines above each row say what the chosen companion and perks do. "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
 - **The focus is taught** by Ruru's *Leaves for the salad* (the first trip: "choose Greens and you'll find far more leaves"), and a tip on the screen says what it does until you pick one.
 - **Trips:** three by day (they're the day's clock, see [CAFE.md](CAFE.md)) and one at night once night is unlocked (see [NIGHT.md](NIGHT.md)). Night trips find night things.
-- **Go:** works out and saves the result straight away, then shows "Out foraging..." for a moment.
+- **Go:** works out and saves the result straight away (and the cafe serves this part of the day while you're out, see [CAFE.md](CAFE.md)), then shows "Out foraging..." with **peek-a-boo**: one of three bushes rustles and something peeks out for a moment. Tap it to grab it as a **bonus find**; miss it and it's gone. It never takes anything away: the trip's own finds are fixed at Go. **Skip** goes straight to the results.
+- **The peek-a-boo find** is one extra roll from the same pool (same focus, companion and perks), from the trip's seed mixed with `ForagingService.PeekABooSalt`, so the main result (and the sandbox's) is unchanged. One chance per trip, and it's saved, so a refresh can't give a second go.
 - **Results:** what was found, rare finds and recipe encounters called out, then **Collect** (or closing) puts it all in the bag.
 - **Companions** are free to take, once a day each, by day or night (see [GUESTS-AND-PROGRESS.md](GUESTS-AND-PROGRESS.md)). After 5 trips together they teach their perk.
 - **Luck protection:** while Ruru's leaves quest is under way, the trip's seed is picked so it finds the leaves still needed. The logged seed still reproduces it.
@@ -93,4 +94,4 @@ The sandbox also runs thousands of simulated trips for exact averages.
 ## Decided
 
 - **Keeping companions and perks special:** each companion goes once a day, perks are rare (mostly from 5 trips with a companion), and perk slots limit how many come along.
-- **A foraging minigame** (e.g. a timing bar for a bonus find) is being considered; see [DECISIONS.md](DECISIONS.md).
+- **A foraging minigame:** peek-a-boo is in to try (a timing bar is the alternative); see [DECISIONS.md](DECISIONS.md).

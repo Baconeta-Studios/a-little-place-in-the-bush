@@ -14,11 +14,12 @@ One place for what's been decided, what's been set aside for later, and what's s
 **The cafe**
 - **No recipes at the start.** They come from quests, rare forage encounters and, for a few, Kererū's recipe shop.
 - **One dish on the menu to start**; more menu slots, sales and trips come from cafe upgrades.
-- **Sales:** a set number per day, shared evenly across the menu, ingredients used when the cafe closes. *Under review: see Open below.*
+- **The cafe serves while you're out:** each forage trip is a part of the day, and as you set off the cafe serves that part's share (3 dishes over 3 trips: one each), shared evenly across the menu. The trip's results say what sold; closing for the day tallies it up. Menu changes count from your next trip.
 
 **Foraging**
 - **Pick a focus ("look out for") before each trip** to find more of something. Taught in Ruru's *Leaves for the salad*, the first trip, and by a tip on the forage screen.
 - **Luck protection** in the tutorial: while *Leaves for the salad* is active, a trip always finds the leaves still needed.
+- **Peek-a-boo** while you're out: something peeks out of a bush for a moment; grab it for a bonus find. It only adds, and can be skipped.
 - **Rare finds stay a surprise:** the forage screen never shows odds, and leaves out Rare and Legendary items.
 - **Rare recipe encounters** each have their own way to be found: Kiwi (night), Kunekune's scribble (with Kunekune), Weka's card (with Weka), Tūī's song (very rare, likelier with a Sweet focus).
 
@@ -56,6 +57,6 @@ One place for what's been decided, what's been set aside for later, and what's s
 
 ## Open
 
-- **How the cafe sells through the day.** Right now you forage, set the menu, then everything sells at once when you close, which can feel like magic. Ideas are being weighed (see the latest discussion); the rules are built so the sales can be moved earlier without changing the menu or ingredients.
-- **A foraging minigame** to make trips feel more hands-on, e.g. a timing bar for a bonus find. Being considered.
+- **Special orders:** now and then a visiting guest asks for a particular dish, and serving it gets a tip. An idea for later, to make serving more hands-on.
+- **Peek-a-boo or a timing bar** for the forage minigame: peek-a-boo is in to try; a timing bar is the alternative if it doesn't feel right.
 - **Expedition art and UI:** the screens are placeholder UI built in code, to be designed.
