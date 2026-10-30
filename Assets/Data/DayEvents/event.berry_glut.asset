@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba03d9e8d1a4345bf23a396c5e81db9, type: 3}
+  m_Name: event.berry_glut
+  m_EditorClassIdentifier: Assembly-CSharp::DayEventDefinition
+  id: event.berry_glut
+  displayName: Berry glut
+  description: 
+  line: The bushes are heavy with fruit.
+  effect: +1 fruit with every fruit find today.
+  weight: 3
+  rarity: 0
+  minCosiness: 0
+  needsNight: 0
+  forage:
+  - type: 1
+    tag: fruit
+    rarity: 0
+    value: 1
+  forageAt: 2
+  peek: []
+  peekLonger: 0
+  extraSales: 0
+  critic: 0
+  familiarFace: 0
+  gift: []
