@@ -55,7 +55,9 @@ public class QuestLogPopup : Popup
 
         text.Append(Heading("The story"));
         QuestData main = quests.CurrentMainQuest();
-        if (main == null) text.Append(quests.IsMainStoryComplete() ? "You've finished the story. The cafe is yours!\n" : "Nothing yet.\n");
+        QuestData waiting = main == null ? quests.WaitingMainQuest() : null;
+        if (waiting != null) text.Append($"<b>{waiting.title}</b>  {Soft("from " + NpcName(design, waiting.giver))}\n{NpcName(design, waiting.giver)} will have something for you tomorrow.\n");
+        else if (main == null) text.Append(quests.IsMainStoryComplete() ? "You've finished the story. The cafe is yours!\n" : "Nothing yet.\n");
         else AppendQuest(text, session, main);
 
         text.Append('\n').Append(Heading("Side quests"));

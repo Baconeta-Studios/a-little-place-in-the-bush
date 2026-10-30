@@ -361,6 +361,10 @@ namespace Bush.Core
         public string summary;
         public bool isMain;
         public List<string> prerequisites = new();
+        /// <summary>Only opens the day after its prerequisites were done ("come back tomorrow"), so the story spreads over days.</summary>
+        public bool nextDay;
+        /// <summary>Doesn't open before this day. 0 for any day.</summary>
+        public int minDay;
         public List<QuestObjective> objectives = new();
         public List<QuestReward> rewards = new();
         public QuestDialogue dialogue = new();

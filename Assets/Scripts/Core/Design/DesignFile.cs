@@ -38,7 +38,7 @@ namespace Bush.Core
         [Serializable] public class Dialogue { public string offer; public string active; public string ready; public string done; }
         [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public bool canFlip; public string category; public int seats; public int cosiness; public string style; }
         [Serializable] public class Upgrade { public string id; public string name; public string description; public string effect; public int amount; public int price; public string requires; }
-        [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
+        [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public bool nextDay; public int minDay; public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
 
         /// <summary>Converts to the model. Unknown enum names are reported in <paramref name="errors"/> and fall back to the first value.</summary>
         public DesignData ToDesign(List<string> errors)
@@ -112,7 +112,7 @@ namespace Bush.Core
             {
                 var quest = new QuestData
                 {
-                    id = x.id, title = x.title, giver = x.giver, isMain = x.isMain, summary = x.summary,
+                    id = x.id, title = x.title, giver = x.giver, isMain = x.isMain, summary = x.summary, nextDay = x.nextDay, minDay = x.minDay,
                     prerequisites = new List<string>(x.prerequisites ?? new List<string>()),
                     dialogue = new QuestDialogue
                     {
@@ -223,7 +223,7 @@ namespace Bush.Core
             {
                 var quest = new Quest
                 {
-                    id = x.id, title = x.title, giver = x.giver, isMain = x.isMain, summary = x.summary,
+                    id = x.id, title = x.title, giver = x.giver, isMain = x.isMain, summary = x.summary, nextDay = x.nextDay, minDay = x.minDay,
                     prerequisites = new List<string>(x.prerequisites),
                     dialogue = new Dialogue { offer = x.dialogue?.offer, active = x.dialogue?.active, ready = x.dialogue?.ready, done = x.dialogue?.done }
                 };

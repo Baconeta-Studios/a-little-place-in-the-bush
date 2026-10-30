@@ -78,7 +78,8 @@ namespace Bush.Core
         CookRecipe,          // target = recipe id, or empty for any recipe
         CompleteExpeditions, // target unused
         TalkTo,              // target = npc id
-        PlaceObject          // target = placeable item id, or empty for anything
+        PlaceObject,         // target = placeable item id, or empty for anything
+        CloseDay             // target unused; closing the cafe for the day
     }
 
     public enum RewardType

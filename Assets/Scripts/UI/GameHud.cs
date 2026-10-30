@@ -114,7 +114,13 @@ public class GameHud : MonoBehaviour
         GameSession session = GameSession.Current;
         if (session == null || !_trackerText) return;
         QuestData main = session.Quests.CurrentMainQuest();
-        _tracker.gameObject.SetActive(main != null && (!_bar || _bar.gameObject.activeSelf));
+        QuestData waiting = main == null ? session.Quests.WaitingMainQuest() : null;
+        _tracker.gameObject.SetActive((main != null || waiting != null) && (!_bar || _bar.gameObject.activeSelf));
+        if (waiting != null)
+        {
+            _trackerText.text = $"<b>{waiting.title}</b>\n{QuestLogPopup.NpcName(session.Design, waiting.giver)} will have something for you tomorrow.";
+            return;
+        }
         if (main == null) return;
 
         string next;

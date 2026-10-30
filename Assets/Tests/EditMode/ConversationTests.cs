@@ -98,6 +98,47 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void NextDayQuests_WaitUntilTomorrow()
+        {
+            _game.design.quests.Find(q => q.id == TestDesign.LostRecipe).nextDay = true;
+            FinishWelcome(); // day 1
+            Assert.IsFalse(_game.quests.CanStart(TestDesign.LostRecipe), "Not the same day.");
+            Assert.IsTrue(_game.quests.WaitingForAnotherDay(TestDesign.LostRecipe));
+            Assert.AreEqual(TestDesign.LostRecipe, _game.quests.WaitingMainQuest()?.id, "The tracker says: tomorrow.");
+            Assert.AreNotEqual(TestDesign.LostRecipe, _game.quests.GetTopic(TestDesign.Ruru).questId, "Not offered today.");
+
+            _game.cafe.CloseDay(); // day 2
+            Assert.IsTrue(_game.quests.CanStart(TestDesign.LostRecipe));
+            Assert.IsNull(_game.quests.WaitingMainQuest());
+        }
+
+        [Test]
+        public void MinDayQuests_WaitForTheirDay()
+        {
+            _game.design.quests.Find(q => q.id == TestDesign.Welcome).minDay = 3;
+            Assert.IsFalse(_game.quests.CanStart(TestDesign.Welcome));
+            _game.cafe.CloseDay();
+            _game.cafe.CloseDay();
+            Assert.IsTrue(_game.quests.CanStart(TestDesign.Welcome));
+        }
+
+        [Test]
+        public void CloseDayObjective_CountsClosingUp()
+        {
+            _game.design.quests.Add(new QuestData
+            {
+                id = "quest.close", title = "Closing time", giver = TestDesign.Ruru,
+                objectives = { new QuestObjective { type = ObjectiveType.CloseDay, qty = 1 } }
+            });
+            _game.design.RebuildIndex();
+            _game.quests.Accept("quest.close");
+            Assert.AreEqual(QuestStatus.Active, _game.quests.GetStatus("quest.close"));
+            _game.cafe.CloseDay();
+            Assert.AreEqual(QuestStatus.ReadyToClaim, _game.quests.GetStatus("quest.close"));
+            Assert.AreEqual("Close the cafe for the day", QuestText.Objective(_game.design, _game.design.GetQuest("quest.close").objectives[0]));
+        }
+
+        [Test]
         public void QuestText_IsReadable()
         {
             QuestData welcome = _game.design.GetQuest(TestDesign.Welcome);

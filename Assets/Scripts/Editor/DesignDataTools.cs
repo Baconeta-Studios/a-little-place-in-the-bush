@@ -210,6 +210,8 @@ public static class DesignDataTools
                 var asset = assets.Get<QuestDefinition>(x.id);
                 asset.giver = assets.Get<NpcDefinition>(x.giver);
                 asset.isMain = x.isMain;
+                asset.nextDay = x.nextDay;
+                asset.minDay = x.minDay;
                 asset.prerequisites = x.prerequisites.Select(assets.Get<QuestDefinition>).Where(q => q).ToList();
                 asset.objectives = x.objectives.Select(o => new ObjectiveEntry { type = o.type, target = assets.GetAny(o.target), qty = o.qty }).ToList();
                 asset.rewards = x.rewards.Select(r => new RewardEntry { type = r.type, target = assets.GetAny(r.target), qty = r.qty }).ToList();

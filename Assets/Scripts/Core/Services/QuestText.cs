@@ -15,6 +15,7 @@ namespace Bush.Core
                     string dish = string.IsNullOrEmpty(objective.target) ? "any dish" : design.GetRecipe(objective.target)?.name ?? objective.target;
                     return qty == 1 ? $"Serve {dish} at the cafe" : $"Serve {dish} at the cafe {qty} times";
                 case ObjectiveType.CompleteExpeditions: return qty == 1 ? "Go foraging" : $"Go foraging {qty} times";
+                case ObjectiveType.CloseDay: return qty == 1 ? "Close the cafe for the day" : $"Close the cafe for the day {qty} times";
                 case ObjectiveType.TalkTo: return $"Talk to {design.GetNpc(objective.target)?.name ?? objective.target}";
                 case ObjectiveType.PlaceObject:
                     string thing = string.IsNullOrEmpty(objective.target) ? "something" : design.GetItem(objective.target)?.name ?? objective.target;
