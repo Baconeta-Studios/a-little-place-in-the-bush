@@ -1536,7 +1536,9 @@
         "active": "Come here, let me have a look at you.",
         "ready": "Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all it takes.",
         "done": "A recipe's no good without leaves, mind."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.main_gather",
@@ -1566,7 +1568,9 @@
         "active": "Three handfuls of leaves. Remember: look out for Greens, and they'll practically jump into your basket.",
         "ready": "See? Look out for something, and you'll find more of it. Keep the leaves, they're for your salad.",
         "done": "Off you go. The menu board's by the door."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.main_welcome",
@@ -1601,6 +1605,40 @@
         "active": "Leaf salad on the menu board, then off you go foraging. The guests will do the rest.",
         "ready": "Ah, I heard the guests liked your salad. You'll do.",
         "done": "The cafe's in good claws."
+      },
+      "nextDay": false,
+      "minDay": 0
+    },
+    {
+      "id": "quest.main_first_close",
+      "title": "Closing time",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_welcome"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "summary": "When the day's foraging is done, close the cafe for the day at the menu board by the door.",
+      "objectives": [
+        {
+          "type": "CloseDay",
+          "target": "",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "That's a good first day. When you've done your foraging, go to the menu board by the door and close up for the day. Come and see me in the morning.",
+        "active": "When your foraging's done, close up at the menu board by the door. Rest up.",
+        "ready": "Morning! You closed up nicely. Every day goes like that: menu, forage, close.",
+        "done": "A cafe's a lot of little days."
       }
     },
     {
@@ -1609,7 +1647,7 @@
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.main_first_close"
       ],
       "summary": "Ruru has some old furniture in the shed for you.",
       "objectives": [
@@ -1641,7 +1679,9 @@
         "active": "The shed's round the back. Well, I'll fetch them.",
         "ready": "Here: two chairs, a table, and a fern to make it homely. They're in your bag.",
         "done": "Set them out and see who drops by."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.main_set_out",
@@ -1671,7 +1711,9 @@
         "active": "Set out the chairs, the table and the fern. Press Build.",
         "ready": "Now that looks like a cafe. Folk will start dropping by, you'll see.",
         "done": "More things, and nicer things, make it cosier. Cosy brings guests."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.main_after_dark",
@@ -1701,7 +1743,9 @@
         "active": "Serve a few more dishes. Then stay up late with me.",
         "ready": "Well done. I've kept day hours long enough for you. From now on, find me after dark.",
         "done": "Tonight, don't rush off to bed. Come and find me. Night's when the bush really wakes up."
-      }
+      },
+      "nextDay": true,
+      "minDay": 0
     },
     {
       "id": "quest.main_lost_recipe",
@@ -1756,7 +1800,9 @@
         "active": "Any luck with the scraps? Try the bush, and ask around the neighbours.",
         "ready": "All four! Let me piece them together...",
         "done": "The kawakawa scroll is yours now. Make the village proud."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.side_weka_trade",
@@ -1791,7 +1837,9 @@
         "active": "A button. A shiny one.",
         "ready": "Ooh, shiny! Deal. Take your paper.",
         "done": "Got anything else shiny? No? Hmph."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.side_snail_hungry",
@@ -1836,7 +1884,9 @@
         "active": "Still... hungry...",
         "ready": "Mmmmm. Here. The paper. Slowly. And my friend the kunekune pig wants to forage with you.",
         "done": "Same time tomorrow?"
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.side_weta_repairs",
@@ -1881,7 +1931,9 @@
         "active": "Four bark, two silk. Kea is good at finding bark.",
         "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
         "done": "Come by at night. I'm awake then."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.companion_kea",
@@ -1911,7 +1963,9 @@
         "active": "Five bits of bark. Still waiting!",
         "ready": "Ha! Not bad for a gecko.",
         "done": "Fine, I'll come foraging with you. For a few coins. I'm a professional."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.companion_weka",
@@ -1941,7 +1995,9 @@
         "active": "Six trips. Out in the bush. I'll be counting. Probably.",
         "ready": "Not bad. Not bad at all.",
         "done": "Take me along any time. I'll find the shiny things."
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     },
     {
       "id": "quest.companion_pekapeka",
@@ -1971,7 +2027,9 @@
         "active": "I'll just... wait here. Until there's lots of food.",
         "ready": "That was delicious. Thank you.",
         "done": "If you ever go out looking for bugs... I could come?"
-      }
+      },
+      "nextDay": false,
+      "minDay": 0
     }
   ],
   "placeables": [

@@ -11,6 +11,10 @@ One place for what's been decided, what's been set aside for later, and what's s
 - **A day dial** on the HUD shows the parts of the day, and the lighting goes warm at dusk and blue at night.
 - **Nothing changes in view while a day ends:** guests and lighting switch while the screen is black.
 
+**The story's pacing**
+- **The tutorial is spread over days:** day 1 is the salad and closing up, day 2 the furniture, and night can't unlock before day 3. Quests can wait for the next day or a set day.
+- **A playthrough test** plays the whole story from the data, and a cheat finishes the current story step, so rewriting the story is safe to try.
+
 **The cafe**
 - **No recipes at the start.** They come from quests, rare forage encounters and, for a few, Kererū's recipe shop.
 - **One dish on the menu to start**; more menu slots, sales and trips come from cafe upgrades.
@@ -54,7 +58,7 @@ One place for what's been decided, what's been set aside for later, and what's s
 - **A second area** (garden, village, a shop). Out of scope for now; characters live at the cafe.
 - **A recipe book.** For now the cafe's menu board already lists the recipes you know. The lost recipe's scrap progress ("2 / 4") could become part of it later.
 - **The real narrative:** characters, names, quests and dialogue will be rewritten. The current ones are placeholders that show what the systems can do.
-- **"Come back tomorrow"** timing for quests, and characters who only appear on certain days.
+- Characters who only appear on certain days (beyond random visits).
 - **Night extras:** glow decorations bringing nocturnal guests, fireflies and stars, night sounds, a night backdrop.
 - **Wall, rug and surface placement**, and special high-cosiness furniture.
 
