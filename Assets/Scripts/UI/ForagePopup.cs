@@ -20,8 +20,8 @@ using UnityEngine.UI;
 public class ForagePopup : Popup
 {
     private const float TripSeconds = 3.2f;
-    /// <summary>How long the peek-a-boo find stays out before it hides again.</summary>
-    private const float PeekSeconds = 0.9f;
+    /// <summary>How long a bush rustles: tap it in time to grab what's in it.</summary>
+    private const float RustleSeconds = 1.0f;
     private const int MaxPreviewItems = 8;
 
     private static ForagePopup _instance;
@@ -47,8 +47,8 @@ public class ForagePopup : Popup
     private TextMeshProUGUI _outText;
     private TextMeshProUGUI _peekNote;
     private RectTransform[] _bushes;
-    private Button _peek;
-    private bool _peekClicked;
+    private int _tappedBush = -1;
+    private ForageRoll _bonus;
     private bool _skipped;
     private TextMeshProUGUI _resultsTitle;
     private ItemGridView _found;
@@ -253,9 +253,10 @@ public class ForagePopup : Popup
     }
 
     /// <summary>
-    /// The trip itself: "Out foraging...", and a little peek-a-boo. One of three bushes rustles, then
-    /// something peeks out for a moment: tap it to grab it as a bonus find. Miss it and it's gone (the
-    /// trip's own finds are never affected). Skip goes straight to the results.
+    /// The trip itself: "Out foraging...", and a little peek-a-boo. After a moment one of three bushes
+    /// rustles: tap that bush while it's rustling to grab what's in it as a bonus find. What it was is only
+    /// revealed in the results (no item art needed). Miss it and it's gone; the trip's own finds are never
+    /// affected. Skip goes straight to the results.
     /// </summary>
     private IEnumerator Trip()
     {
@@ -264,62 +265,44 @@ public class ForagePopup : Popup
         ForageRoll peek = session != null ? ForagingService.PeekABooFind(session.Design, session.State) : null;
         uint seed = session != null && session.State.hasPendingExpedition ? session.State.pendingExpedition.seed : 0u;
         int bush = (int)(seed % 3u);
-        float rustleAt = 0.6f + (seed >> 4) % 9 * 0.1f; // a different moment each trip
-        float peekAt = rustleAt + 0.45f;
-        _peekClicked = _skipped = false;
-        _peek.gameObject.SetActive(false);
+        float rustleAt = 0.7f + (seed >> 4) % 9 * 0.1f; // a different moment each trip
+        _tappedBush = -1;
+        _skipped = false;
+        _bonus = null;
         _peekNote.text = peek != null ? "Keep an eye on the bushes..." : "";
         foreach (RectTransform b in _bushes) b.localRotation = Quaternion.identity;
 
-        if (peek != null)
-        {
-            ItemData item = session.Design.GetItem(peek.itemId);
-            ItemDefinition definition = session.Database.Find<ItemDefinition>(peek.itemId);
-            Image icon = _peek.transform.Find("Icon").GetComponent<Image>();
-            icon.sprite = ItemGridView.IconFor(definition, null, out Color tint);
-            icon.color = icon.sprite ? Color.white : tint;
-            GameUi.SetLabel(_peek, item != null ? item.name : peek.itemId);
-            var peekRect = (RectTransform)_peek.transform;
-            peekRect.anchoredPosition = new Vector2(_bushes[bush].anchoredPosition.x, _bushes[bush].anchoredPosition.y + 150f);
-        }
-
-        bool peekResolved = peek == null;
+        bool resolved = peek == null;
         for (float t = 0f; t < TripSeconds && !_skipped; t += Time.unscaledDeltaTime) // the popup pauses the game
         {
             _outText.text = "Out foraging" + new string('.', 1 + (int)(t * 3f) % 3);
 
-            if (!peekResolved)
+            if (!resolved)
             {
-                // Rustle, then peek out, then hide.
-                bool rustling = t >= rustleAt && t < peekAt + PeekSeconds;
-                _bushes[bush].localRotation = Quaternion.Euler(0f, 0f, rustling ? Mathf.Sin(t * 40f) * 6f : 0f);
-                bool showing = t >= peekAt && t < peekAt + PeekSeconds;
-                if (_peek.gameObject.activeSelf != showing) _peek.gameObject.SetActive(showing);
+                bool rustling = t >= rustleAt && t < rustleAt + RustleSeconds;
+                _bushes[bush].localRotation = Quaternion.Euler(0f, 0f, rustling ? Mathf.Sin(t * 40f) * 7f : 0f);
+                if (rustling && _peekNote.text != "Something's rustling!") _peekNote.text = "Something's rustling!";
 
-                if (_peekClicked)
+                if (_tappedBush == bush && rustling)
                 {
-                    ForageRoll taken = ForagingService.TakePeekABoo(session.Design, session.State);
+                    _bonus = ForagingService.TakePeekABoo(session.Design, session.State);
                     session.SaveNow();
-                    _peek.gameObject.SetActive(false);
-                    _bushes[bush].localRotation = Quaternion.identity;
-                    ItemData got = taken != null ? session.Design.GetItem(taken.itemId) : null;
-                    _peekNote.text = got != null ? $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>Got it!</b> +{taken.qty} {got.name}</color>" : "";
-                    peekResolved = true;
+                    _peekNote.text = $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>Got something!</b></color>";
+                    resolved = true;
                 }
-                else if (t >= peekAt + PeekSeconds)
+                else if (t >= rustleAt + RustleSeconds)
                 {
                     ForagingService.MissPeekABoo(session.State);
-                    _peek.gameObject.SetActive(false);
-                    _bushes[bush].localRotation = Quaternion.identity;
                     _peekNote.text = "It got away.";
-                    peekResolved = true;
+                    resolved = true;
                 }
+                if (resolved) _bushes[bush].localRotation = Quaternion.identity;
             }
+            _tappedBush = -1; // a tap only counts on the frame it lands
             yield return null;
         }
 
-        if (!peekResolved && session != null) ForagingService.MissPeekABoo(session.State);
-        _peek.gameObject.SetActive(false);
+        if (!resolved && session != null) ForagingService.MissPeekABoo(session.State);
         _trip = null;
         ShowResults();
     }
@@ -370,6 +353,13 @@ public class ForagePopup : Popup
                 ? $"<b>{companion.name} has taught you a perk: {perk.name}!</b> You can use it without them now."
                 : $"Trips with {companion.name}: {trips} of {companion.tripsToTeach} before they teach you {perk.name}.");
         }
+        if (_bonus != null)
+        {
+            ItemData bonusItem = session.Design.GetItem(_bonus.itemId);
+            notes.Add($"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}>From the rustling bush: +{_bonus.qty} {bonusItem?.name ?? _bonus.itemId}</color>");
+            _bonus = null;
+        }
+
         // What the cafe sold while you were out on this trip.
         if (!session.State.isNight && session.State.menu.Count == 0 && session.Design.rules.TripsPerDay(session.State) > 0)
             notes.Add($"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>The cafe's menu was empty, so nothing sold while you were out.</color>");
@@ -479,32 +469,21 @@ public class ForagePopup : Popup
         _outText = GameUi.AddText(_out, "Out foraging...", 48f, GameUi.Ink, TextAlignmentOptions.Top, "OutText");
         _outText.rectTransform.offsetMax = new Vector2(0f, -60f);
 
-        // Peek-a-boo: three bushes, and something that peeks out of one for a moment.
+        // Peek-a-boo: three bushes (plain circles, no art needed); tap the one that rustles.
         _bushes = new RectTransform[3];
         for (int i = 0; i < 3; i++)
         {
+            int index = i;
             RectTransform bushRect = GameUi.NewRect($"Bush{i}", _out);
             GameUi.Place(bushRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), new Vector2((i - 1) * 380f, -170f), new Vector2(300f, 200f));
             Image bushImage = bushRect.gameObject.AddComponent<Image>();
             bushImage.sprite = GeneratedSprites.Circle;
             bushImage.color = new Color(0.33f + i * 0.04f, 0.52f, 0.28f);
-            bushImage.raycastTarget = false;
+            var bushButton = bushRect.gameObject.AddComponent<Button>();
+            bushButton.targetGraphic = bushImage;
+            bushButton.onClick.AddListener(() => _tappedBush = index);
             _bushes[i] = bushRect;
         }
-        _peek = GameUi.AddButton(_out, "", () => _peekClicked = true, new Vector2(220f, 220f), GameUi.Cream, GameUi.Ink, 26f);
-        var peekRect2 = (RectTransform)_peek.transform;
-        peekRect2.anchorMin = peekRect2.anchorMax = new Vector2(0.5f, 0.5f);
-        peekRect2.pivot = new Vector2(0.5f, 0f);
-        peekRect2.sizeDelta = new Vector2(220f, 220f);
-        TextMeshProUGUI peekLabel = _peek.GetComponentInChildren<TextMeshProUGUI>();
-        peekLabel.rectTransform.offsetMin = new Vector2(8f, 8f);
-        peekLabel.rectTransform.offsetMax = new Vector2(-8f, -150f);
-        RectTransform peekIcon = GameUi.NewRect("Icon", _peek.transform);
-        GameUi.Place(peekIcon, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(130f, 130f));
-        Image peekIconImage = peekIcon.gameObject.AddComponent<Image>();
-        peekIconImage.preserveAspect = true;
-        peekIconImage.raycastTarget = false;
-        _peek.gameObject.SetActive(false);
 
         _peekNote = GameUi.AddText(_out, "", 34f, GameUi.InkSoft, TextAlignmentOptions.Center, "PeekNote");
         _peekNote.rectTransform.anchorMin = new Vector2(0f, 0f);

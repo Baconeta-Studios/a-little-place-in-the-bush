@@ -19,7 +19,7 @@ One place for what's been decided, what's been set aside for later, and what's s
 **Foraging**
 - **Pick a focus ("look out for") before each trip** to find more of something. Taught in Ruru's *Leaves for the salad*, the first trip, and by a tip on the forage screen.
 - **Luck protection** in the tutorial: while *Leaves for the salad* is active, a trip always finds the leaves still needed.
-- **Peek-a-boo** while you're out: something peeks out of a bush for a moment; grab it for a bonus find. It only adds, and can be skipped.
+- **Peek-a-boo** while you're out: one of three bushes rustles; tap it in time for a bonus find, revealed in the results. No item art needed. It only adds, and can be skipped.
 - **Rare finds stay a surprise:** the forage screen never shows odds, and leaves out Rare and Legendary items.
 - **Rare recipe encounters** each have their own way to be found: Kiwi (night), Kunekune's scribble (with Kunekune), Weka's card (with Weka), Tūī's song (very rare, likelier with a Sweet focus).
 
