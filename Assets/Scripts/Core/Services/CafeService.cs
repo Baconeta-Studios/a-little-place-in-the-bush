@@ -60,6 +60,12 @@ namespace Bush.Core
             return missing.Count == 0;
         }
 
+        /// <summary>
+        /// Whether any recipe you know could be made from what's in the larder: the only time an empty menu is
+        /// worth a warning (on the first morning you know a recipe but have nothing to make it with).
+        /// </summary>
+        public bool CanCookAnything() => _design.recipes.Exists(r => CanCook(r.id, out _));
+
         /// <summary>Uses the ingredients and pays the coins in one transaction.</summary>
         public bool Cook(string recipeId)
         {

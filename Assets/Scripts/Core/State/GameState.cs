@@ -173,6 +173,8 @@ namespace Bush.Core
         /// rather than position, so reordering a quest's objectives in a patch doesn't move progress around.</summary>
         public List<QuestCounter> counters = new();
         public bool rewardClaimed;
+        /// <summary>The day it was completed, for quests that only open the day after.</summary>
+        public int completedDay;
     }
 
     [Serializable]

@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.main_welcome
   displayName: A cafe of my own
-  description: Put leaf salad on the menu board by the cafe door, then go foraging. The cafe serves what's on the menu while you're out.
+  description: Go to the cafe door and put leaf salad on the menu, then go foraging. The cafe serves what's on the menu while you're out.
   giver: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
   isMain: 1
   prerequisites:
   - {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}
+  nextDay: 0
+  minDay: 0
   objectives:
   - type: 2
     target: {fileID: 11400000, guid: fca9e2ef2c795124082e02373b8bd0f6, type: 2}
@@ -30,7 +32,7 @@ MonoBehaviour:
   - type: 2
     target: {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
     qty: 1
-  offerLine: Now let's see you serve it. Put leaf salad on the menu board by the door, then head out foraging. I'll mind the cafe while you're gone, and the guests will eat whatever's on the menu.
-  activeLine: Leaf salad on the menu board, then off you go foraging. The guests will do the rest.
+  offerLine: Now let's see you serve it. Go to the cafe door and put leaf salad on the menu, then head out foraging. I'll mind the cafe while you're gone, and the guests will eat whatever's on the menu.
+  activeLine: Leaf salad on the menu at the cafe door, then off you go foraging. The guests will do the rest.
   readyLine: Ah, I heard the guests liked your salad. You'll do.
   doneLine: The cafe's in good claws.

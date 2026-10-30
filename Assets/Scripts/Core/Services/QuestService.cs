@@ -26,6 +26,7 @@ namespace Bush.Core
             _events.ExpeditionCompleted += OnExpeditionCompleted;
             _events.TalkedTo += OnTalkedTo;
             _events.ObjectPlaced += OnObjectPlaced;
+            _events.DayEnded += OnDayEnded;
         }
 
         public void Dispose()
@@ -34,6 +35,7 @@ namespace Bush.Core
             _events.ExpeditionCompleted -= OnExpeditionCompleted;
             _events.TalkedTo -= OnTalkedTo;
             _events.ObjectPlaced -= OnObjectPlaced;
+            _events.DayEnded -= OnDayEnded;
         }
 
         public QuestStatus GetStatus(string questId)
@@ -44,14 +46,29 @@ namespace Bush.Core
             return progress.status;
         }
 
-        /// <summary>Not started yet, and every prerequisite quest is completed.</summary>
-        public bool CanStart(string questId)
+        /// <summary>Not started yet, every prerequisite quest is completed, and it's the right day (see <see cref="QuestData.nextDay"/>, <see cref="QuestData.minDay"/>).</summary>
+        public bool CanStart(string questId) => PrerequisitesDone(questId) && !WaitingForAnotherDay(questId);
+
+        /// <summary>Not started yet and every prerequisite quest is completed (whatever the day).</summary>
+        public bool PrerequisitesDone(string questId)
         {
             QuestData quest = _design.GetQuest(questId);
             if (quest == null || GetStatus(questId) != QuestStatus.NotStarted) return false;
             foreach (string prerequisite in quest.prerequisites)
                 if (GetStatus(prerequisite) != QuestStatus.Completed) return false;
             return true;
+        }
+
+        /// <summary>It would be ready to start, but not today: a later day (minDay), or the day after its prerequisites.</summary>
+        public bool WaitingForAnotherDay(string questId)
+        {
+            QuestData quest = _design.GetQuest(questId);
+            if (quest == null) return false;
+            if (quest.minDay > _state.day) return true;
+            if (!quest.nextDay) return false;
+            foreach (string prerequisite in quest.prerequisites)
+                if ((_state.FindQuest(prerequisite)?.completedDay ?? 0) >= _state.day) return true;
+            return false;
         }
 
         public bool Start(string questId)
@@ -153,6 +170,7 @@ namespace Bush.Core
 
             progress.status = QuestStatus.Completed;
             progress.rewardClaimed = true;
+            progress.completedDay = _state.day;
             _events.RaiseQuestCompleted(questId);
             return true;
         }
@@ -244,6 +262,13 @@ namespace Bush.Core
             return next;
         }
 
+        /// <summary>The next story quest that's waiting for another day (for "Tomorrow: ..." on the tracker), when there's nothing to do in the story today.</summary>
+        public QuestData WaitingMainQuest()
+        {
+            if (CurrentMainQuest() != null) return null;
+            return _design.quests.Find(q => q.isMain && PrerequisitesDone(q.id) && WaitingForAnotherDay(q.id));
+        }
+
         /// <summary>Side quests under way or ready to hand in, in design order.</summary>
         public List<QuestData> ActiveSideQuests() =>
             _design.quests.FindAll(q => !q.isMain && GetStatus(q.id) is QuestStatus.Active or QuestStatus.ReadyToClaim);
@@ -267,6 +292,8 @@ namespace Bush.Core
         private void OnExpeditionCompleted(ForageResult _) => Count(ObjectiveType.CompleteExpeditions, _ => true);
 
         private void OnTalkedTo(string npcId) => Count(ObjectiveType.TalkTo, o => o.target == npcId);
+
+        private void OnDayEnded(DaySummary _) => Count(ObjectiveType.CloseDay, _ => true);
 
         private void OnObjectPlaced(string itemId) =>
             Count(ObjectiveType.PlaceObject, o => string.IsNullOrEmpty(o.target) || o.target == itemId);

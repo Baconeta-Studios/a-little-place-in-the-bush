@@ -21,6 +21,7 @@ There's one list of quests; a flag and prerequisites make the story:
 
 - **Main quests** (`isMain: true`) form the story. Chain them with `prerequisites` (each one needs the one before), so there's only ever one story step at a time. The tracker always shows it. Finishing every main quest is the win condition.
 - **Side quests** (`isMain: false`) can open up whenever their prerequisites are done, as many as you like, in any order.
+- **Pacing over days:** `"nextDay": true` makes a quest open only the day after its prerequisites were done ("come back tomorrow"); `"minDay": 5` keeps it closed before day 5. While the story is waiting, the tracker says who'll have something for you tomorrow.
 - A character offers their main quests before their side quests.
 
 ## Adding a quest
@@ -59,6 +60,7 @@ Quests live in [`Design/design-data.json`](../Design/design-data.json) under `qu
 | `CompleteExpeditions` | (unused) | Forage trips. |
 | `TalkTo` | npc id | Talking to them while the quest is under way. |
 | `PlaceObject` | placeable item id, or empty for any | Placing furniture in build mode. |
+| `CloseDay` | (unused) | Closing the cafe for the day. |
 
 | Reward type | target | |
 | --- | --- | --- |
@@ -86,4 +88,9 @@ Counting objectives (cook, forage, talk, place) only count while the quest is un
 - Unity: `Npc` (interactable with the ! / ? marker), `DialogueBox`, `QuestLogPopup`, and the tracker in `GameHud`.
 - Characters come and go by day and night, and random visitors drop by on some days (see [GUESTS-AND-PROGRESS.md](GUESTS-AND-PROGRESS.md) and [NIGHT.md](NIGHT.md)).
 - Reward types also include `UnlockNight` (night time after closing).
-- Not yet: "come back tomorrow" timing, and choices beyond accept / not now. The quests themselves are placeholders until the real story is written.
+- Not yet: choices beyond accept / not now.
+
+## Testing the story
+
+- **The playthrough test** (`StoryTests` in the EditMode tests) plays the real story in `Design/design-data.json` from the first quest to the end, day by day, doing whatever each quest asks. It fails if a quest can never open, asks for something that can't be done yet (like serving a recipe you can't know), or the tutorial's pacing breaks (night before day 3). Run it after rewriting the story.
+- **In the game:** the cheat **Quests: finish the current story step** does what the current story quest asks and hands it in, so you can jump to any point and read the dialogue there. If the story's waiting for tomorrow, it says so: close the day first. The quests themselves are placeholders until the real story is written.

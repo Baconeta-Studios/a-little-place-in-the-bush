@@ -186,6 +186,19 @@ public class GameSession : MonoBehaviour
             State.companionsUsedToday.Clear();
             RequestSave();
         }, this);
+        CheatMenu.AddButton("Quests: finish the current story step", () =>
+        {
+            QuestData step = Quests.CurrentMainQuest();
+            if (step == null)
+            {
+                QuestData waiting = Quests.WaitingMainQuest();
+                Debug.Log(waiting != null ? $"[Cheats] {waiting.title} opens tomorrow: close the day (or go to bed) first." : "[Cheats] No story step to finish.");
+                return;
+            }
+            string error = StoryShortcuts.Finish(Design, State, Economy, Cafe, Quests, Events, step.id);
+            Debug.Log(error == null ? $"[Cheats] Finished {step.title}." : $"[Cheats] Couldn't finish {step.title}: {error}");
+            RequestSave();
+        }, this);
         CheatMenu.AddButton("Day event: next one (cycles)", () =>
         {
             var events = Design.rules.dayEvents;

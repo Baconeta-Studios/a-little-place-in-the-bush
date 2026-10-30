@@ -19,6 +19,8 @@ MonoBehaviour:
   isMain: 1
   prerequisites:
   - {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}
+  nextDay: 0
+  minDay: 0
   objectives:
   - type: 0
     target: {fileID: 11400000, guid: 15c11bb6271bccc41a369397b19055c3, type: 2}
@@ -30,4 +32,4 @@ MonoBehaviour:
   offerLine: 'Your larder''s empty! Take the path at the side of the cafe into the bush. Here''s a trick: decide what you''re looking out for before you go. Choose Greens, and you''ll find far more leaves.'
   activeLine: 'Three handfuls of leaves. Remember: look out for Greens, and they''ll practically jump into your basket.'
   readyLine: See? Look out for something, and you'll find more of it. Keep the leaves, they're for your salad.
-  doneLine: Off you go. The menu board's by the door.
+  doneLine: Off you go. You set the menu at the cafe door.

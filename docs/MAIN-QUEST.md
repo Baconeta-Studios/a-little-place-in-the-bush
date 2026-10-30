@@ -17,14 +17,20 @@ Each scrap comes from a different part of the game, so the main quest pulls the 
 
 Quest chain:
 
-The opening is a short tutorial chain, one system per step (placeholder text until the real opening is written):
+The opening is a short tutorial chain, one system per step, spread over three days so night can't come on the first day (placeholder text until the real opening is written):
+
+- **Day 1:** Hello, Ruru; Leaves for the salad; A cafe of my own; Closing time.
+- **Day 2:** Somewhere to sit; Open for guests.
+- **Day 3 or later:** After dark (opens the day after Open for guests), which unlocks night; then The lost recipe, at night.
+
 
 0. **Hello, Ruru** (main, Ruru): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none.
 0. **Leaves for the salad** (main, Ruru): have 3 leaves. Teaches foraging: Ruru sends you down the path into the bush. **Luck protection:** while it's under way, a trip always finds the leaves you still need (the quest is set as *Luck Protected Quest* on the GameDatabase; the trip's seed is picked so it does, and the logged seed still reproduces it in the sandbox). Rewards 5 coins.
 1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board, and that the cafe serves while you're out foraging. Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
+1. **Closing time** (main, Ruru): close the cafe for the day. Teaches closing up; handed in the next morning. Rewards 10 coins.
 1. **Somewhere to sit** (main, Ruru): talk to Ruru. She gives you two chairs, a table and a fern from her shed (the cafe starts empty).
 1. **Open for guests** (main, Ruru): place 4 things in build mode. Teaches building, and that guests sit on chairs you've placed and come more often to a cosier cafe. Rewards 20 coins. Visitors only start dropping by after this.
-1. **After dark** (main, Ruru): serve 3 dishes. Unlocks night time: after closing, a calm night with nocturnal guests and one night forage trip (see [NIGHT.md](NIGHT.md)).
+1. **After dark** (main, Ruru, opens the day after Open for guests): serve 3 dishes. Unlocks night time: after closing, a calm night with nocturnal guests and one night forage trip (see [NIGHT.md](NIGHT.md)).
 2. **The lost recipe** (main, Ruru): hand in scraps 1-4. Rewards the *kawakawa scroll* recipe, 50 coins and the *Keen eye* perk. Completing it wins the game.
 3. Side quests 2-4 above, each available after quest 1, in any order.
 

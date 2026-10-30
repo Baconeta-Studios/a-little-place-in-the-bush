@@ -44,6 +44,8 @@ public class ForagePopup : Popup
     private Button _go;
     /// <summary>Go was pressed with an empty menu and the warning shown: the next press goes anyway.</summary>
     private bool _emptyMenuWarned;
+    /// <summary>The menu was empty when this trip set off although something could have been made: worth a note in the results.</summary>
+    private bool _emptyMenuMissed;
     private ItemGridView _preview;
     private TextMeshProUGUI _previewNote;
     private TextMeshProUGUI _outText;
@@ -250,9 +252,11 @@ public class ForagePopup : Popup
             return;
         }
 
-        // By day, with recipes known but nothing on the menu, the cafe would serve nobody: say so once.
+        // By day, with nothing on the menu but something you could make, the cafe would serve nobody: say so once.
+        // (Not when there's nothing to make anyway, like the very first trip.)
         bool emptyMenu = !session.State.isNight && session.Design.rules.TripsPerDay(session.State) > 0 && session.State.menu.Count == 0 &&
-                         session.Design.recipes.Exists(r => session.Cafe.IsUnlocked(r.id));
+                         session.Cafe.CanCookAnything();
+        _emptyMenuMissed = emptyMenu;
         if (emptyMenu && !_emptyMenuWarned)
         {
             _emptyMenuWarned = true;
@@ -385,7 +389,7 @@ public class ForagePopup : Popup
         }
 
         // What the cafe sold while you were out on this trip.
-        if (!session.State.isNight && session.State.menu.Count == 0 && session.Design.rules.TripsPerDay(session.State) > 0)
+        if (_emptyMenuMissed)
             notes.Add($"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>The cafe's menu was empty, so nothing sold while you were out.</color>");
         else if (session.State.servedWhileOut.Count > 0)
         {
@@ -406,6 +410,7 @@ public class ForagePopup : Popup
 
     private void Collect(bool close)
     {
+        _emptyMenuMissed = false; // that note was for this trip only
         GameSession session = Session;
         if (session == null) return;
         ExpeditionClaim claim = ForagingService.Claim(session.Design, session.State, session.Economy, session.Events);
