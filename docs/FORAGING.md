@@ -76,17 +76,21 @@ For the setup screen ("show what each choice does before Go"), the preview repor
 
 The sandbox also runs thousands of simulated trips for exact averages.
 
-## In the game (first version)
+## In the game
 
 `ForagePopup` (`Assets/Scripts/UI/ForagePopup.cs`), opened by walking to a **ForageSpot** in the world (a path into the bush at the side of the cafe). A HUD button is still available for testing: tick **Forage Button** on `GameHud`. It's deliberately simple:
 
-- **Setup:** the place (the first forage table) and what to look out for (a focus, or Anything). It's always daytime for now, and there are a few trips a day (see [CAFE.md](CAFE.md)). "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
+- **Setup:** the place (the first forage table), what to **look out for** (a focus, or Anything), who to **take along** (companions you've befriended who are about at this time of day and not tired) and **perks** (as many as your perk slots). The lines above each row say what the chosen companion and perks do. "You might find" shows the likeliest items for that setup, without odds, and leaves out Rare and Legendary things so they stay a surprise. Items the focus boosts are marked "more".
+- **The focus is taught** by Ruru's *Leaves for the salad* (the first trip: "choose Greens and you'll find far more leaves"), and a tip on the screen says what it does until you pick one.
+- **Trips:** three by day (they're the day's clock, see [CAFE.md](CAFE.md)) and one at night once night is unlocked (see [NIGHT.md](NIGHT.md)). Night trips find night things.
 - **Go:** works out and saves the result straight away, then shows "Out foraging..." for a moment.
 - **Results:** what was found, rare finds and recipe encounters called out, then **Collect** (or closing) puts it all in the bag.
-- No companions or perks yet. The rules support them; the screen will add a companion slot and a perk slot later.
+- **Companions** are free to take, once a day each, by day or night (see [GUESTS-AND-PROGRESS.md](GUESTS-AND-PROGRESS.md)). After 5 trips together they teach their perk.
+- **Luck protection:** while Ruru's leaves quest is under way, the trip's seed is picked so it finds the leaves still needed. The logged seed still reproduces it.
 
 **Debugging:** every trip logs its table, focus, time and seed to the Console, and the results show the seed in the editor and development builds. Put the same setup and seed into the web sandbox to get the same result. To open foraging from anything else, call `ForagePopup.Show()`.
 
-## Open questions
+## Decided
 
-- **Keeping companions and perks special.** Once they're in, it shouldn't be possible to keep the best perk on every trip. Ideas: a perk has a cooldown in days, or uses up something (a snack for the companion); a companion gets tired after a trip and rests a day; one trip a day (or a morning and an evening trip) once day and night exist.
+- **Keeping companions and perks special:** each companion goes once a day, perks are rare (mostly from 5 trips with a companion), and perk slots limit how many come along.
+- **A foraging minigame** (e.g. a timing bar for a bonus find) is being considered; see [DECISIONS.md](DECISIONS.md).

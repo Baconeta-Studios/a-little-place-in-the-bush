@@ -84,4 +84,6 @@ Counting objectives (cook, forage, talk, place) only count while the quest is un
 
 - Rules (`Bush.Core`): `QuestService` (`GetTopic`, `Accept`, `Claim`, `CurrentMainQuest`, `ActiveSideQuests`, `AvailableSideQuests`), `QuestText` for readable objectives and rewards. Tests: `ConversationTests`, `QuestAndCafeTests`.
 - Unity: `Npc` (interactable with the ! / ? marker), `DialogueBox`, `QuestLogPopup`, and the tracker in `GameHud`.
-- Not yet: characters that only appear on some days, "come back tomorrow" timing, and choices beyond accept / not now.
+- Characters come and go by day and night, and random visitors drop by on some days (see [GUESTS-AND-PROGRESS.md](GUESTS-AND-PROGRESS.md) and [NIGHT.md](NIGHT.md)).
+- Reward types also include `UnlockNight` (night time after closing).
+- Not yet: "come back tomorrow" timing, and choices beyond accept / not now. The quests themselves are placeholders until the real story is written.

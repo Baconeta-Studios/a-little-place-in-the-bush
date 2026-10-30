@@ -1,6 +1,6 @@
-# Main quest and quest items (draft)
+# Main quest and quest items (placeholder story)
 
-A first pass at the main story and the "quest items" it needs, so the data and code can be built ahead of the writing. Everything here is placeholder content in [`Design/design-data.json`](../Design/design-data.json): rename, rewrite and re-tune freely.
+A first pass at the main story and the "quest items" it needs, so the data and code can be built ahead of the writing. **The real narrative, characters and quest list will replace this**; the structure (a main chain, side quests, quest items, rewards that unlock recipes, companions, perks, furniture and night) is what carries over. Everything here is placeholder content in [`Design/design-data.json`](../Design/design-data.json): rename, rewrite and re-tune freely.
 
 ## The idea: The lost recipe
 

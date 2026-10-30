@@ -1,6 +1,6 @@
 # First playable: setup and testing
 
-How to get click-to-walk, interaction and area travel running in a scene, and how to test them (Trello list 03). How it works is in [ARCHITECTURE.md, sections 5 and 6](ARCHITECTURE.md#5-game-layer-monobehaviours).
+How to get click-to-walk, interaction and area travel running in a scene, and how to test them (Trello list 03). This is the original setup guide for the movement layer; the cafe scene has moved on since (the counter is now the cafe door, and a second area, the garden, is out of scope for now: see [DECISIONS.md](DECISIONS.md)). How it works is in [ARCHITECTURE.md, sections 5 and 6](ARCHITECTURE.md#5-game-layer-monobehaviours).
 
 ## Set up the cafe (about 5 minutes)
 

@@ -15,19 +15,20 @@ Full GDD (Canva): https://www.canva.com/design/DAHY_0K-xoA/AdOWDfjHg6R3XCjFi38QH
 
 ## Current state
 
-**Greybox.** The project was created from the Baconeta [Ludum Dare template](#template-systems). The first game scene is in, but there's no gameplay code yet. What exists today:
+**Playable prototype.** The project was created from the Baconeta [Ludum Dare template](#template-systems). The core loop is in and plays in the browser: forage, set the menu, close the cafe, earn coins, furnish the cafe, meet characters and follow a placeholder story, with night time after the tutorial. Art and UI are placeholders; characters, quests and dialogue are placeholders to be rewritten. What's been decided, set aside and still open is in [docs/DECISIONS.md](docs/DECISIONS.md). What exists today:
 
-- **Cafe greybox** (`Assets/Scenes/Cafe.unity`), the only enabled scene in the build list: backdrop, floor with its walkable area, placeholder props with footprints, and a capsule stand-in for the gecko. Its layout, sorting and camera setup are described in [ARCHITECTURE.md, section 6](docs/ARCHITECTURE.md#6-world-camera-and-movement).
+- **The cafe** (`Assets/Scenes/Cafe.unity`), the only enabled scene in the build list: backdrop, floor with its walkable area, the gecko, characters, the cafe door, the forage path and the sign. Its layout, sorting and camera setup are described in [ARCHITECTURE.md, section 6](docs/ARCHITECTURE.md#6-world-camera-and-movement).
 - `CameraFit` (`Assets/Scripts/Camera`), which keeps the 16:9 safe area on screen at any aspect ratio.
 - Sorting layers, physics layers and Y-axis depth sorting set up in Project Settings and the 2D renderer.
 - Template menu and volume test scenes in `Assets/Scenes/Templates/`, kept for reference but disabled in the build list.
-- **Game rules in `Bush.Core`** (`Assets/Scripts/Core`): economy, foraging, cooking and quests, as plain C# with EditMode tests. No UI uses them yet.
-- **Design data**: items, recipes, companions, perks, forage tables, NPCs and a draft main quest in `Design/design-data.json`, imported into ScriptableObjects with **Tools > Bush > Import Design Data**. See [docs/MAIN-QUEST.md](docs/MAIN-QUEST.md).
+- **Game rules in `Bush.Core`** (`Assets/Scripts/Core`): economy, foraging, the cafe day, quests, visitors, building, upgrades and cosiness, as plain C# with EditMode tests (about 105).
+- **Design data**: items, recipes, companions, perks, focuses, forage tables, characters, quests, placeables and upgrades in `Design/design-data.json`, imported into ScriptableObjects with **Tools > Bush > Import Design Data**. The placeholder story is in [docs/MAIN-QUEST.md](docs/MAIN-QUEST.md).
+- **Foraging**: walk to the path at the side of the cafe, pick what to look out for, a companion and perks, and go. See [docs/FORAGING.md](docs/FORAGING.md).
 - **Night and the day dial**: after Ruru's *After dark* quest, closing the cafe leads into a calm night with nocturnal guests and a night forage trip; a day dial on the HUD and day/dusk/night lighting. See [docs/NIGHT.md](docs/NIGHT.md).
 - **Guests, companions, upgrades and cosiness**: characters who visit on some days, companions to befriend, cafe upgrades, and a sign that describes your cafe. See [docs/GUESTS-AND-PROGRESS.md](docs/GUESTS-AND-PROGRESS.md).
 - **Quests and characters**: talk to characters in a dialogue box, accept and hand in quests, a quest log and a story tracker. See [docs/QUESTS.md](docs/QUESTS.md) to add quests and characters.
-- **The cafe day (prototype)**: forage a few times a day, set the menu from the recipes you know, close for the day and get paid. See [docs/CAFE.md](docs/CAFE.md).
-- **Build mode (prototype)** in the cafe: place, move, flip and put away furniture and plants, saved between sessions; plus a read-only bag (inventory). See [docs/BUILD-MODE.md](docs/BUILD-MODE.md) to set it up and try it.
+- **The cafe day**: forage a few times a day, set the menu from the recipes you know, close for the day and get paid. See [docs/CAFE.md](docs/CAFE.md).
+- **Build mode** in the cafe: place, move, flip and put away furniture you own, saved between sessions; plus a read-only bag (inventory). See [docs/BUILD-MODE.md](docs/BUILD-MODE.md).
 - **Forage sandbox** (`Tools/ForageSandbox/index.html`): a standalone web page for trying out and tuning foraging without Unity. It uses the same rules and gives the same results for the same seed.
 - Template systems: UI state switching, popups (pause/settings/end game/high scores), audio manager with mix groups, scene loader, achievements, Unity Analytics bootstrap, cheat menu, prefab pooling.
 - URP 2D renderer setup.

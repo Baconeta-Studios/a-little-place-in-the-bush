@@ -1,6 +1,6 @@
-# Build mode (prototype)
+# Build mode
 
-Placing, moving and putting away things in the cafe's outdoor space, plus the first look at the bag (inventory). This is a prototype for us to play with: the item source is unlimited, the UI is built in code with placeholder styling, and the placeables are coloured boxes.
+Placing, moving and putting away things in the cafe's outdoor space, plus the bag (inventory). You place what you own: furniture comes from quests (Ruru's *Somewhere to sit* gives the first), and the tray only shows what's in your bag. The UI is built in code with placeholder styling, and the placeables are coloured boxes until the art is in.
 
 How it fits together is in [ARCHITECTURE.md](ARCHITECTURE.md) (sections 4 and 5).
 
@@ -12,13 +12,13 @@ How it fits together is in [ARCHITECTURE.md](ARCHITECTURE.md) (sections 4 and 5)
 4. Open `Cafe.unity` and run **Tools > Bush > Set Up Build Mode In This Scene**. It:
    - adds `GameSessionBootstrap` (with the GameDatabase) and `GameHud` to `Systems`;
    - adds `BuildArea` and `BuildMode` to `World`, placing into `World/Placed`;
-   - turns the chairs and the plant in `World/Static` into the starting layout, so they can be moved like everything else (the scene objects are removed; Ctrl+Z undoes it all).
+   - turns the chairs and the plant in `World/Static` into the starting layout, so they can be moved like everything else (the scene objects are removed; Ctrl+Z undoes it all). The cafe now starts empty instead: the **Starting Layout** on `BuildArea` is cleared, and the first furniture comes from a quest.
 5. **Tools > Bush > Validate Design Data**, then run the tests (**Test Runner > EditMode > Run All**). One of them, the save round trip, only means anything inside Unity (it checks Unity's own JSON serialiser).
 6. Press Play. Save the scene and commit, including `Assets/Data` and `Assets/Prefabs/Placeables`.
 
 ## How to play with it
 
-- **Bag** (top left) opens the inventory: Larder, Materials, Treasures, Satchel and Placeables, with coins. It's empty on a new save; the cheat menu's *Bag: give 5 of every item* fills it.
+- **Bag** (top left) opens the inventory: Larder, Materials, Treasures, Satchel and Placeables, with coins. It's empty on a new save; the cheat menu's *Bag: give 5 of every item* fills it. Using and selling from the bag are set aside for later.
 - **Build** (top left, only in the cafe) enters build mode. The game pauses, the gecko stops taking clicks, and the camera slides down so the whole floor sits above the tray.
   - Tap an item in the tray at the bottom: it appears on a free spot. Drag it; it snaps to the 0.25 grid. On a phone it sits above your finger while you drag.
   - Green outline: it can go here. Red: it can't, and a label says why.
@@ -34,11 +34,11 @@ How it fits together is in [ARCHITECTURE.md](ARCHITECTURE.md) (sections 4 and 5)
 The ghost goes red, with a reason, if it would:
 - go off the open ground (the walkable floor is the build area, so reshaping `WalkableArea` changes where you can build);
 - overlap something else;
-- cover a stand point (the cafe door) or the spawn point;
+- cover a stand point (the cafe door, the forage path, a guest who's here today) or the spawn point (guests who aren't in today don't take up any room);
 - **cut off a path**: the gecko must still be able to walk from the spawn point to every stand point it can reach now.
 - use a placement type other than Floor (Wall, Rug and Surface aren't built yet).
 
-### Unlimited items (prototype)
+### What you can place
 
 Build mode uses the real rules: placing takes one from the bag, putting away gives it back. The tray only shows what's in your bag (and only the tabs that have something), so things you haven't found stay a surprise and the tray stays short as the list grows. The cafe starts empty, and Ruru's *Somewhere to sit* quest gives the first furniture. For testing, the cheat menu's *Build: unlimited items* toggle makes every placeable free to place. Things placed for free don't turn into real items when put away, but the starting furniture does (it's yours), so nothing that came with the cafe is ever lost. *Build: give 3 of every placeable* stocks the bag for that.
 
@@ -50,7 +50,7 @@ Build mode uses the real rules: placing takes one from the bag, putting away giv
 | Build: give 3 of every placeable | Stocks the bag for the non-unlimited rules |
 | Bag: give 5 of every item | Fills the bag (unique items: one each) |
 | Bag: give 100 coins | |
-| Save: save now / reset everything | Reset deletes the save and reloads the scene: back to the starting layout |
+| Save: save now / reset everything | Reset deletes the save and reloads the scene: an empty cafe again |
 
 If a save can't be read (broken, or from a newer build), the game starts fresh and copies the old save to a backup slot first (`bush.save.v1.backup` on the web, `bush-save.backup.json` elsewhere), so it can be recovered.
 
@@ -63,7 +63,8 @@ If a save can't be read (broken, or from a newer build), the game starts fresh a
    ```
    - **Footprint** is only the base that blocks walking (where it touches the floor), not the whole picture. Width is left to right; depth is front to back.
    - **Category** becomes a tray tab.
-   - **Seats** is how many guests can perch on it. Guests aren't in yet, but quests can already count seats.
+   - **Seats** is how many guests can perch on it: visiting guests sit on free seats (see [GUESTS-AND-PROGRESS.md](GUESTS-AND-PROGRESS.md)).
+   - **Cosiness** (how much it adds to the cafe's cosiness: basic furniture 1-3, special things much more) and **style** (`garden`, `rustic`, `glow`, `fancy`..., for the sign).
 2. Import the design data, then either run **Create Placeholder Placeables**, or make a real prefab:
    - root at the **floor contact point** (centre of the base), no scale;
    - a child called **`Visual`** with the art (any scale; sorting layer World, sort point Pivot, pivot at the bottom);
@@ -92,8 +93,8 @@ Placement types other than `Floor` (Wall for windows and fairy lights, Rug, Surf
 
 **Saving**
 - [ ] Place a few things, reload (or close and reopen the browser tab): everything is where you left it.
-- [ ] *Save: reset everything* goes back to the starting layout.
-- [ ] Unlimited off: placing uses an item from the bag and putting away returns it.
+- [ ] *Save: reset everything* gives an empty cafe.
+- [ ] Placing uses an item from the bag and putting away returns it; the tray only shows what's in the bag.
 
 **Bag**
 - [ ] Opening pauses the game; Escape and Close close it.
@@ -102,8 +103,7 @@ Placement types other than `Floor` (Wall for windows and fairy lights, Rug, Surf
 
 ## Not built yet
 
-- Earning placeables (shop, quest rewards) and turning unlimited mode off for good.
-- Guests using seats.
+- More ways to earn placeables (more quest rewards, rare finds) and special high-cosiness pieces.
 - Wall, Rug and Surface placement.
 - Real art and a designed UI (the prototype UI is built in `UI/BuildUi.cs`, `UI/InventoryPopup.cs` and `UI/GameHud.cs`).
-- Using, selling and sorting from the bag.
+- Using, selling and sorting from the bag (set aside for later).
