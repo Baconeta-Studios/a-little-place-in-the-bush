@@ -15,12 +15,14 @@ public class NpcDefinition : GameDefinition
     [Min(0)] public int firstDay;
     [Tooltip("Random visitors: only turn up once this quest is completed. Empty for any time.")]
     public QuestDefinition afterQuest;
+    [Tooltip("About by day, by night (nocturnal), or both.")]
+    public ActiveTime activeAt;
     [Tooltip("Recipes they sell (each recipe's price is on the recipe). Empty for no shop.")]
     public List<RecipeDefinition> shop = new();
 
     public NpcData ToData() => new()
     {
         id = id, name = displayName, species = species, description = description, visits = visits, visitChance = visitChance,
-        firstDay = firstDay, afterQuest = Definitions.Id(afterQuest), shop = shop.FindAll(r => r).ConvertAll(Definitions.Id)
+        firstDay = firstDay, afterQuest = Definitions.Id(afterQuest), activeAt = activeAt, shop = shop.FindAll(r => r).ConvertAll(Definitions.Id)
     };
 }

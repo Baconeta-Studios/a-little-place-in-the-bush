@@ -28,11 +28,13 @@ public class CompanionDefinition : GameDefinition
     public int tripsToTeach = 3;
     [Tooltip("Coins to take them on a trip. They can go once a day.")]
     [Min(0)] public int tripCost;
+    [Tooltip("When they'll come foraging: by day, at night, or either (still only once a day).")]
+    public ActiveTime activeAt;
 
     public CompanionData ToData() => new()
     {
         id = id, name = displayName, description = description, unlockedByDefault = unlockedByDefault,
         modifiers = Definitions.ToData(modifiers), teachesPerk = Definitions.Id(teachesPerk), tripsToTeach = tripsToTeach,
-        tripCost = tripCost
+        tripCost = tripCost, activeAt = activeAt
     };
 }

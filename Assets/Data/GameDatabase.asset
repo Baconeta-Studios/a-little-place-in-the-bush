@@ -106,6 +106,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
   - {fileID: 11400000, guid: fdfffad10a858fa48a6acde403b4a441, type: 2}
   - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  - {fileID: 11400000, guid: 885c453432c69494eb010b72c9d41fb6, type: 2}
   - {fileID: 11400000, guid: 68fa2deb035c85346afb899ff0d1d904, type: 2}
   - {fileID: 11400000, guid: 883796afaccf8cc47be41ab8b17209fb, type: 2}
   - {fileID: 11400000, guid: 4f817d13caacfa34384265157e7d2d3b, type: 2}
@@ -132,4 +133,5 @@ MonoBehaviour:
   menuSlots: 1
   forageTripsPerDay: 2
   perkSlots: 1
+  nightTrips: 1
   luckProtectedQuest: {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}

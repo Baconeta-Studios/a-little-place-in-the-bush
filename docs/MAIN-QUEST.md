@@ -24,6 +24,7 @@ The opening is a short tutorial chain, one system per step (placeholder text unt
 1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board and closing for the day (the cafe cooks and sells at closing time). Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
 1. **Somewhere to sit** (main, Ruru): talk to Ruru. She gives you two chairs, a table and a fern from her shed (the cafe starts empty).
 1. **Open for guests** (main, Ruru): place 4 things in build mode. Teaches building, and that guests sit on chairs you've placed and come more often to a cosier cafe. Rewards 20 coins. Visitors only start dropping by after this.
+1. **After dark** (main, Ruru): serve 3 dishes. Unlocks night time: after closing, a calm night with nocturnal guests and one night forage trip (see [NIGHT.md](NIGHT.md)).
 2. **The lost recipe** (main, Ruru): hand in scraps 1-4. Rewards the *kawakawa scroll* recipe, 50 coins and the *Keen eye* perk. Completing it wins the game.
 3. Side quests 2-4 above, each available after quest 1, in any order.
 

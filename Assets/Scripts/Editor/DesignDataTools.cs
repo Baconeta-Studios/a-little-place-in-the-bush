@@ -132,6 +132,7 @@ public static class DesignDataTools
                 asset.visits = x.visits;
                 asset.visitChance = (float)x.visitChance;
                 asset.firstDay = x.firstDay;
+                asset.activeAt = x.activeAt;
             }
             foreach (UpgradeData x in design.rules.upgrades)
             {
@@ -182,6 +183,7 @@ public static class DesignDataTools
                 asset.teachesPerk = assets.Get<PerkDefinition>(x.teachesPerk);
                 asset.tripsToTeach = x.tripsToTeach;
                 asset.tripCost = x.tripCost;
+                asset.activeAt = x.activeAt;
             }
             foreach (NpcData x in design.npcs)
             {

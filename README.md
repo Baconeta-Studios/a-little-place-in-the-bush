@@ -23,6 +23,7 @@ Full GDD (Canva): https://www.canva.com/design/DAHY_0K-xoA/AdOWDfjHg6R3XCjFi38QH
 - Template menu and volume test scenes in `Assets/Scenes/Templates/`, kept for reference but disabled in the build list.
 - **Game rules in `Bush.Core`** (`Assets/Scripts/Core`): economy, foraging, cooking and quests, as plain C# with EditMode tests. No UI uses them yet.
 - **Design data**: items, recipes, companions, perks, forage tables, NPCs and a draft main quest in `Design/design-data.json`, imported into ScriptableObjects with **Tools > Bush > Import Design Data**. See [docs/MAIN-QUEST.md](docs/MAIN-QUEST.md).
+- **Night and the day dial**: after Ruru's *After dark* quest, closing the cafe leads into a calm night with nocturnal guests and a night forage trip; a day dial on the HUD and day/dusk/night lighting. See [docs/NIGHT.md](docs/NIGHT.md).
 - **Guests, companions, upgrades and cosiness**: characters who visit on some days, companions to befriend, cafe upgrades, and a sign that describes your cafe. See [docs/GUESTS-AND-PROGRESS.md](docs/GUESTS-AND-PROGRESS.md).
 - **Quests and characters**: talk to characters in a dialogue box, accept and hand in quests, a quest log and a story tracker. See [docs/QUESTS.md](docs/QUESTS.md) to add quests and characters.
 - **The cafe day (prototype)**: forage a few times a day, set the menu from the recipes you know, close for the day and get paid. See [docs/CAFE.md](docs/CAFE.md).

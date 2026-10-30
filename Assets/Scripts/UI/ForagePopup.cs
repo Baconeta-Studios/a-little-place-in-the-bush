@@ -103,7 +103,7 @@ public class ForagePopup : Popup
         focusId = _focusId,
         companionId = _companionId,
         perkIds = new List<string>(_perkIds),
-        time = TimeOfDay.Day // no night yet
+        time = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day
     };
 
     // ----- Setup -----
@@ -132,11 +132,13 @@ public class ForagePopup : Popup
 
         // Who comes along: companions you've befriended, each once a day for a few coins.
         Clear(_companionRow);
-        if (session.Design.GetCompanion(_companionId) == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId)) _companionId = "";
+        CompanionData kept = session.Design.GetCompanion(_companionId);
+        if (kept == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId) || !ForagingService.IsAboutNow(session.State, kept)) _companionId = "";
         AddChoice(_companionRow, "Just me", _companionId == "", () => { _companionId = ""; RefreshSetup(); });
         foreach (CompanionData companion in session.Design.companions)
         {
             if (!Unlocks.IsCompanionUnlocked(session.Design, session.State, companion.id)) continue;
+            if (!ForagingService.IsAboutNow(session.State, companion)) continue; // day companions sleep at night, and the other way round
             string id = companion.id;
             bool tired = ForagingService.IsTired(session.State, id);
             string label = tired ? $"{companion.name} (tired)" : companion.tripCost > 0 ? $"{companion.name}, {companion.tripCost}c" : companion.name;
@@ -180,9 +182,12 @@ public class ForagePopup : Popup
         bool canGo = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out string whyNot);
         string berry = ColorUtility.ToHtmlStringRGB(GameUi.Berry);
         _tripsLeft.text = tripsLeft == 0
-            ? $"<color=#{berry}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
+            ? session.State.isNight
+                ? $"<color=#{berry}>That's tonight's trip done. Go to bed, and forage again tomorrow.</color>"
+                : $"<color=#{berry}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
             : !canGo ? $"<color=#{berry}>{whyNot}</color>"
-            : tripsLeft < 0 ? "" : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
+            : tripsLeft < 0 ? "" : session.State.isNight ? "One trip tonight. Night brings different finds."
+            : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
         _go.interactable = canGo;
 
         // What you might find: the likeliest first, rare things left out so they stay a surprise.

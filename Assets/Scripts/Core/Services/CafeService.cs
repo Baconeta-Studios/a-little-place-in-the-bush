@@ -142,6 +142,7 @@ namespace Bush.Core
         /// </summary>
         public DaySummary CloseDay()
         {
+            if (_state.isNight) return new DaySummary { day = _state.day, nightFalls = true }; // already closed
             var summary = new DaySummary
             {
                 day = _state.day,
@@ -175,13 +176,41 @@ namespace Bush.Core
                 }
             }
 
+            if (_state.nightUnlocked)
+            {
+                // Into the night: the cafe's closed, nocturnal guests come out, one night forage trip.
+                _state.isNight = true;
+                _state.nightTripsToday = 0;
+                summary.nightFalls = true;
+                _events.RaiseDayEnded(summary);
+                _events.RaiseNightStarted();
+            }
+            else
+            {
+                StartNextMorning();
+                _events.RaiseDayEnded(summary);
+            }
+            return summary;
+        }
+
+        /// <summary>Ends the night and starts the next morning. Only at night.</summary>
+        public bool GoToBed()
+        {
+            if (!_state.isNight) return false;
+            StartNextMorning();
+            return true;
+        }
+
+        private void StartNextMorning()
+        {
+            _state.isNight = false;
             _state.day++;
             _state.forageTripsToday = 0;
+            _state.nightTripsToday = 0;
             _state.timeOfDay = 0f;
             _state.companionsUsedToday.Clear();
             Visitors.RollToday(_design, _state);
-            _events.RaiseDayEnded(summary);
-            return summary;
+            _events.RaiseMorningStarted();
         }
 
         // ----- Upgrades -----
@@ -244,6 +273,8 @@ namespace Bush.Core
         public int sold;
         public int coins;
         public List<DishSale> dishes = new();
+        /// <summary>The cafe closed into the night (night's unlocked); otherwise it went straight to the next morning.</summary>
+        public bool nightFalls;
         /// <summary>A tip from a lucky day (already in <see cref="coins"/>). 0 for none.</summary>
         public int tip;
         public int Missed => Math.Max(0, salesPlanned - sold);

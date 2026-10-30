@@ -1266,7 +1266,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "teachesPerk": "perk.bark_knowhow",
       "tripsToTeach": 5,
-      "tripCost": 0
+      "tripCost": 0,
+      "activeAt": "Day"
     },
     {
       "id": "companion.weka",
@@ -1289,7 +1290,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "teachesPerk": "perk.shiny_sense",
       "tripsToTeach": 5,
-      "tripCost": 0
+      "tripCost": 0,
+      "activeAt": "Both"
     },
     {
       "id": "companion.pekapeka",
@@ -1312,7 +1314,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "teachesPerk": "perk.night_sight",
       "tripsToTeach": 5,
-      "tripCost": 0
+      "tripCost": 0,
+      "activeAt": "Night"
     },
     {
       "id": "companion.kunekune",
@@ -1341,7 +1344,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "teachesPerk": "perk.truffle_nose",
       "tripsToTeach": 5,
-      "tripCost": 0
+      "tripCost": 0,
+      "activeAt": "Day"
     },
     {
       "id": "companion.spider",
@@ -1364,7 +1368,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "teachesPerk": "perk.silk_sense",
       "tripsToTeach": 5,
-      "tripCost": 0
+      "tripCost": 0,
+      "activeAt": "Both"
     }
   ],
   "perks": [
@@ -1858,7 +1863,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "visitChance": 0,
       "firstDay": 0,
       "afterQuest": "",
-      "shop": []
+      "shop": [],
+      "activeAt": "DayUntilNight"
     },
     {
       "id": "npc.weka",
@@ -1869,7 +1875,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "visitChance": 0.25,
       "firstDay": 6,
       "afterQuest": "quest.main_set_out",
-      "shop": []
+      "shop": [],
+      "activeAt": "Day"
     },
     {
       "id": "npc.snail",
@@ -1880,7 +1887,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "visitChance": 0.25,
       "firstDay": 0,
       "afterQuest": "quest.main_set_out",
-      "shop": []
+      "shop": [],
+      "activeAt": "Day"
     },
     {
       "id": "npc.weta",
@@ -1891,7 +1899,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "visitChance": 0.2,
       "firstDay": 0,
       "afterQuest": "quest.main_set_out",
-      "shop": []
+      "shop": [],
+      "activeAt": "Night"
     },
     {
       "id": "npc.kea",
@@ -1902,7 +1911,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "visitChance": 0.2,
       "firstDay": 4,
       "afterQuest": "quest.main_set_out",
-      "shop": []
+      "shop": [],
+      "activeAt": "Day"
     },
     {
       "id": "npc.pekapeka",
@@ -1913,7 +1923,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "visitChance": 0.18,
       "firstDay": 8,
       "afterQuest": "quest.main_set_out",
-      "shop": []
+      "shop": [],
+      "activeAt": "Night"
     },
     {
       "id": "npc.kereru",
@@ -1928,7 +1939,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         "recipe.fern_fritters",
         "recipe.mushroom_soup",
         "recipe.cricket_croissants"
-      ]
+      ],
+      "activeAt": "Day"
     }
   ],
   "quests": [
@@ -2096,12 +2108,42 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       }
     },
     {
+      "id": "quest.main_after_dark",
+      "title": "After dark",
+      "giver": "npc.ruru",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_set_out"
+      ],
+      "summary": "Ruru says the bush wakes up at night. Serve a few more dishes and she'll show you.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockNight",
+          "target": "",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "You're getting the hang of this. Keep the guests fed a few more days, and then stay up after closing sometime. Night's when the bush really wakes up.",
+        "active": "Serve a few more dishes. Then stay up late with me.",
+        "ready": "Well done. I've kept day hours long enough for you. From now on, find me after dark.",
+        "done": "Tonight, don't rush off to bed. Come and find me. Night's when the bush really wakes up."
+      }
+    },
+    {
       "id": "quest.main_lost_recipe",
       "title": "The lost recipe",
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
-        "quest.main_set_out"
+        "quest.main_after_dark"
       ],
       "summary": "Ruru's famous kawakawa scroll recipe was torn into four scraps and scattered. Find all four and bring them to her.",
       "objectives": [

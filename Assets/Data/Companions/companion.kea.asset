@@ -29,3 +29,4 @@ MonoBehaviour:
   teachesPerk: {fileID: 11400000, guid: 60bea418e4879934eac3fbf86a585243, type: 2}
   tripsToTeach: 5
   tripCost: 0
+  activeAt: 0

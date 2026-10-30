@@ -206,6 +206,76 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void Night_ComesAfterClosing_OnceUnlocked()
+        {
+            _game.cafe.CloseDay();
+            Assert.AreEqual(2, _game.state.day, "No night yet: straight to the next morning.");
+            Assert.IsFalse(_game.state.isNight);
+
+            _game.state.nightUnlocked = true;
+            DaySummary summary = _game.cafe.CloseDay();
+            Assert.IsTrue(summary.nightFalls);
+            Assert.IsTrue(_game.state.isNight);
+            Assert.AreEqual(2, _game.state.day, "Still the same day until bed.");
+            Assert.AreEqual(0, _game.cafe.CloseDay().sold, "Already closed for the night.");
+
+            Assert.IsTrue(_game.cafe.GoToBed());
+            Assert.IsFalse(_game.state.isNight);
+            Assert.AreEqual(3, _game.state.day);
+            Assert.IsFalse(_game.cafe.GoToBed(), "Only at night.");
+        }
+
+        [Test]
+        public void Night_HasOneForageTrip_WithNightFinds()
+        {
+            _game.state.nightUnlocked = true;
+            _game.state.forageTripsToday = 2; // the day's trips are used up
+            _game.cafe.CloseDay();
+            Assert.AreEqual(1, ForagingService.TripsLeftToday(_game.design, _game.state));
+            Assert.IsNotNull(ForagingService.Begin(_game.design, _game.state, TestDesign.Setup(time: TimeOfDay.Night), 1u));
+            ForagingService.Claim(_game.design, _game.state, _game.economy, _game.events);
+            Assert.AreEqual(0, ForagingService.TripsLeftToday(_game.design, _game.state));
+            Assert.IsFalse(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(time: TimeOfDay.Night), out string error));
+            StringAssert.Contains("bed", error);
+
+            _game.cafe.GoToBed();
+            Assert.AreEqual(2, ForagingService.TripsLeftToday(_game.design, _game.state), "A fresh day's trips.");
+        }
+
+        [Test]
+        public void Companions_ForageByDayOrNight_ButOnlyOnce()
+        {
+            CompanionData kea = _game.design.GetCompanion(TestDesign.Kea);
+            CompanionData weka = _game.design.GetCompanion(TestDesign.Weka);
+            kea.activeAt = ActiveTime.Night;
+            weka.activeAt = ActiveTime.Both;
+            _game.state.nightUnlocked = true;
+
+            Assert.IsFalse(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(TestDesign.Kea), out string error));
+            StringAssert.Contains("night", error);
+            ForagingService.Begin(_game.design, _game.state, TestDesign.Setup(TestDesign.Weka), 1u);
+            ForagingService.Claim(_game.design, _game.state, _game.economy, _game.events);
+
+            _game.state.forageTripsToday = 2;
+            _game.cafe.CloseDay(); // into the night
+            Assert.IsTrue(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(TestDesign.Kea, time: TimeOfDay.Night), out _), "Kea's nocturnal.");
+            Assert.IsFalse(ForagingService.CanBegin(_game.design, _game.state, TestDesign.Setup(TestDesign.Weka, time: TimeOfDay.Night), out error),
+                "Weka went out today, so not tonight too.");
+            StringAssert.Contains("tired", error);
+        }
+
+        [Test]
+        public void NightUnlock_IsAQuestReward()
+        {
+            _game.design.quests.Find(q => q.id == TestDesign.Welcome).rewards.Add(new QuestReward { type = RewardType.UnlockNight });
+            _game.quests.Start(TestDesign.Welcome);
+            _game.economy.Add(TestDesign.Leaf, 3);
+            _game.cafe.Cook(TestDesign.Salad);
+            Assert.IsTrue(_game.quests.Claim(TestDesign.Welcome));
+            Assert.IsTrue(_game.state.nightUnlocked);
+        }
+
+        [Test]
         public void Normalise_TidiesTheMenu()
         {
             _game.state.menu.AddRange(new[] { TestDesign.Salad, TestDesign.Salad, "recipe.gone", "" });

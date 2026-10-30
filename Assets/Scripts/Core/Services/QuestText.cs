@@ -33,6 +33,7 @@ namespace Bush.Core
                 case RewardType.UnlockRecipe: return $"New recipe: {design.GetRecipe(reward.target)?.name ?? reward.target}";
                 case RewardType.UnlockCompanion: return $"New companion: {design.GetCompanion(reward.target)?.name ?? reward.target}";
                 case RewardType.UnlockPerk: return $"New perk: {design.GetPerk(reward.target)?.name ?? reward.target}";
+                case RewardType.UnlockNight: return "Night time: stay up after closing";
                 default: return reward.type.ToString();
             }
         }

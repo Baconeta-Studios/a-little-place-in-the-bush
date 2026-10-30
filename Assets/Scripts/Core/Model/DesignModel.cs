@@ -66,6 +66,8 @@ namespace Bush.Core
         public int menuSlots = 1;
         /// <summary>Forage trips per day, which are also the parts of the day. 0 means no limit, and no day clock.</summary>
         public int forageTripsPerDay;
+        /// <summary>Forage trips at night, once night is unlocked.</summary>
+        public int nightTrips = 1;
         /// <summary>Perks that can be taken on one trip, at the start.</summary>
         public int perkSlots = 1;
         /// <summary>
@@ -167,6 +169,8 @@ namespace Bush.Core
         public int tripsToTeach;
         /// <summary>Coins to take them on a trip. They can go once a day (they get tired).</summary>
         public int tripCost;
+        /// <summary>When they'll come foraging: by day, at night (nocturnal), or either, though still only once a day.</summary>
+        public ActiveTime activeAt;
     }
 
     [Serializable]
@@ -226,6 +230,8 @@ namespace Bush.Core
         public int firstDay;
         /// <summary>For Random visitors: they only turn up once this quest is completed. Empty for any time.</summary>
         public string afterQuest;
+        /// <summary>By day, by night (nocturnal guests), or both.</summary>
+        public ActiveTime activeAt;
         /// <summary>Recipes they sell (each recipe's price is in the recipe). Empty for no shop.</summary>
         public List<string> shop = new();
     }
