@@ -20,7 +20,9 @@ namespace Bush.Core.Tests
             string path = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "..", "Design", "design-data.json"));
             var file = UnityEngine.JsonUtility.FromJson<DesignFile>(File.ReadAllText(path));
             DesignData design = file.ToDesign(new List<string>());
-            // Like the GameDatabase: closing opens with the first story quest that asks you to close up.
+            // Like the GameDatabase (the day rules aren't in the JSON): three trips a day, and closing early
+            // opens with the first story quest that asks you to close up.
+            design.rules.forageTripsPerDay = 3;
             design.rules.closeUnlockedBy = design.quests.Find(q => q.isMain && q.objectives.Exists(o => o.type == ObjectiveType.CloseDay))?.id;
             return design;
         }

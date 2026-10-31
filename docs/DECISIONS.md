@@ -13,7 +13,7 @@ One place for what's been decided, what's been set aside for later, and what's s
 
 **The story's pacing**
 - **The tutorial is spread over days:** day 1 is the salad and closing up, day 2 the furniture, and night can't unlock before day 3. Quests can wait for the next day or a set day.
-- **No closing before the story teaches it:** "Close for the day" is hidden at the cafe door until *Closing time* has been taken on, so day 1 can't be skipped. Set as *Close Unlocked By* on the GameDatabase (empty for always open).
+- **No closing before the story teaches it:** Closing early is hidden at the cafe door until *Closing time* has been taken on, so day 1 can't be skipped. In the evening (trips used up) you can always close, so the day can't get stuck. Set as *Close Unlocked By* on the GameDatabase (empty for always open).
 - **A playthrough test** plays the whole story from the data, and a cheat finishes the current story step, so rewriting the story is safe to try.
 
 **The cafe**

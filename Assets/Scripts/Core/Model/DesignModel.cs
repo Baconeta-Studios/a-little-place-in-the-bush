@@ -142,8 +142,9 @@ namespace Bush.Core
         /// </summary>
         public string luckProtectedQuest;
         /// <summary>
-        /// "Close for the day" stays hidden until this quest has been taken on (the tutorial's "Closing time"),
-        /// so a new player can't skip day 1 before learning anything. Empty for always open.
+        /// Closing early stays hidden until this quest has been taken on (the tutorial's "Closing time"),
+        /// so a new player can't skip day 1 before learning anything. In the evening (no trips left) closing
+        /// is always open, so the day can't get stuck. Empty for always open.
         /// </summary>
         public string closeUnlockedBy;
         /// <summary>The cafe upgrades on offer, in shop order. They add to the numbers above.</summary>

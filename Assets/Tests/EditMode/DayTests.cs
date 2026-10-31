@@ -155,6 +155,10 @@ namespace Bush.Core.Tests
             Assert.IsFalse(_game.cafe.CloseUnlocked());
             Assert.AreEqual(TestDesign.Welcome, _game.cafe.CloseUnlockedBy().id);
 
+            Evening();
+            Assert.IsTrue(_game.cafe.CloseUnlocked(), "Always open once the day's trips are used up, so the day can't get stuck.");
+            _game.state.forageTripsToday = 0;
+
             _game.quests.Start(TestDesign.Welcome);
             Assert.IsTrue(_game.cafe.CloseUnlocked(), "Open once it's under way.");
 

@@ -39,7 +39,7 @@ public class GameDatabase : ScriptableObject
 
     [Tooltip("Luck protection: while this quest is under way, a forage trip always finds what its item objectives still need.")]
     public QuestDefinition luckProtectedQuest;
-    [Tooltip("\"Close for the day\" stays hidden at the cafe door until this quest has been taken on. Empty for always open.")]
+    [Tooltip("Closing early stays hidden at the cafe door until this quest has been taken on. In the evening it's always open. Empty for always open.")]
     public QuestDefinition closeUnlockedBy;
 
     private Dictionary<string, GameDefinition> _byId;
