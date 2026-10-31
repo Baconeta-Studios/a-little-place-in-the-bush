@@ -3135,7 +3135,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   npc: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
-  markerHeight: 1.8
+  markerHeight: 2
   takesSeats: 1
   artFacesRight: 0
   footprintSize: {x: 0.89, y: 0.25}
@@ -3152,7 +3152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPrompt
   marker: {fileID: 0}
-  markerOffset: {x: 0, y: 1.2}
+  markerOffset: {x: 0, y: 1}
   showDistance: 2.5
   showPromptText: 1
   highlightColor: {r: 1, g: 0.9, b: 0.55, a: 1}
@@ -4089,7 +4089,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   npc: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
-  markerHeight: 1.8
+  markerHeight: 2.4
   takesSeats: 0
   artFacesRight: 0
   footprintSize: {x: 0.8, y: 0.5}
@@ -4152,7 +4152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPrompt
   marker: {fileID: 0}
-  markerOffset: {x: 0, y: 1.2}
+  markerOffset: {x: 0, y: 1}
   showDistance: 5
   showPromptText: 1
   highlightColor: {r: 1, g: 0.9, b: 0.55, a: 1}
