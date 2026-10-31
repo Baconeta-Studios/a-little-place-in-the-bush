@@ -154,3 +154,4 @@ MonoBehaviour:
     exclusiveFromCosiness: 0.3
     firstDay: 3
   luckProtectedQuest: {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}
+  closeUnlockedBy: {fileID: 11400000, guid: 389153578eedaaf419fbed858a8cd3e8, type: 2}

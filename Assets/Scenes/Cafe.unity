@@ -310,6 +310,7 @@ MonoBehaviour:
   markerHeight: 2.4
   takesSeats: 1
   artFacesRight: 1
+  footprintSize: {x: 0.6, y: 0.3}
 --- !u!114 &193236004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -858,6 +859,7 @@ MonoBehaviour:
   markerHeight: 2.4
   takesSeats: 1
   artFacesRight: 0
+  footprintSize: {x: 0.6, y: 0.3}
 --- !u!1 &513111148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,6 +1074,7 @@ MonoBehaviour:
   markerHeight: 2.4
   takesSeats: 1
   artFacesRight: 1
+  footprintSize: {x: 0.6, y: 0.3}
 --- !u!1 &539176517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1741,6 +1744,7 @@ MonoBehaviour:
   markerHeight: 2.4
   takesSeats: 1
   artFacesRight: 0
+  footprintSize: {x: 0.6, y: 0.3}
 --- !u!1 &624205944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2271,8 +2275,8 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b6c6eb8c89ac53e489f484dea81592f4, type: 3}
-  m_Color: {r: 0.6698113, g: 1, b: 0.9894942, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 8655101493f190249861fe316030cd62, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3011,6 +3015,7 @@ MonoBehaviour:
   markerHeight: 2.4
   takesSeats: 1
   artFacesRight: 1
+  footprintSize: {x: 0.6, y: 0.3}
 --- !u!114 &1358706939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3058,7 +3063,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.2, y: -4.62, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1740469765}
@@ -3099,7 +3104,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0057414174, y: 0.91402686}
+  m_Offset: {x: 0.09590268, y: 0.03729564}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3109,7 +3114,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.241141, y: 1.5879004}
+  m_Size: {x: 1.6886902, y: 1.6624917}
   m_EdgeRadius: 0
 --- !u!114 &1363875419
 MonoBehaviour:
@@ -3130,9 +3135,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   npc: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
-  markerHeight: 2.4
+  markerHeight: 2
   takesSeats: 1
   artFacesRight: 0
+  footprintSize: {x: 0.89, y: 0.25}
 --- !u!114 &1363875420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3146,7 +3152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPrompt
   marker: {fileID: 0}
-  markerOffset: {x: 0, y: 1.2}
+  markerOffset: {x: 0, y: 1}
   showDistance: 2.5
   showPromptText: 1
   highlightColor: {r: 1, g: 0.9, b: 0.55, a: 1}
@@ -3313,7 +3319,7 @@ Transform:
   m_GameObject: {fileID: 1510875374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.01, y: 0.04, z: 0}
+  m_LocalPosition: {x: -1.61, y: -0.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3880,8 +3886,8 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b6c6eb8c89ac53e489f484dea81592f4, type: 3}
-  m_Color: {r: 0.5999999, g: 0.4466037, b: 0.2932075, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 9a7d2db6abe10ee4ea6e407dc60c6eb0, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4057,7 +4063,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.48, y: -1.5, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 790272635}
@@ -4086,6 +4092,7 @@ MonoBehaviour:
   markerHeight: 2.4
   takesSeats: 0
   artFacesRight: 0
+  footprintSize: {x: 0.8, y: 0.5}
 --- !u!61 &1795903386
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4120,7 +4127,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0057414174, y: 0.91402686}
+  m_Offset: {x: 0, y: -0.01065582}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4130,7 +4137,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.241141, y: 1.5879004}
+  m_Size: {x: 1.241141, y: 2.0993848}
   m_EdgeRadius: 0
 --- !u!114 &1795903387
 MonoBehaviour:
@@ -4145,8 +4152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPrompt
   marker: {fileID: 0}
-  markerOffset: {x: 0, y: 1.2}
-  showDistance: 2.5
+  markerOffset: {x: 0, y: 1}
+  showDistance: 5
   showPromptText: 1
   highlightColor: {r: 1, g: 0.9, b: 0.55, a: 1}
   highlightAmount: 0.35

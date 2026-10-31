@@ -19,7 +19,10 @@ namespace Bush.Core.Tests
         {
             string path = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "..", "Design", "design-data.json"));
             var file = UnityEngine.JsonUtility.FromJson<DesignFile>(File.ReadAllText(path));
-            return file.ToDesign(new List<string>());
+            DesignData design = file.ToDesign(new List<string>());
+            // Like the GameDatabase: closing opens with the first story quest that asks you to close up.
+            design.rules.closeUnlockedBy = design.quests.Find(q => q.isMain && q.objectives.Exists(o => o.type == ObjectiveType.CloseDay))?.id;
+            return design;
         }
 
         /// <summary>Plays the main story; returns the day each main quest was handed in.</summary>
@@ -49,6 +52,8 @@ namespace Bush.Core.Tests
 
         private static void NextDay(TestGame game)
         {
+            Assert.IsTrue(game.state.isNight || game.cafe.CloseUnlocked(),
+                $"Day {game.state.day}: the story needs the day closed, but closing isn't open yet ({game.design.rules.closeUnlockedBy} not taken on).");
             if (game.state.isNight) game.cafe.GoToBed();
             else
             {
@@ -102,6 +107,14 @@ namespace Bush.Core.Tests
             var game = new TestGame(LoadRealDesign());
             PlayTheStory(game, out _);
             Assert.IsTrue(game.quests.IsMainStoryComplete(), $"The story wasn't finished by day {MaxDays}.");
+        }
+
+        [Test]
+        public void Closing_IsLockedOnTheFirstMorning()
+        {
+            var game = new TestGame(LoadRealDesign());
+            Assert.IsNotNull(game.design.rules.closeUnlockedBy, "The story has a quest that teaches closing.");
+            Assert.IsFalse(game.cafe.CloseUnlocked());
         }
 
         [Test]

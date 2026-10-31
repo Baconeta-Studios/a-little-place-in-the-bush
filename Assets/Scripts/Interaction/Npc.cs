@@ -10,7 +10,9 @@ using UnityEngine;
 /// characters while the story is theirs, random visitors on the days they drop by. Place every
 /// character in the scene at their own spot; the ones who aren't in today are hidden (in build mode
 /// too) and block nothing. Visiting guests sit on the seats of furniture you've placed
-/// (<see cref="GuestSeating"/>), and use their own spot when there's no free seat. Set it up like any interactable: a Collider2D on the Interactable layer and a
+/// (<see cref="GuestSeating"/>), and use their own spot when there's no free seat. While they're
+/// here, a small footprint at their feet (on the Obstacle layer, like furniture) makes the gecko walk
+/// around them rather than through them. Set it up like any interactable: a Collider2D on the Interactable layer and a
 /// StandPoint child, then pick the character's NPC asset.
 /// </summary>
 public class Npc : Interactable
@@ -22,6 +24,8 @@ public class Npc : Interactable
     [SerializeField] private bool takesSeats = true;
     [Tooltip("Whether the art (in a child called Visual) faces right when its X scale is positive.")]
     [SerializeField] private bool artFacesRight = true;
+    [Tooltip("The base that blocks walking while they're here, in world units at their feet: x = width, y = depth (front to back). 0 for none.")]
+    [SerializeField] private Vector2 footprintSize = new(0.6f, 0.3f);
 
     private TextMeshPro _marker;
     private float _nextMarkerCheck;
@@ -30,6 +34,7 @@ public class Npc : Interactable
     private bool _present = true;
     private Transform _visual;
     private StandPoint _stand;
+    private BoxCollider2D _footprint;
 
     public bool TakesSeats => takesSeats;
     /// <summary>Their own spot, where they were placed in the scene.</summary>
@@ -46,6 +51,7 @@ public class Npc : Interactable
         if (!npc) Debug.LogWarning($"[Npc] {name} has no NPC asset set.", this);
         _renderers = GetComponentsInChildren<Renderer>(true);
         _colliders = GetComponentsInChildren<Collider2D>(true);
+        CreateFootprint(); // after collecting the click areas: the footprint is switched on and off separately
         _visual = transform.Find("Visual");
         _stand = GetComponentInChildren<StandPoint>(true);
         HomePosition = transform.position;
@@ -110,6 +116,38 @@ public class Npc : Interactable
         _present = present;
         foreach (Renderer r in _renderers) if (r) r.enabled = present;
         foreach (Collider2D c in _colliders) if (c) c.enabled = present;
+        if (_footprint) _footprint.enabled = present;
+    }
+
+    /// <summary>Switches the footprint off while seats are worked out (only furniture counts), and back on (only while here).</summary>
+    public void SetFootprintActive(bool active)
+    {
+        if (_footprint) _footprint.enabled = active && _present;
+    }
+
+    /// <summary>A small box at the feet on the Obstacle layer, so the walkable grid routes the gecko around them.</summary>
+    private void CreateFootprint()
+    {
+        int obstacle = LayerMask.NameToLayer("Obstacle");
+        if (footprintSize.x <= 0f || footprintSize.y <= 0f || obstacle < 0) return;
+        var footprintObject = new GameObject("Footprint");
+        footprintObject.layer = obstacle;
+        footprintObject.transform.SetParent(transform, false);
+        _footprint = footprintObject.AddComponent<BoxCollider2D>();
+        // Sized in world units whatever the character's scale.
+        Vector3 scale = transform.lossyScale;
+        Vector2 size = new(footprintSize.x / Mathf.Max(0.0001f, Mathf.Abs(scale.x)), footprintSize.y / Mathf.Max(0.0001f, Mathf.Abs(scale.y)));
+        _footprint.size = size;
+        _footprint.offset = new Vector2(0f, size.y * 0.5f);
+        _footprint.enabled = _present;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (footprintSize.x <= 0f || footprintSize.y <= 0f) return;
+        Gizmos.color = new Color(1f, 0.5f, 0.3f);
+        Vector3 feet = transform.position;
+        Gizmos.DrawWireCube(feet + new Vector3(0f, footprintSize.y * 0.5f, 0f), new Vector3(footprintSize.x, footprintSize.y, 0f));
     }
 
     public override void Interact(in InteractionContext context)

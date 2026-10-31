@@ -8,7 +8,8 @@ using UnityEngine;
 /// there and free; the rest take the next free seat that isn't right next to another guest (so a
 /// bench seats one, and two chairs side by side seat one, unless they're spaced out). With no seat left, a guest uses their own spot
 /// from the scene, or, if it's been built over or another guest is right there, the nearest open spot. Worked out again
-/// each day, whenever someone arrives or leaves, and after building. Guests stay put while building.
+/// each day, whenever someone arrives or leaves, and after building, and then the walkable grid is rebuilt so
+/// the gecko walks around guests (their footprints, see <see cref="Npc"/>). Guests stay put while building.
 /// Created automatically by the first <see cref="Npc"/> in a scene.
 /// </summary>
 public class GuestSeating : MonoBehaviour
@@ -59,7 +60,15 @@ public class GuestSeating : MonoBehaviour
         string signature = Signature(session, area, npcs);
         if (signature == _signature) return;
         _signature = signature;
+
+        // Work out seats against the furniture only (guests' own footprints would block their spots), then put
+        // the footprints back and rebuild the walkable floor so the gecko walks around everyone.
+        GridPathfinder pathfinder = area ? area.Pathfinder : FindAnyObjectByType<GridPathfinder>();
+        foreach (Npc npc in npcs) npc.SetFootprintActive(false);
+        if (pathfinder) pathfinder.Grid.Rebuild();
         Seat(area, npcs);
+        foreach (Npc npc in npcs) npc.SetFootprintActive(true);
+        if (pathfinder) pathfinder.Grid.Rebuild();
     }
 
     /// <summary>Changes when the day, who's in, or what's placed changes.</summary>
@@ -157,7 +166,7 @@ public class GuestSeating : MonoBehaviour
     private static void SendHome(Npc npc, GridPathfinder pathfinder, Vector2 origin, List<Vector2> occupied)
     {
         Vector2 home = npc.HomePosition, stand = npc.HomeStand;
-        if (!pathfinder || SpotIsClear(home, stand, pathfinder, origin, occupied))
+        if (!pathfinder || SpotIsClear(npc, home, stand, pathfinder, origin, occupied))
         {
             npc.PlaceAt(home, stand, npc.HomeFacesRight);
             return;
@@ -172,7 +181,7 @@ public class GuestSeating : MonoBehaviour
                 Vector2 spot = home + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle) * 0.6f) * radius; // flatter: the floor is wide, not deep
                 Vector2 spotStand = spot + standOffset;
                 if (!pathfinder.IsWalkable(spotStand) && pathfinder.TryGetNearestWalkable(spotStand, out Vector2 nearby)) spotStand = nearby;
-                if (!pathfinder.IsWalkable(spot) || !SpotIsClear(spot, spotStand, pathfinder, origin, occupied)) continue;
+                if (!SpotIsClear(npc, spot, spotStand, pathfinder, origin, occupied)) continue;
                 npc.PlaceAt(spot, spotStand, npc.HomeFacesRight);
                 return;
             }
@@ -180,8 +189,16 @@ public class GuestSeating : MonoBehaviour
         npc.PlaceAt(home, stand, npc.HomeFacesRight); // nowhere better nearby: stay home
     }
 
-    private static bool SpotIsClear(Vector2 spot, Vector2 stand, GridPathfinder pathfinder, Vector2 origin, List<Vector2> occupied) =>
-        !Physics2D.OverlapPoint(spot, LayerMask.GetMask("Obstacle")) &&
+    private static bool SpotIsClear(Npc npc, Vector2 spot, Vector2 stand, GridPathfinder pathfinder, Vector2 origin, List<Vector2> occupied) =>
+        !BlockedByOthers(npc, spot) &&
         !occupied.Exists(o => Vector2.Distance(o, spot) < MinGuestSpacing) &&
         pathfinder.IsWalkable(stand) && pathfinder.IsReachable(origin, stand);
+
+    /// <summary>Something else (furniture, another guest) is on this spot. The guest's own footprint doesn't count.</summary>
+    private static bool BlockedByOthers(Npc npc, Vector2 spot)
+    {
+        foreach (Collider2D hit in Physics2D.OverlapPointAll(spot, LayerMask.GetMask("Obstacle")))
+            if (!hit.transform.IsChildOf(npc.transform)) return true;
+        return false;
+    }
 }

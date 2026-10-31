@@ -147,6 +147,22 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void Closing_StaysLocked_UntilTheClosingQuestIsTakenOn()
+        {
+            Assert.IsTrue(_game.cafe.CloseUnlocked(), "Open when no quest is set.");
+
+            _game.design.rules.closeUnlockedBy = TestDesign.Welcome;
+            Assert.IsFalse(_game.cafe.CloseUnlocked());
+            Assert.AreEqual(TestDesign.Welcome, _game.cafe.CloseUnlockedBy().id);
+
+            _game.quests.Start(TestDesign.Welcome);
+            Assert.IsTrue(_game.cafe.CloseUnlocked(), "Open once it's under way.");
+
+            _game.state.FindQuest(TestDesign.Welcome).status = QuestStatus.Completed;
+            Assert.IsTrue(_game.cafe.CloseUnlocked(), "And stays open after.");
+        }
+
+        [Test]
         public void CloseDay_NextMorning_KeepsTheMenu_ResetsTrips()
         {
             _game.cafe.AddToMenu(TestDesign.Salad);

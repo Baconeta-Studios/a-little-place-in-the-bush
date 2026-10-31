@@ -141,6 +141,11 @@ namespace Bush.Core
         /// item objectives still need (the tutorial's "3 leaves"). Empty for none.
         /// </summary>
         public string luckProtectedQuest;
+        /// <summary>
+        /// "Close for the day" stays hidden until this quest has been taken on (the tutorial's "Closing time"),
+        /// so a new player can't skip day 1 before learning anything. Empty for always open.
+        /// </summary>
+        public string closeUnlockedBy;
         /// <summary>The cafe upgrades on offer, in shop order. They add to the numbers above.</summary>
         public List<UpgradeData> upgrades = new();
         /// <summary>The day events (see <see cref="DayEvents"/>).</summary>

@@ -108,6 +108,9 @@ public class CafePopup : Popup
         _title.text = $"The cafe, day {session.State.day}" + (part != null ? $": {part}" : "");
         bool evening = rules.IsEvening(session.State);
         GameUi.SetLabel(_closeDay, session.State.isNight ? "Go to bed" : evening ? "Close for the day" : "Close early");
+        // Hidden until the story teaches closing (DayRules.closeUnlockedBy), so day 1 can't be skipped.
+        QuestData closeQuest = session.State.isNight ? null : cafe.CloseUnlockedBy();
+        _closeDay.gameObject.SetActive(closeQuest == null);
 
         // Today's menu, with what the cafe will serve while you're out on the next trip.
         List<DishSale> plan = cafe.PlanSales(out int unsold);
@@ -126,6 +129,8 @@ public class CafePopup : Popup
                 : rules.TripsPerDay(session.State) <= 0
                     ? $"Sold today: {soldToday} ({coinsToday} coins)."
                     : $"Serves {now} while you're out on your next trip. Sold today: {soldToday} ({coinsToday} coins).";
+        if (closeQuest != null)
+            sales += $" {QuestLogPopup.NpcName(design, closeQuest.giver)} wants a word before you close up.";
         DayEventData today = DayEvents.Today(design, session.State);
         if (today != null && (today.extraSales > 0 || (today.critic && !session.State.criticDone)))
             sales += $" <color={Hex(GameUi.Moss)}>{today.name}: {today.effect}</color>";
@@ -222,6 +227,7 @@ public class CafePopup : Popup
     {
         GameSession session = Session;
         if (session == null) return;
+        if (!session.State.isNight && !session.Cafe.CloseUnlocked()) return; // the button's hidden; just in case
         if (session.State.isNight)
         {
             base.Close();
