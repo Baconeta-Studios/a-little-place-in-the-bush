@@ -206,16 +206,17 @@ namespace Bush.Core
         }
 
         /// <summary>
-        /// Whether "Close for the day" is offered yet: true once the quest in <see cref="DayRules.closeUnlockedBy"/>
-        /// has been taken on (or done), or if there's none. <see cref="CloseDay"/> itself doesn't check, so cheats still work.
+        /// Whether "Close for the day" is offered yet: true in the evening (so the day can't get stuck), once the
+        /// quest in <see cref="DayRules.closeUnlockedBy"/> has been taken on (or done), or if there's none.
+        /// <see cref="CloseDay"/> itself doesn't check, so cheats still work.
         /// </summary>
         public bool CloseUnlocked() => CloseUnlockedBy() == null;
 
-        /// <summary>The quest that has to be taken on before closing for the day, while it hasn't been; otherwise null.</summary>
+        /// <summary>The quest that has to be taken on before closing early, while it hasn't been; otherwise null.</summary>
         public QuestData CloseUnlockedBy()
         {
             QuestData quest = _design.GetQuest(_design.rules?.closeUnlockedBy);
-            if (quest == null) return null;
+            if (quest == null || _design.rules.IsEvening(_state)) return null;
             QuestStatus status = _state.FindQuest(quest.id)?.status ?? QuestStatus.NotStarted;
             return status == QuestStatus.NotStarted ? quest : null;
         }

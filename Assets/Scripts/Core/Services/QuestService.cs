@@ -262,6 +262,18 @@ namespace Bush.Core
             return next;
         }
 
+        /// <summary>
+        /// The quest to take on before foraging (<see cref="DayRules.forageUnlockedBy"/>), while it's waiting. Only
+        /// when it can be started right now and its giver is here, so talking to them always lifts it: it can
+        /// never leave the player stuck. Otherwise null.
+        /// </summary>
+        public QuestData ForagingWaitsFor()
+        {
+            QuestData quest = _design.GetQuest(_design.rules?.forageUnlockedBy);
+            if (quest == null || !CanStart(quest.id)) return null;
+            return Visitors.IsPresent(_design, _state, this, quest.giver) ? quest : null;
+        }
+
         /// <summary>The next story quest that's waiting for another day (for "Tomorrow: ..." on the tracker), when there's nothing to do in the story today.</summary>
         public QuestData WaitingMainQuest()
         {

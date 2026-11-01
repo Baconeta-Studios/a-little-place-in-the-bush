@@ -20,7 +20,10 @@ namespace Bush.Core.Tests
             string path = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "..", "Design", "design-data.json"));
             var file = UnityEngine.JsonUtility.FromJson<DesignFile>(File.ReadAllText(path));
             DesignData design = file.ToDesign(new List<string>());
-            // Like the GameDatabase: closing opens with the first story quest that asks you to close up.
+            // Like the GameDatabase (the day rules aren't in the JSON): three trips a day, and closing early
+            // opens with the first story quest that asks you to close up.
+            design.rules.forageTripsPerDay = 3;
+            design.rules.forageUnlockedBy = design.quests.Find(q => q.isMain)?.id;
             design.rules.closeUnlockedBy = design.quests.Find(q => q.isMain && q.objectives.Exists(o => o.type == ObjectiveType.CloseDay))?.id;
             return design;
         }
@@ -42,6 +45,7 @@ namespace Bush.Core.Tests
                 }
 
                 if (game.quests.GetStatus(quest.id) == QuestStatus.NotStarted) Assert.IsTrue(game.quests.Accept(quest.id), quest.id);
+                Assert.IsNull(game.quests.ForagingWaitsFor(), $"Day {game.state.day}: foraging still waits after taking on {quest.id}.");
                 DoWhatItAsks(game, quest);
                 Assert.IsTrue(game.quests.Claim(quest.id, out string error), $"Day {game.state.day}: couldn't hand in {quest.id}: {error}");
                 handedIn[quest.id] = game.state.day;
@@ -115,6 +119,16 @@ namespace Bush.Core.Tests
             var game = new TestGame(LoadRealDesign());
             Assert.IsNotNull(game.design.rules.closeUnlockedBy, "The story has a quest that teaches closing.");
             Assert.IsFalse(game.cafe.CloseUnlocked());
+        }
+
+        [Test]
+        public void Foraging_WaitsForRuru_OnTheFirstMorning()
+        {
+            var game = new TestGame(LoadRealDesign());
+            QuestData first = game.quests.ForagingWaitsFor();
+            Assert.IsNotNull(first, "The bush path waits for the first quest.");
+            Assert.IsTrue(game.quests.Accept(first.id));
+            Assert.IsNull(game.quests.ForagingWaitsFor());
         }
 
         [Test]
