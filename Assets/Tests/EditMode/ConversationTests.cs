@@ -10,6 +10,22 @@ namespace Bush.Core.Tests
         [SetUp]
         public void SetUp() => _game = new TestGame();
 
+        [Test]
+        public void Foraging_WaitsForTheFirstQuest_OnlyWhileItsGiverIsHere()
+        {
+            Assert.IsNull(_game.quests.ForagingWaitsFor(), "Nothing waits when it isn't set.");
+
+            _game.design.rules.forageUnlockedBy = TestDesign.Welcome;
+            Assert.AreEqual(TestDesign.Welcome, _game.quests.ForagingWaitsFor()?.id, "Ruru gives the current story quest, so she's here.");
+
+            _game.state.isNight = true; // Ruru's a day character: not here, so nothing to wait for
+            Assert.IsNull(_game.quests.ForagingWaitsFor(), "Never waits on someone who isn't here.");
+            _game.state.isNight = false;
+
+            _game.quests.Accept(TestDesign.Welcome);
+            Assert.IsNull(_game.quests.ForagingWaitsFor(), "Taking it on lifts it.");
+        }
+
         private void FinishWelcome()
         {
             _game.quests.Accept(TestDesign.Welcome);

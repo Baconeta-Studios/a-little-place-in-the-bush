@@ -41,6 +41,8 @@ public class GameDatabase : ScriptableObject
     public QuestDefinition luckProtectedQuest;
     [Tooltip("Closing early stays hidden at the cafe door until this quest has been taken on. In the evening it's always open. Empty for always open.")]
     public QuestDefinition closeUnlockedBy;
+    [Tooltip("Foraging waits until this quest has been taken on (only while its giver is here to give it). Empty for none.")]
+    public QuestDefinition forageUnlockedBy;
 
     private Dictionary<string, GameDefinition> _byId;
 
@@ -59,7 +61,8 @@ public class GameDatabase : ScriptableObject
         foreach (PlaceableDefinition x in placeables) if (x) design.placeables.Add(x.ToData());
         design.rules = new DayRules { salesPerDay = salesPerDay, menuSlots = menuSlots, forageTripsPerDay = forageTripsPerDay, perkSlots = perkSlots, nightTrips = nightTrips,
             luckProtectedQuest = luckProtectedQuest ? luckProtectedQuest.id : "",
-            closeUnlockedBy = closeUnlockedBy ? closeUnlockedBy.id : "" };
+            closeUnlockedBy = closeUnlockedBy ? closeUnlockedBy.id : "",
+            forageUnlockedBy = forageUnlockedBy ? forageUnlockedBy.id : "" };
         foreach (UpgradeDefinition x in upgrades) if (x) design.rules.upgrades.Add(x.ToData());
         foreach (DayEventDefinition x in dayEvents) if (x) design.rules.dayEvents.Add(x.ToData());
         design.rules.events = dayEventTuning ?? new DayEventSettings();

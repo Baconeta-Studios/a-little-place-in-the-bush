@@ -197,6 +197,12 @@ public class ForagePopup : Popup
 
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
         bool canGo = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out string whyNot);
+        QuestData waitsFor = session.Quests.ForagingWaitsFor();
+        if (canGo && waitsFor != null)
+        {
+            canGo = false;
+            whyNot = $"{QuestLogPopup.NpcName(session.Design, waitsFor.giver)} wants to say hello before you head into the bush.";
+        }
         string berry = ColorUtility.ToHtmlStringRGB(GameUi.Berry);
         _tripsLeft.text = tripsLeft == 0
             ? session.State.isNight
@@ -251,6 +257,7 @@ public class ForagePopup : Popup
             Debug.LogWarning($"[Forage] Can't go: {error}");
             return;
         }
+        if (session.Quests.ForagingWaitsFor() != null) return; // Go is greyed out; just in case
 
         // By day, with nothing on the menu but something you could make, the cafe would serve nobody: say so once.
         // (Not when there's nothing to make anyway, like the very first trip.)

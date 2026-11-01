@@ -24,7 +24,7 @@ The opening is a short tutorial chain, one system per step, spread over three da
 - **Day 3 or later:** After dark (opens the day after Open for guests), which unlocks night; then The lost recipe, at night.
 
 
-0. **Hello, Ruru** (main, Ruru): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none.
+0. **Hello, Ruru** (main, Ruru): talk to Ruru. Teaches the *leaf salad* recipe, since you start knowing none. Until it's taken on, the bush path says Ruru wants to say hello first (*Forage Unlocked By* on the GameDatabase; only while Ruru's there to give it, so it can't strand you).
 0. **Leaves for the salad** (main, Ruru): have 3 leaves. Teaches foraging: Ruru sends you down the path into the bush. **Luck protection:** while it's under way, a trip always finds the leaves you still need (the quest is set as *Luck Protected Quest* on the GameDatabase; the trip's seed is picked so it does, and the logged seed still reproduces it in the sandbox). Rewards 5 coins.
 1. **A cafe of my own** (main, Ruru): serve a leaf salad. Teaches the menu board, and that the cafe serves while you're out foraging. Rewards 20 coins and the *worm pie* recipe (the snail's quest needs it). Unlocks everything below.
 1. **Closing time** (main, Ruru): close the cafe for the day. Teaches closing up; handed in the next morning. Until it's taken on, closing early is hidden at the cafe door (closing in the evening, with the trips used up, always works) and the board says Ruru wants a word first (the quest is set as *Close Unlocked By* on the GameDatabase; the cheat still closes the day). Rewards 10 coins.

@@ -147,6 +147,12 @@ namespace Bush.Core
         /// is always open, so the day can't get stuck. Empty for always open.
         /// </summary>
         public string closeUnlockedBy;
+        /// <summary>
+        /// Foraging waits until this quest has been taken on (the tutorial's "Hello, Ruru"), so a new player meets
+        /// Ruru and learns a recipe before using up trips. Only while its giver is here to give it (see
+        /// <see cref="QuestService.ForagingWaitsFor"/>), so it can't strand anyone. Empty for none.
+        /// </summary>
+        public string forageUnlockedBy;
         /// <summary>The cafe upgrades on offer, in shop order. They add to the numbers above.</summary>
         public List<UpgradeData> upgrades = new();
         /// <summary>The day events (see <see cref="DayEvents"/>).</summary>
