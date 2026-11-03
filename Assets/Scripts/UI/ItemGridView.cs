@@ -138,6 +138,15 @@ public class ItemGridView : MonoBehaviour
         return null;
     }
 
+    /// <summary>The art to show for a recipe: the shared recipe picture, or its first ingredient.</summary>
+    public static Sprite IconFor(RecipeData recipe, GameDatabase database, out Color tint)
+    {
+        tint = Color.white;
+        if (database.recipeIcon) return database.recipeIcon;
+        ItemDefinition first = recipe.ingredients.Count > 0 ? database.Find<ItemDefinition>(recipe.ingredients[0].itemId) : null;
+        return IconFor(first, null, out tint);
+    }
+
     public static Color RarityColor(Rarity rarity) => rarity switch
     {
         Rarity.Uncommon => new Color(0.36f, 0.6f, 0.3f),

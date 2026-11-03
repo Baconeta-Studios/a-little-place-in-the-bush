@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.nectar
   displayName: Nectar
   description: A sticky drop of sweetness.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: cd16dd1caca24f6baad90bd748d68659, type: 3}
   category: 0
   rarity: 1
   tags:

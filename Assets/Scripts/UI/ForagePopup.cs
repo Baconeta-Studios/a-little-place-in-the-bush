@@ -823,6 +823,7 @@ public class ForagePopup : Popup
         previewArea.gameObject.AddComponent<LayoutElement>().preferredHeight = 180f;
         _preview = ItemGridView.Create(previewArea, true, new Vector2(184f, 170f), true);
         _preview.MakeCardsFlat();
+        GameUi.AddPanel(_preview.GetComponent<RectTransform>(), GameUi.CardBack).raycastTarget = false;
         _previewNote = Text(finds, "And maybe something rare.", 27f, GameUi.InkSoft, "PreviewNote");
 
         RectTransform companions = Column(sheet, "Companions", 8f, null, null);

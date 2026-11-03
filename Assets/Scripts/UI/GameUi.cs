@@ -23,6 +23,9 @@ public class GameUi : MonoBehaviour
     public static readonly Color Bark = new(0.55f, 0.4f, 0.26f);
     public static readonly Color Berry = new(0.75f, 0.27f, 0.22f);
     public static readonly Color Cream = new(1f, 0.98f, 0.92f);
+    // Dark enough for the pale line work on the item icons to show.
+    public static readonly Color CardBack = new(0.73f, 0.63f, 0.47f);
+    public static readonly Color CardSelected = new(0.55f, 0.68f, 0.45f);
 
     private static GameUi _current;
     private RectTransform _safeRoot;

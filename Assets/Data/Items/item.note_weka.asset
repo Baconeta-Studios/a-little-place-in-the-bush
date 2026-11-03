@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.note_weka
   displayName: Weka's pinched menu card
   description: Weka 'found' a shiny old menu card on your trip together. It has the beetlejuice recipe on the back, and Weka wants it back.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d6f8265d8368c534db987e8d19a8c6f3, type: 3}
   category: 3
   rarity: 2
   tags:

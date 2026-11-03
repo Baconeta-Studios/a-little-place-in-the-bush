@@ -17,8 +17,8 @@ public class ItemCardView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI title;
     [SerializeField] private GameObject badge;
     [SerializeField] private TextMeshProUGUI badgeText;
-    [SerializeField] private Color normalColor = GameUi.Cream;
-    [SerializeField] private Color selectedColor = GameUi.MossLight;
+    [SerializeField] private Color normalColor = GameUi.CardBack;
+    [SerializeField] private Color selectedColor = GameUi.CardSelected;
 
     /// <summary>For cards that are only there to look at: no background, and they don't look tappable.</summary>
     public void MakeFlat()
@@ -57,7 +57,7 @@ public class ItemCardView : MonoBehaviour
         RectTransform rect = GameUi.NewRect(name, parent);
         var view = rect.gameObject.AddComponent<ItemCardView>();
 
-        view.background = GameUi.AddPanel(rect, GameUi.Cream);
+        view.background = GameUi.AddPanel(rect, GameUi.CardBack);
         view.button = rect.gameObject.AddComponent<Button>();
         view.button.targetGraphic = view.background;
         view.group = rect.gameObject.AddComponent<CanvasGroup>();

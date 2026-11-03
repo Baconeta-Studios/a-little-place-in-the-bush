@@ -155,14 +155,12 @@ public class CafePopup : Popup
             if (!cafe.IsUnlocked(recipe.id)) continue;
             string id = recipe.id;
             bool canMakeOne = cafe.CanCook(id, out _);
-            ItemData firstIngredient = recipe.ingredients.Count > 0 ? design.GetItem(recipe.ingredients[0].itemId) : null;
-            ItemDefinition icon = firstIngredient != null ? session.Database.Find<ItemDefinition>(firstIngredient.id) : null;
             cards.Add(new ItemCard
             {
                 key = id,
                 title = recipe.name,
                 badge = cafe.IsOnMenu(id) ? "on menu" : "",
-                icon = ItemGridView.IconFor(icon, null, out Color tint),
+                icon = ItemGridView.IconFor(recipe, session.Database, out Color tint),
                 iconTint = tint,
                 dimmed = !canMakeOne,
                 selected = id == _selected,

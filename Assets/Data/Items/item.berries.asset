@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.berries
   displayName: Berries
   description: Small, bright and juicy.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0d133be126c14c4489134b540bd69844, type: 3}
   category: 0
   rarity: 0
   tags:

@@ -64,14 +64,13 @@ public class RecipeShopPopup : Popup
             RecipeData recipe = design.GetRecipe(recipeId);
             if (recipe == null) continue;
             bool alreadyKnown = session.Cafe.IsUnlocked(recipe.id);
-            ItemData first = recipe.ingredients.Count > 0 ? design.GetItem(recipe.ingredients[0].itemId) : null;
             string id = recipe.id;
             cards.Add(new ItemCard
             {
                 key = id,
                 title = recipe.name,
                 badge = alreadyKnown ? "known" : $"{recipe.price}c",
-                icon = ItemGridView.IconFor(first != null ? session.Database.Find<ItemDefinition>(first.id) : null, null, out Color tint),
+                icon = ItemGridView.IconFor(recipe, session.Database, out Color tint),
                 iconTint = tint,
                 dimmed = alreadyKnown,
                 selected = id == _selected,

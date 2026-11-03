@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.truffle
   displayName: Truffle
   description: Kunekune pigs can sniff these out.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d755cc562050d5a42806e33e0046d4c7, type: 3}
   category: 0
   rarity: 2
   tags:

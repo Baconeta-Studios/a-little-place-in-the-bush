@@ -43,6 +43,8 @@ public class GameDatabase : ScriptableObject
     public QuestDefinition closeUnlockedBy;
     [Tooltip("Foraging waits until this quest has been taken on (only while its giver is here to give it). Empty for none.")]
     public QuestDefinition forageUnlockedBy;
+    [Tooltip("The picture on every recipe card. Empty shows the recipe's first ingredient.")]
+    public Sprite recipeIcon;
 
     private Dictionary<string, GameDefinition> _byId;
 

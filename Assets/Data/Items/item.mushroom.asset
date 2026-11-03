@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.mushroom
   displayName: Mushroom
   description: Earthy and plump.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b1ad2f9c7a50a6648b6ddadf1805ac3a, type: 3}
   category: 0
   rarity: 0
   tags:
