@@ -46,6 +46,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b56afdc5703376f4a9469240776a12ae, type: 2}
   - {fileID: 11400000, guid: 5f7e7d9b5fd169940ba55b21ba95bf02, type: 2}
   - {fileID: 11400000, guid: b3d05536aadf3354d8a1d03b4db623e1, type: 2}
+  - {fileID: 11400000, guid: 3080cb37c4088cc42bd25fe3d9416dbe, type: 2}
   recipes:
   - {fileID: 11400000, guid: fca9e2ef2c795124082e02373b8bd0f6, type: 2}
   - {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
@@ -113,6 +114,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0b4d4f252873a4f4db75996db4e17819, type: 2}
   - {fileID: 11400000, guid: 1fe74d0315ea2f442b0e0e20e3b784cb, type: 2}
   - {fileID: 11400000, guid: 3df59951eda77c642a5e1d788dbaf31d, type: 2}
+  - {fileID: 11400000, guid: f31edbee4d05d1544a6c9669cdc15dc1, type: 2}
   upgrades:
   - {fileID: 11400000, guid: 0dc42b32bd84fef4eac1edc24dc2b6d9, type: 2}
   - {fileID: 11400000, guid: bbbe6bf176503aa42b984c45b0352d60, type: 2}
