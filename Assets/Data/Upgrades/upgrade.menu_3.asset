@@ -17,5 +17,5 @@ MonoBehaviour:
   description: Put three dishes on the menu.
   effect: 0
   amount: 1
-  price: 450
+  price: 225
   requires: {fileID: 11400000, guid: 0dc42b32bd84fef4eac1edc24dc2b6d9, type: 2}

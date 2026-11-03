@@ -20,6 +20,17 @@ One place for what's been decided, what's been set aside for later, and what's s
 **UI**
 - **The HUD and forage screen are prefabs,** made once by a tool from the default layouts, then edited by hand. Scripts link up their own buttons, so restyling can't unhook anything. See [UI.md](UI.md). The other screens stay in code until they're next up for restyling.
 
+**Content, for a 10 to 30 minute game**
+- **Fewer things:** 12 recipes and 24 findable items. Moth, Mud, Feijoa, Giant worm and Sea glass went, with the four recipes that needed them. Pāua shell and Kauri gum have no use yet, for the story rewrite to pick up.
+- **The shop pays off:** Kererū sells five recipes, and dearer ones earn more per dish.
+- **Night has its own finds:** Moss, Cricket, Beetle, Glowworm and Kiwi's note only turn up at night, and worms, mushrooms, silk and truffles are likelier, with fewer leaves and berries. Nectar and Pōhutukawa petals are day only.
+- **Upgrades are half price,** and the bench, flower barrel and lantern post now come from quests.
+
+**Foraging**
+- **The forage screen asks one question.** It's a place at the edge of the bush rather than a form: what are we after? Companions and perks stay hidden until you have some.
+- **Quests point the way:** the focus a quest needs is chosen for you once and marked. Your own choice sticks.
+- **Finds go straight in the bag,** with no Collect step, and the results say what to do next, including *Go again* without walking back. Players could skip the yard this way; the trip limit keeps that small, and it's one to watch in playtests.
+
 **Build mode**
 - **Three more ways to place things:** small things sit on spots on tables and move with them; windows must fit wholly inside a polygon drawn on the tree; fairy lights snap end to end, sharing a pole, and only the poles block walking.
 - **Fairy-light joins aren't saved:** two sets are joined when their ends are in the same place, so nothing can get out of step.

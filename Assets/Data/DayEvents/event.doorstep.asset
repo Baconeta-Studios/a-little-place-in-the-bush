@@ -41,7 +41,7 @@ MonoBehaviour:
     qty: 2
     weight: 2
     exclusive: 0
-  - item: {fileID: 11400000, guid: 07137c6e4c4acdd4ab01e63a34ca6786, type: 2}
+  - item: {fileID: 11400000, guid: 7e0846d4372a28c47ae735622485a65a, type: 2}
     qty: 2
     weight: 2
     exclusive: 0

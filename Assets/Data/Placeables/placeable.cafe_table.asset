@@ -19,6 +19,7 @@ MonoBehaviour:
   prefab: {fileID: 8261507659864829758, guid: 69e5f257434b0574da6a7cbe27207624, type: 3}
   placement: 0
   footprintSize: {x: 1.2, y: 0.5}
+  chainSpan: 0
   canFlip: 0
   category: Furniture
   seats: 0
