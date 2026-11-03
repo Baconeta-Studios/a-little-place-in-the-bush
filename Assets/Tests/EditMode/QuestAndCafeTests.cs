@@ -38,6 +38,22 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void ForageGoal_LeavesOutItemsForagingWontFind()
+        {
+            TestGame game = GameWantingBugs(1);
+            game.design.quests.Find(q => q.id == TestDesign.Welcome).objectives.Add(
+                new QuestObjective { type = ObjectiveType.HaveItems, target = TestDesign.Scrap2, qty = 1 });
+            game.quests.Start(TestDesign.Welcome);
+            Assert.AreEqual(TestDesign.Bug, ForageGoals.Current(game.design, game.quests).item.id);
+
+            game.economy.Add(TestDesign.Bug, 1);
+            Assert.IsNull(ForageGoals.Current(game.design, game.quests), "All that's left has to come from somewhere else.");
+
+            game.economy.Add(TestDesign.Scrap2, 1);
+            Assert.IsTrue(ForageGoals.Current(game.design, game.quests).IsMet, "Ready to hand in, so it shows as done.");
+        }
+
+        [Test]
         public void ForageGoal_ReadsNaturally()
         {
             var leaves = new ItemData { id = "a", name = "Leaves" };

@@ -23,8 +23,10 @@ namespace Bush.Core
     public static class ForageGoals
     {
         /// <summary>
-        /// The first item still wanted by the main quest, then by side quests under way. If nothing's still
-        /// wanted, the last one that was met, so the results can show it finished. Null if no quest wants items.
+        /// The first forageable item still wanted by the main quest, then by side quests under way. Items that come
+        /// from somewhere else (a scrap someone's holding on to) aren't goals here, because foraging won't find them.
+        /// If nothing's still wanted, the first item of a quest that's ready to hand in, so the results can show it
+        /// finished. Null if there's nothing to show.
         /// </summary>
         public static ForageGoal Current(DesignData design, QuestService quests)
         {
@@ -67,7 +69,7 @@ namespace Bush.Core
                 QuestObjective objective = quest.objectives[i];
                 if (objective.type != ObjectiveType.HaveItems && objective.type != ObjectiveType.DeliverItems) continue;
                 ItemData item = design.GetItem(objective.target);
-                if (item == null) continue;
+                if (item == null || !CanBeForaged(design, item)) continue;
                 (int current, int required) = quests.GetProgress(quest.id, i);
                 var goal = new ForageGoal
                 {
@@ -75,9 +77,12 @@ namespace Bush.Core
                     focus = design.focuses.Find(f => f.tags.Exists(item.HasTag))
                 };
                 if (!goal.IsMet) return goal;
-                met ??= goal;
+                if (quests.GetStatus(quest.id) == QuestStatus.ReadyToClaim) met ??= goal;
             }
             return null;
         }
+
+        private static bool CanBeForaged(DesignData design, ItemData item) =>
+            design.forageTables.Exists(table => table.entries.Exists(entry => entry.itemId == item.id));
     }
 }
