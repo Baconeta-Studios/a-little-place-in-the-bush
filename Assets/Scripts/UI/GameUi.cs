@@ -6,7 +6,8 @@ using UnityEngine.UI;
 /// <summary>
 /// The game's own screen-space UI (HUD buttons, build tray, bag), built in code for the prototype so
 /// nothing needs wiring in the scene. One per scene, under the template popups (which draw at 100).
-/// <see cref="SafeRoot"/> stays inside the phone's safe area. Restyle or swap for prefabs later.
+/// <see cref="SafeRoot"/> stays inside the phone's safe area. The HUD and the forage screen can be
+/// restyled as prefabs (see docs/UI.md); the helpers here make their default layouts.
 /// </summary>
 public class GameUi : MonoBehaviour
 {

@@ -11,7 +11,8 @@ using UnityEngine.UI;
 /// the perk slots allow), press Go, see what you found, collect it into the bag. It's always daytime for now, and there are a few trips a day (see <see cref="DayRules"/>). Companions and perks aren't offered yet; the rules already support
 /// them (see docs/FORAGING.md). The setup shows what you might find, without the odds, and hides rare
 /// things so they stay a surprise. Opened from the HUD (<see cref="GameHud"/>), or call
-/// <see cref="Show"/> from anything else, such as a garden gate. Built in code.
+/// <see cref="Show"/> from anything else, such as a garden gate. How it looks is in Resources/UI/ForagePopup.prefab
+/// (Tools > Bush > Create UI Prefabs makes it from <see cref="BuildDefault"/>, which is also used if there's no prefab).
 ///
 /// The result is worked out and saved when Go is pressed (<see cref="ForagingService.Begin"/>), so
 /// closing or refreshing mid-trip can't lose or duplicate it: reopening shows the same results.
@@ -19,6 +20,8 @@ using UnityEngine.UI;
 /// </summary>
 public class ForagePopup : Popup
 {
+    public const string ResourcePath = "UI/ForagePopup";
+
     private const float TripSeconds = 3.2f;
     /// <summary>How long a bush rustles: tap it in time to grab what's in it.</summary>
     private const float RustleSeconds = 0.5f;
@@ -31,32 +34,47 @@ public class ForagePopup : Popup
     private readonly List<string> _perkIds = new();
     private Coroutine _trip;
 
-    private RectTransform _setup;
-    private RectTransform _out;
-    private RectTransform _results;
-    private TextMeshProUGUI _tableName;
-    private RectTransform _focusRow;
-    private RectTransform _companionRow;
-    private RectTransform _perkRow;
-    private TextMeshProUGUI _perkLabel;
-    private TextMeshProUGUI _companionLabel;
-    private TextMeshProUGUI _tripsLeft;
-    private Button _go;
+    [Header("The three steps")]
+    [SerializeField] private RectTransform _setup;
+    [SerializeField] private RectTransform _out;
+    [SerializeField] private RectTransform _results;
+    [Header("Setup")]
+    [SerializeField] private TextMeshProUGUI _tableName;
+    [SerializeField] private RectTransform _focusRow;
+    [SerializeField] private RectTransform _companionRow;
+    [SerializeField] private RectTransform _perkRow;
+    [SerializeField] private TextMeshProUGUI _perkLabel;
+    [SerializeField] private TextMeshProUGUI _companionLabel;
+    [SerializeField] private TextMeshProUGUI _tripsLeft;
+    [SerializeField] private Button _close;
+    [SerializeField] private Button _go;
+    [Tooltip("Copied for each choice in the rows above, so restyling this restyles them all.")]
+    [SerializeField] private Button _choiceTemplate;
+    [SerializeField] private Color _choiceColor = GameUi.Cream;
+    [SerializeField] private Color _choiceTextColor = GameUi.Ink;
+    [SerializeField] private Color _chosenColor = GameUi.Moss;
+    [SerializeField] private Color _chosenTextColor = GameUi.Cream;
+    [SerializeField] private ItemGridView _preview;
+    [SerializeField] private TextMeshProUGUI _previewNote;
+    [Header("Out foraging")]
+    [SerializeField] private TextMeshProUGUI _outText;
+    [SerializeField] private TextMeshProUGUI _peekNote;
+    [Tooltip("The bushes to tap: one rustles each trip. Each needs a Button.")]
+    [SerializeField] private RectTransform[] _bushes;
+    [SerializeField] private Button _skip;
+    [Header("Results")]
+    [SerializeField] private TextMeshProUGUI _resultsTitle;
+    [SerializeField] private ItemGridView _found;
+    [SerializeField] private TextMeshProUGUI _resultsNote;
+    [SerializeField] private Button _collect;
+
     /// <summary>Go was pressed with an empty menu and the warning shown: the next press goes anyway.</summary>
     private bool _emptyMenuWarned;
     /// <summary>The menu was empty when this trip set off although something could have been made: worth a note in the results.</summary>
     private bool _emptyMenuMissed;
-    private ItemGridView _preview;
-    private TextMeshProUGUI _previewNote;
-    private TextMeshProUGUI _outText;
-    private TextMeshProUGUI _peekNote;
-    private RectTransform[] _bushes;
     private int _tappedBush = -1;
     private ForageRoll _bonus;
     private bool _skipped;
-    private TextMeshProUGUI _resultsTitle;
-    private ItemGridView _found;
-    private TextMeshProUGUI _resultsNote;
 
     /// <summary>Opens the forage screen, creating it the first time.</summary>
     public static void Show()
@@ -67,13 +85,45 @@ public class ForagePopup : Popup
 
     private static ForagePopup Create()
     {
-        GameUi ui = GameUi.Current;
-        RectTransform root = GameUi.NewRect("Forage", ui.SafeRoot);
+        Transform safeRoot = GameUi.Current.SafeRoot;
+        var prefab = Resources.Load<ForagePopup>(ResourcePath);
+        if (!prefab) return BuildDefault(safeRoot);
+
+        // A popup is "open" while active, and the prefab is saved on so it can be seen and edited:
+        // copy it under something switched off, so it arrives closed without ever opening.
+        var closed = new GameObject("Closed");
+        closed.SetActive(false);
+        ForagePopup popup = Instantiate(prefab, closed.transform);
+        popup.gameObject.SetActive(false);
+        popup.transform.SetParent(safeRoot, false);
+        Destroy(closed);
+        return popup;
+    }
+
+    /// <summary>The default layout, closed. Tools > Bush > Create UI Prefabs saves this as the prefab.</summary>
+    public static ForagePopup BuildDefault(Transform parent)
+    {
+        RectTransform root = GameUi.NewRect("ForagePopup", parent);
         GameUi.Stretch(root);
         root.gameObject.SetActive(false); // a popup is "open" while active
         var popup = root.gameObject.AddComponent<ForagePopup>();
         popup.Build(root);
         return popup;
+    }
+
+    /// <summary>The buttons are linked here rather than in the prefab, so restyling can't unhook them.</summary>
+    protected override void Awake()
+    {
+        base.Awake();
+        _close.onClick.AddListener(Close);
+        _go.onClick.AddListener(Go);
+        _skip.onClick.AddListener(() => _skipped = true);
+        _collect.onClick.AddListener(() => Collect(true));
+        for (int i = 0; i < _bushes.Length; i++)
+        {
+            int index = i;
+            _bushes[i].GetComponent<Button>().onClick.AddListener(() => _tappedBush = index);
+        }
     }
 
     protected override void OnEnable()
@@ -297,7 +347,7 @@ public class ForagePopup : Popup
         GameSession session = Session;
         ForageRoll peek = session != null ? ForagingService.PeekABooFind(session.Design, session.State) : null;
         uint seed = session != null && session.State.hasPendingExpedition ? session.State.pendingExpedition.seed : 0u;
-        int bush = (int)(seed % 3u);
+        int bush = (int)(seed % (uint)_bushes.Length);
         float rustleAt = 0.7f + (seed >> 4) % 9 * 0.1f; // a different moment each trip
         bool stillAir = session != null && DayEvents.Today(session.Design, session.State)?.peekLonger == true;
         float rustleFor = stillAir ? RustleSeconds * 2f : RustleSeconds;
@@ -446,10 +496,19 @@ public class ForagePopup : Popup
         return new ItemCard { key = item.id, title = item.name, badge = badge, icon = icon, iconTint = tint };
     }
 
-    private static Button AddChoice(RectTransform row, string label, bool selected, UnityEngine.Events.UnityAction onClick)
+    private Button AddChoice(RectTransform row, string label, bool selected, UnityEngine.Events.UnityAction onClick)
     {
-        return GameUi.AddButton(row, label, onClick, new Vector2(210f, 76f),
-            selected ? GameUi.Moss : GameUi.Cream, selected ? GameUi.Cream : GameUi.Ink, 28f);
+        Button choice = Instantiate(_choiceTemplate, row);
+        choice.gameObject.SetActive(true);
+        choice.targetGraphic.color = selected ? _chosenColor : _choiceColor;
+        var text = choice.GetComponentInChildren<TextMeshProUGUI>();
+        if (text)
+        {
+            text.text = label;
+            text.color = selected ? _chosenTextColor : _choiceTextColor;
+        }
+        choice.onClick.AddListener(onClick);
+        return choice;
     }
 
     private static void Clear(RectTransform rect)
@@ -474,7 +533,8 @@ public class ForagePopup : Popup
 
         // Setup: title, where, focus, time, what you might find, Go.
         Title(_setup, "Go foraging");
-        CloseButton(_setup, "Close", Close);
+        _close = GameUi.AddButton(_setup, "Close", null, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
+        GameUi.Place((RectTransform)_close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
 
         _tableName = Line(_setup, "", 32f, GameUi.Bark, -120f, 50f);
 
@@ -491,15 +551,20 @@ public class ForagePopup : Popup
         previewArea.anchorMax = new Vector2(1f, 1f);
         previewArea.offsetMin = new Vector2(24f, 190f);
         previewArea.offsetMax = new Vector2(-24f, -636f);
-        _preview = ItemGridView.Create(previewArea, true, new Vector2(150f, 160f));
+        _preview = ItemGridView.Create(previewArea, true, new Vector2(150f, 160f), true);
 
         _previewNote = GameUi.AddText(_setup, "", 28f, GameUi.InkSoft, TextAlignmentOptions.Left, "PreviewNote");
         Anchor(_previewNote.rectTransform, 40f, 110f, -400f, 190f);
         _tripsLeft = GameUi.AddText(_setup, "", 30f, GameUi.Bark, TextAlignmentOptions.Left, "TripsLeft");
         Anchor(_tripsLeft.rectTransform, 40f, 30f, -400f, 100f);
 
-        _go = GameUi.AddButton(_setup, "Go!", Go, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
+        _go = GameUi.AddButton(_setup, "Go!", null, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
         GameUi.Place((RectTransform)_go.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
+
+        // What the choices in the rows are copied from.
+        _choiceTemplate = GameUi.AddButton(_setup, "Choice", null, new Vector2(210f, 76f), Color.white, Color.white, 28f);
+        _choiceTemplate.gameObject.name = "ChoiceTemplate";
+        _choiceTemplate.gameObject.SetActive(false);
 
         // Out: a short pause so it feels like a trip.
         _outText = GameUi.AddText(_out, "Out foraging...", 48f, GameUi.Ink, TextAlignmentOptions.Top, "OutText");
@@ -509,15 +574,12 @@ public class ForagePopup : Popup
         _bushes = new RectTransform[3];
         for (int i = 0; i < 3; i++)
         {
-            int index = i;
             RectTransform bushRect = GameUi.NewRect($"Bush{i}", _out);
             GameUi.Place(bushRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), new Vector2((i - 1) * 380f, -170f), new Vector2(300f, 200f));
             Image bushImage = bushRect.gameObject.AddComponent<Image>();
             bushImage.sprite = GeneratedSprites.Circle;
             bushImage.color = new Color(0.33f + i * 0.04f, 0.52f, 0.28f);
-            var bushButton = bushRect.gameObject.AddComponent<Button>();
-            bushButton.targetGraphic = bushImage;
-            bushButton.onClick.AddListener(() => _tappedBush = index);
+            bushRect.gameObject.AddComponent<Button>().targetGraphic = bushImage;
             _bushes[i] = bushRect;
         }
 
@@ -528,8 +590,8 @@ public class ForagePopup : Popup
         _peekNote.rectTransform.offsetMin = new Vector2(40f, 150f);
         _peekNote.rectTransform.offsetMax = new Vector2(-40f, 220f);
 
-        Button skip = GameUi.AddButton(_out, "Skip", () => _skipped = true, new Vector2(200f, 84f), GameUi.Bark, GameUi.Cream);
-        GameUi.Place((RectTransform)skip.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(200f, 84f));
+        _skip = GameUi.AddButton(_out, "Skip", null, new Vector2(200f, 84f), GameUi.Bark, GameUi.Cream);
+        GameUi.Place((RectTransform)_skip.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(200f, 84f));
 
         // Results: what you found, notes (rare finds, recipes), Collect.
         _resultsTitle = Title(_results, "You found");
@@ -538,13 +600,15 @@ public class ForagePopup : Popup
         foundArea.anchorMax = new Vector2(1f, 1f);
         foundArea.offsetMin = new Vector2(24f, 300f);
         foundArea.offsetMax = new Vector2(-24f, -130f);
-        _found = ItemGridView.Create(foundArea, false, new Vector2(190f, 210f));
+        _found = ItemGridView.Create(foundArea, false, new Vector2(190f, 210f), true);
 
         _resultsNote = GameUi.AddText(_results, "", 32f, GameUi.Ink, TextAlignmentOptions.TopLeft, "ResultsNote");
         Anchor(_resultsNote.rectTransform, 40f, 150f, -400f, 290f);
 
-        Button collect = GameUi.AddButton(_results, "Collect", () => Collect(true), new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
-        GameUi.Place((RectTransform)collect.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
+        _collect = GameUi.AddButton(_results, "Collect", null, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
+        GameUi.Place((RectTransform)_collect.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
+
+        SetStep(_setup); // so the prefab opens on the first step; turn the others on to edit them
     }
 
     private static RectTransform Step(RectTransform panel, string name)
@@ -561,12 +625,6 @@ public class ForagePopup : Popup
         title.rectTransform.offsetMin = new Vector2(40f, 0f);
         title.rectTransform.offsetMax = new Vector2(-260f, -28f);
         return title;
-    }
-
-    private static void CloseButton(RectTransform parent, string label, UnityEngine.Events.UnityAction onClick)
-    {
-        Button close = GameUi.AddButton(parent, label, onClick, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
-        GameUi.Place((RectTransform)close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
     }
 
     /// <summary>A line of text across the top part of the panel, <paramref name="top"/> below the top edge.</summary>
