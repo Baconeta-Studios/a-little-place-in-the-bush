@@ -81,11 +81,26 @@ namespace Bush.Core
             return true;
         }
 
-        /// <summary>Takes it out of the space. It goes back to the inventory if it came from there.</summary>
+        /// <summary>Sits it on a spot of something else. False if something else is already there.</summary>
+        public bool Attach(int instanceId, int parentId, int slot)
+        {
+            PlacedObjectData placed = Find(instanceId);
+            if (placed == null || Find(parentId) == null || instanceId == parentId) return false;
+            if (_state.placed.Exists(p => p != placed && p.parentId == parentId && p.slot == slot)) return false;
+            placed.parentId = parentId;
+            placed.slot = slot;
+            _events?.RaiseBuildChanged(placed.area);
+            return true;
+        }
+
+        /// <summary>Takes it out of the space, with anything sitting on it. They go back to the inventory if they came from there.</summary>
         public bool Remove(int instanceId)
         {
             PlacedObjectData placed = Find(instanceId);
             if (placed == null) return false;
+
+            foreach (PlacedObjectData onTop in _state.placed.FindAll(p => p.parentId == instanceId))
+                if (!Remove(onTop.instanceId)) return false;
 
             PlaceableData placeable = _design.GetPlaceable(placed.placeableId);
             if (placed.fromInventory && placeable != null && !_economy.Add(placeable.itemId, 1)) return false;

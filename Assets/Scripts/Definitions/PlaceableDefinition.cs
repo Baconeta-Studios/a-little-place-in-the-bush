@@ -14,10 +14,12 @@ public class PlaceableDefinition : GameDefinition
     public ItemDefinition item;
     [Tooltip("Root at the floor contact point, art in a child called Visual, optional SeatPoint children.")]
     public GameObject prefab;
-    [Tooltip("Only Floor works so far. Wall, Rug and Surface are reserved for later.")]
+    [Tooltip("Floor: on the ground. Surface: on a SurfacePoint (a spot on a table). Wall: on a PlacementZone (the tree). Rug isn't built yet.")]
     public PlacementType placement;
-    [Tooltip("The base that blocks walking, in world units: x = width, y = depth (front to back).")]
+    [Tooltip("Floor: the base that blocks walking, in world units: x = width, y = depth (front to back). Wall: the rectangle that has to fit on the zone, with the root at its bottom middle. Surface: not used.")]
     public Vector2 footprintSize = new(1f, 0.4f);
+    [Tooltip("Fairy lights: above 0 makes it snap end to end. The distance between its two poles, in world units. The footprint is then each pole's. Children called PoleLeft and PoleRight hide when they'd double up at a join.")]
+    [Min(0f)] public float chainSpan;
     public bool canFlip = true;
     [Tooltip("Tray tab, e.g. Furniture, Plants, Decor.")]
     public string category = "Furniture";
@@ -31,7 +33,7 @@ public class PlaceableDefinition : GameDefinition
     public PlaceableData ToData() => new()
     {
         id = id, itemId = Definitions.Id(item), placement = placement, footprintWidth = footprintSize.x,
-        footprintDepth = footprintSize.y, canFlip = canFlip, category = category, seats = seats,
+        footprintDepth = footprintSize.y, chainSpan = chainSpan, canFlip = canFlip, category = category, seats = seats,
         cosiness = cosiness, style = style
     };
 

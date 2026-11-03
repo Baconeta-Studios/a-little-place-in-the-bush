@@ -19,7 +19,7 @@ public class WalkableGrid : MonoBehaviour
     private Grid _grid;
     private bool[] _walkable;
     private Vector3Int _minCell;
-    private Rect? _temporaryBlock;
+    private Rect[] _temporaryBlocks;
 
     public event Action Rebuilt;
 
@@ -80,19 +80,20 @@ public class WalkableGrid : MonoBehaviour
         IsBuilt && InBounds(cell) && _walkable[cell.y * Width + cell.x] && !IsTemporarilyBlocked(cell);
 
     /// <summary>
-    /// Treats a rectangle as blocked without touching any colliders, so build mode can ask "would this
+    /// Treats rectangles as blocked without touching any colliders, so build mode can ask "would this
     /// placement cut off a path?" before committing. Pass null to clear it. Always clear it straight after.
     /// </summary>
-    public void SetTemporaryBlock(Rect? footprint) => _temporaryBlock = footprint;
+    public void SetTemporaryBlocks(Rect[] footprints) => _temporaryBlocks = footprints;
 
     private bool IsTemporarilyBlocked(Vector2Int cell)
     {
-        if (!_temporaryBlock.HasValue) return false;
+        if (_temporaryBlocks == null) return false;
         Vector2 center = CellToWorld(cell);
         Vector2 half = CellSize * 0.5f + Vector2.one * clearance;
-        Rect block = _temporaryBlock.Value;
-        return center.x + half.x > block.xMin && center.x - half.x < block.xMax &&
-               center.y + half.y > block.yMin && center.y - half.y < block.yMax;
+        foreach (Rect block in _temporaryBlocks)
+            if (center.x + half.x > block.xMin && center.x - half.x < block.xMax &&
+                center.y + half.y > block.yMin && center.y - half.y < block.yMax) return true;
+        return false;
     }
 
     public bool IsWalkable(Vector2 world) => IsWalkable(WorldToCell(world));

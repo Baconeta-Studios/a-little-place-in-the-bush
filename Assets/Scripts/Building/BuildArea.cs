@@ -78,7 +78,18 @@ public class BuildArea : MonoBehaviour
             if (start.placeable) layout.Add((start.placeable.id, start.position.x, start.position.y, start.flipped));
         session.Build.InitialiseArea(AreaId, layout);
 
-        foreach (PlacedObjectData placed in session.Build.GetPlaced(AreaId)) Spawn(placed);
+        // Things on the ground first, so what sits on them has somewhere to go. Anything whose spot is gone
+        // (the table's prefab changed) goes back to the bag rather than floating.
+        var placedHere = new List<PlacedObjectData>(session.Build.GetPlaced(AreaId));
+        foreach (PlacedObjectData placed in placedHere) if (placed.parentId == 0) Spawn(placed);
+        foreach (PlacedObjectData placed in placedHere)
+        {
+            if (placed.parentId == 0) continue;
+            if (Spawn(placed).transform.GetComponentInParent<SurfacePoint>()) continue;
+            Despawn(placed.instanceId);
+            session.Build.Remove(placed.instanceId);
+        }
+        RefreshChains();
         Grid.Rebuild();
         IsLoaded = true;
         Loaded?.Invoke(this);
@@ -96,16 +107,87 @@ public class BuildArea : MonoBehaviour
         PlacedObject instance = CreateInstance(definition, PlacedParent);
         instance.Setup(definition, placed.instanceId);
         instance.transform.position = new Vector3(placed.x, placed.y, 0f);
+        if (placed.parentId != 0) SitOn(instance, FindSurface(placed.parentId, placed.slot));
         instance.SetFlipped(placed.flipped);
         _spawned[placed.instanceId] = instance;
         return instance;
     }
 
+    /// <summary>Takes it out of the world, with anything sitting on it.</summary>
     public void Despawn(int instanceId)
     {
         if (!_spawned.TryGetValue(instanceId, out PlacedObject instance)) return;
         _spawned.Remove(instanceId);
-        if (instance) Destroy(instance.gameObject);
+        if (!instance) return;
+        foreach (PlacedObject onTop in instance.GetComponentsInChildren<PlacedObject>(true))
+            if (onTop != instance) _spawned.Remove(onTop.InstanceId);
+        Destroy(instance.gameObject);
+    }
+
+    // ----- Surfaces -----
+
+    /// <summary>The nearest spot within <paramref name="radius"/> that nothing but <paramref name="ignore"/> is on. Null if none.</summary>
+    public SurfacePoint FreeSurfaceNear(Vector2 position, float radius, PlacedObject ignore = null)
+    {
+        SurfacePoint best = null;
+        float bestDistance = radius;
+        foreach (PlacedObject placed in Spawned)
+        {
+            if (!placed || placed == ignore) continue;
+            foreach (SurfacePoint point in placed.GetComponentsInChildren<SurfacePoint>(true))
+            {
+                float distance = Vector2.Distance(position, point.transform.position);
+                if (distance > bestDistance || point.IsTaken(ignore)) continue;
+                best = point;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    /// <summary>Puts it on the spot, moving with it from then on; or, with no spot, loose in the world where it is.</summary>
+    public void SitOn(PlacedObject placed, SurfacePoint point)
+    {
+        Vector3 position = placed.transform.position;
+        placed.transform.SetParent(point ? point.transform : PlacedParent, false);
+        placed.transform.position = point ? point.transform.position : position;
+        placed.SetOnSurface(point);
+    }
+
+    private SurfacePoint FindSurface(int parentId, int slot)
+    {
+        PlacedObject parent = Get(parentId);
+        if (!parent) return null;
+        SurfacePoint[] points = parent.GetComponentsInChildren<SurfacePoint>(true);
+        return slot >= 0 && slot < points.Length ? points[slot] : null;
+    }
+
+    // ----- Fairy lights -----
+
+    /// <summary>Every run of fairy lights here, without <paramref name="ignore"/>.</summary>
+    public List<ChainPiece> ChainPieces(PlacedObject ignore = null)
+    {
+        var pieces = new List<ChainPiece>();
+        foreach (PlacedObject placed in Spawned)
+            if (placed && placed != ignore && placed.Definition && placed.Definition.chainSpan > 0f)
+                pieces.Add(PlacedObject.ChainPieceAt(placed.Definition, placed.transform.position));
+        return pieces;
+    }
+
+    /// <summary>Shows and hides poles to match where everything is, counting a ghost that isn't placed yet.</summary>
+    public void RefreshChains(PlacedObject ghost = null)
+    {
+        var all = new List<PlacedObject>(_spawned.Values);
+        if (ghost && !all.Contains(ghost)) all.Add(ghost);
+        foreach (PlacedObject placed in all)
+        {
+            if (!placed || !placed.Definition || placed.Definition.chainSpan <= 0f) continue;
+            var others = new List<ChainPiece>();
+            foreach (PlacedObject other in all)
+                if (other && other != placed && other.Definition && other.Definition.chainSpan > 0f)
+                    others.Add(PlacedObject.ChainPieceAt(other.Definition, other.transform.position));
+            placed.SetChainJoins(ChainLights.Joins(PlacedObject.ChainPieceAt(placed.Definition, placed.transform.position), others).left);
+        }
     }
 
     public PlacedObject Get(int instanceId) => _spawned.TryGetValue(instanceId, out PlacedObject instance) ? instance : null;

@@ -217,7 +217,10 @@ namespace Bush.Core
                 if (!placedItems.Add(placeable.itemId ?? "")) errors.Add($"{where}: item {placeable.itemId} is used by two placeables.");
                 if (placeable.footprintWidth <= 0 || placeable.footprintDepth <= 0) errors.Add($"{where}: footprint must be bigger than 0 both ways.");
                 if (placeable.seats < 0) errors.Add($"{where}: seats can't be negative.");
-                if (placeable.placement != PlacementType.Floor) errors.Add($"{where}: only Floor placement works so far ({placeable.placement} is reserved for later).");
+                if (placeable.placement == PlacementType.Rug) errors.Add($"{where}: Rug placement isn't built yet.");
+                if (placeable.chainSpan < 0) errors.Add($"{where}: chainSpan can't be negative.");
+                if (placeable.chainSpan > 0 && placeable.placement != PlacementType.Floor) errors.Add($"{where}: only Floor placeables can snap end to end.");
+                if (placeable.seats > 0 && placeable.placement != PlacementType.Floor) errors.Add($"{where}: only Floor placeables can have seats.");
             }
             foreach (ItemData item in design.items)
                 if (item.category == ItemCategory.Placeable && design.GetPlaceableForItem(item.id) == null)

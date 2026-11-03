@@ -154,6 +154,7 @@ public static class DesignDataTools
                 SetBasics(asset, x.id, item?.name ?? x.id, item?.description);
                 asset.placement = x.placement;
                 asset.footprintSize = new Vector2(x.footprintWidth, x.footprintDepth);
+                asset.chainSpan = x.chainSpan;
                 asset.canFlip = x.canFlip;
                 asset.category = x.category;
                 asset.seats = x.seats;
