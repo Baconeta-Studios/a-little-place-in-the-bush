@@ -296,8 +296,7 @@ public class ForagePopup : Popup
         DayEventData today = DayEvents.Today(session.Design, session.State);
         TimeOfDay now = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day;
         if (today != null && (DayEvents.ForageModifiersFor(session.Design, today.id, now).Count > 0 || today.peekLonger || today.peek.Count > 0))
-            _previewNote.text += $"
-<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
+            _previewNote.text += $"\n<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
     }
 
     private void Go()
