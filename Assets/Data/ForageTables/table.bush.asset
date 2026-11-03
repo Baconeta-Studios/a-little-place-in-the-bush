@@ -21,7 +21,14 @@ MonoBehaviour:
     weight: 40
     min: 2
     max: 4
-    time: 0
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 15c11bb6271bccc41a369397b19055c3, type: 2}
+    weight: 20
+    min: 2
+    max: 4
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: ed9083e8c834f8748a8457451dc540b7, type: 2}
@@ -35,7 +42,7 @@ MonoBehaviour:
     weight: 12
     min: 1
     max: 2
-    time: 0
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: 0526e4447748bd7489128d4fd6f5f2d2, type: 2}
@@ -49,14 +56,14 @@ MonoBehaviour:
     weight: 25
     min: 2
     max: 4
-    time: 0
+    time: 1
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
-  - item: {fileID: 11400000, guid: 07137c6e4c4acdd4ab01e63a34ca6786, type: 2}
-    weight: 8
-    min: 1
-    max: 2
-    time: 0
+  - item: {fileID: 11400000, guid: 2ac16a05039756c4cb9e874bfb9fc6d2, type: 2}
+    weight: 15
+    min: 2
+    max: 4
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: 10c6829227dd3034993056d291a04c99, type: 2}
@@ -84,20 +91,13 @@ MonoBehaviour:
     weight: 25
     min: 1
     max: 3
-    time: 0
+    time: 1
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
-  - item: {fileID: 11400000, guid: df44f566e3919a64e9ff76f34b6a6ae6, type: 2}
-    weight: 6
+  - item: {fileID: 11400000, guid: 4be5aa6e943834c43b16f4c35bd3cb6a, type: 2}
+    weight: 40
     min: 1
-    max: 1
-    time: 2
-    requiresQuest: {fileID: 0}
-    requiresCompanion: {fileID: 0}
-  - item: {fileID: 11400000, guid: 8096cbf782712f5478b2baecf75838fe, type: 2}
-    weight: 14
-    min: 1
-    max: 2
+    max: 3
     time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
@@ -105,14 +105,14 @@ MonoBehaviour:
     weight: 12
     min: 1
     max: 2
-    time: 0
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: e9f301cc6060e4c4985b84ef29435784, type: 2}
     weight: 8
     min: 1
     max: 2
-    time: 0
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: ac7a5df089bde4345b07c92187115f15, type: 2}
@@ -126,21 +126,28 @@ MonoBehaviour:
     weight: 14
     min: 1
     max: 3
-    time: 0
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: a07aecd8570d619419e001f2df5e27c5, type: 2}
+    weight: 24
+    min: 1
+    max: 3
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: 9c2998cfb49b1fd48a691cbafb89d395, type: 2}
     weight: 2
     min: 1
     max: 1
-    time: 0
+    time: 1
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
-  - item: {fileID: 11400000, guid: eec1e6b06695ff1499ca7733d1b21be3, type: 2}
-    weight: 10
+  - item: {fileID: 11400000, guid: 9c2998cfb49b1fd48a691cbafb89d395, type: 2}
+    weight: 4
     min: 1
-    max: 3
-    time: 0
+    max: 1
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
@@ -154,18 +161,18 @@ MonoBehaviour:
     weight: 14
     min: 1
     max: 2
-    time: 0
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 5fef92819bc9cd541bc4ace75ef76865, type: 2}
+    weight: 22
+    min: 1
+    max: 2
+    time: 2
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: 4db78b696f792f1439cc12c1fdd2bc98, type: 2}
     weight: 4
-    min: 1
-    max: 1
-    time: 0
-    requiresQuest: {fileID: 0}
-    requiresCompanion: {fileID: 0}
-  - item: {fileID: 11400000, guid: e0d824e56df75774dbf7fd4fc813551c, type: 2}
-    weight: 3
     min: 1
     max: 1
     time: 0

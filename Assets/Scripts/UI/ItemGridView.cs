@@ -90,6 +90,12 @@ public class ItemGridView : MonoBehaviour
         return view;
     }
 
+    /// <summary>Cards in this grid are only there to look at (it needs a template).</summary>
+    public void MakeCardsFlat()
+    {
+        if (_cardTemplate) _cardTemplate.MakeFlat();
+    }
+
     public void SetItems(IReadOnlyList<ItemCard> cards)
     {
         for (int i = _content.childCount - 1; i >= 0; i--) Destroy(_content.GetChild(i).gameObject);
@@ -130,6 +136,15 @@ public class ItemGridView : MonoBehaviour
         }
         tint = RarityColor(item ? item.rarity : Rarity.Common);
         return null;
+    }
+
+    /// <summary>The art to show for a recipe: the shared recipe picture, or its first ingredient.</summary>
+    public static Sprite IconFor(RecipeData recipe, GameDatabase database, out Color tint)
+    {
+        tint = Color.white;
+        if (database.recipeIcon) return database.recipeIcon;
+        ItemDefinition first = recipe.ingredients.Count > 0 ? database.Find<ItemDefinition>(recipe.ingredients[0].itemId) : null;
+        return IconFor(first, null, out tint);
     }
 
     public static Color RarityColor(Rarity rarity) => rarity switch

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.recipe_scrap_1
   displayName: Recipe scrap (top)
   description: The top of an old recipe card. It smells of kawakawa.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c9dedb2fbe7ff1f4e86d8226bb1be478, type: 3}
   category: 3
   rarity: 2
   tags:

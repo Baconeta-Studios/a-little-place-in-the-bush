@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.note_tui
   displayName: "T\u016B\u012B's golden song"
   description: "A t\u016B\u012B in the flowering p\u014Dhutukawa sang you a song, and somehow the song was a recipe."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d6f8265d8368c534db987e8d19a8c6f3, type: 3}
   category: 3
   rarity: 3
   tags:

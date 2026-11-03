@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.cricket
   displayName: Cricket
   description: Chirps until the very end.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 835f940bac469884999a53bd4c8aea14, type: 3}
   category: 0
   rarity: 0
   tags:

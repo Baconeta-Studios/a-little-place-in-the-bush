@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
   id: placeable.cafe_table
   displayName: Cafe table
-  description: A round table for two.
+  description: A wooden table for two.
   item: {fileID: 11400000, guid: d195deb54dd0eb943b13f569035cce42, type: 2}
   prefab: {fileID: 8261507659864829758, guid: 69e5f257434b0574da6a7cbe27207624, type: 3}
   placement: 0
   footprintSize: {x: 1.2, y: 0.5}
-  canFlip: 0
+  chainSpan: 0
+  canFlip: 1
   category: Furniture
   seats: 0
   cosiness: 1

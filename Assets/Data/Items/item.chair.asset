@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: item.chair
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: item.chair
-  displayName: Cafe chair
-  description: A little wooden chair. One guest can perch here.
+  displayName: Stone chair
+  description: A little stone chair. One guest can perch here.
   icon: {fileID: 0}
   category: 4
   rarity: 0

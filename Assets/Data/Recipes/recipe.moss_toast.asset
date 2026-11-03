@@ -21,7 +21,7 @@ MonoBehaviour:
     qty: 2
   - item: {fileID: 11400000, guid: a07aecd8570d619419e001f2df5e27c5, type: 2}
     qty: 1
-  coins: 9
+  coins: 12
   unlockedByDefault: 0
-  price: 20
+  price: 40
   scraps: []

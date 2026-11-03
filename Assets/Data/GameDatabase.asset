@@ -18,23 +18,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 21d252eb39e43484e841df122d459570, type: 2}
   - {fileID: 11400000, guid: 0526e4447748bd7489128d4fd6f5f2d2, type: 2}
   - {fileID: 11400000, guid: 2ac16a05039756c4cb9e874bfb9fc6d2, type: 2}
-  - {fileID: 11400000, guid: 07137c6e4c4acdd4ab01e63a34ca6786, type: 2}
   - {fileID: 11400000, guid: 10c6829227dd3034993056d291a04c99, type: 2}
   - {fileID: 11400000, guid: 7e0846d4372a28c47ae735622485a65a, type: 2}
   - {fileID: 11400000, guid: b89950a3d9d6f6340998bc587546d00e, type: 2}
   - {fileID: 11400000, guid: 4be5aa6e943834c43b16f4c35bd3cb6a, type: 2}
-  - {fileID: 11400000, guid: df44f566e3919a64e9ff76f34b6a6ae6, type: 2}
-  - {fileID: 11400000, guid: 8096cbf782712f5478b2baecf75838fe, type: 2}
   - {fileID: 11400000, guid: 80c3f9a27f00d324680d999e67636f33, type: 2}
   - {fileID: 11400000, guid: e9f301cc6060e4c4985b84ef29435784, type: 2}
   - {fileID: 11400000, guid: ac7a5df089bde4345b07c92187115f15, type: 2}
   - {fileID: 11400000, guid: a07aecd8570d619419e001f2df5e27c5, type: 2}
   - {fileID: 11400000, guid: 9c2998cfb49b1fd48a691cbafb89d395, type: 2}
-  - {fileID: 11400000, guid: eec1e6b06695ff1499ca7733d1b21be3, type: 2}
   - {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
   - {fileID: 11400000, guid: 5fef92819bc9cd541bc4ace75ef76865, type: 2}
   - {fileID: 11400000, guid: 4db78b696f792f1439cc12c1fdd2bc98, type: 2}
-  - {fileID: 11400000, guid: e0d824e56df75774dbf7fd4fc813551c, type: 2}
   - {fileID: 11400000, guid: 3b983ba66cd4b8f46ad0a90c92f9f176, type: 2}
   - {fileID: 11400000, guid: e2aa67cc0cc56b547a8b2d538de27678, type: 2}
   - {fileID: 11400000, guid: 6998e61fb629b984e8ba945fd2ee58b1, type: 2}
@@ -51,6 +46,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b56afdc5703376f4a9469240776a12ae, type: 2}
   - {fileID: 11400000, guid: 5f7e7d9b5fd169940ba55b21ba95bf02, type: 2}
   - {fileID: 11400000, guid: b3d05536aadf3354d8a1d03b4db623e1, type: 2}
+  - {fileID: 11400000, guid: 3080cb37c4088cc42bd25fe3d9416dbe, type: 2}
+  - {fileID: 11400000, guid: 014aa3277ebc21d4aacf267fb796213f, type: 2}
   recipes:
   - {fileID: 11400000, guid: fca9e2ef2c795124082e02373b8bd0f6, type: 2}
   - {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
@@ -58,15 +55,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 88efc5a638f5d474b94bfb72eaef2b2f, type: 2}
   - {fileID: 11400000, guid: 2f958f2b8540b814ca9cd070c75dfbbc, type: 2}
   - {fileID: 11400000, guid: ca8b00c001dff5a4f84f5636ce326935, type: 2}
-  - {fileID: 11400000, guid: 57ebc6c0b028b5d43a545062252f5765, type: 2}
-  - {fileID: 11400000, guid: e6e94c28ff5b21a4ba13a581eabc9269, type: 2}
   - {fileID: 11400000, guid: 5adb08a7524ff884996b4e6cff4c3cd4, type: 2}
   - {fileID: 11400000, guid: b16007e25e96f8f4c9a9ed5868dc5032, type: 2}
   - {fileID: 11400000, guid: 04bf8760921b23546b96fc99aa4ec00d, type: 2}
   - {fileID: 11400000, guid: 9ff8240dc9e99f248a66d3e2a8310770, type: 2}
   - {fileID: 11400000, guid: fde4bbabc08f90e4ca6a53d170041b39, type: 2}
-  - {fileID: 11400000, guid: df44eff5dd967ad4c888702312aaafdd, type: 2}
-  - {fileID: 11400000, guid: e686df16ac772f348be02a38f834c875, type: 2}
   - {fileID: 11400000, guid: 6bf9482be144b6e4e96126f0e121791d, type: 2}
   companions:
   - {fileID: 11400000, guid: 7d1adf87ad8dd694994ada244cd9bb2d, type: 2}
@@ -122,6 +115,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0b4d4f252873a4f4db75996db4e17819, type: 2}
   - {fileID: 11400000, guid: 1fe74d0315ea2f442b0e0e20e3b784cb, type: 2}
   - {fileID: 11400000, guid: 3df59951eda77c642a5e1d788dbaf31d, type: 2}
+  - {fileID: 11400000, guid: f31edbee4d05d1544a6c9669cdc15dc1, type: 2}
+  - {fileID: 11400000, guid: 1a499f9241f769b4e9864855094bd4d1, type: 2}
   upgrades:
   - {fileID: 11400000, guid: 0dc42b32bd84fef4eac1edc24dc2b6d9, type: 2}
   - {fileID: 11400000, guid: bbbe6bf176503aa42b984c45b0352d60, type: 2}
@@ -156,3 +151,4 @@ MonoBehaviour:
   luckProtectedQuest: {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}
   closeUnlockedBy: {fileID: 11400000, guid: 389153578eedaaf419fbed858a8cd3e8, type: 2}
   forageUnlockedBy: {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}
+  recipeIcon: {fileID: 21300000, guid: d6f8265d8368c534db987e8d19a8c6f3, type: 3}

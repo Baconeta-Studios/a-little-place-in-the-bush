@@ -1,6 +1,7 @@
 using Bush.Core;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// A character you can talk to. Click them, the gecko walks over, and a conversation opens at the
@@ -12,7 +13,9 @@ using UnityEngine;
 /// too) and block nothing. Visiting guests sit on the seats of furniture you've placed
 /// (<see cref="GuestSeating"/>), and use their own spot when there's no free seat. While they're
 /// here, a small footprint at their feet (on the Obstacle layer, like furniture) makes the gecko walk
-/// around them rather than through them. Set it up like any interactable: a Collider2D on the Interactable layer and a
+/// around them rather than through them. A seated guest's feet are higher up the screen than the base of what
+/// they're sitting on, which would draw them behind it, so they sort from a point at that base instead
+/// (a SortingGroup around the art, moved independently of it). Set it up like any interactable: a Collider2D on the Interactable layer and a
 /// StandPoint child, then pick the character's NPC asset.
 /// </summary>
 public class Npc : Interactable
@@ -35,6 +38,8 @@ public class Npc : Interactable
     private Transform _visual;
     private StandPoint _stand;
     private BoxCollider2D _footprint;
+    private Transform _sorter;
+    private Vector3 _visualOffset;
 
     public bool TakesSeats => takesSeats;
     /// <summary>Their own spot, where they were placed in the scene.</summary>
@@ -53,6 +58,7 @@ public class Npc : Interactable
         _colliders = GetComponentsInChildren<Collider2D>(true);
         CreateFootprint(); // after collecting the click areas: the footprint is switched on and off separately
         _visual = transform.Find("Visual");
+        SetUpSorting();
         _stand = GetComponentInChildren<StandPoint>(true);
         HomePosition = transform.position;
         HomeStand = _stand ? (Vector2)_stand.transform.position : HomePosition;
@@ -95,10 +101,36 @@ public class Npc : Interactable
 
     public bool IsPresent => _present;
 
-    /// <summary>Moves them (to a seat, or home), with the gecko's spot beside them, facing the given way.</summary>
-    public void PlaceAt(Vector2 position, Vector2 stand, bool faceRight)
+    /// <summary>Wraps the art in something that can set where it sorts from without moving it.</summary>
+    private void SetUpSorting()
+    {
+        if (!_visual) return;
+        var sorter = new GameObject("Sorting");
+        sorter.transform.SetParent(transform, false);
+        _visualOffset = _visual.position - transform.position;
+        _visual.SetParent(sorter.transform, true);
+        var group = sorter.AddComponent<SortingGroup>();
+        Renderer art = _visual.GetComponentInChildren<Renderer>(true);
+        if (art)
+        {
+            group.sortingLayerID = art.sortingLayerID;
+            group.sortingOrder = art.sortingOrder;
+        }
+        _sorter = sorter.transform;
+    }
+
+    /// <summary>
+    /// Moves them (to a seat, or home), with the gecko's spot beside them, facing the given way.
+    /// <paramref name="sortFromY"/> is the height they draw in order from, if not their feet: the base of a seat.
+    /// </summary>
+    public void PlaceAt(Vector2 position, Vector2 stand, bool faceRight, float? sortFromY = null)
     {
         transform.position = new Vector3(position.x, position.y, transform.position.z);
+        if (_sorter)
+        {
+            _sorter.position = new Vector3(position.x, sortFromY ?? position.y, transform.position.z);
+            _visual.position = transform.position + _visualOffset;
+        }
         if (_stand) _stand.transform.position = new Vector3(stand.x, stand.y, _stand.transform.position.z);
         if (_visual)
         {

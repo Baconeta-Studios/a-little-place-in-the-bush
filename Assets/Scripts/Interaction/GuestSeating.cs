@@ -157,7 +157,18 @@ public class GuestSeating : MonoBehaviour
     }
 
     private static void Sit(Npc npc, (SeatPoint seat, Vector2 stand) spot) =>
-        npc.PlaceAt(spot.seat.transform.position, spot.stand, spot.seat.FaceRight);
+        npc.PlaceAt(spot.seat.transform.position, spot.stand, spot.seat.FaceRight, FrontOf(spot.seat));
+
+    /// <summary>A height just in front of the thing a seat is on, so whoever's sitting draws over it.</summary>
+    private static float? FrontOf(SeatPoint seat)
+    {
+        var placed = seat.GetComponentInParent<PlacedObject>();
+        if (!placed) return null;
+        float lowest = placed.transform.position.y;
+        foreach (SpriteRenderer art in placed.GetComponentsInChildren<SpriteRenderer>(true))
+            if (art.sortingLayerName != "FloorDecals") lowest = Mathf.Min(lowest, art.transform.position.y);
+        return lowest - 0.01f;
+    }
 
     /// <summary>
     /// Their own spot from the scene, if it's clear: not built over, reachable, and not right next to

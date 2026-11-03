@@ -17,5 +17,5 @@ MonoBehaviour:
   description: Take two perks foraging at once. They stack.
   effect: 3
   amount: 1
-  price: 350
+  price: 175
   requires: {fileID: 0}

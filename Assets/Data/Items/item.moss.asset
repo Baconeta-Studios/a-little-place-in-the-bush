@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.moss
   displayName: Moss
   description: Soft and springy. Surprisingly good on toast.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a3a574b3c904a074da20573351958bc4, type: 3}
   category: 0
   rarity: 0
   tags:

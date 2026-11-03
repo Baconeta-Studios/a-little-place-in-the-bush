@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: item.cafe_table
   displayName: Cafe table
-  description: A round table for two.
-  icon: {fileID: 0}
+  description: A wooden table for two.
+  icon: {fileID: 21300000, guid: 4b34e1d04374c89428986b27c62e5184, type: 3}
   category: 4
   rarity: 0
   tags:

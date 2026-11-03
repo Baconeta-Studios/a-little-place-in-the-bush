@@ -303,7 +303,8 @@ public static class DesignDataTools
             }
         }
 
-        foreach (ItemDefinition item in database.items.Where(i => i && !i.icon))
+        // A placeable's item shows the placeable's own sprite when it has no icon, so it only needs one or the other.
+        foreach (ItemDefinition item in database.items.Where(i => i && !ItemGridView.IconFor(i, database.placeables.FirstOrDefault(p => p && p.item == i), out _)))
             yield return $"Item {item.id} has no icon yet.";
 
         foreach (PlaceableDefinition placeable in database.placeables.Where(p => p))

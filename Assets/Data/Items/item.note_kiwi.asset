@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.note_kiwi
   displayName: Kiwi's late-night note
   description: You met Kiwi snuffling by the stream in the dark. Kiwi scratched out how to make glowworm jelly.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d6f8265d8368c534db987e8d19a8c6f3, type: 3}
   category: 3
   rarity: 2
   tags:

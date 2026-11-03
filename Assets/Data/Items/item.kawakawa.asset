@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.kawakawa
   displayName: Kawakawa leaf
   description: Heart-shaped and peppery. The holey ones are the best.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: bf6b999a01ec8e54c9d6b648d8d84e61, type: 3}
   category: 0
   rarity: 1
   tags:

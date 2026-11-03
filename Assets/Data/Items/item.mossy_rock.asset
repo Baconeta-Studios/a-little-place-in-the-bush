@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb1ffe09847a4ad6b3fec74071f10727, type: 3}
-  m_Name: item.mud
+  m_Name: item.mossy_rock
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: item.mud
-  displayName: Mud
-  description: Good, rich mud. Ask a pig.
-  icon: {fileID: 0}
-  category: 0
-  rarity: 0
+  id: item.mossy_rock
+  displayName: Mossy Rock
+  description: A nice mossy stone seat.
+  icon: {fileID: 21300000, guid: d03016c90623e6a41af1535048860e24, type: 3}
+  category: 4
+  rarity: 1
   tags:
-  - mud
-  sellValue: 1
+  - furniture
+  sellValue: 15
   unique: 0
   teachesRecipe: {fileID: 0}

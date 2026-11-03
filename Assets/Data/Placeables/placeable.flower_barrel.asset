@@ -19,6 +19,7 @@ MonoBehaviour:
   prefab: {fileID: 2185431914243485880, guid: ddec7a023f7b8f94990b618601c89f31, type: 3}
   placement: 0
   footprintSize: {x: 0.9, y: 0.5}
+  chainSpan: 0
   canFlip: 1
   category: Plants
   seats: 0

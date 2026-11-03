@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: focus.fungi
   m_EditorClassIdentifier: Assembly-CSharp::FocusDefinition
   id: focus.fungi
-  displayName: Fungi and mud
+  displayName: Fungi
   description: 
   icon: {fileID: 0}
   tags:
   - fungi
-  - mud
   multiplier: 2

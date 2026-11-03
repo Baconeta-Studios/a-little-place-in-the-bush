@@ -13,7 +13,9 @@ public class GameUi : MonoBehaviour
 {
     // A small bush palette, shared by everything built here.
     public static readonly Color Panel = new(0.95f, 0.92f, 0.84f, 0.97f);
+    public static readonly Color Panel2 = new(0.91f, 0.86f, 0.75f);
     public static readonly Color PanelDark = new(0.22f, 0.2f, 0.15f, 0.92f);
+    public static readonly Color Apron = new(0.64f, 0.24f, 0.11f);
     public static readonly Color Ink = new(0.2f, 0.16f, 0.11f);
     public static readonly Color InkSoft = new(0.42f, 0.36f, 0.28f);
     public static readonly Color Moss = new(0.33f, 0.52f, 0.28f);
@@ -21,6 +23,9 @@ public class GameUi : MonoBehaviour
     public static readonly Color Bark = new(0.55f, 0.4f, 0.26f);
     public static readonly Color Berry = new(0.75f, 0.27f, 0.22f);
     public static readonly Color Cream = new(1f, 0.98f, 0.92f);
+    // Dark enough for the pale line work on the item icons to show.
+    public static readonly Color CardBack = new(0.73f, 0.63f, 0.47f);
+    public static readonly Color CardSelected = new(0.55f, 0.68f, 0.45f);
 
     private static GameUi _current;
     private RectTransform _safeRoot;

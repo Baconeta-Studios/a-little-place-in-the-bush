@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.paua_shell
   displayName: "P\u0101ua shell"
   description: Swirls of blue and green.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d755cc562050d5a42806e33e0046d4c7, type: 3}
   category: 2
   rarity: 2
   tags:

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.fern_frond
   displayName: Fern frond
   description: A curly young frond. Lovely fried.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a32d93e70762e5c408cf2e6a397b6eae, type: 3}
   category: 0
   rarity: 0
   tags:

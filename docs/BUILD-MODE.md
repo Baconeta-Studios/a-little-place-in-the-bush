@@ -57,6 +57,10 @@ If a save can't be read (broken, or from a newer build), the game starts fresh a
 
 ## Making a new placeable
 
+**The quick way:** right-click a sprite in the Project window and choose **Bush > Create Placeable**. Name it, and optionally pick a placeable to base it on, which copies its settings and prefab, including seat points. It makes the item (with the sprite as its icon), the placeable and its prefab, adds them to the database and to `Design/design-data.json`, and fits the art to the width you give it, standing on the ground line. It then needs a way into the game: a quest reward, say. To try it out, use the cheat *Build: give 3 of every placeable*.
+
+**By hand:**
+
 1. In `Design/design-data.json` (or the sandbox), add an item with category `Placeable`, and a matching entry in `placeables`:
    ```json
    { "id": "placeable.planter", "item": "item.planter", "placement": "Floor",

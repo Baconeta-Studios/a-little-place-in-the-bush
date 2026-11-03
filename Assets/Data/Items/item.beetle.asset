@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.beetle
   displayName: Beetle
   description: Shiny shell, nutty taste.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: bae5424f9f48466d98b7508f948d9dc6, type: 3}
   category: 0
   rarity: 1
   tags:

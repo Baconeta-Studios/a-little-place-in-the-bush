@@ -33,11 +33,19 @@ Unity's UI package has a bug: pressing Play with a prefab containing buttons ope
 
 ### The forage screen (`ForagePopup.prefab`)
 
-It has three steps under `Panel`, only one showing at a time when the game runs. It always starts closed in the game, whether the root is on or off in the prefab. `Setup` is on in the prefab: turn on `Out` or `Results` to edit them, and it doesn't matter how you leave them.
+Three steps under the root, over one `Backdrop`, only one showing at a time when the game runs. `Setup` is on in the prefab: turn on `Out` or `Results` to edit them, and it doesn't matter how you leave them. The game always starts it closed.
 
-- **Setup:** `Row`s hold the focus, companion and perk choices. Each choice is a copy of `ChoiceTemplate` (hidden, under `Setup`), with its background and text tinted by the *Choice* and *Chosen* colours on the root. For art, put a sprite on the template and use white or a light tint.
-- **Out:** the three `Bush` objects are what rustles. Each needs a Button. You can have as many as you like, as long as the root's *Bushes* list matches.
-- **Results:** `Found` is the grid of finds.
-- **Item cards:** each `ItemGrid` has a hidden `CardTemplate` that its cards are copied from: background, icon, letter (shown until an item has art), title and badge. The card's colours are on its `ItemCardView`. In `Preview` (a row), the template's size is the card size. In `Found` (a grid), it's *Cell Size* on the `Content`'s Grid Layout Group.
+**Fonts have jobs.** Titles are Caveat Brush, buttons and numbers Grandstander Bold, everything you read Pangolin, and notes from characters Mynerve.
 
-Fixed labels like "Look out for" live in the prefab, so you can reword them there. Text that changes as you play (trips left, notes, results) comes from code, and the game colours some of its words with its own palette. The fonts and sizes are still yours.
+- **Setup:** `Sheet` sizes itself to what's in it, so hidden sections leave no gap. `Focus` is a grid (*Cell Size* on it); `Companions` and `Perks` stay hidden until you have one. `Side` holds the gecko, the trip markers, *Head out* and the status line.
+- **Choices** are copies of `ChoiceTemplate`, tinted by the *Choice* and *Chosen* colours on the root. For art, put a sprite on the template and use a white or light tint. Its child `NudgeTag` is the note ("Ruru needs 3 leaves") on the option a quest needs.
+- **Trip markers** are copies of `PipTemplate`, faded once used (*Used Pip Alpha* on the root). It uses the koru icon, which Rebuild Forage Screen Prefab resets to a dot, so set it again after a rebuild.
+- **Out:** the three `Bush` objects are what rustles. Each needs a Button. You can have as many as you like, as long as the root's *Bushes* list matches. `Sky` and `Ground` are crops of the backdrop (move and resize the `Painting` inside them to change the crop), and the `Foliage` under `Scenery` are shaded layers of the Bush art, drifting slowly during the trip. `Gecko` stays where you put it, pads on the spot and turns to face the bush that rustles. A painted forage background could replace all of this later.
+- **Results:** finds land in `Pile`, which is a grid, above `BasketFront`, which draws over them. Swap `BasketFront`'s sprite for your basket. `Side` has the summary, the quest's progress and the next-step buttons.
+- **Icons** are in `Assets/Images/UI/Icons`, set on each item asset, with their pale line work drawn to sit on `GameUi.CardBack` or darker. Rarer finds share `Rare`, finds that teach a recipe share `Recipe`, and every recipe card uses the *Recipe Icon* on `GameDatabase`. `Beetle`, `Nectar`, `Honeydew` and `Pohutukawa` are recoloured copies of `Cricket`, `Berries` and `Leaf`, standing in until they have their own art.
+- **Item cards:** `CardTemplate` (under the preview's `ItemGrid`) and `FoundTemplate` are what the cards are copied from: icon, letter (shown until an item has art), name and badge.
+- **Companion art** comes from *Portrait* on each companion's asset (`Assets/Data/Companions`). Weka and Kunekune have theirs; a companion without one just doesn't appear beside the gecko.
+
+Fixed labels like "What are we after?" live in the prefab, so you can reword them there. Text that changes as you play comes from code.
+
+**Tools > Bush > Rebuild Forage Screen Prefab** makes this prefab again from the default layout in `ForagePopup.cs`. It asks first, because that loses your edits. **Rebuild Forage Trip Scene** replaces only the `Out` step and keeps your edits to the rest.

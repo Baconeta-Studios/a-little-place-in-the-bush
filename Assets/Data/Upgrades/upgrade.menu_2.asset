@@ -17,5 +17,5 @@ MonoBehaviour:
   description: Put two dishes on the menu.
   effect: 0
   amount: 1
-  price: 150
+  price: 75
   requires: {fileID: 0}

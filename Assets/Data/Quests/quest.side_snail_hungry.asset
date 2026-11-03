@@ -38,6 +38,9 @@ MonoBehaviour:
   - type: 4
     target: {fileID: 11400000, guid: 1cb5e24027b17664f9ff6acb5aee4358, type: 2}
     qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 065a04bfe78f599439857d2ad6df4b8a, type: 2}
+    qty: 1
   offerLine: Worm... pie...? Two, please. I found some old paper you can have.
   activeLine: Still... hungry...
   readyLine: Mmmmm. Here. The paper. Slowly. And my friend the kunekune pig wants to forage with you.

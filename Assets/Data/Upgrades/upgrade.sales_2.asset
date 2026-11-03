@@ -17,5 +17,5 @@ MonoBehaviour:
   description: Another dish sold a day.
   effect: 1
   amount: 1
-  price: 600
+  price: 300
   requires: {fileID: 11400000, guid: bbbe6bf176503aa42b984c45b0352d60, type: 2}

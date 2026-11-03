@@ -17,8 +17,19 @@ public class ItemCardView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI title;
     [SerializeField] private GameObject badge;
     [SerializeField] private TextMeshProUGUI badgeText;
-    [SerializeField] private Color normalColor = GameUi.Cream;
-    [SerializeField] private Color selectedColor = GameUi.MossLight;
+    [SerializeField] private Color normalColor = GameUi.CardBack;
+    [SerializeField] private Color selectedColor = GameUi.CardSelected;
+
+    /// <summary>For cards that are only there to look at: no background, and they don't look tappable.</summary>
+    public void MakeFlat()
+    {
+        normalColor.a = 0f;
+        background.color = normalColor;
+        button.interactable = false;
+    }
+
+    /// <summary>For cards with no background over something dark.</summary>
+    public void SetNameColor(Color color) => title.color = color;
 
     public void Fill(ItemCard card)
     {
@@ -46,7 +57,7 @@ public class ItemCardView : MonoBehaviour
         RectTransform rect = GameUi.NewRect(name, parent);
         var view = rect.gameObject.AddComponent<ItemCardView>();
 
-        view.background = GameUi.AddPanel(rect, GameUi.Cream);
+        view.background = GameUi.AddPanel(rect, GameUi.CardBack);
         view.button = rect.gameObject.AddComponent<Button>();
         view.button.targetGraphic = view.background;
         view.group = rect.gameObject.AddComponent<CanvasGroup>();
@@ -62,7 +73,7 @@ public class ItemCardView : MonoBehaviour
         view.letter = GameUi.AddText(iconRect, "", 54f, GameUi.Cream, TextAlignmentOptions.Center, "Letter");
         view.letter.fontStyle = FontStyles.Bold;
 
-        view.title = GameUi.AddText(rect, "", 24f, GameUi.Ink, TextAlignmentOptions.Center, "Title");
+        view.title = GameUi.AddText(rect, "", 24f, GameUi.Ink, TextAlignmentOptions.Center, "Name");
         RectTransform titleRect = view.title.rectTransform;
         titleRect.anchorMin = new Vector2(0.05f, 0.02f);
         titleRect.anchorMax = new Vector2(0.95f, 0.36f);
@@ -72,10 +83,10 @@ public class ItemCardView : MonoBehaviour
         view.title.fontSizeMax = 26f;
 
         RectTransform badge = GameUi.NewRect("Badge", rect);
-        GameUi.Place(badge, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-8f, -8f), new Vector2(64f, 40f));
+        GameUi.Place(badge, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-2f, 6f), new Vector2(72f, 32f));
         GameUi.AddPanel(badge, GameUi.Moss).raycastTarget = false;
         view.badge = badge.gameObject;
-        view.badgeText = GameUi.AddText(badge, "", 26f, GameUi.Cream);
+        view.badgeText = GameUi.AddText(badge, "", 20f, GameUi.Cream, TextAlignmentOptions.Center, "BadgeText");
         view.badgeText.fontStyle = FontStyles.Bold;
         return view;
     }

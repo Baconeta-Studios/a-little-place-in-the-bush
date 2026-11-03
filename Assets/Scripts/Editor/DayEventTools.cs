@@ -72,7 +72,7 @@ public static class DayEventTools
         Make("event.doorstep", "Left on the doorstep", "There's something on the doorstep this morning.", "A gift, straight into your bag. Sometimes something special.", 2, Rarity.Uncommon,
             e => e.gift = new List<GiftEntryDefinition>
             {
-                Gift("item.leaves", 3, 3), Gift("item.berries", 3, 3), Gift("item.mushroom", 2, 2), Gift("item.feijoa", 2, 2), Gift("item.shiny_button", 1, 1),
+                Gift("item.leaves", 3, 3), Gift("item.berries", 3, 3), Gift("item.mushroom", 2, 2), Gift("item.nectar", 2, 2), Gift("item.shiny_button", 1, 1),
                 Gift("item.lantern_post", 1, 2, true), Gift("item.flower_barrel", 1, 2, true), Gift("item.bench", 1, 1, true), Gift("item.kauri_gum", 1, 1, true)
             });
 

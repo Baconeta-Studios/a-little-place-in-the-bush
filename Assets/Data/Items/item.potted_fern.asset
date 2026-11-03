@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: item.potted_fern
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: item.potted_fern
-  displayName: Potted fern
-  description: A happy fern in a clay pot.
+  displayName: Potted plant
+  description: A happy plant in a clay pot.
   icon: {fileID: 0}
   category: 4
   rarity: 0

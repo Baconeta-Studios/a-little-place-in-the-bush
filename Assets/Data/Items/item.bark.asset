@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.bark
   displayName: Bark
   description: A strip of tough bark. Useful for repairs.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 2d747aeee236bcc4ba6c9a801f8c989c, type: 3}
   category: 1
   rarity: 0
   tags:

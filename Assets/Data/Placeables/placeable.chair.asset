@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: placeable.chair
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
   id: placeable.chair
-  displayName: Cafe chair
-  description: A little wooden chair. One guest can perch here.
+  displayName: Stone chair
+  description: A little stone chair. One guest can perch here.
   item: {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
   prefab: {fileID: 4620762537711841443, guid: 9b78072948ac4f74cbec7423a87176e8, type: 3}
   placement: 0
   footprintSize: {x: 0.9, y: 0.4}
+  chainSpan: 0
   canFlip: 1
   category: Furniture
   seats: 1

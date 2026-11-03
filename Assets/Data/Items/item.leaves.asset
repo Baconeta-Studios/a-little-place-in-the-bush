@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.leaves
   displayName: Leaves
   description: A handful of fresh green leaves.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5bb43f84498c14c41804c5c369f65b13, type: 3}
   category: 0
   rarity: 0
   tags:
