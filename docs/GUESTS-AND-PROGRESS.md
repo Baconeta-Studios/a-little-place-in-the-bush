@@ -20,6 +20,7 @@ Every character has a **Visits** setting (`visits` in the data):
 - **Guests block walking**, like furniture: while they're here, a small footprint at their feet (**Footprint Size** on the Npc, 0.6 x 0.3 by default; select a character to see it as an orange box) makes the gecko walk around them instead of through them. It's off while they're away, and the walkable floor is rebuilt whenever guests arrive, leave or change seats. In build mode you can't place things on a guest who's here.
 - **No free seat:** they use their own spot. If something's been built over it, or the gecko can't reach it, they stand at the nearest open spot instead, so they can always be talked to.
 - Seats are worked out again each morning, when someone arrives or leaves, and after building. In build mode, guests who are here stay put and keep their spot clear; if you move the chair someone's on, they find a new seat when you're done.
+- **Drawing order:** a seated guest draws just in front of what they're sitting on, whatever height the seat point is. Anyone standing in front of the seat draws over them, and anyone behind it draws behind them.
 - Untick **Takes Seats** on a character who should always stay at their own spot (Ruru behind the counter, say). For seated guests to look right, put each SeatPoint where a sitting guest's feet would be.
 - Side quests come from any character, so random visitors give side quests when they drop by.
 
