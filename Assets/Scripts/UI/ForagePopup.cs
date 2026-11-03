@@ -39,7 +39,6 @@ public class ForagePopup : Popup
     [SerializeField] private RectTransform _out;
     [SerializeField] private RectTransform _results;
     [Header("Setup")]
-    [SerializeField] private TextMeshProUGUI _tableName;
     [SerializeField] private RectTransform _focusRow;
     [SerializeField] private RectTransform _companionRow;
     [SerializeField] private RectTransform _perkRow;
@@ -182,13 +181,6 @@ public class ForagePopup : Popup
         GameSession session = Session;
         if (session == null) return;
 
-        ForageTableData table = session.Design.GetForageTable(TableId(session));
-        _tableName.text = table != null ? table.name : "Nowhere to forage (no forage table in the design data)";
-        DayEventData today = DayEvents.Today(session.Design, session.State);
-        TimeOfDay now = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day;
-        if (today != null && (DayEvents.ForageModifiersFor(session.Design, today.id, now).Count > 0 || today.peekLonger || today.peek.Count > 0))
-            _tableName.text += $"   <color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
-
         Clear(_focusRow);
         AddChoice(_focusRow, "Anything", _focusId == "", () => { _focusId = ""; RefreshSetup(); });
         foreach (FocusData focus in session.Design.focuses)
@@ -236,12 +228,18 @@ public class ForagePopup : Popup
         string soft = ColorUtility.ToHtmlStringRGB(GameUi.InkSoft);
         var chosenPerks = new List<ForageModifier>();
         foreach (string id in _perkIds) chosenPerks.AddRange(session.Design.GetPerk(id)?.modifiers ?? new List<ForageModifier>());
-        _perkLabel.text = !anyPerks ? "Perks: none yet. Companions teach them after many trips together."
+        // With none yet, the note sits where the perks will go, so the section keeps its shape.
+        if (!anyPerks)
+        {
+            TextMeshProUGUI none = Instantiate(_perkLabel, _perkRow);
+            none.text = "None yet. Companions teach them after many trips together.";
+        }
+        _perkLabel.text = !anyPerks ? "Perks"
             : _perkIds.Count == 0 ? $"Perks (0/{slots})  <color=#{soft}>Tap one to take it along.</color>"
             : $"Perks ({_perkIds.Count}/{slots})  <color=#{soft}>{ModifierText.Describe(chosenPerks)}</color>";
 
         CompanionData chosen = session.Design.GetCompanion(_companionId);
-        _companionLabel.text = chosen == null ? $"Take along  <color=#{soft}>Going alone is free.</color>"
+        _companionLabel.text = chosen == null ? $"Companions:"
             : $"Take along  <color=#{soft}>{chosen.name}: {ModifierText.Describe(chosen.modifiers)}. " +
               $"{(chosen.tripCost > 0 ? $"{chosen.tripCost} coins, " : "")}once a day.</color>";
 
@@ -294,6 +292,12 @@ public class ForagePopup : Popup
                                 ? $"Looking out for {chosenFocus.name.ToLowerInvariant()}: those turn up more (marked \"more\"). "
                                 : "Tip: choose something to look out for, and you'll find more of it. ") +
                             (anyRare ? "Something rare might turn up too." : "");
+        // Today's event changes what turns up, so it goes with the finds.
+        DayEventData today = DayEvents.Today(session.Design, session.State);
+        TimeOfDay now = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day;
+        if (today != null && (DayEvents.ForageModifiersFor(session.Design, today.id, now).Count > 0 || today.peekLonger || today.peek.Count > 0))
+            _previewNote.text += $"
+<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
     }
 
     private void Go()
@@ -536,14 +540,13 @@ public class ForagePopup : Popup
         _close = GameUi.AddButton(_setup, "Close", null, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
         GameUi.Place((RectTransform)_close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
 
-        _tableName = Line(_setup, "", 32f, GameUi.Bark, -120f, 50f);
-
-        Line(_setup, "Look out for", 30f, GameUi.InkSoft, -190f, 44f);
-        _focusRow = Row(_setup, -240f, 80f);
-        _companionLabel = Line(_setup, "Take along", 30f, GameUi.InkSoft, -330f, 44f);
-        _companionRow = Row(_setup, -374f, 76f);
-        _perkLabel = Line(_setup, "Perks", 30f, GameUi.InkSoft, -460f, 44f);
-        _perkRow = Row(_setup, -504f, 76f);
+        // Each label sits close to its row, with more room between sections.
+        Line(_setup, "Look out for", 30f, GameUi.InkSoft, -124f, 44f);
+        _focusRow = Row(_setup, -172f, 80f);
+        _companionLabel = Line(_setup, "Take along", 30f, GameUi.InkSoft, -282f, 44f);
+        _companionRow = Row(_setup, -330f, 76f);
+        _perkLabel = Line(_setup, "Perks", 30f, GameUi.InkSoft, -436f, 44f);
+        _perkRow = Row(_setup, -484f, 76f);
         Line(_setup, "You might find", 30f, GameUi.InkSoft, -590f, 44f);
 
         RectTransform previewArea = GameUi.NewRect("Preview", _setup);
@@ -646,8 +649,8 @@ public class ForagePopup : Popup
         row.anchorMin = new Vector2(0f, 1f);
         row.anchorMax = new Vector2(1f, 1f);
         row.pivot = new Vector2(0.5f, 1f);
-        row.offsetMin = new Vector2(32f, top - height);
-        row.offsetMax = new Vector2(-32f, top);
+        row.offsetMin = new Vector2(40f, top - height); // lined up with the labels
+        row.offsetMax = new Vector2(-40f, top);
         HorizontalLayoutGroup layout = GameUi.AddLayout<HorizontalLayoutGroup>(row, 12f);
         layout.childAlignment = TextAnchor.MiddleLeft;
         return row;
