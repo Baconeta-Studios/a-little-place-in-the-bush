@@ -6,8 +6,8 @@ using UnityEngine.UI;
 /// <summary>
 /// The HUD's day dial: a ring split into the parts of the day (one per forage trip, then evening,
 /// then night once it's unlocked), the day number in the middle, and a hand that turns to the
-/// current part. Parts already passed are dimmed. Tap it for what's next. Built in code; swap the
-/// generated circles for art later. Owned by <see cref="GameHud"/>.
+/// current part. Parts already passed are dimmed. Tap it for what's next. Part of the HUD prefab
+/// (<see cref="HudView"/>): the parts are made at run time from <c>Segment Sprite</c>, one per part of the day.
 /// </summary>
 public class DayDial : MonoBehaviour
 {
@@ -18,10 +18,16 @@ public class DayDial : MonoBehaviour
     private static readonly Color EveningColor = new(0.6f, 0.4f, 0.55f);
     private static readonly Color NightColor = new(0.24f, 0.2f, 0.54f);
 
-    private RectTransform _ring;
-    private RectTransform _hand;
-    private TextMeshProUGUI _day;
-    private TextMeshProUGUI _label;
+    [SerializeField] private RectTransform _ring;
+    [SerializeField] private Button _ringButton;
+    [SerializeField] private RectTransform _hand;
+    [SerializeField] private TextMeshProUGUI _day;
+    [SerializeField] private TextMeshProUGUI _label;
+    [Tooltip("What each part of the ring is cut from: a white circle, filled radially and tinted.")]
+    [SerializeField] private Sprite _segmentSprite;
+    [Tooltip("An outline on the label, added when the game runs: it needs its own material, which a prefab can't keep. 0 for none.")]
+    [SerializeField, Min(0f)] private float _labelOutlineWidth = 0.2f;
+    [SerializeField] private Color32 _labelOutlineColor = new(40, 30, 20, 255);
     private Image[] _segments = new Image[0];
     private string _layout;
     private float _handAngle;
@@ -31,9 +37,23 @@ public class DayDial : MonoBehaviour
     public static DayDial Create(Transform parent)
     {
         RectTransform root = GameUi.NewRect("DayDial", parent);
+        root.gameObject.SetActive(false); // so Awake runs once it's built
         var dial = root.gameObject.AddComponent<DayDial>();
         dial.Build(root);
+        root.gameObject.SetActive(true);
         return dial;
+    }
+
+    private void Awake()
+    {
+        if (_ringButton) _ringButton.onClick.AddListener(ShowHint);
+    }
+
+    private void Start()
+    {
+        if (_labelOutlineWidth <= 0f) return;
+        _label.outlineWidth = _labelOutlineWidth;
+        _label.outlineColor = _labelOutlineColor;
     }
 
     private void Update()
@@ -94,7 +114,7 @@ public class DayDial : MonoBehaviour
             RectTransform rect = GameUi.NewRect($"Part{i}", _ring);
             GameUi.Stretch(rect);
             var image = rect.gameObject.AddComponent<Image>();
-            image.sprite = GeneratedSprites.Circle;
+            image.sprite = _segmentSprite;
             image.type = Image.Type.Filled;
             image.fillMethod = Image.FillMethod.Radial360;
             image.fillOrigin = (int)Image.Origin360.Top;
@@ -134,9 +154,9 @@ public class DayDial : MonoBehaviour
         var back = _ring.gameObject.AddComponent<Image>();
         back.sprite = GeneratedSprites.Circle;
         back.color = GameUi.PanelDark;
-        var button = _ring.gameObject.AddComponent<Button>();
-        button.targetGraphic = back;
-        button.onClick.AddListener(ShowHint);
+        _ringButton = _ring.gameObject.AddComponent<Button>();
+        _ringButton.targetGraphic = back;
+        _segmentSprite = GeneratedSprites.Circle;
 
         _hand = GameUi.NewRect("Hand", _ring);
         GameUi.Place(_hand, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(8f, 66f));
@@ -160,7 +180,5 @@ public class DayDial : MonoBehaviour
         _label.rectTransform.pivot = new Vector2(0.5f, 1f);
         _label.rectTransform.offsetMin = new Vector2(-60f, -60f);
         _label.rectTransform.offsetMax = new Vector2(60f, 0f);
-        _label.outlineWidth = 0.2f;
-        _label.outlineColor = new Color32(40, 30, 20, 255);
     }
 }

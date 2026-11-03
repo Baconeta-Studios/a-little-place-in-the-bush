@@ -26,11 +26,14 @@ public struct ItemCard
 /// </summary>
 public class ItemGridView : MonoBehaviour
 {
-    private RectTransform _content;
-    private bool _horizontal;
-    private Vector2 _cardSize;
+    [SerializeField] private RectTransform _content;
+    [SerializeField] private bool _horizontal;
+    [SerializeField] private Vector2 _cardSize;
+    [Tooltip("Copied for each card, so restyling this restyles them all. Its size is the card size in a row; a grid uses the Grid Layout Group's cell size.")]
+    [SerializeField] private ItemCardView _cardTemplate;
 
-    public static ItemGridView Create(RectTransform parent, bool horizontal, Vector2 cardSize)
+    /// <param name="withTemplate">Make a hidden card to copy, for a screen that's a prefab, so the cards can be restyled there.</param>
+    public static ItemGridView Create(RectTransform parent, bool horizontal, Vector2 cardSize, bool withTemplate = false)
     {
         RectTransform root = GameUi.NewRect("ItemGrid", parent);
         GameUi.Stretch(root);
@@ -77,6 +80,13 @@ public class ItemGridView : MonoBehaviour
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
         scroll.content = view._content;
+
+        if (withTemplate)
+        {
+            view._cardTemplate = ItemCardView.Build(root, "CardTemplate");
+            ((RectTransform)view._cardTemplate.transform).sizeDelta = cardSize;
+            view._cardTemplate.gameObject.SetActive(false);
+        }
         return view;
     }
 
@@ -88,62 +98,20 @@ public class ItemGridView : MonoBehaviour
 
     private void AddCard(ItemCard card)
     {
-        RectTransform rect = GameUi.NewRect(card.key, _content);
-        rect.sizeDelta = _cardSize;
+        ItemCardView view = _cardTemplate ? Instantiate(_cardTemplate, _content) : ItemCardView.Build(_content, card.key);
+        view.gameObject.SetActive(true);
+        view.name = card.key;
+        var rect = (RectTransform)view.transform;
+        Vector2 size = _cardTemplate ? rect.sizeDelta : _cardSize;
+        rect.sizeDelta = size;
         if (_horizontal)
         {
-            var element = rect.gameObject.AddComponent<LayoutElement>();
-            element.preferredWidth = _cardSize.x;
-            element.preferredHeight = _cardSize.y;
+            var element = view.GetComponent<LayoutElement>();
+            if (!element) element = view.gameObject.AddComponent<LayoutElement>();
+            element.preferredWidth = size.x;
+            element.preferredHeight = size.y;
         }
-
-        Image background = GameUi.AddPanel(rect, card.selected ? GameUi.MossLight : GameUi.Cream);
-        var button = rect.gameObject.AddComponent<Button>();
-        button.targetGraphic = background;
-        Action onClick = card.onClick;
-        if (onClick != null) button.onClick.AddListener(() => onClick());
-
-        var group = rect.gameObject.AddComponent<CanvasGroup>();
-        group.alpha = card.dimmed ? 0.45f : 1f;
-
-        // Icon area: the top two thirds.
-        RectTransform iconRect = GameUi.NewRect("Icon", rect);
-        iconRect.anchorMin = new Vector2(0.12f, 0.36f);
-        iconRect.anchorMax = new Vector2(0.88f, 0.92f);
-        iconRect.offsetMin = iconRect.offsetMax = Vector2.zero;
-        var icon = iconRect.gameObject.AddComponent<Image>();
-        icon.raycastTarget = false;
-        icon.preserveAspect = true;
-        if (card.icon)
-        {
-            icon.sprite = card.icon;
-            icon.color = card.iconTint;
-        }
-        else
-        {
-            // No art yet: a coloured dot with the first letter.
-            icon.sprite = GeneratedSprites.Circle;
-            icon.color = card.iconTint;
-            string letter = string.IsNullOrEmpty(card.title) ? "?" : card.title.Substring(0, 1).ToUpperInvariant();
-            GameUi.AddText(iconRect, letter, 54f, GameUi.Cream).fontStyle = FontStyles.Bold;
-        }
-
-        TextMeshProUGUI title = GameUi.AddText(rect, card.title, 24f, GameUi.Ink, TextAlignmentOptions.Center, "Title");
-        RectTransform titleRect = title.rectTransform;
-        titleRect.anchorMin = new Vector2(0.05f, 0.02f);
-        titleRect.anchorMax = new Vector2(0.95f, 0.36f);
-        titleRect.offsetMin = titleRect.offsetMax = Vector2.zero;
-        title.enableAutoSizing = true;
-        title.fontSizeMin = 16f;
-        title.fontSizeMax = 26f;
-
-        if (!string.IsNullOrEmpty(card.badge))
-        {
-            RectTransform badge = GameUi.NewRect("Badge", rect);
-            GameUi.Place(badge, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-8f, -8f), new Vector2(64f, 40f));
-            GameUi.AddPanel(badge, GameUi.Moss).raycastTarget = false;
-            GameUi.AddText(badge, card.badge, 26f, GameUi.Cream).fontStyle = FontStyles.Bold;
-        }
+        view.Fill(card);
     }
 
     /// <summary>The art to show for an item: its icon, or the placeable's sprite, or nothing (a lettered dot is drawn).</summary>

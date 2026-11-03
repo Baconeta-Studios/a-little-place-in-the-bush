@@ -132,5 +132,5 @@ In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`)
 
 - More ways to earn placeables (more quest rewards, rare finds) and special high-cosiness pieces.
 - Rug placement.
-- Real art and a designed UI (the prototype UI is built in `UI/BuildUi.cs`, `UI/InventoryPopup.cs` and `UI/GameHud.cs`).
+- Real art and a designed UI (the build tray and bag are still built in code, in `UI/BuildUi.cs` and `UI/InventoryPopup.cs`; the HUD is a prefab, see [UI.md](UI.md)).
 - Using, selling and sorting from the bag (set aside for later).
