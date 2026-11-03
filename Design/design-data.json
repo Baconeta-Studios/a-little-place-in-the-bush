@@ -445,6 +445,19 @@
       "unique": false,
       "description": "A swish table for a cafe.",
       "teachesRecipe": ""
+    },
+    {
+      "id": "item.mossy_rock",
+      "name": "Mossy Rock",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 15,
+      "unique": false,
+      "description": "A nice mossy stone seat.",
+      "teachesRecipe": ""
     }
   ],
   "recipes": [
@@ -2012,6 +2025,19 @@
       "seats": 0,
       "cosiness": 2,
       "style": "fancy"
+    },
+    {
+      "id": "placeable.mossy_rock",
+      "item": "item.mossy_rock",
+      "placement": "Floor",
+      "footprintWidth": 0.9,
+      "footprintDepth": 0.4,
+      "chainSpan": 0.0,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 1,
+      "cosiness": 1,
+      "style": "rustic"
     }
   ],
   "upgrades": [
