@@ -17,6 +17,10 @@ One place for what's been decided, what's been set aside for later, and what's s
 - **Meet Ruru before foraging:** the bush path waits until *Hello, Ruru* has been taken on (*Forage Unlocked By* on the GameDatabase). It only waits while the quest's giver is here to give it, so talking to them always lifts it. Otherwise the tutorial isn't forced: skipping a step costs time, never locks the game. Set as *Close Unlocked By* on the GameDatabase (empty for always open).
 - **A playthrough test** plays the whole story from the data, and a cheat finishes the current story step, so rewriting the story is safe to try.
 
+**Build mode**
+- **Three more ways to place things:** small things sit on spots on tables and move with them; windows must fit wholly inside a polygon drawn on the tree; fairy lights snap end to end, sharing a pole, and only the poles block walking.
+- **Fairy-light joins aren't saved:** two sets are joined when their ends are in the same place, so nothing can get out of step.
+
 **The cafe**
 - **No recipes at the start.** They come from quests, rare forage encounters and, for a few, Kererū's recipe shop.
 - **One dish on the menu to start**; more menu slots, sales and trips come from cafe upgrades.

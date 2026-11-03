@@ -24,6 +24,10 @@ public class BuildMode : MonoBehaviour
     [SerializeField, Min(0f)] private float tapTolerance = 0.2f;
     [Tooltip("On touch, the item sits this far above your finger while dragging, so your thumb doesn't hide it.")]
     [SerializeField, Min(0f)] private float touchLift = 0.9f;
+    [Tooltip("How close a small thing has to be dragged to a spot on a table to snap to it.")]
+    [SerializeField, Min(0f)] private float surfaceSnapRadius = 0.8f;
+    [Tooltip("How close fairy lights have to be dragged to another set's free end to snap to it.")]
+    [SerializeField, Min(0f)] private float chainSnapRadius = 0.6f;
     [Tooltip("Hook up a sound or particles here.")]
     [SerializeField] private UnityEvent onPlaced = new();
 
@@ -36,6 +40,7 @@ public class BuildMode : MonoBehaviour
         public bool flipped;
         public Vector2 originalPosition;
         public bool originalFlipped;
+        public Transform originalParent;
         public PlacementCheck check;
         public bool checkedOnce;
         public PlacementContext context;
@@ -222,6 +227,7 @@ public class BuildMode : MonoBehaviour
             obj = placed, definition = placed.Definition, isNew = false,
             position = placed.transform.position, flipped = placed.Flipped,
             originalPosition = placed.transform.position, originalFlipped = placed.Flipped,
+            originalParent = placed.transform.parent,
             context = PlacementContext.For(_area)
         };
         SetCandidatePosition(_candidate.position);
@@ -237,11 +243,17 @@ public class BuildMode : MonoBehaviour
             return;
         }
 
+        SurfacePoint surface = _candidate.definition.placement == PlacementType.Surface
+            ? _area.FreeSurfaceNear(_candidate.position, 0.01f, _candidate.obj)
+            : null;
+
         PlacedObject result;
         if (_candidate.isNew)
         {
             PlacedObjectData data = Session.Build.Place(_area.AreaId, _candidate.definition.id, _candidate.position.x, _candidate.position.y, _candidate.flipped);
-            Destroy(_candidate.obj.gameObject);
+            GameObject ghost = _candidate.obj.gameObject;
+            ghost.transform.SetParent(null); // it's gone at the end of the frame, but its spot is free now
+            Destroy(ghost);
             _candidate = null;
             if (data == null)
             {
@@ -249,6 +261,7 @@ public class BuildMode : MonoBehaviour
                 _ui.Refresh();
                 return;
             }
+            if (surface) Session.Build.Attach(data.instanceId, surface.Owner.InstanceId, surface.Index);
             result = _area.Spawn(data);
         }
         else
@@ -256,11 +269,13 @@ public class BuildMode : MonoBehaviour
             result = _candidate.obj;
             Session.Build.Move(result.InstanceId, _candidate.position.x, _candidate.position.y);
             Session.Build.SetFlipped(result.InstanceId, _candidate.flipped);
+            if (surface) Session.Build.Attach(result.InstanceId, surface.Owner.InstanceId, surface.Index);
             result.SetFootprintActive(true);
             result.ClearBuildState();
             _candidate = null;
         }
 
+        _area.RefreshChains();
         _area.Grid.Rebuild();
         result.PlayPlacedFeedback();
         onPlaced.Invoke();
@@ -282,10 +297,13 @@ public class BuildMode : MonoBehaviour
         if (_candidate == null) return;
         if (_candidate.isNew)
         {
+            _candidate.obj.transform.SetParent(null); // it's gone at the end of the frame, but its spot is free now
             Destroy(_candidate.obj.gameObject);
         }
         else
         {
+            if (_candidate.definition.placement == PlacementType.Surface)
+                _area.SitOn(_candidate.obj, _candidate.originalParent ? _candidate.originalParent.GetComponent<SurfacePoint>() : null);
             _candidate.obj.transform.position = _candidate.originalPosition;
             _candidate.obj.SetFlipped(_candidate.originalFlipped);
             _candidate.obj.SetFootprintActive(true);
@@ -294,6 +312,7 @@ public class BuildMode : MonoBehaviour
         }
         _candidate = null;
         _dragging = false;
+        _area.RefreshChains();
         if (_ui) _ui.Refresh();
     }
 
@@ -317,6 +336,7 @@ public class BuildMode : MonoBehaviour
         }
         _candidate = null;
         _area.Despawn(id);
+        _area.RefreshChains();
         _area.Grid.Rebuild();
         Session.RequestSave();
         _ui.Toast($"Put the {label.ToLowerInvariant()} away.");
@@ -394,7 +414,9 @@ public class BuildMode : MonoBehaviour
             return true;
         }
 
-        PlacedObject placed = FindPlacedAt(world);
+        // Holding something for a table, a tap on the table means "put it here", not "pick up the table".
+        bool holdingForSurface = _candidate != null && _candidate.definition.placement == PlacementType.Surface;
+        PlacedObject placed = holdingForSurface ? null : FindPlacedAt(world);
         if (placed)
         {
             Select(placed);
@@ -427,6 +449,7 @@ public class BuildMode : MonoBehaviour
         foreach (PlacedObject placed in _area.Spawned)
         {
             if (!placed || !Hits(placed, world)) continue;
+            if (placed.Definition && placed.Definition.placement == PlacementType.Surface) return placed; // it's on top of whatever it's on
             float y = placed.transform.position.y; // lowest on screen is in front
             if (y < bestY)
             {
@@ -459,15 +482,41 @@ public class BuildMode : MonoBehaviour
 
     private Vector2 Snap(Vector2 world)
     {
+        PlacementType placement = _candidate?.definition ? _candidate.definition.placement : PlacementType.Floor;
+        if (placement == PlacementType.Surface)
+        {
+            SurfacePoint point = _area.FreeSurfaceNear(world, surfaceSnapRadius, _candidate?.obj);
+            return point ? point.transform.position : world;
+        }
+
         Vector2 cell = _area.Grid.CellSize;
         float step = Mathf.Max(0.05f, Mathf.Min(cell.x, cell.y));
         Vector2 snapped = new(Mathf.Round(world.x / step) * step, Mathf.Round(world.y / step) * step);
 
-        // Keep it near the floor so it can't be dragged off into the sky.
-        Bounds floor = _area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds : new Bounds(Vector3.zero, Vector3.one * 100f);
-        snapped.x = Mathf.Clamp(snapped.x, floor.min.x, floor.max.x);
-        snapped.y = Mathf.Clamp(snapped.y, floor.min.y, floor.max.y);
+        // Keep it near where it can go so it can't be dragged off into the sky.
+        Bounds limits = placement == PlacementType.Wall ? WallBounds()
+            : _area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds : new Bounds(Vector3.zero, Vector3.one * 100f);
+        snapped.x = Mathf.Clamp(snapped.x, limits.min.x, limits.max.x);
+        snapped.y = Mathf.Clamp(snapped.y, limits.min.y, limits.max.y);
+
+        float span = _candidate?.definition ? _candidate.definition.chainSpan : 0f;
+        if (span > 0f && ChainLights.TrySnap(span, snapped.x, snapped.y, _area.ChainPieces(_candidate.obj), chainSnapRadius, out float x, out float y))
+            return new Vector2(x, y);
         return snapped;
+    }
+
+    /// <summary>Around every <see cref="PlacementZone"/>, for keeping Wall things near them.</summary>
+    private Bounds WallBounds()
+    {
+        bool any = false;
+        var bounds = new Bounds(Vector3.zero, Vector3.one * 100f);
+        foreach (PlacementZone zone in FindObjectsByType<PlacementZone>())
+        {
+            if (!any) bounds = zone.Bounds;
+            else bounds.Encapsulate(zone.Bounds);
+            any = true;
+        }
+        return bounds;
     }
 
     private void SetCandidatePosition(Vector2 position)
@@ -475,6 +524,8 @@ public class BuildMode : MonoBehaviour
         if (_candidate == null) return;
         bool moved = (position - _candidate.position).sqrMagnitude > 0.0001f;
         _candidate.position = position;
+        if (_candidate.definition.placement == PlacementType.Surface) // sit it on the spot, to draw over the table
+            _area.SitOn(_candidate.obj, _area.FreeSurfaceNear(position, 0.01f, _candidate.obj));
         _candidate.obj.transform.position = new Vector3(position.x, position.y, 0f);
         _candidate.obj.SetFlipped(_candidate.flipped);
         if (moved || !_candidate.checkedOnce) Validate(); // checking runs pathfinding, so only when it changes
@@ -483,9 +534,9 @@ public class BuildMode : MonoBehaviour
     private void Validate()
     {
         if (_candidate == null) return;
-        _candidate.check = PlacementValidator.Check(_area, _candidate.definition, _candidate.position,
-            _candidate.isNew ? null : _candidate.obj, _candidate.context);
+        _candidate.check = PlacementValidator.Check(_area, _candidate.definition, _candidate.position, _candidate.obj, _candidate.context);
         _candidate.checkedOnce = true;
+        _area.RefreshChains(_candidate.obj);
         _candidate.obj.ShowBuildState(_candidate.check.ok);
         if (_ui) _ui.RefreshCandidate();
     }
@@ -493,8 +544,16 @@ public class BuildMode : MonoBehaviour
     /// <summary>A free spot near the middle of the view, searched outwards. Falls back to the middle.</summary>
     private Vector2 FindStartSpot(PlaceableDefinition definition)
     {
-        // The middle of the floor (not the view: the camera slides while building).
-        Bounds floor = _area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds : new Bounds(Vector3.zero, Vector3.one);
+        // The first free spot on a table, if that's what it needs.
+        if (definition.placement == PlacementType.Surface)
+        {
+            SurfacePoint free = _area.FreeSurfaceNear(_area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds.center : Vector3.zero, float.MaxValue, _candidate?.obj);
+            if (free) return free.transform.position;
+        }
+
+        // The middle of the floor or the tree (not the view: the camera slides while building).
+        Bounds floor = definition.placement == PlacementType.Wall ? WallBounds()
+            : _area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds : new Bounds(Vector3.zero, Vector3.one);
         Vector2 centre = Snap(floor.center);
         PlacementContext context = _candidate?.context ?? PlacementContext.For(_area);
         var tried = new HashSet<Vector2>();
@@ -509,7 +568,7 @@ public class BuildMode : MonoBehaviour
                     if (Mathf.Abs(dx) != ring && Mathf.Abs(dy) != ring) continue;
                     Vector2 spot = Snap(centre + new Vector2(dx, dy) * step);
                     if (!tried.Add(spot)) continue; // clamped onto a spot already tried
-                    if (PlacementValidator.Check(_area, definition, spot, null, context).ok) return spot;
+                    if (PlacementValidator.Check(_area, definition, spot, _candidate?.obj, context).ok) return spot;
                     if (tried.Count >= maxChecks) break;
                 }
             }

@@ -27,6 +27,61 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void SittingOnSomething_OneToASpot_AndItComesAwayWithIt()
+        {
+            _game.economy.Add(TestDesign.ChairItem, 1);
+            _game.economy.Add(TestDesign.FernItem, 3);
+            PlacedObjectData table = Build.Place(TestDesign.Area, TestDesign.Chair, 0f, 0f, false);
+            PlacedObjectData fern = Build.Place(TestDesign.Area, TestDesign.Fern, 0f, 0f, false);
+            PlacedObjectData other = Build.Place(TestDesign.Area, TestDesign.Fern, 0f, 0f, false);
+
+            Assert.IsTrue(Build.Attach(fern.instanceId, table.instanceId, 0));
+            Assert.IsFalse(Build.Attach(other.instanceId, table.instanceId, 0), "That spot's taken.");
+            Assert.IsTrue(Build.Attach(other.instanceId, table.instanceId, 1));
+            Assert.IsTrue(Build.Attach(fern.instanceId, table.instanceId, 0), "It can stay on its own spot.");
+
+            Assert.IsTrue(Build.Remove(table.instanceId));
+            Assert.IsEmpty(Build.GetPlaced(TestDesign.Area).ToList(), "What's on it comes away too.");
+            Assert.AreEqual(1, _game.economy.Count(TestDesign.ChairItem));
+            Assert.AreEqual(3, _game.economy.Count(TestDesign.FernItem), "Back in the bag.");
+        }
+
+        [Test]
+        public void ChainLights_JoinEndToEnd_AndPartWhenMoved()
+        {
+            var first = new ChainPiece(0f, 0f, 2f);
+            var joined = new ChainPiece(2f, 0f, 2f);
+            Assert.AreEqual((false, true), ChainLights.Joins(first, new[] { joined }));
+            Assert.AreEqual((true, false), ChainLights.Joins(joined, new[] { first }));
+            Assert.AreEqual((false, false), ChainLights.Joins(first, new[] { new ChainPiece(2.5f, 0f, 2f) }), "Apart.");
+            Assert.AreEqual((false, false), ChainLights.Joins(first, new[] { new ChainPiece(2f, 1f, 2f) }), "Not on the same line.");
+        }
+
+        [Test]
+        public void ChainLights_SnapToAFreeEnd_WithinReach()
+        {
+            var pieces = new[] { new ChainPiece(0f, 0f, 2f) };
+            Assert.IsTrue(ChainLights.TrySnap(2f, 2.3f, 0.2f, pieces, 0.6f, out float x, out float y));
+            Assert.AreEqual(2f, x, 0.001f);
+            Assert.AreEqual(0f, y, 0.001f);
+
+            Assert.IsTrue(ChainLights.TrySnap(3f, -2.4f, 0f, pieces, 0.6f, out x, out _), "Different lengths still meet at the ends.");
+            Assert.AreEqual(-2.5f, x, 0.001f);
+
+            Assert.IsFalse(ChainLights.TrySnap(2f, 5f, 0f, pieces, 0.6f, out x, out _), "Too far.");
+            Assert.AreEqual(5f, x, 0.001f, "Stays where it was dragged.");
+        }
+
+        [Test]
+        public void ChainLights_ThreeInARow_TheMiddleEndsAreTaken()
+        {
+            var pieces = new[] { new ChainPiece(0f, 0f, 2f), new ChainPiece(2f, 0f, 2f) };
+            Assert.IsTrue(ChainLights.TrySnap(2f, 4.2f, 0f, pieces, 0.6f, out float x, out _), "A third on the free end.");
+            Assert.AreEqual(4f, x, 0.001f);
+            Assert.IsFalse(ChainLights.TrySnap(2f, 1f, 0f, pieces, 0.5f, out _, out _), "Nowhere free in the middle.");
+        }
+
+        [Test]
         public void Place_FailsWithoutTheItem()
         {
             Assert.IsNull(Build.Place(TestDesign.Area, TestDesign.Chair, 0f, 0f, false));

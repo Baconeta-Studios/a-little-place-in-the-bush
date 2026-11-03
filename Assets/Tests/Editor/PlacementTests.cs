@@ -140,6 +140,44 @@ public class PlacementTests
         Assert.IsTrue(PlacementValidator.Check(_area, _chair, At(-2f, -3f), placed).ok, "But it can stay where it is.");
     }
 
+    [Test]
+    public void Wall_MustFitInsideTheZone_ClearOfOtherWallThings()
+    {
+        GameObject zoneObject = Make("Tree");
+        var polygon = zoneObject.AddComponent<PolygonCollider2D>();
+        polygon.points = new[] { At(10f, 10f), At(14f, 10f), At(14f, 14f), At(10f, 14f) };
+        zoneObject.AddComponent<PlacementZone>();
+        Physics2D.SyncTransforms();
+
+        PlaceableDefinition window = Definition(new Vector2(1f, 1f));
+        window.placement = Bush.Core.PlacementType.Wall;
+
+        Assert.IsTrue(PlacementValidator.Check(_area, window, At(12f, 11f)).ok);
+        PlacementCheck overTheEdge = PlacementValidator.Check(_area, window, At(13.75f, 11f));
+        Assert.IsFalse(overTheEdge.ok, "Half off the tree.");
+        StringAssert.Contains("fit on the tree", overTheEdge.reason);
+    }
+
+    [Test]
+    public void Surface_NeedsAFreeSpot()
+    {
+        PlaceableDefinition pot = Definition(new Vector2(0.3f, 0.3f));
+        pot.placement = Bush.Core.PlacementType.Surface;
+        PlacementCheck check = PlacementValidator.Check(_area, pot, At(-2f, -3f));
+        Assert.IsFalse(check.ok);
+        StringAssert.Contains("free spot", check.reason);
+    }
+
+    [Test]
+    public void FairyLights_OnlyThePolesBlock()
+    {
+        PlaceableDefinition lights = Definition(new Vector2(0.3f, 0.2f));
+        lights.chainSpan = 2f;
+        // The poles sit either side of the wall, with the lights hanging over it.
+        Assert.IsTrue(PlacementValidator.Check(_area, lights, At(0f, -3f)).ok, "The wall is between the poles.");
+        Assert.IsFalse(PlacementValidator.Check(_area, lights, At(1f, -3f)).ok, "A pole is on the wall.");
+    }
+
     private PlaceableDefinition Definition(Vector2 footprint)
     {
         var definition = ScriptableObject.CreateInstance<PlaceableDefinition>();

@@ -393,6 +393,11 @@ namespace Bush.Core
         public float footprintWidth = 1f;
         /// <summary>Depth (front to back) of the base that blocks walking, in world units.</summary>
         public float footprintDepth = 0.4f;
+        /// <summary>
+        /// Above 0 for something held up at both ends that snaps end to end (fairy lights): the distance between
+        /// its two poles. The footprint is then each pole's, and the gecko can walk underneath. See <see cref="ChainLights"/>.
+        /// </summary>
+        public float chainSpan;
         public bool canFlip = true;
         /// <summary>Tray tab, e.g. Furniture, Plants, Decor.</summary>
         public string category;

@@ -195,6 +195,10 @@ namespace Bush.Core
         public float x;
         public float y;
         public bool flipped;
+        /// <summary>What it's sitting on, for Surface placeables (0 for nothing). It then moves with that, and x and y are only where it last was.</summary>
+        public int parentId;
+        /// <summary>Which of the parent's surface points it's on.</summary>
+        public int slot;
         /// <summary>Took an item from the inventory when placed, so putting it away gives one back.
         /// False for the starting layout and for unlimited (prototype) placing.</summary>
         public bool fromInventory;

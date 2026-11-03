@@ -44,9 +44,10 @@ public class PlacementContext
 }
 
 /// <summary>
-/// Build mode's rules for where a placeable can go: Floor placement only for now, on the open ground,
-/// not overlapping anything, not covering a stand point or spawn point, and not cutting off the gecko's
-/// path to any of them.
+/// Build mode's rules for where a placeable can go. Floor: on the open ground, not overlapping anything,
+/// not covering a stand point or spawn point, and not cutting off the gecko's path to any of them (for
+/// fairy lights, that's each pole, and a pole shared at a join is already there). Surface: on a free
+/// <see cref="SurfacePoint"/>. Wall: wholly on a <see cref="PlacementZone"/>, clear of other Wall things.
 /// </summary>
 public static class PlacementValidator
 {
@@ -58,13 +59,76 @@ public static class PlacementValidator
         PlacedObject ignore = null, PlacementContext context = null)
     {
         if (!area || !definition) return PlacementCheck.Invalid("Nothing to place.");
-        if (definition.placement != PlacementType.Floor)
-            return PlacementCheck.Invalid($"{definition.placement} placement isn't built yet.");
+        switch (definition.placement)
+        {
+            case PlacementType.Surface: return CheckSurface(area, basePosition, ignore);
+            case PlacementType.Wall: return CheckWall(area, definition, basePosition, ignore);
+            case PlacementType.Floor: break;
+            default: return PlacementCheck.Invalid($"{definition.placement} placement isn't built yet.");
+        }
 
         context ??= PlacementContext.For(area);
         WalkableGrid grid = area.Grid;
-        Rect footprint = PlacedObject.FootprintAt(definition, basePosition);
+        var footprints = new List<Rect>(PlacedObject.FootprintsAt(definition, basePosition));
+        if (definition.chainSpan > 0f) // a pole landing on a neighbour's end shares its pole
+        {
+            (bool left, bool right) = ChainLights.Joins(PlacedObject.ChainPieceAt(definition, basePosition), area.ChainPieces(ignore));
+            if (right) footprints.RemoveAt(1);
+            if (left) footprints.RemoveAt(0);
+        }
 
+        foreach (Rect footprint in footprints)
+        {
+            PlacementCheck check = CheckFootprint(area, grid, footprint, ignore, context);
+            if (!check.ok) return check;
+        }
+
+        // 4. Not cutting off a path: spots the gecko can reach now must stay reachable from the spawn point.
+        GridPathfinder pathfinder = area.Pathfinder;
+        if (pathfinder && context.mustStayReachable.Count > 0)
+        {
+            grid.SetTemporaryBlocks(footprints.ToArray());
+            try
+            {
+                foreach ((Vector2 position, string label) in context.mustStayReachable)
+                    if (!pathfinder.IsReachable(context.pathOrigin, position)) return PlacementCheck.Invalid($"It would block the path to {label}.");
+            }
+            finally
+            {
+                grid.SetTemporaryBlocks(null);
+            }
+        }
+
+        return PlacementCheck.Valid;
+    }
+
+    private static PlacementCheck CheckSurface(BuildArea area, Vector2 position, PlacedObject ignore) =>
+        area.FreeSurfaceNear(position, 0.01f, ignore)
+            ? PlacementCheck.Valid
+            : PlacementCheck.Invalid("It needs a free spot on a table.");
+
+    private static PlacementCheck CheckWall(BuildArea area, PlaceableDefinition definition, Vector2 position, PlacedObject ignore)
+    {
+        Rect rect = PlacedObject.FootprintAt(definition, position);
+        string label = "the tree";
+        bool fits = false;
+        foreach (PlacementZone zone in Object.FindObjectsByType<PlacementZone>())
+        {
+            label = zone.Label;
+            if (zone.Fits(rect)) fits = true;
+        }
+        if (!fits) return PlacementCheck.Invalid($"It needs to fit on {label}.");
+
+        foreach (PlacedObject placed in area.Spawned)
+        {
+            if (!placed || placed == ignore || !placed.Definition || placed.Definition.placement != PlacementType.Wall) continue;
+            if (rect.Overlaps(placed.FootprintRect)) return PlacementCheck.Invalid($"It's too close to the {placed.DisplayName.ToLowerInvariant()}.");
+        }
+        return PlacementCheck.Valid;
+    }
+
+    private static PlacementCheck CheckFootprint(BuildArea area, WalkableGrid grid, Rect footprint, PlacedObject ignore, PlacementContext context)
+    {
         // 1. On the open ground: every corner and the middle of the base inside the floor.
         Collider2D floor = grid.WalkableArea;
         const float inset = 0.02f;
@@ -95,22 +159,6 @@ public static class PlacementValidator
         Rect keepClear = new(footprint.xMin - clear, footprint.yMin - clear, footprint.width + clear * 2f, footprint.height + clear * 2f);
         foreach ((Vector2 position, string label) in context.keepClear)
             if (keepClear.Contains(position)) return PlacementCheck.Invalid($"It would be in the way of {label}.");
-
-        // 4. Not cutting off a path: spots the gecko can reach now must stay reachable from the spawn point.
-        GridPathfinder pathfinder = area.Pathfinder;
-        if (pathfinder && context.mustStayReachable.Count > 0)
-        {
-            grid.SetTemporaryBlock(footprint);
-            try
-            {
-                foreach ((Vector2 position, string label) in context.mustStayReachable)
-                    if (!pathfinder.IsReachable(context.pathOrigin, position)) return PlacementCheck.Invalid($"It would block the path to {label}.");
-            }
-            finally
-            {
-                grid.SetTemporaryBlock(null);
-            }
-        }
 
         return PlacementCheck.Valid;
     }

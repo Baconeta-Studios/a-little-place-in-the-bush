@@ -36,7 +36,7 @@ namespace Bush.Core
         [Serializable] public class Objective { public string type; public string target; public int qty; }
         [Serializable] public class Reward { public string type; public string target; public int qty; }
         [Serializable] public class Dialogue { public string offer; public string active; public string ready; public string done; }
-        [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public bool canFlip; public string category; public int seats; public int cosiness; public string style; }
+        [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public float chainSpan; public bool canFlip; public string category; public int seats; public int cosiness; public string style; }
         [Serializable] public class Upgrade { public string id; public string name; public string description; public string effect; public int amount; public int price; public string requires; }
         [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public bool nextDay; public int minDay; public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
 
@@ -138,7 +138,7 @@ namespace Bush.Core
                     design.placeables.Add(new PlaceableData
                     {
                         id = x.id, itemId = x.item, placement = Parse(x.placement, PlacementType.Floor, errors, x.id),
-                        footprintWidth = x.footprintWidth, footprintDepth = x.footprintDepth, canFlip = x.canFlip,
+                        footprintWidth = x.footprintWidth, footprintDepth = x.footprintDepth, chainSpan = x.chainSpan, canFlip = x.canFlip,
                         category = x.category, seats = x.seats, cosiness = x.cosiness, style = x.style ?? ""
                     });
             }
@@ -238,7 +238,7 @@ namespace Bush.Core
                 file.placeables.Add(new Placeable
                 {
                     id = x.id, item = x.itemId, placement = x.placement.ToString(), footprintWidth = x.footprintWidth,
-                    footprintDepth = x.footprintDepth, canFlip = x.canFlip, category = x.category ?? "", seats = x.seats,
+                    footprintDepth = x.footprintDepth, chainSpan = x.chainSpan, canFlip = x.canFlip, category = x.category ?? "", seats = x.seats,
                     cosiness = x.cosiness, style = x.style ?? ""
                 });
 

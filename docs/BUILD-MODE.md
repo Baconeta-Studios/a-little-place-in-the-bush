@@ -36,7 +36,8 @@ The ghost goes red, with a reason, if it would:
 - overlap something else;
 - cover a stand point (the cafe door, the forage path, a guest who's here today) or the spawn point (guests who aren't in today don't take up any room);
 - **cut off a path**: the gecko must still be able to walk from the spawn point to every stand point it can reach now.
-- use a placement type other than Floor (Wall, Rug and Surface aren't built yet).
+
+Things that don't go on the ground have their own rules: see [Things on tables, on the tree, and fairy lights](#things-on-tables-on-the-tree-and-fairy-lights).
 
 ### What you can place
 
@@ -72,7 +73,33 @@ If a save can't be read (broken, or from a newer build), the game starts fresh a
    - no need for a collider: `PlacedObject` adds and sizes the footprint from the asset.
 3. Assign the prefab on the placeable asset (`Assets/Data/Placeables`). **Validate Design Data** warns if its seat points don't match its seat count.
 
-Placement types other than `Floor` (Wall for windows and fairy lights, Rug, Surface for things on tables) are reserved in the data but not built yet.
+## Things on tables, on the tree, and fairy lights
+
+**Importing overwrites these numbers.** `placement`, the footprint and `chainSpan` come from `Design/design-data.json`, so put them there as well as on the asset, or the next import resets them.
+
+### On a table (`"placement": "Surface"`): pot plants, little umbrellas
+
+1. **On the table's prefab:** add an empty child of the root (not inside `Visual`) for each spot, with the **SurfacePoint** component, where the small thing's base should touch. They show as small blue circles in the Scene view. Leave their order alone once saves exist: a save remembers things by which spot they're on.
+2. **On the small thing's prefab:** root at the point its base touches, art in `Visual`, as usual. No footprint: the footprint numbers aren't used.
+
+In play: it snaps to the nearest free spot (*Surface Snap Radius* on `BuildMode`) and goes red away from one. It moves and flips with the table. Putting the table away puts what's on it in the bag too.
+
+### On the tree (`"placement": "Wall"`): windows
+
+1. **In the scene:** add an empty object (under `World` is tidy) with **PlacementZone** (it adds a PolygonCollider2D). Click *Edit Collider* and trace the part of the tree things can go on. It doesn't block walking or clicks. *Label* is what the player's told: "It needs to fit on the tree." You can have several zones.
+2. **On the window's prefab:** root at the **bottom middle** of the window, art in `Visual`.
+3. **On the placeable:** the footprint is the window's size: `footprintWidth` across, `footprintDepth` up. That whole rectangle has to fit inside the polygon, so make it match the art.
+
+In play: it snaps to the grid, goes red if any of it is off the polygon or on another window. It draws just above the backdrop (the Background sorting layer, order 10), set automatically, so anything in the world goes in front of it.
+
+### Fairy lights (`"placement": "Floor"` with `"chainSpan"`)
+
+A set is one placeable: the lights with a pole at each end.
+
+1. **On the prefab:** root at the middle, on the ground line. `Visual` holds the lights (and no poles). Add two children called exactly **`PoleLeft`** and **`PoleRight`**, holding each pole's art, with each pole's base at the prefab's `chainSpan / 2` either side of the root.
+2. **On the placeable:** `chainSpan` is the distance between the two poles' bases, in world units. The footprint is now **one pole's** base. Only the poles block walking, so the gecko walks underneath the lights.
+
+In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`) and it snaps on in a straight line, sharing a pole. You can join as many as fit, and different lengths can join. At a join, the set on the right hides its `PoleLeft`. Nothing about joins is saved: sets are joined when their ends are in the same place, so moving one away brings its pole back.
 
 ## Test checklist
 
@@ -104,6 +131,6 @@ Placement types other than `Floor` (Wall for windows and fairy lights, Rug, Surf
 ## Not built yet
 
 - More ways to earn placeables (more quest rewards, rare finds) and special high-cosiness pieces.
-- Wall, Rug and Surface placement.
+- Rug placement.
 - Real art and a designed UI (the prototype UI is built in `UI/BuildUi.cs`, `UI/InventoryPopup.cs` and `UI/GameHud.cs`).
 - Using, selling and sorting from the bag (set aside for later).
