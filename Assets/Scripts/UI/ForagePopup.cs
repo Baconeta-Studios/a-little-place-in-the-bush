@@ -600,6 +600,7 @@ public class ForagePopup : Popup
         _questCard.SetActive(goal != null);
         if (goal == null) return;
         _questLabel.text = $"{goal.quest.title}: {goal.have} of {goal.needed} {goal.item.name.ToLowerInvariant()}";
+        if (!_questBar.sprite) _questBar.sprite = GeneratedSprites.Square; // an image with no sprite ignores its fill, and shows full
         _questBar.fillAmount = goal.needed > 0 ? (float)goal.have / goal.needed : 1f;
     }
 
@@ -608,17 +609,21 @@ public class ForagePopup : Popup
     {
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
         bool canGoAgain = tripsLeft != 0;
+        // The same trip can't always run twice (a companion who went along is tired now), so that one goes back to the choices.
+        bool sameTrip = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out _);
+        string againLabel = sameTrip ? "Go again" : "Plan another trip";
+        System.Action again = sameTrip ? Go : ShowSetup;
         QuestData ready = ForageGoals.ReadyToHandIn(session.Quests);
 
         if (ready != null)
         {
             string giver = QuestLogPopup.NpcName(session.Design, ready.giver);
             SetNext(_nextMain, $"Go and see {giver}{Visitors.WhenAbout(session.Design, session.State, ready.giver)}", ref _mainAction, Close);
-            SetNext(_nextOther, canGoAgain ? "Go again" : null, ref _otherAction, Go);
+            SetNext(_nextOther, canGoAgain ? againLabel : null, ref _otherAction, again);
         }
         else if (canGoAgain)
         {
-            SetNext(_nextMain, "Go again", ref _mainAction, Go);
+            SetNext(_nextMain, againLabel, ref _mainAction, again);
             SetNext(_nextOther, "Back to the cafe", ref _otherAction, Close);
         }
         else
