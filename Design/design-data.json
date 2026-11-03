@@ -329,7 +329,7 @@
     },
     {
       "id": "item.chair",
-      "name": "Cafe chair",
+      "name": "Stone chair",
       "category": "Placeable",
       "rarity": "Common",
       "tags": [
@@ -337,7 +337,7 @@
       ],
       "sellValue": 8,
       "unique": false,
-      "description": "A little wooden chair. One guest can perch here.",
+      "description": "A little stone chair. One guest can perch here.",
       "teachesRecipe": ""
     },
     {
@@ -350,7 +350,7 @@
       ],
       "sellValue": 12,
       "unique": false,
-      "description": "A round table for two.",
+      "description": "A wooden table for two.",
       "teachesRecipe": ""
     },
     {
@@ -368,7 +368,7 @@
     },
     {
       "id": "item.potted_fern",
-      "name": "Potted fern",
+      "name": "Potted plant",
       "category": "Placeable",
       "rarity": "Common",
       "tags": [
@@ -376,7 +376,7 @@
       ],
       "sellValue": 6,
       "unique": false,
-      "description": "A happy fern in a clay pot.",
+      "description": "A happy plant in a clay pot.",
       "teachesRecipe": ""
     },
     {
@@ -432,6 +432,19 @@
       "unique": true,
       "description": "A tūī in the flowering pōhutukawa sang you a song, and somehow the song was a recipe.",
       "teachesRecipe": "recipe.pohutukawa_biscuits"
+    },
+    {
+      "id": "item.cafe_fancy_table",
+      "name": "Fancy table",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 20,
+      "unique": false,
+      "description": "A swish table for a cafe.",
+      "teachesRecipe": ""
     }
   ],
   "recipes": [
@@ -1933,7 +1946,7 @@
       "placement": "Floor",
       "footprintWidth": 1.2,
       "footprintDepth": 0.5,
-      "canFlip": false,
+      "canFlip": true,
       "category": "Furniture",
       "seats": 0,
       "cosiness": 1,
@@ -1986,6 +1999,19 @@
       "seats": 0,
       "cosiness": 3,
       "style": "glow"
+    },
+    {
+      "id": "placeable.cafe_fancy_table",
+      "item": "item.cafe_fancy_table",
+      "placement": "Floor",
+      "footprintWidth": 1.2,
+      "footprintDepth": 0.5,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 0,
+      "cosiness": 2,
+      "style": "fancy"
     }
   ],
   "upgrades": [

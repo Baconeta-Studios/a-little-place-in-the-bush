@@ -763,7 +763,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
     },
     {
       "id": "item.chair",
-      "name": "Cafe chair",
+      "name": "Stone chair",
       "category": "Placeable",
       "rarity": "Common",
       "tags": [
@@ -771,7 +771,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "sellValue": 8,
       "unique": false,
-      "description": "A little wooden chair. One guest can perch here.",
+      "description": "A little stone chair. One guest can perch here.",
       "teachesRecipe": ""
     },
     {
@@ -784,7 +784,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "sellValue": 12,
       "unique": false,
-      "description": "A round table for two.",
+      "description": "A wooden table for two.",
       "teachesRecipe": ""
     },
     {
@@ -802,7 +802,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
     },
     {
       "id": "item.potted_fern",
-      "name": "Potted fern",
+      "name": "Potted plant",
       "category": "Placeable",
       "rarity": "Common",
       "tags": [
@@ -810,7 +810,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "sellValue": 6,
       "unique": false,
-      "description": "A happy fern in a clay pot.",
+      "description": "A happy plant in a clay pot.",
       "teachesRecipe": ""
     },
     {
@@ -866,6 +866,19 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "unique": true,
       "description": "A tūī in the flowering pōhutukawa sang you a song, and somehow the song was a recipe.",
       "teachesRecipe": "recipe.pohutukawa_biscuits"
+    },
+    {
+      "id": "item.cafe_fancy_table",
+      "name": "Fancy table",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "furniture"
+      ],
+      "sellValue": 20,
+      "unique": false,
+      "description": "A swish table for a cafe.",
+      "teachesRecipe": ""
     }
   ],
   "recipes": [
@@ -2367,7 +2380,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "placement": "Floor",
       "footprintWidth": 1.2,
       "footprintDepth": 0.5,
-      "canFlip": false,
+      "canFlip": true,
       "category": "Furniture",
       "seats": 0,
       "cosiness": 1,
@@ -2420,6 +2433,19 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "seats": 0,
       "cosiness": 3,
       "style": "glow"
+    },
+    {
+      "id": "placeable.cafe_fancy_table",
+      "item": "item.cafe_fancy_table",
+      "placement": "Floor",
+      "footprintWidth": 1.2,
+      "footprintDepth": 0.5,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 0,
+      "cosiness": 2,
+      "style": "fancy"
     }
   ],
   "upgrades": [
