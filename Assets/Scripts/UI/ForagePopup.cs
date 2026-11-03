@@ -7,14 +7,16 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Foraging: pick a focus, a companion (each can go once a day, for a few coins) and perks (as many as
-/// the perk slots allow), press Go, see what you found, collect it into the bag. It's always daytime for now, and there are a few trips a day (see <see cref="DayRules"/>). Companions and perks aren't offered yet; the rules already support
-/// them (see docs/FORAGING.md). The setup shows what you might find, without the odds, and hides rare
-/// things so they stay a surprise. Opened from the HUD (<see cref="GameHud"/>), or call
-/// <see cref="Show"/> from anything else, such as a garden gate. How it looks is in Resources/UI/ForagePopup.prefab
-/// (Tools > Bush > Create UI Prefabs makes it from <see cref="BuildDefault"/>, which is also used if there's no prefab).
+/// Foraging, in three steps. At the edge of the bush: one question, what are we after? The focus the story
+/// needs is already chosen and marked (<see cref="ForageGoals"/>), and companions and perks only appear
+/// once you have some. Out foraging: a place of its own in the bush, made from crops of the backdrop and
+/// layers of the Bush art. The gecko looks around, and tapping the bush that rustles grabs a bonus. Back again: finds drop into the basket and go straight in the bag, with what the cafe
+/// sold, how the quest is going, and one main button for what to do next. Opened from
+/// <see cref="ForageSpot"/>, or call <see cref="Show"/> from anything else, such as a garden gate.
+/// How it looks is in Resources/UI/ForagePopup.prefab (see docs/UI.md), made from <see cref="BuildDefault"/>,
+/// which is also used if there's no prefab.
 ///
-/// The result is worked out and saved when Go is pressed (<see cref="ForagingService.Begin"/>), so
+/// The result is worked out and saved when you head out (<see cref="ForagingService.Begin"/>), so
 /// closing or refreshing mid-trip can't lose or duplicate it: reopening shows the same results.
 /// Each trip logs its seed, which gives the same result in the web sandbox.
 /// </summary>
@@ -25,7 +27,12 @@ public class ForagePopup : Popup
     private const float TripSeconds = 3.2f;
     /// <summary>How long a bush rustles: tap it in time to grab what's in it.</summary>
     private const float RustleSeconds = 0.5f;
-    private const int MaxPreviewItems = 8;
+    private const int MaxPreviewItems = 5;
+    private const float DropHeight = 520f;
+    private const float DropSeconds = 0.4f;
+    private const float DropGap = 0.16f;
+    private const float SceneryDrift = 70f;
+    private const float HopSeconds = 0.45f;
 
     private static ForagePopup _instance;
 
@@ -40,40 +47,66 @@ public class ForagePopup : Popup
     [SerializeField] private RectTransform _results;
     [Header("Setup")]
     [SerializeField] private RectTransform _focusRow;
+    [SerializeField] private GameObject _companionSection;
     [SerializeField] private RectTransform _companionRow;
+    [SerializeField] private TextMeshProUGUI _companionLabel;
+    [SerializeField] private GameObject _perkSection;
     [SerializeField] private RectTransform _perkRow;
     [SerializeField] private TextMeshProUGUI _perkLabel;
-    [SerializeField] private TextMeshProUGUI _companionLabel;
-    [SerializeField] private TextMeshProUGUI _tripsLeft;
+    [SerializeField] private TextMeshProUGUI _previewLabel;
+    [SerializeField] private ItemGridView _preview;
+    [SerializeField] private TextMeshProUGUI _previewNote;
+    [SerializeField] private Image _companionArt;
+    [SerializeField] private RectTransform _setupPips;
+    [SerializeField] private TextMeshProUGUI _status;
     [SerializeField] private Button _close;
     [SerializeField] private Button _go;
-    [Tooltip("Copied for each choice in the rows above, so restyling this restyles them all.")]
+    [Tooltip("Copied for each choice above, so restyling this restyles them all. A child called Nudge is the note on the one a quest needs.")]
     [SerializeField] private Button _choiceTemplate;
     [SerializeField] private Color _choiceColor = GameUi.Cream;
     [SerializeField] private Color _choiceTextColor = GameUi.Ink;
-    [SerializeField] private Color _chosenColor = GameUi.Moss;
+    [SerializeField] private Color _chosenColor = new(0.2f, 0.36f, 0.21f);
     [SerializeField] private Color _chosenTextColor = GameUi.Cream;
-    [SerializeField] private ItemGridView _preview;
-    [SerializeField] private TextMeshProUGUI _previewNote;
+    [Tooltip("One marker for each trip in the day, copied. Faded once used.")]
+    [SerializeField] private Image _pipTemplate;
+    [SerializeField, Range(0f, 1f)] private float _usedPipAlpha = 0.3f;
     [Header("Out foraging")]
     [SerializeField] private TextMeshProUGUI _outText;
     [SerializeField] private TextMeshProUGUI _peekNote;
     [Tooltip("The bushes to tap: one rustles each trip. Each needs a Button.")]
     [SerializeField] private RectTransform[] _bushes;
+    [Tooltip("Stands where you put it, pads on the spot, and turns to face the bush that rustles.")]
+    [SerializeField] private RectTransform _gecko;
+    [Tooltip("Drifts slowly to the side during the trip, so it feels like moving along. Can be left empty.")]
+    [SerializeField] private RectTransform _scenery;
     [SerializeField] private Button _skip;
-    [Header("Results")]
+    [Header("Back again")]
     [SerializeField] private TextMeshProUGUI _resultsTitle;
-    [SerializeField] private ItemGridView _found;
     [SerializeField] private TextMeshProUGUI _resultsNote;
-    [SerializeField] private Button _collect;
+    [Tooltip("Finds land here, above the front of the basket.")]
+    [SerializeField] private RectTransform _pile;
+    [SerializeField] private ItemCardView _foundTemplate;
+    [SerializeField] private GameObject _questCard;
+    [SerializeField] private TextMeshProUGUI _questLabel;
+    [SerializeField] private Image _questBar;
+    [SerializeField] private RectTransform _resultPips;
+    [SerializeField] private Button _nextMain;
+    [SerializeField] private Button _nextOther;
 
     /// <summary>Go was pressed with an empty menu and the warning shown: the next press goes anyway.</summary>
     private bool _emptyMenuWarned;
     /// <summary>The menu was empty when this trip set off although something could have been made: worth a note in the results.</summary>
     private bool _emptyMenuMissed;
+    private string _hintKey;
     private int _tappedBush = -1;
     private ForageRoll _bonus;
     private bool _skipped;
+    private Vector2 _geckoStart;
+    private Vector2 _sceneryStart;
+    private System.Action _mainAction;
+    private System.Action _otherAction;
+
+    private static GameSession Session => GameSession.Current;
 
     /// <summary>Opens the forage screen, creating it the first time.</summary>
     public static void Show()
@@ -99,17 +132,6 @@ public class ForagePopup : Popup
         return popup;
     }
 
-    /// <summary>The default layout, closed. Tools > Bush > Create UI Prefabs saves this as the prefab.</summary>
-    public static ForagePopup BuildDefault(Transform parent)
-    {
-        RectTransform root = GameUi.NewRect("ForagePopup", parent);
-        GameUi.Stretch(root);
-        root.gameObject.SetActive(false); // a popup is "open" while active
-        var popup = root.gameObject.AddComponent<ForagePopup>();
-        popup.Build(root);
-        return popup;
-    }
-
     /// <summary>The buttons are linked here rather than in the prefab, so restyling can't unhook them.</summary>
     protected override void Awake()
     {
@@ -117,18 +139,21 @@ public class ForagePopup : Popup
         _close.onClick.AddListener(Close);
         _go.onClick.AddListener(Go);
         _skip.onClick.AddListener(() => _skipped = true);
-        _collect.onClick.AddListener(() => Collect(true));
+        _nextMain.onClick.AddListener(() => _mainAction?.Invoke());
+        _nextOther.onClick.AddListener(() => _otherAction?.Invoke());
         for (int i = 0; i < _bushes.Length; i++)
         {
             int index = i;
             _bushes[i].GetComponent<Button>().onClick.AddListener(() => _tappedBush = index);
         }
+        if (_gecko) _geckoStart = _gecko.anchoredPosition;
+        if (_scenery) _sceneryStart = _scenery.anchoredPosition;
     }
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        // A trip already under way (e.g. the page was refreshed on the results): show its results.
+        // A trip already under way (e.g. the page was refreshed mid-trip): show its results.
         if (Session != null && Session.State.hasPendingExpedition) ShowResults();
         else ShowSetup();
     }
@@ -136,7 +161,7 @@ public class ForagePopup : Popup
     protected override void OnDisable()
     {
         base.OnDisable();
-        if (_trip != null) StopCoroutine(_trip);
+        StopAllCoroutines();
         _trip = null;
     }
 
@@ -144,15 +169,6 @@ public class ForagePopup : Popup
     {
         if (_instance == this) _instance = null;
     }
-
-    /// <summary>Closing from the results (Escape, or Collect) puts the finds in the bag.</summary>
-    public override void Close()
-    {
-        if (_results && _results.gameObject.activeSelf) Collect(false);
-        base.Close();
-    }
-
-    private static GameSession Session => GameSession.Current;
 
     private static string TableId(GameSession session) =>
         session.Design.forageTables.Count > 0 ? session.Design.forageTables[0].id : "";
@@ -181,43 +197,86 @@ public class ForagePopup : Popup
         GameSession session = Session;
         if (session == null) return;
 
+        // The focus a quest needs is chosen for you once. After that, your choice sticks.
+        ForageGoal goal = ForageGoals.Current(session.Design, session.Quests);
+        bool hint = goal != null && !goal.IsMet && goal.focus != null;
+        if (hint)
+        {
+            string key = goal.quest.id + goal.item.id;
+            if (key != _hintKey)
+            {
+                _hintKey = key;
+                _focusId = goal.focus.id;
+            }
+        }
+
         Clear(_focusRow);
         AddChoice(_focusRow, "Anything", _focusId == "", () => { _focusId = ""; RefreshSetup(); });
         foreach (FocusData focus in session.Design.focuses)
         {
             string id = focus.id;
-            AddChoice(_focusRow, focus.name, _focusId == id, () => { _focusId = id; RefreshSetup(); });
+            Button choice = AddChoice(_focusRow, focus.name, _focusId == id, () => { _focusId = id; RefreshSetup(); });
+            if (hint && goal.focus.id == id)
+                SetNudge(choice, ForageGoals.Describe(goal, QuestLogPopup.NpcName(session.Design, goal.quest.giver)));
         }
 
-        // Who comes along: companions you've befriended, each once a day for a few coins.
+        RefreshCompanions(session);
+        RefreshPerks(session);
+        RefreshPreview(session);
+        RefreshStatus(session);
+    }
+
+    /// <summary>Who comes along: companions you've befriended, each once a day. Hidden until you have one.</summary>
+    private void RefreshCompanions(GameSession session)
+    {
         Clear(_companionRow);
         CompanionData kept = session.Design.GetCompanion(_companionId);
-        if (kept == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId) || !ForagingService.IsAboutNow(session.State, kept)) _companionId = "";
+        if (kept == null || !Unlocks.IsCompanionUnlocked(session.Design, session.State, _companionId) || !ForagingService.IsAboutNow(session.State, kept)
+            || ForagingService.IsTired(session.State, _companionId)) _companionId = "";
+
+        bool any = false;
         AddChoice(_companionRow, "Just me", _companionId == "", () => { _companionId = ""; RefreshSetup(); });
         foreach (CompanionData companion in session.Design.companions)
         {
             if (!Unlocks.IsCompanionUnlocked(session.Design, session.State, companion.id)) continue;
             if (!ForagingService.IsAboutNow(session.State, companion)) continue; // day companions sleep at night, and the other way round
+            any = true;
             string id = companion.id;
             bool tired = ForagingService.IsTired(session.State, id);
             string label = tired ? $"{companion.name} (tired)" : companion.tripCost > 0 ? $"{companion.name}, {companion.tripCost}c" : companion.name;
             Button choice = AddChoice(_companionRow, label, _companionId == id, () => { _companionId = id; RefreshSetup(); });
             choice.interactable = !tired;
         }
+        _companionSection.SetActive(any);
 
-        // Perks: learned from companions; as many as the slots allow, and they stack.
+        CompanionData chosen = session.Design.GetCompanion(_companionId);
+        string soft = ColorUtility.ToHtmlStringRGB(GameUi.InkSoft);
+        _companionLabel.text = chosen == null ? "Companions"
+            : $"Companions  <color=#{soft}>{chosen.name}: {ModifierText.Describe(chosen.modifiers)}. " +
+              $"{(chosen.tripCost > 0 ? $"{chosen.tripCost} coins, once" : "Once")} a day.</color>";
+
+        Sprite portrait = chosen != null ? session.Database.Find<CompanionDefinition>(chosen.id)?.portrait : null;
+        if (_companionArt)
+        {
+            _companionArt.gameObject.SetActive(portrait);
+            _companionArt.sprite = portrait;
+        }
+    }
+
+    /// <summary>Perks: learned from companions; as many as the slots allow, and they stack. Hidden until you have one.</summary>
+    private void RefreshPerks(GameSession session)
+    {
         Clear(_perkRow);
         int slots = session.Design.rules.PerkSlots(session.State);
         _perkIds.RemoveAll(id => !Unlocks.IsPerkUnlocked(session.Design, session.State, id));
         while (_perkIds.Count > slots) _perkIds.RemoveAt(_perkIds.Count - 1);
-        bool anyPerks = false;
+        bool any = false;
         foreach (PerkData perk in session.Design.perks)
         {
             if (!Unlocks.IsPerkUnlocked(session.Design, session.State, perk.id)) continue;
-            anyPerks = true;
+            any = true;
             string id = perk.id;
-            bool on = _perkIds.Contains(id);
-            AddChoice(_perkRow, perk.name, on, () =>
+            AddChoice(_perkRow, perk.name, _perkIds.Contains(id), () =>
             {
                 if (_perkIds.Contains(id)) _perkIds.Remove(id);
                 else if (_perkIds.Count < slots) _perkIds.Add(id);
@@ -225,52 +284,24 @@ public class ForagePopup : Popup
                 RefreshSetup();
             });
         }
+        _perkSection.SetActive(any);
+
         string soft = ColorUtility.ToHtmlStringRGB(GameUi.InkSoft);
-        var chosenPerks = new List<ForageModifier>();
-        foreach (string id in _perkIds) chosenPerks.AddRange(session.Design.GetPerk(id)?.modifiers ?? new List<ForageModifier>());
-        // With none yet, the note sits where the perks will go, so the section keeps its shape.
-        if (!anyPerks)
-        {
-            TextMeshProUGUI none = Instantiate(_perkLabel, _perkRow);
-            none.text = "None yet. Companions teach them after many trips together.";
-        }
-        _perkLabel.text = !anyPerks ? "Perks"
-            : _perkIds.Count == 0 ? $"Perks (0/{slots})  <color=#{soft}>Tap one to take it along.</color>"
-            : $"Perks ({_perkIds.Count}/{slots})  <color=#{soft}>{ModifierText.Describe(chosenPerks)}</color>";
+        var chosen = new List<ForageModifier>();
+        foreach (string id in _perkIds) chosen.AddRange(session.Design.GetPerk(id)?.modifiers ?? new List<ForageModifier>());
+        _perkLabel.text = _perkIds.Count == 0 ? $"Perks (0/{slots})"
+            : $"Perks ({_perkIds.Count}/{slots})  <color=#{soft}>{ModifierText.Describe(chosen)}</color>";
+    }
 
-        CompanionData chosen = session.Design.GetCompanion(_companionId);
-        _companionLabel.text = chosen == null ? $"Companions:"
-            : $"Take along  <color=#{soft}>{chosen.name}: {ModifierText.Describe(chosen.modifiers)}. " +
-              $"{(chosen.tripCost > 0 ? $"{chosen.tripCost} coins, " : "")}once a day.</color>";
-
-        int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
-        bool canGo = ForagingService.CanBegin(session.Design, session.State, CurrentSetup(session), out string whyNot);
-        QuestData waitsFor = session.Quests.ForagingWaitsFor();
-        if (canGo && waitsFor != null)
-        {
-            canGo = false;
-            whyNot = $"{QuestLogPopup.NpcName(session.Design, waitsFor.giver)} wants to say hello before you head into the bush.";
-        }
-        string berry = ColorUtility.ToHtmlStringRGB(GameUi.Berry);
-        _tripsLeft.text = tripsLeft == 0
-            ? session.State.isNight
-                ? $"<color=#{berry}>That's tonight's trip done. Go to bed, and forage again tomorrow.</color>"
-                : $"<color=#{berry}>It's evening. Close the cafe for the day, and forage again tomorrow.</color>"
-            : !canGo ? $"<color=#{berry}>{whyNot}</color>"
-            : tripsLeft < 0 ? "" : session.State.isNight ? "One trip tonight. Night brings different finds."
-            : $"{tripsLeft} trip{(tripsLeft == 1 ? "" : "s")} left today";
-        _go.interactable = canGo;
-        GameUi.SetLabel(_go, _emptyMenuWarned ? "Go anyway" : "Go!");
-        if (_emptyMenuWarned && canGo)
-            _tripsLeft.text = $"<color=#{berry}>Your menu's empty, so the cafe won't serve anyone while you're out. Set it at the cafe door, or go anyway.</color>";
-
-        // What you might find: the likeliest first, rare things left out so they stay a surprise.
-        ExpeditionSetup setup = CurrentSetup(session);
-        ForagePreview preview = ForagingService.Preview(session.Design, setup, new GameStateForageContext(session.State));
-        FocusData chosenFocus = session.Design.GetFocus(_focusId);
+    /// <summary>What you might find: what you're looking for first, then the likeliest, leaving rare things as a surprise.</summary>
+    private void RefreshPreview(GameSession session)
+    {
+        ForagePreview preview = ForagingService.Preview(session.Design, CurrentSetup(session), new GameStateForageContext(session.State));
+        FocusData focus = session.Design.GetFocus(_focusId);
         preview.odds.Sort((a, b) => b.chancePerRoll.CompareTo(a.chancePerRoll));
 
-        var cards = new List<ItemCard>();
+        var focused = new List<ItemCard>();
+        var others = new List<ItemCard>();
         bool anyRare = false;
         foreach (ForageOdds odds in preview.odds)
         {
@@ -281,22 +312,75 @@ public class ForagePopup : Popup
                 anyRare = true;
                 continue;
             }
-            if (cards.Count >= MaxPreviewItems) continue;
-            bool focused = chosenFocus != null && chosenFocus.tags.Exists(item.HasTag);
-            cards.Add(Card(session, item, focused ? "more" : ""));
+            if (focus != null && focus.tags.Exists(item.HasTag)) focused.Add(Card(session, item, "more"));
+            else others.Add(Card(session, item, ""));
         }
-        _preview.SetItems(cards);
+        focused.AddRange(others);
+        if (focused.Count > MaxPreviewItems) focused.RemoveRange(MaxPreviewItems, focused.Count - MaxPreviewItems);
+        _preview.SetItems(focused);
 
-        // Teaches the focus: until you pick one, say what it does.
-        _previewNote.text = (chosenFocus != null
-                                ? $"Looking out for {chosenFocus.name.ToLowerInvariant()}: those turn up more (marked \"more\"). "
-                                : "Tip: choose something to look out for, and you'll find more of it. ") +
-                            (anyRare ? "Something rare might turn up too." : "");
+        _previewLabel.text = focus != null ? "You'll find more of these:" : "A bit of everything:";
+        string note = anyRare ? "And maybe something rare." : "";
         // Today's event changes what turns up, so it goes with the finds.
         DayEventData today = DayEvents.Today(session.Design, session.State);
         TimeOfDay now = session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day;
         if (today != null && (DayEvents.ForageModifiersFor(session.Design, today.id, now).Count > 0 || today.peekLonger || today.peek.Count > 0))
-            _previewNote.text += $"\n<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
+            note += (note.Length > 0 ? "\n" : "") + $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>{today.name}:</b> {today.effect}</color>";
+        _previewNote.text = note;
+    }
+
+    /// <summary>Trips left, whether you can go, and what the cafe does while you're out.</summary>
+    private void RefreshStatus(GameSession session)
+    {
+        DayRules rules = session.Design.rules;
+        GameState state = session.State;
+        int tripsLeft = ForagingService.TripsLeftToday(session.Design, state);
+        bool canGo = ForagingService.CanBegin(session.Design, state, CurrentSetup(session), out string whyNot);
+        QuestData waitsFor = session.Quests.ForagingWaitsFor();
+        if (canGo && waitsFor != null)
+        {
+            canGo = false;
+            whyNot = $"{QuestLogPopup.NpcName(session.Design, waitsFor.giver)} wants to say hello before you head into the bush.";
+        }
+
+        string status;
+        if (tripsLeft == 0)
+            status = state.isNight ? "That's tonight's trip done. Go to bed, and forage again tomorrow."
+                : "It's evening. Close the cafe for the day, and forage again tomorrow.";
+        else if (!canGo) status = whyNot;
+        else if (_emptyMenuWarned) status = "Your menu's empty, so the cafe won't serve anyone while you're out. Set it at the cafe door, or go anyway.";
+        else if (state.isNight) status = "Night brings different finds.";
+        else if (tripsLeft < 0) status = "";
+        else
+        {
+            int serves = rules.NextPartSales(state);
+            status = state.menu.Count > 0 && serves > 0 ? $"The cafe serves {serves} dish{(serves == 1 ? "" : "es")} while you're out"
+                : state.menu.Count == 0 && session.Cafe.CanCookAnything() ? "The cafe's menu is empty"
+                : ""; // nothing to say until there's something you could make
+        }
+        _status.text = status;
+        _status.transform.parent.gameObject.SetActive(status.Length > 0);
+
+        _go.interactable = canGo;
+        SetLabel(_go, _emptyMenuWarned ? "Go anyway" : "Head out");
+        RefreshPips(_setupPips, session);
+    }
+
+    private void RefreshPips(RectTransform row, GameSession session)
+    {
+        Clear(row);
+        GameState state = session.State;
+        int total = state.isNight ? session.Design.rules.nightTrips : session.Design.rules.TripsPerDay(state);
+        int left = ForagingService.TripsLeftToday(session.Design, state);
+        row.gameObject.SetActive(total > 0 && left >= 0);
+        for (int i = 0; i < total; i++)
+        {
+            Image pip = Instantiate(_pipTemplate, row);
+            pip.gameObject.SetActive(true);
+            Color color = pip.color;
+            color.a = i < left ? 1f : _usedPipAlpha;
+            pip.color = color;
+        }
     }
 
     private void Go()
@@ -320,6 +404,7 @@ public class ForagePopup : Popup
         if (emptyMenu && !_emptyMenuWarned)
         {
             _emptyMenuWarned = true;
+            SetStep(_setup); // pressing Go again from the results comes back here for the warning
             RefreshSetup();
             return;
         }
@@ -339,10 +424,9 @@ public class ForagePopup : Popup
     }
 
     /// <summary>
-    /// The trip itself: "Out foraging...", and a little peek-a-boo. After a moment one of three bushes
-    /// rustles: tap that bush while it's rustling to grab what's in it as a bonus find. What it was is only
-    /// revealed in the results (no item art needed). Miss it and it's gone; the trip's own finds are never
-    /// affected. Skip goes straight to the results.
+    /// The trip itself: the gecko looks around the bushes, and a little peek-a-boo. After a moment one bush
+    /// rustles: tap it while it's rustling to grab what's in it as a bonus find. What it was is only revealed
+    /// in the results. Miss it and it's gone; the trip's own finds are never affected. Skip goes straight to the results.
     /// </summary>
     private IEnumerator Trip()
     {
@@ -357,35 +441,47 @@ public class ForagePopup : Popup
         _tappedBush = -1;
         _skipped = false;
         _bonus = null;
-        _peekNote.text = peek != null ? "Keep an eye on the bushes..." : "";
+        _outText.text = "Out foraging...";
+        _peekNote.text = peek != null ? "Keep an eye on the bushes" : "";
         foreach (RectTransform b in _bushes) b.localRotation = Quaternion.identity;
 
         bool resolved = peek == null;
+        float hopAt = -1f;
+        float facing = 1f;
         for (float t = 0f; t < TripSeconds && !_skipped; t += Time.unscaledDeltaTime) // the popup pauses the game
         {
-            _outText.text = "Out foraging" + new string('.', 1 + (int)(t * 3f) % 3);
+            if (_scenery) _scenery.anchoredPosition = _sceneryStart + new Vector2(-SceneryDrift * t / TripSeconds, 0f);
 
             if (!resolved)
             {
                 bool rustling = t >= rustleAt && t < rustleAt + rustleFor;
                 _bushes[bush].localRotation = Quaternion.Euler(0f, 0f, rustling ? Mathf.Sin(t * 40f) * 7f : 0f);
-                if (rustling && _peekNote.text != "Something's rustling!") _peekNote.text = "Something's rustling!";
+                if (rustling)
+                {
+                    _outText.text = "Something's rustling!";
+                    _peekNote.text = "";
+                    if (_gecko) facing = _bushes[bush].position.x < _gecko.position.x ? -1f : 1f;
+                }
 
                 if (_tappedBush == bush && rustling)
                 {
                     _bonus = ForagingService.TakePeekABoo(session.Design, session.State);
                     session.SaveNow();
-                    _peekNote.text = $"<color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}><b>Got something!</b></color>";
+                    _outText.text = "Got something!";
+                    hopAt = t;
+                    _peekNote.text = "";
                     resolved = true;
                 }
                 else if (t >= rustleAt + rustleFor)
                 {
                     ForagingService.MissPeekABoo(session.State);
+                    _outText.text = "Out foraging...";
                     _peekNote.text = "It got away.";
                     resolved = true;
                 }
                 if (resolved) _bushes[bush].localRotation = Quaternion.identity;
             }
+            MoveGecko(t, hopAt, facing);
             _tappedBush = -1; // a tap only counts on the frame it lands
             yield return null;
         }
@@ -395,8 +491,21 @@ public class ForagePopup : Popup
         ShowResults();
     }
 
-    // ----- Results -----
+    /// <summary>Pads on the spot, facing the way it's looking, with a happy hop when you grab something.</summary>
+    private void MoveGecko(float t, float hopAt, float facing)
+    {
+        if (!_gecko) return;
+        float height = Mathf.Abs(Mathf.Sin(t * 7f)) * 10f;
+        if (hopAt >= 0f && t - hopAt < HopSeconds) height += Mathf.Sin((t - hopAt) / HopSeconds * Mathf.PI) * 90f;
+        _gecko.anchoredPosition = _geckoStart + new Vector2(0f, height);
+        Vector3 scale = _gecko.localScale;
+        scale.x = Mathf.Abs(scale.x) * facing;
+        _gecko.localScale = scale;
+    }
 
+    // ----- Back again -----
+
+    /// <summary>Shows what you found and puts it straight in the bag.</summary>
     private void ShowResults()
     {
         GameSession session = Session;
@@ -414,10 +523,19 @@ public class ForagePopup : Popup
             ItemData item = session.Design.GetItem(stack.itemId);
             if (item != null) cards.Add(Card(session, item, item.unique ? "" : "x" + stack.qty));
         }
-        _found.SetItems(cards);
+        int found = result.TotalItems();
+        _resultsTitle.text = found == 0 ? "Nothing this time" : $"{found} find{(found == 1 ? "" : "s")}, in your bag";
+        _resultsNote.text = ResultNotes(session, result);
 
-        _resultsTitle.text = cards.Count == 0 ? "Nothing this time" : $"You found {result.TotalItems()} things";
+        Claim(session);
+        RefreshQuestCard(session);
+        RefreshPips(_resultPips, session);
+        SetNextSteps(session);
+        StartCoroutine(DropFinds(cards));
+    }
 
+    private string ResultNotes(GameSession session, ForageResult result)
+    {
         var notes = new List<string>();
         foreach (string rareId in result.rareFinds)
         {
@@ -429,7 +547,7 @@ public class ForagePopup : Popup
             ItemData item = session.Design.GetItem(stack.itemId);
             RecipeData recipe = item != null ? session.Design.GetRecipe(item.teachesRecipe) : null;
             if (recipe != null && !Unlocks.IsRecipeUnlocked(session.Design, session.State, recipe.id))
-                notes.Add($"<b>{item.name}</b> will teach you a recipe: {recipe.name}.");
+                notes.Add($"<b>{item.name}</b> has taught you a recipe: {recipe.name}.");
         }
         // A companion about to teach their perk (Claim does it).
         CompanionData companion = session.Design.GetCompanion(session.State.pendingExpedition.setup.companionId);
@@ -460,30 +578,98 @@ public class ForagePopup : Popup
                 sold.Add($"{dish.sold} {session.Design.GetRecipe(dish.recipeId)?.name ?? dish.recipeId}");
                 coins += dish.coins;
             }
-            notes.Add($"While you were out, the cafe sold {string.Join(", ", sold)}. <color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}>+{coins} coins</color>");
+            notes.Add($"The cafe sold {string.Join(", ", sold)}. <color=#{ColorUtility.ToHtmlStringRGB(GameUi.Moss)}>+{coins} coins</color>");
         }
-        if (ForagingService.TripsLeftToday(session.Design, session.State) == 0)
-            notes.Add("The sun's going down. Head back to the cafe to close up for the day.");
         if (Debug.isDebugBuild) notes.Add($"<size=70%><color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>seed {result.seed}</color></size>");
-        _resultsNote.text = string.Join("\n", notes);
+        return string.Join("\n", notes);
     }
 
-    private void Collect(bool close)
+    private void Claim(GameSession session)
     {
         _emptyMenuMissed = false; // that note was for this trip only
-        GameSession session = Session;
-        if (session == null) return;
         ExpeditionClaim claim = ForagingService.Claim(session.Design, session.State, session.Economy, session.Events);
-        if (claim.paid)
-        {
-            foreach (string recipeId in claim.learnedRecipeIds)
-                Debug.Log($"[Forage] Learned recipe {recipeId}.");
-            session.SaveNow();
-        }
-        if (close) Close();
+        if (!claim.paid) return;
+        foreach (string recipeId in claim.learnedRecipeIds)
+            Debug.Log($"[Forage] Learned recipe {recipeId}.");
+        session.SaveNow();
     }
 
-    // ----- Building the screen -----
+    private void RefreshQuestCard(GameSession session)
+    {
+        ForageGoal goal = ForageGoals.Current(session.Design, session.Quests);
+        _questCard.SetActive(goal != null);
+        if (goal == null) return;
+        _questLabel.text = $"{goal.quest.title}: {goal.have} of {goal.needed} {goal.item.name.ToLowerInvariant()}";
+        _questBar.fillAmount = goal.needed > 0 ? (float)goal.have / goal.needed : 1f;
+    }
+
+    /// <summary>One main button for what to do next: see whoever has finished work for you, go again, or head home.</summary>
+    private void SetNextSteps(GameSession session)
+    {
+        int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
+        bool canGoAgain = tripsLeft != 0;
+        QuestData ready = ForageGoals.ReadyToHandIn(session.Quests);
+
+        if (ready != null)
+        {
+            string giver = QuestLogPopup.NpcName(session.Design, ready.giver);
+            SetNext(_nextMain, $"Go and see {giver}{Visitors.WhenAbout(session.Design, session.State, ready.giver)}", ref _mainAction, Close);
+            SetNext(_nextOther, canGoAgain ? "Go again" : null, ref _otherAction, Go);
+        }
+        else if (canGoAgain)
+        {
+            SetNext(_nextMain, "Go again", ref _mainAction, Go);
+            SetNext(_nextOther, "Back to the cafe", ref _otherAction, Close);
+        }
+        else
+        {
+            string done = session.State.isNight ? "Back to bed" : "Close up for the day";
+            SetNext(_nextMain, done, ref _mainAction, Close);
+            SetNext(_nextOther, null, ref _otherAction, null);
+        }
+    }
+
+    private void SetNext(Button button, string label, ref System.Action action, System.Action onClick)
+    {
+        button.gameObject.SetActive(label != null);
+        if (label == null) return;
+        SetLabel(button, label);
+        action = onClick;
+    }
+
+    /// <summary>Finds fall into the basket one at a time. They're already in the bag, so skipping this loses nothing.</summary>
+    private IEnumerator DropFinds(List<ItemCard> cards)
+    {
+        Clear(_pile);
+        var dropping = new List<RectTransform>();
+        foreach (ItemCard card in cards)
+        {
+            RectTransform cell = GameUi.NewRect(card.key, _pile);
+            ItemCardView view = Instantiate(_foundTemplate, cell);
+            view.gameObject.SetActive(true);
+            view.Fill(card);
+            var rect = (RectTransform)view.transform;
+            GameUi.Stretch(rect);
+            rect.anchoredPosition = new Vector2(0f, DropHeight * 2f);
+            dropping.Add(rect);
+        }
+
+        float end = cards.Count * DropGap + DropSeconds;
+        for (float t = 0f; t < end; t += Time.unscaledDeltaTime)
+        {
+            for (int i = 0; i < dropping.Count; i++)
+            {
+                float k = Mathf.Clamp01((t - i * DropGap) / DropSeconds);
+                float fall = 1f - k;
+                float bounce = Mathf.Sin(k * Mathf.PI) * 0.06f * (1f - k);
+                dropping[i].anchoredPosition = new Vector2(0f, (k <= 0f ? 2f : fall * fall + bounce) * DropHeight);
+            }
+            yield return null;
+        }
+        foreach (RectTransform rect in dropping) rect.anchoredPosition = Vector2.zero;
+    }
+
+    // ----- Small helpers -----
 
     private void SetStep(RectTransform step)
     {
@@ -504,8 +690,8 @@ public class ForagePopup : Popup
         Button choice = Instantiate(_choiceTemplate, row);
         choice.gameObject.SetActive(true);
         choice.targetGraphic.color = selected ? _chosenColor : _choiceColor;
-        var text = choice.GetComponentInChildren<TextMeshProUGUI>();
-        if (text)
+        Transform labelObject = choice.transform.Find("Text");
+        if (labelObject && labelObject.TryGetComponent(out TextMeshProUGUI text))
         {
             text.text = label;
             text.color = selected ? _chosenTextColor : _choiceTextColor;
@@ -514,154 +700,368 @@ public class ForagePopup : Popup
         return choice;
     }
 
+    private static void SetNudge(Button choice, string text)
+    {
+        Transform nudge = choice.transform.Find("NudgeTag");
+        if (!nudge) return;
+        nudge.gameObject.SetActive(true);
+        nudge.GetComponentInChildren<TextMeshProUGUI>().text = text;
+    }
+
+    private static void SetLabel(Button button, string label)
+    {
+        Transform labelObject = button.transform.Find("Text");
+        if (labelObject && labelObject.TryGetComponent(out TextMeshProUGUI text)) text.text = label;
+    }
+
     private static void Clear(RectTransform rect)
     {
-        for (int i = rect.childCount - 1; i >= 0; i--) Destroy(rect.GetChild(i).gameObject);
+        for (int i = rect.childCount - 1; i >= 0; i--)
+        {
+            // Off the layout now, rather than at the end of the frame.
+            GameObject child = rect.GetChild(i).gameObject;
+            child.SetActive(false);
+            child.transform.SetParent(null);
+            Destroy(child);
+        }
+    }
+
+    // ----- The default layout -----
+
+    /// <summary>The default layout, closed. Tools > Bush > Rebuild Forage Screen Prefab saves this as the prefab.</summary>
+    public static ForagePopup BuildDefault(Transform parent)
+    {
+        RectTransform root = GameUi.NewRect("ForagePopup", parent);
+        GameUi.Stretch(root);
+        root.gameObject.SetActive(false); // a popup is "open" while active
+        var popup = root.gameObject.AddComponent<ForagePopup>();
+        popup.Build(root);
+        return popup;
+    }
+
+    /// <summary>The trip's step, for the prefab tool.</summary>
+    public GameObject OutStep => _out.gameObject;
+
+    /// <summary>For the prefab tool: replaces just the trip's step, leaving the other two as they are.</summary>
+    public void RebuildOutStep()
+    {
+        for (int i = _out.childCount - 1; i >= 0; i--) DestroyImmediate(_out.GetChild(i).gameObject);
+        BuildOut();
+    }
+
+    /// <summary>For the prefab tool: the backdrop, the gecko and the bushes, from the project's art.</summary>
+    public void UseArt(Sprite backdrop, Sprite gecko, Sprite bush)
+    {
+        Image background = transform.Find("Backdrop").GetComponent<Image>();
+        background.sprite = backdrop;
+        background.color = Color.white;
+        foreach (Image image in _out.GetComponentsInChildren<Image>(true))
+        {
+            if (image.name == "Painting")
+            {
+                image.sprite = backdrop;
+                image.color = Color.white;
+            }
+            else if (image.name == "Foliage")
+            {
+                image.sprite = bush; // keeps its tint: these are the shaded layers behind
+            }
+        }
+        foreach (RectTransform rect in _bushes)
+        {
+            Image image = rect.GetComponent<Image>();
+            image.sprite = bush;
+            image.color = Color.white;
+        }
+        foreach (Image image in GetComponentsInChildren<Image>(true))
+        {
+            if (image.name != "Gecko") continue;
+            image.sprite = gecko;
+            image.color = Color.white;
+        }
     }
 
     private void Build(RectTransform root)
     {
-        // Dim the game behind, and block clicks to it.
-        GameUi.AddPanel(root, new Color(0.08f, 0.07f, 0.05f, 0.55f), false);
+        // The bush fills the screen, and blocks clicks to the game behind it.
+        RectTransform backdrop = GameUi.NewRect("Backdrop", root);
+        GameUi.Stretch(backdrop);
+        var backdropImage = backdrop.gameObject.AddComponent<Image>();
+        backdropImage.color = new Color(0.25f, 0.29f, 0.2f);
+        var fit = backdrop.gameObject.AddComponent<AspectRatioFitter>();
+        fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+        fit.aspectRatio = 5f / 3f;
 
-        RectTransform panel = GameUi.NewRect("Panel", root);
-        panel.anchorMin = new Vector2(0.03f, 0.04f);
-        panel.anchorMax = new Vector2(0.97f, 0.96f);
-        panel.offsetMin = panel.offsetMax = Vector2.zero;
-        GameUi.AddPanel(panel, GameUi.Panel);
+        _setup = Step(root, "Setup");
+        _out = Step(root, "Out");
+        _results = Step(root, "Results");
+        BuildSetup();
+        BuildOut();
+        BuildResults();
+        SetStep(_setup); // so the prefab opens on the first step; turn the others on to edit them
+    }
 
-        _setup = Step(panel, "Setup");
-        _out = Step(panel, "Out");
-        _results = Step(panel, "Results");
+    private void BuildSetup()
+    {
+        // The sheet: only as tall as what's in it, so sections that are hidden leave no hole.
+        RectTransform sheet = Column(_setup, "Sheet", 26f, new RectOffset(52, 52, 40, 44), GameUi.Panel2);
+        GameUi.Place(sheet, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(56f, 0f), new Vector2(1130f, 0f));
+        sheet.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        // Setup: title, where, focus, time, what you might find, Go.
-        Title(_setup, "Go foraging");
-        _close = GameUi.AddButton(_setup, "Close", null, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
-        GameUi.Place((RectTransform)_close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
+        Text(sheet, "What are we after?", 84f, GameUi.Ink, "Title");
 
-        // Each label sits close to its row, with more room between sections.
-        Line(_setup, "Look out for", 30f, GameUi.InkSoft, -124f, 44f);
-        _focusRow = Row(_setup, -172f, 80f);
-        _companionLabel = Line(_setup, "Take along", 30f, GameUi.InkSoft, -282f, 44f);
-        _companionRow = Row(_setup, -330f, 76f);
-        _perkLabel = Line(_setup, "Perks", 30f, GameUi.InkSoft, -436f, 44f);
-        _perkRow = Row(_setup, -484f, 76f);
-        Line(_setup, "You might find", 30f, GameUi.InkSoft, -590f, 44f);
+        _focusRow = GameUi.NewRect("Focus", sheet);
+        var grid = _focusRow.gameObject.AddComponent<GridLayoutGroup>();
+        grid.cellSize = new Vector2(334f, 100f);
+        grid.spacing = new Vector2(14f, 24f);
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = 3;
 
-        RectTransform previewArea = GameUi.NewRect("Preview", _setup);
-        previewArea.anchorMin = new Vector2(0f, 0f);
-        previewArea.anchorMax = new Vector2(1f, 1f);
-        previewArea.offsetMin = new Vector2(24f, 190f);
-        previewArea.offsetMax = new Vector2(-24f, -636f);
-        _preview = ItemGridView.Create(previewArea, true, new Vector2(150f, 160f), true);
+        RectTransform finds = Column(sheet, "Finds", 8f, null, null);
+        _previewLabel = Text(finds, "You'll find more of these:", 31f, GameUi.Ink, "PreviewLabel");
+        RectTransform previewArea = GameUi.NewRect("Preview", finds);
+        previewArea.gameObject.AddComponent<LayoutElement>().preferredHeight = 180f;
+        _preview = ItemGridView.Create(previewArea, true, new Vector2(184f, 170f), true);
+        _preview.MakeCardsFlat();
+        _previewNote = Text(finds, "And maybe something rare.", 27f, GameUi.InkSoft, "PreviewNote");
 
-        _previewNote = GameUi.AddText(_setup, "", 28f, GameUi.InkSoft, TextAlignmentOptions.Left, "PreviewNote");
-        Anchor(_previewNote.rectTransform, 40f, 110f, -400f, 190f);
-        _tripsLeft = GameUi.AddText(_setup, "", 30f, GameUi.Bark, TextAlignmentOptions.Left, "TripsLeft");
-        Anchor(_tripsLeft.rectTransform, 40f, 30f, -400f, 100f);
+        RectTransform companions = Column(sheet, "Companions", 8f, null, null);
+        _companionSection = companions.gameObject;
+        _companionLabel = Text(companions, "Companions", 29f, GameUi.InkSoft, "CompanionLabel");
+        _companionRow = ChoiceRow(companions);
 
-        _go = GameUi.AddButton(_setup, "Go!", null, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
-        GameUi.Place((RectTransform)_go.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
+        RectTransform perks = Column(sheet, "Perks", 8f, null, null);
+        _perkSection = perks.gameObject;
+        _perkLabel = Text(perks, "Perks", 29f, GameUi.InkSoft, "PerkLabel");
+        _perkRow = ChoiceRow(perks);
 
-        // What the choices in the rows are copied from.
-        _choiceTemplate = GameUi.AddButton(_setup, "Choice", null, new Vector2(210f, 76f), Color.white, Color.white, 28f);
+        // Beside it: the gecko at the edge of the bush, ready to go.
+        RectTransform side = Column(_setup, "Side", 20f, null, null);
+        GameUi.Place(side, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 40f), new Vector2(640f, 0f));
+        side.GetComponent<VerticalLayoutGroup>().childAlignment = TextAnchor.LowerCenter;
+        side.GetComponent<VerticalLayoutGroup>().childForceExpandWidth = false;
+        side.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        RectTransform crew = GameUi.NewRect("Crew", side);
+        HorizontalLayoutGroup crewRow = GameUi.AddLayout<HorizontalLayoutGroup>(crew, 8f);
+        crewRow.childAlignment = TextAnchor.LowerCenter;
+        Art(crew, "Gecko", new Vector2(310f, 390f));
+        _companionArt = Art(crew, "Companion", new Vector2(200f, 240f));
+        _companionArt.gameObject.SetActive(false);
+
+        _setupPips = Pips(side);
+        _go = GameUi.AddButton(side, "Head out", null, new Vector2(400f, 120f), GameUi.Apron, GameUi.Cream, 44f);
+
+        RectTransform status = GameUi.NewRect("Status", side);
+        GameUi.AddPanel(status, GameUi.PanelDark).raycastTarget = false;
+        status.gameObject.AddComponent<LayoutElement>().preferredWidth = 620f;
+        HorizontalLayoutGroup statusRow = GameUi.AddLayout<HorizontalLayoutGroup>(status, 0f, new RectOffset(18, 18, 10, 10));
+        statusRow.childForceExpandWidth = true;
+        _status = GameUi.AddText(status, "", 27f, GameUi.Cream, TextAlignmentOptions.Center, "StatusText");
+
+        _close = GameUi.AddButton(_setup, "Back", null, new Vector2(170f, 80f), GameUi.PanelDark, GameUi.Cream, 30f);
+        GameUi.Place((RectTransform)_close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(170f, 80f));
+
+        // What's copied: a choice, with its note hidden, and a trip marker.
+        _choiceTemplate = GameUi.AddButton(_setup, "Choice", null, new Vector2(240f, 84f), Color.white, Color.white, 28f);
         _choiceTemplate.gameObject.name = "ChoiceTemplate";
+        RectTransform nudge = GameUi.NewRect("NudgeTag", _choiceTemplate.transform);
+        GameUi.Place(nudge, new Vector2(0.5f, 0f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(330f, 42f));
+        nudge.localRotation = Quaternion.Euler(0f, 0f, 2f);
+        GameUi.AddPanel(nudge, new Color(0.89f, 0.75f, 0.29f)).raycastTarget = false;
+        GameUi.AddText(nudge, "", 26f, GameUi.Ink, TextAlignmentOptions.Center, "Nudge");
+        nudge.gameObject.SetActive(false);
         _choiceTemplate.gameObject.SetActive(false);
 
-        // Out: a short pause so it feels like a trip.
-        _outText = GameUi.AddText(_out, "Out foraging...", 48f, GameUi.Ink, TextAlignmentOptions.Top, "OutText");
-        _outText.rectTransform.offsetMax = new Vector2(0f, -60f);
+        RectTransform pip = GameUi.NewRect("PipTemplate", _setup);
+        _pipTemplate = pip.gameObject.AddComponent<Image>();
+        _pipTemplate.sprite = GeneratedSprites.Circle;
+        _pipTemplate.color = new Color(0.89f, 0.75f, 0.29f);
+        _pipTemplate.raycastTarget = false;
+        var pipSize = pip.gameObject.AddComponent<LayoutElement>();
+        pipSize.preferredWidth = pipSize.preferredHeight = 46f;
+        pip.gameObject.SetActive(false);
+    }
 
-        // Peek-a-boo: three bushes (plain circles, no art needed); tap the one that rustles.
+    private void BuildOut()
+    {
+        // A place of its own, from what's already painted: the misty green and the clear ground of the
+        // backdrop, cropped in, with shaded layers of the Bush art hiding the join.
+        Crop(_out, "Sky", new Rect(0f, 0.36f, 1f, 0.64f), new Rect(0.71f, 0.8f, 0.29f, 0.17f), new Color(0.3f, 0.38f, 0.28f));
+        Crop(_out, "Ground", new Rect(0f, 0f, 1f, 0.38f), new Rect(0.05f, 0.17f, 0.65f, 0.23f), new Color(0.36f, 0.27f, 0.2f));
+
+        _scenery = GameUi.NewRect("Scenery", _out);
+        GameUi.Stretch(_scenery);
+        FoliageRow(_scenery, 11, 230f, 300f, 340f, new Color(0.42f, 0.5f, 0.4f));
+        FoliageRow(_scenery, 9, 300f, 230f, 460f, new Color(0.62f, 0.68f, 0.56f));
+
+        _outText = GameUi.AddText(_out, "Out foraging...", 92f, GameUi.Cream, TextAlignmentOptions.Top, "OutText");
+        _outText.rectTransform.offsetMax = new Vector2(0f, -44f);
+        _peekNote = GameUi.AddText(_out, "", 38f, GameUi.Cream, TextAlignmentOptions.Top, "PeekNote");
+        _peekNote.rectTransform.offsetMax = new Vector2(0f, -150f);
+
+        // Three bushes to watch; tap the one that rustles.
         _bushes = new RectTransform[3];
         for (int i = 0; i < 3; i++)
         {
             RectTransform bushRect = GameUi.NewRect($"Bush{i}", _out);
-            GameUi.Place(bushRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0f), new Vector2((i - 1) * 380f, -170f), new Vector2(300f, 200f));
+            GameUi.Place(bushRect, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2((i - 1) * 560f, 90f), new Vector2(440f, 440f));
             Image bushImage = bushRect.gameObject.AddComponent<Image>();
             bushImage.sprite = GeneratedSprites.Circle;
             bushImage.color = new Color(0.33f + i * 0.04f, 0.52f, 0.28f);
+            bushImage.preserveAspect = true;
             bushRect.gameObject.AddComponent<Button>().targetGraphic = bushImage;
             _bushes[i] = bushRect;
         }
 
-        _peekNote = GameUi.AddText(_out, "", 34f, GameUi.InkSoft, TextAlignmentOptions.Center, "PeekNote");
-        _peekNote.rectTransform.anchorMin = new Vector2(0f, 0f);
-        _peekNote.rectTransform.anchorMax = new Vector2(1f, 0f);
-        _peekNote.rectTransform.pivot = new Vector2(0.5f, 0f);
-        _peekNote.rectTransform.offsetMin = new Vector2(40f, 150f);
-        _peekNote.rectTransform.offsetMax = new Vector2(-40f, 220f);
+        // In front, in the gap between the first two bushes.
+        RectTransform gecko = GameUi.NewRect("Gecko", _out);
+        GameUi.Place(gecko, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-280f, 24f), new Vector2(250f, 310f));
+        Image geckoImage = gecko.gameObject.AddComponent<Image>();
+        geckoImage.preserveAspect = true;
+        geckoImage.raycastTarget = false; // never in the way of a bush
+        geckoImage.color = new Color(0.61f, 0.61f, 0.3f);
+        _gecko = gecko;
 
-        _skip = GameUi.AddButton(_out, "Skip", null, new Vector2(200f, 84f), GameUi.Bark, GameUi.Cream);
-        GameUi.Place((RectTransform)_skip.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(200f, 84f));
-
-        // Results: what you found, notes (rare finds, recipes), Collect.
-        _resultsTitle = Title(_results, "You found");
-        RectTransform foundArea = GameUi.NewRect("Found", _results);
-        foundArea.anchorMin = new Vector2(0f, 0f);
-        foundArea.anchorMax = new Vector2(1f, 1f);
-        foundArea.offsetMin = new Vector2(24f, 300f);
-        foundArea.offsetMax = new Vector2(-24f, -130f);
-        _found = ItemGridView.Create(foundArea, false, new Vector2(190f, 210f), true);
-
-        _resultsNote = GameUi.AddText(_results, "", 32f, GameUi.Ink, TextAlignmentOptions.TopLeft, "ResultsNote");
-        Anchor(_resultsNote.rectTransform, 40f, 150f, -400f, 290f);
-
-        _collect = GameUi.AddButton(_results, "Collect", null, new Vector2(320f, 110f), GameUi.Moss, GameUi.Cream, 40f);
-        GameUi.Place((RectTransform)_collect.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(320f, 110f));
-
-        SetStep(_setup); // so the prefab opens on the first step; turn the others on to edit them
+        _skip = GameUi.AddButton(_out, "Skip", null, new Vector2(170f, 80f), GameUi.PanelDark, GameUi.Cream, 30f);
+        GameUi.Place((RectTransform)_skip.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), new Vector2(170f, 80f));
     }
 
-    private static RectTransform Step(RectTransform panel, string name)
+    /// <summary>Shows one part of a painting, given as fractions of it, in one part of the screen.</summary>
+    private static void Crop(RectTransform parent, string name, Rect onScreen, Rect ofPainting, Color fallback)
     {
-        RectTransform step = GameUi.NewRect(name, panel);
+        RectTransform window = GameUi.NewRect(name, parent);
+        window.anchorMin = onScreen.min;
+        window.anchorMax = onScreen.max;
+        window.offsetMin = window.offsetMax = Vector2.zero;
+        window.gameObject.AddComponent<RectMask2D>();
+
+        RectTransform painting = GameUi.NewRect("Painting", window);
+        painting.anchorMin = new Vector2(-ofPainting.xMin / ofPainting.width, -ofPainting.yMin / ofPainting.height);
+        painting.anchorMax = new Vector2((1f - ofPainting.xMin) / ofPainting.width, (1f - ofPainting.yMin) / ofPainting.height);
+        painting.offsetMin = painting.offsetMax = Vector2.zero;
+        Image image = painting.gameObject.AddComponent<Image>();
+        image.color = fallback;
+        image.raycastTarget = false;
+    }
+
+    /// <summary>A row of shaded bushes behind the ones you can tap, running off both sides of the screen.</summary>
+    private static void FoliageRow(RectTransform parent, int count, float gap, float height, float size, Color tint)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            RectTransform bush = GameUi.NewRect("Foliage", parent);
+            // Uneven, so it doesn't read as a neat row of the same bush.
+            float wobbleX = (i * 37 % 11 - 5) * 12f;
+            float wobbleY = (i * 53 % 7 - 3) * 12f;
+            float scale = 1f + (i * 29 % 5 - 2) * 0.07f;
+            GameUi.Place(bush, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2((i - (count - 1) * 0.5f) * gap + wobbleX, height + wobbleY), new Vector2(size * scale, size * scale));
+            Image image = bush.gameObject.AddComponent<Image>();
+            image.sprite = GeneratedSprites.Circle;
+            image.color = tint;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
+        }
+    }
+
+    private void BuildResults()
+    {
+        // The basket: finds land in the pile above its front, which draws over them.
+        _pile = GameUi.NewRect("Pile", _results);
+        GameUi.Place(_pile, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(530f, 226f), new Vector2(860f, 760f));
+        var pile = _pile.gameObject.AddComponent<GridLayoutGroup>();
+        pile.cellSize = new Vector2(190f, 210f);
+        pile.spacing = new Vector2(8f, 0f);
+        pile.startCorner = GridLayoutGroup.Corner.LowerLeft;
+        pile.childAlignment = TextAnchor.LowerCenter;
+
+        RectTransform basket = GameUi.NewRect("BasketFront", _results);
+        GameUi.Place(basket, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(530f, 36f), new Vector2(760f, 200f));
+        GameUi.AddPanel(basket, GameUi.Bark).raycastTarget = false;
+
+        _foundTemplate = ItemCardView.Build(_results, "FoundTemplate");
+        _foundTemplate.MakeFlat();
+        _foundTemplate.SetNameColor(GameUi.Cream); // these sit on the bush, not on paper
+        _foundTemplate.gameObject.SetActive(false);
+
+        // Beside it: what happened, and what to do next.
+        RectTransform side = Column(_results, "Side", 20f, null, null);
+        GameUi.Place(side, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-50f, 40f), new Vector2(800f, 0f));
+        side.GetComponent<VerticalLayoutGroup>().childAlignment = TextAnchor.LowerCenter;
+        side.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        RectTransform summary = Column(side, "Summary", 10f, new RectOffset(34, 34, 22, 26), GameUi.Panel2);
+        _resultsTitle = Text(summary, "5 finds, in your bag", 62f, GameUi.Ink, "Title");
+        _resultsNote = Text(summary, "", 30f, GameUi.Ink, "ResultsNote");
+
+        RectTransform quest = Column(side, "QuestCard", 10f, new RectOffset(34, 34, 18, 24), GameUi.Panel2);
+        _questCard = quest.gameObject;
+        _questLabel = Text(quest, "", 28f, GameUi.InkSoft, "QuestLabel");
+        RectTransform bar = GameUi.NewRect("Bar", quest);
+        bar.gameObject.AddComponent<LayoutElement>().preferredHeight = 20f;
+        GameUi.AddPanel(bar, new Color(0f, 0f, 0f, 0.15f)).raycastTarget = false;
+        RectTransform fill = GameUi.NewRect("Fill", bar);
+        GameUi.Stretch(fill);
+        _questBar = fill.gameObject.AddComponent<Image>();
+        _questBar.sprite = GeneratedSprites.Square;
+        _questBar.color = GameUi.Moss;
+        _questBar.type = Image.Type.Filled;
+        _questBar.fillMethod = Image.FillMethod.Horizontal;
+        _questBar.raycastTarget = false;
+
+        _resultPips = Pips(side);
+        _nextMain = GameUi.AddButton(side, "Go again", null, new Vector2(800f, 120f), GameUi.Apron, GameUi.Cream, 44f);
+        _nextOther = GameUi.AddButton(side, "Back to the cafe", null, new Vector2(800f, 84f), GameUi.PanelDark, GameUi.Cream, 30f);
+    }
+
+    private static RectTransform Step(RectTransform parent, string name)
+    {
+        RectTransform step = GameUi.NewRect(name, parent);
         GameUi.Stretch(step);
         return step;
     }
 
-    private static TextMeshProUGUI Title(RectTransform parent, string text)
+    /// <summary>A stack that fills its width, each thing as tall as it needs. With a colour, it's a panel.</summary>
+    private static RectTransform Column(RectTransform parent, string name, float spacing, RectOffset padding, Color? panel)
     {
-        TextMeshProUGUI title = GameUi.AddText(parent, text, 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
-        title.fontStyle = FontStyles.Bold;
-        title.rectTransform.offsetMin = new Vector2(40f, 0f);
-        title.rectTransform.offsetMax = new Vector2(-260f, -28f);
-        return title;
+        RectTransform column = GameUi.NewRect(name, parent);
+        if (panel.HasValue) GameUi.AddPanel(column, panel.Value).raycastTarget = false;
+        VerticalLayoutGroup layout = GameUi.AddLayout<VerticalLayoutGroup>(column, spacing, padding);
+        layout.childAlignment = TextAnchor.UpperLeft;
+        layout.childForceExpandWidth = true;
+        return column;
     }
 
-    /// <summary>A line of text across the top part of the panel, <paramref name="top"/> below the top edge.</summary>
-    private static TextMeshProUGUI Line(RectTransform parent, string text, float size, Color color, float top, float height)
-    {
-        TextMeshProUGUI line = GameUi.AddText(parent, text, size, color, TextAlignmentOptions.Left, "Line");
-        RectTransform rect = line.rectTransform;
-        rect.anchorMin = new Vector2(0f, 1f);
-        rect.anchorMax = new Vector2(1f, 1f);
-        rect.pivot = new Vector2(0.5f, 1f);
-        rect.offsetMin = new Vector2(40f, top - height);
-        rect.offsetMax = new Vector2(-40f, top);
-        return line;
-    }
+    private static TextMeshProUGUI Text(RectTransform parent, string text, float size, Color color, string name) =>
+        GameUi.AddText(parent, text, size, color, TextAlignmentOptions.Left, name);
 
-    private static RectTransform Row(RectTransform parent, float top, float height)
+    private static RectTransform ChoiceRow(RectTransform parent)
     {
         RectTransform row = GameUi.NewRect("Row", parent);
-        row.anchorMin = new Vector2(0f, 1f);
-        row.anchorMax = new Vector2(1f, 1f);
-        row.pivot = new Vector2(0.5f, 1f);
-        row.offsetMin = new Vector2(40f, top - height); // lined up with the labels
-        row.offsetMax = new Vector2(-40f, top);
         HorizontalLayoutGroup layout = GameUi.AddLayout<HorizontalLayoutGroup>(row, 12f);
         layout.childAlignment = TextAnchor.MiddleLeft;
         return row;
     }
 
-    /// <summary>Stretches along the bottom of the panel, from <paramref name="bottom"/> to <paramref name="top"/>, leaving <paramref name="right"/> (negative) for a button.</summary>
-    private static void Anchor(RectTransform rect, float left, float bottom, float right, float top)
+    private static RectTransform Pips(RectTransform parent)
     {
-        rect.anchorMin = new Vector2(0f, 0f);
-        rect.anchorMax = new Vector2(1f, 0f);
-        rect.pivot = new Vector2(0.5f, 0f);
-        rect.offsetMin = new Vector2(left, bottom);
-        rect.offsetMax = new Vector2(right, top);
+        RectTransform row = GameUi.NewRect("Pips", parent);
+        HorizontalLayoutGroup layout = GameUi.AddLayout<HorizontalLayoutGroup>(row, 14f);
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        return row;
+    }
+
+    private static Image Art(RectTransform parent, string name, Vector2 size)
+    {
+        RectTransform rect = GameUi.NewRect(name, parent);
+        var layout = rect.gameObject.AddComponent<LayoutElement>();
+        layout.preferredWidth = size.x;
+        layout.preferredHeight = size.y;
+        Image image = rect.gameObject.AddComponent<Image>();
+        image.preserveAspect = true;
+        image.raycastTarget = false;
+        image.color = new Color(0.61f, 0.61f, 0.3f);
+        return image;
     }
 }

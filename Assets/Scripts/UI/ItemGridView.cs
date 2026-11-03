@@ -90,6 +90,12 @@ public class ItemGridView : MonoBehaviour
         return view;
     }
 
+    /// <summary>Cards in this grid are only there to look at (it needs a template).</summary>
+    public void MakeCardsFlat()
+    {
+        if (_cardTemplate) _cardTemplate.MakeFlat();
+    }
+
     public void SetItems(IReadOnlyList<ItemCard> cards)
     {
         for (int i = _content.childCount - 1; i >= 0; i--) Destroy(_content.GetChild(i).gameObject);

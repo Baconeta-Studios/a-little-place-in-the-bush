@@ -13,7 +13,9 @@ public class GameUi : MonoBehaviour
 {
     // A small bush palette, shared by everything built here.
     public static readonly Color Panel = new(0.95f, 0.92f, 0.84f, 0.97f);
+    public static readonly Color Panel2 = new(0.91f, 0.86f, 0.75f);
     public static readonly Color PanelDark = new(0.22f, 0.2f, 0.15f, 0.92f);
+    public static readonly Color Apron = new(0.64f, 0.24f, 0.11f);
     public static readonly Color Ink = new(0.2f, 0.16f, 0.11f);
     public static readonly Color InkSoft = new(0.42f, 0.36f, 0.28f);
     public static readonly Color Moss = new(0.33f, 0.52f, 0.28f);

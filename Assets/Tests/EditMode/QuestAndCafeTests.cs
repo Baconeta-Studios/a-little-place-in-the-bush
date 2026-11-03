@@ -4,6 +4,52 @@ namespace Bush.Core.Tests
 {
     public class QuestAndCafeTests
     {
+        private static TestGame GameWantingBugs(int qty)
+        {
+            var game = new TestGame();
+            game.design.quests.Find(q => q.id == TestDesign.Welcome).objectives[0] =
+                new QuestObjective { type = ObjectiveType.HaveItems, target = TestDesign.Bug, qty = qty };
+            return game;
+        }
+
+        [Test]
+        public void ForageGoal_OnlyWhileAQuestIsUnderWay_ThenPointsAtTheFocus()
+        {
+            TestGame game = GameWantingBugs(3);
+            Assert.IsNull(ForageGoals.Current(game.design, game.quests), "Not until it's taken on.");
+
+            game.quests.Start(TestDesign.Welcome);
+            game.economy.Add(TestDesign.Bug, 1);
+            ForageGoal goal = ForageGoals.Current(game.design, game.quests);
+            Assert.AreEqual(TestDesign.FocusBugs, goal.focus.id);
+            Assert.AreEqual(2, goal.Still);
+        }
+
+        [Test]
+        public void ForageGoal_StaysToShowItsDone_AndTheQuestIsReadyToHandIn()
+        {
+            TestGame game = GameWantingBugs(1);
+            game.quests.Start(TestDesign.Welcome);
+            Assert.IsNull(ForageGoals.ReadyToHandIn(game.quests));
+
+            game.economy.Add(TestDesign.Bug, 1);
+            Assert.IsTrue(ForageGoals.Current(game.design, game.quests).IsMet);
+            Assert.AreEqual(TestDesign.Welcome, ForageGoals.ReadyToHandIn(game.quests).id);
+        }
+
+        [Test]
+        public void ForageGoal_ReadsNaturally()
+        {
+            var leaves = new ItemData { id = "a", name = "Leaves" };
+            var worm = new ItemData { id = "b", name = "Worm" };
+            var acorn = new ItemData { id = "c", name = "Acorn" };
+            Assert.AreEqual("Ruru needs 3 leaves", ForageGoals.Describe(new ForageGoal { item = leaves, needed = 3 }, "Ruru"));
+            Assert.AreEqual("Ruru needs leaves", ForageGoals.Describe(new ForageGoal { item = leaves, needed = 1 }, "Ruru"));
+            Assert.AreEqual("Ruru needs 2 worms", ForageGoals.Describe(new ForageGoal { item = worm, needed = 2 }, "Ruru"));
+            Assert.AreEqual("Ruru needs a worm", ForageGoals.Describe(new ForageGoal { item = worm, needed = 1 }, "Ruru"));
+            Assert.AreEqual("Ruru needs an acorn", ForageGoals.Describe(new ForageGoal { item = acorn, needed = 1 }, "Ruru"));
+        }
+
         private TestGame _game;
 
         [SetUp]
