@@ -28,6 +28,6 @@ MonoBehaviour:
   cosiness: 3
   style: garden
   groundShadow: 1
-  shadowSize: {x: 0, y: 0}
-  shadowOffset: {x: 0, y: 0}
+  shadowSize: {x: 2.1, y: 0.7}
+  shadowOffset: {x: 0, y: 0.08}
   shadowStrength: 0.45
