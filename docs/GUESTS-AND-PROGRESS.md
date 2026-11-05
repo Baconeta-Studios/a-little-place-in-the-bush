@@ -26,7 +26,7 @@ Every character has a **Visits** setting (`visits` in the data):
 - Untick **Takes Seats** on a character who should always stay at their own spot (Ruru behind the counter, say). For seated guests to look right, put each SeatPoint where a sitting guest's feet would be.
 - Side quests come from any character, so random visitors give side quests when they drop by.
 
-Placeholder visitors, all only once the cafe has furniture (after *Open for guests*), and now and then to begin with: Snail (25%), Wētā (20%), Kererū the recipe trader (25%), and the companions-to-be, who also come later: Kea (from day 4, 20%), Weka (from day 6, 25%) and Pekapeka (from day 8, 18%). A cosier cafe raises these.
+Random visitors each come on about 1 day in 5 once their part of the story's done: Kunekune, Snail and Weka (20%), Spider (15%), and Kōwhai after the date (25%). By night, Ruru after she moves on, Pekapeka and Gus (20%). That's about one guest a day early on. A cosier cafe raises the chances, up to 1.5 times at cosiness 150 (*Extra Visitors At Full* on the GameDatabase's cafe sign settings), so about 1.5 a day late on. Anyone a quest is waiting on still comes for sure, on top of these.
 
 ## The recipe shop
 
