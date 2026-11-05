@@ -35,7 +35,7 @@ public static class UiPrefabTools
     }
 
     /// <summary>The HUD and the screens built from the shared pieces. Asks before replacing each one.</summary>
-    [MenuItem("Tools/Bush/Rebuild HUD, Quests, Bag, Upgrades, Talking and Cafe Sign", priority = 46)]
+    [MenuItem("Tools/Bush/Rebuild HUD, Quests, Bag, Upgrades, Talking, Cafe Sign and Build Mode", priority = 46)]
     public static void RebuildScreens()
     {
         Directory.CreateDirectory(PrefabFolder);
@@ -54,6 +54,18 @@ public static class UiPrefabTools
         Save(UpgradesPopup.ResourcePath, () => UpgradesPopup.BuildDefault(null).gameObject, sprites, made);
         Save(DialogueBox.ResourcePath, () => DialogueBox.BuildDefault(null).gameObject, sprites, made);
         Save(CafeSignPopup.ResourcePath, () => CafeSignPopup.BuildDefault(null).gameObject, sprites, made);
+        Save(BuildUi.ResourcePath, () => BuildUi.BuildDefault(null).gameObject, sprites, made);
+    }
+
+    [MenuItem("Tools/Bush/Rebuild Build Mode Prefab", priority = 47)]
+    public static void RebuildBuildMode()
+    {
+        Directory.CreateDirectory(PrefabFolder);
+        Directory.CreateDirectory(SpriteFolder);
+        AssetDatabase.Refresh();
+        var made = new List<string>();
+        Save(BuildUi.ResourcePath, () => BuildUi.BuildDefault(null).gameObject, SavedSprites(), made);
+        Finish(made);
     }
 
     [MenuItem("Tools/Bush/Rebuild Menu Board Prefab", priority = 45)]

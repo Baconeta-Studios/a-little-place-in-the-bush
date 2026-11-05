@@ -1,6 +1,6 @@
 # UI
 
-The HUD, forage screen, menu board, quest screen, bag, upgrades, dialogue and cafe sign are all prefabs in `Assets/Resources/UI`, which you can lay out and restyle in the Editor. The build tray and recipe shop are still built in code, from the helpers in `UI/GameUi.cs`. The pause and settings menus are in `Assets/Prefabs/UI/Popups/PopupCanvas.prefab`.
+The HUD, forage screen, menu board, quest screen, bag, upgrades, dialogue, cafe sign and build mode are all prefabs in `Assets/Resources/UI`, which you can lay out and restyle in the Editor. The recipe shop is still built in code, from the helpers in `UI/GameUi.cs`. The pause and settings menus are in `Assets/Prefabs/UI/Popups/PopupCanvas.prefab`.
 
 ## Make the prefabs (once)
 
@@ -38,7 +38,7 @@ Every screen uses the same few pieces, each with one job. Use these before addin
 - **Fonts:** two, across the whole game: Caveat Brush for titles and signs, and Pangolin for everything else, in bold for buttons and names. They're set on `Resources/UI/UiFonts.asset`, and text built in code picks the right one by itself. Add a third only for something special and important.
 - **Colours:** green means done or ready, and red means a problem or shortage.
 
-The main cafe view should show as little as it can. The recipe shop and build tray have the fonts, but not the rest of this yet.
+The main cafe view should show as little as it can. The recipe shop has the fonts, but not the rest of this yet.
 
 ### The title screen (`Assets/Scenes/Title.unity`)
 
@@ -69,6 +69,10 @@ The first scene in the build, and where Main Menu in the pause menu goes. Pressi
 
 `TabTemplate` is copied for each tab, tinted by the *Tab* colours on the root, and `CardTemplate` (under `ItemGrid`) for each item. Set the grid's cell size on its Grid Layout Group.
 
+### Build mode (`BuildMode.prefab`)
+
+`PaperTop` is the strip along the top, with the hint and `DoneButton`, and `PaperTray` is the tray along the bottom. Move or resize either: the camera keeps the floor clear of whatever they cover. `TabTemplate` (under `Tabs`) is copied for each kind of thing you have, tinted by the *Tab* colours on the root, and `CardTemplate` (under `List`) for each thing. `Actions` (Place, Flip, Put away) follows whatever you're holding, with `Reason` just above it when it can't go there. `Toast` is for short messages. **Tools > Bush > Rebuild Build Mode Prefab** makes it again from the default layout, which loses your edits, so it asks first.
+
 ### Upgrades (`UpgradesPopup.prefab`)
 
 `RowTemplate` is copied for each upgrade.
@@ -81,7 +85,7 @@ The first scene in the build, and where Main Menu in the pause menu goes. Pressi
 
 `Group` keeps it all in the middle of any shape of screen. `Sign` and `SignTitle` are the hanging sign. `PipTemplate` is copied for each level of cosiness, with *Unreached Pip Alpha* on the root for the ones you haven't got to. `Stats` holds the four cards.
 
-**Tools > Bush > Rebuild HUD, Quests, Bag, Upgrades, Talking and Cafe Sign** makes these from their default layouts, asking before replacing each one, because that loses your edits.
+**Tools > Bush > Rebuild HUD, Quests, Bag, Upgrades, Talking, Cafe Sign and Build Mode** makes these from their default layouts, asking before replacing each one, because that loses your edits.
 
 ### The forage screen (`ForagePopup.prefab`)
 
