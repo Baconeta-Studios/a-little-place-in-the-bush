@@ -9,6 +9,7 @@ namespace Audio
     {
         private AudioSource _self;
         private Coroutine _resetCoroutine;
+        private Coroutine _fadeCoroutine;
 
         private void Awake()
         {
@@ -42,7 +43,7 @@ namespace Audio
             }
 
             _self.PlayOneShot(clip, volume);
-            _resetCoroutine = StartCoroutine(ResetObject(clip.length + 0.5f));
+            _resetCoroutine = StartCoroutine(ResetObject(clip.length / Mathf.Max(0.1f, _self.pitch) + 0.5f));
         }
 
         public void PlayLooping(AudioClip clip, float volume)
@@ -52,6 +53,34 @@ namespace Audio
             _self.loop = true;
             _self.volume = volume;
             _self.Play();
+        }
+
+        /// <summary>Above 1 is higher and quicker. Set it before playing.</summary>
+        public void SetPitch(float pitch)
+        {
+            if (!_self) _self = GetComponent<AudioSource>();
+            _self.pitch = pitch;
+        }
+
+        /// <summary>Fades to a volume, in real time, so it still works while the game is paused.</summary>
+        public void FadeTo(float volume, float seconds, bool stopAfter = false)
+        {
+            if (!_self) _self = GetComponent<AudioSource>();
+            if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+            _fadeCoroutine = StartCoroutine(Fade(volume, seconds, stopAfter));
+        }
+
+        private IEnumerator Fade(float volume, float seconds, bool stopAfter)
+        {
+            float from = _self.volume;
+            for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime)
+            {
+                _self.volume = Mathf.Lerp(from, volume, t / seconds);
+                yield return null;
+            }
+            _self.volume = volume;
+            _fadeCoroutine = null;
+            if (stopAfter) StopAudio();
         }
 
         public void StopAudio()
@@ -65,7 +94,7 @@ namespace Audio
 
         private IEnumerator ResetObject(float delay)
         {
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay); // the game pauses behind most screens
             ResetData();
         }
     }

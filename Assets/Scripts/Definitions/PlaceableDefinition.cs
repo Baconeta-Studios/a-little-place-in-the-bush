@@ -30,6 +30,21 @@ public class PlaceableDefinition : GameDefinition
     [Tooltip("Its look, for the cafe sign: garden, rustic, glow, fancy...")]
     public string style;
 
+    [Header("Shadow (easiest in Tools > Bush > Placeable Shadows and Bases)")]
+    [Tooltip("A soft shadow on the floor. Floor things only. A child called Shadow in the prefab is used instead, if there is one.")]
+    public bool groundShadow = true;
+    [Tooltip("In world units. 0 follows the base.")]
+    public Vector2 shadowSize;
+    [Tooltip("Moves it from where it would sit by itself.")]
+    public Vector2 shadowOffset;
+    [Range(0f, 1f)] public float shadowStrength = 0.45f;
+
+    public Vector2 ShadowSize => new(
+        shadowSize.x > 0f ? shadowSize.x : footprintSize.x * 1.45f,
+        shadowSize.y > 0f ? shadowSize.y : Mathf.Max(0.35f, footprintSize.y * 1.3f));
+
+    public Vector2 ShadowCentre => shadowOffset + new Vector2(0f, footprintSize.y * 0.1f);
+
     public PlaceableData ToData() => new()
     {
         id = id, itemId = Definitions.Id(item), placement = placement, footprintWidth = footprintSize.x,

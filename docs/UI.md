@@ -1,6 +1,6 @@
 # UI
 
-The HUD, the forage screen and the menu board are prefabs you can lay out and restyle in the Editor. The rest of the UI (build tray, bag, quest log, dialogue, upgrades, recipe shop, cafe sign) is still built in code, from the helpers in `UI/GameUi.cs`.
+The HUD, forage screen, menu board, quest screen, bag, upgrades and dialogue are all prefabs in `Assets/Resources/UI`, which you can lay out and restyle in the Editor. The build tray, recipe shop and cafe sign are still built in code, from the helpers in `UI/GameUi.cs`. The pause and settings menus are in `Assets/Prefabs/UI/Popups/PopupCanvas.prefab`.
 
 ## Make the prefabs (once)
 
@@ -29,7 +29,7 @@ Unity's UI package has a bug: pressing Play with a prefab containing buttons ope
 
 Every screen uses the same few pieces, each with one job. Use these before adding anything new.
 
-- **Torn paper** (`Images/UI/Panel.png`): the big sheet holding a screen's content. It has a clear edge, about 30 at the sides and 55 top and bottom, so leave room for it.
+- **Torn paper** (`Images/UI/Panel.png`, Image Type Tiled): the big sheet holding a screen's content. It has a clear edge, about 30 at the sides and 55 top and bottom, so leave room for it.
 - **Tan card** (`GameUi.CardBack`): something you can pick or open. Its colour is dark enough for the icons' pale line work to show.
 - **Three buttons:** `GameUi.Apron` for the one main action on a screen, `GameUi.Cream` for other choices, and `GameUi.PanelDark` for leaving, always called Back.
 - **Gold tape:** someone in the game is asking for something. Only that.
@@ -38,13 +38,34 @@ Every screen uses the same few pieces, each with one job. Use these before addin
 - **Fonts:** Caveat Brush for titles, Grandstander for buttons and names, Pangolin for reading, Mynerve only for characters' handwriting. They're set on `Resources/UI/UiFonts.asset`, and text built in code gets its font from there by what it's called and what it's on (`UiFonts`), so name text for its job: `Title`, `Name`, `DishName`, `Nudge`. Pangolin is also the project's default in TMP Settings.
 - **Colours:** green means done or ready, and red means a problem or shortage.
 
-The main cafe view should show as little as it can. Screens built in code (bag, quest log, dialogue, upgrades, recipe shop, cafe sign, build tray) have the fonts, but not the rest of this yet.
+The main cafe view should show as little as it can. The recipe shop, cafe sign and build tray have the fonts, but not the rest of this yet.
 
 ### The HUD (`HUD.prefab`)
 
 - `HudBar` lays its buttons out in a row. Build and Go to bed are hidden until they're needed, and Forage only shows where `GameHud` has *Forage Button* ticked.
-- The text in `Coins` and `QuestTracker` is filled in by the game.
+- The text in `CoinsText` and `TrackerText` is filled in by the game.
+- **The job note:** `PaperTracker` is the note and `JobButton` is what's left when it's tucked away. Whether it's tucked is remembered on the device. When it's tucked, it peeks out for a few seconds if the step changes.
+- **Day dial:** tapping it opens `DayInfo`, with the part of the day, trips left, today's event and who's around.
+- **Settings:** the cog is `PauseButton` in `PopupCanvas.prefab`, with `Placeholder-cog.png` for now.
 - `DayDial`: the ring's parts are made when the game runs, one per part of the day, by filling and tinting *Segment Sprite* (a white circle). The hand, the middle and the label are in the prefab. The hand has to stay a child of the ring. The label's outline is added when the game runs, so it doesn't show while editing: set it on `DayDial` (0 for none).
+
+### The quest screen (`QuestLogPopup.prefab`)
+
+`PaperStory` is the story's sheet and `PaperDetail` (under `Detail`) is what opens when you tap a note. Both are the same `QuestDetailView`, with `RowTemplate`, `PieceTemplate` and the rewards' `RowTemplate` copied for what a quest needs. With three or more items to gather, they show as pieces saying where each one is. `NoteTemplate` under `Jobs` is copied for each side quest. Portraits come from *Portrait* on each NPC's asset.
+
+### The bag (`InventoryPopup.prefab`)
+
+`TabTemplate` is copied for each tab, tinted by the *Tab* colours on the root, and `CardTemplate` (under `ItemGrid`) for each item. Set the grid's cell size on its Grid Layout Group.
+
+### Upgrades (`UpgradesPopup.prefab`)
+
+`RowTemplate` is copied for each upgrade.
+
+### Talking (`DialogueBox.prefab`)
+
+`MainReply` is the first reply, `OtherReply` any others, and `LeaveReply` is for Bye and Not now. `Portrait` shows the character's *Portrait*, or a circle with their initial if they have no art yet.
+
+**Tools > Bush > Rebuild HUD, Quests, Bag, Upgrades and Talking** makes these from their default layouts, asking before replacing each one, because that loses your edits.
 
 ### The forage screen (`ForagePopup.prefab`)
 

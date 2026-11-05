@@ -216,6 +216,8 @@ How every area scene is laid out. The Cafe greybox (`Assets/Scenes/Cafe.unity`) 
 - **Tools > Bush > Set Up Area Scene** adds all of the above to an area scene laid out like the cafe (and a placeholder counter, exit, spawn point and the pause menu if they're missing). See [FIRST-PLAYABLE.md](FIRST-PLAYABLE.md).
 - Build mode must not let the player place something that blocks the path to an exit or a key stand point.
 
+**Audio:** see [AUDIO.md](AUDIO.md).
+
 ## 7. Tests
 
 EditMode tests in `Bush.Core.Tests` (`Assets/Tests/EditMode`, about 105 tests) cover:

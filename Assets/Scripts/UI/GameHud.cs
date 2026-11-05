@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The game's HUD, hidden while building. Top left: coins, Bag (the read-only inventory), Quests,
+/// The game's HUD, hidden while building. Top left: coins. Bottom left: Bag (the read-only inventory), Quests,
 /// Forage (where ticked), Build (only in areas with a <see cref="BuildArea"/>) and, at night, Go to bed.
-/// Top right: the day dial (<see cref="DayDial"/>) and the quest tracker, the main story's current
-/// step; tap it for the quest log. Also sets up the day and night lighting. Put it on Systems in each area scene.
+/// Top right: the day dial (<see cref="DayDial"/>; tap it for what's on today) and the job note, the main
+/// story's current step. Tap the note for the quests, or its x to tuck it away, which is remembered. Tucked away,
+/// it peeks out for a moment when the step changes. Also sets up the day and night lighting. Put it on Systems in
+/// each area scene.
 /// How it looks is in <see cref="HudView"/>; this is what it does.
 /// </summary>
 public class GameHud : MonoBehaviour
@@ -17,7 +19,13 @@ public class GameHud : MonoBehaviour
 
     private HudView _view;
     private InventoryPopup _bag;
+    private const string TuckedKey = "hud.jobTucked";
+    private const float PeekSeconds = 4f;
+
     private float _nextTrackerRefresh;
+    private bool _tucked;
+    private float _peekUntil;
+    private string _lastNote;
 
     private void Start()
     {
@@ -31,6 +39,10 @@ public class GameHud : MonoBehaviour
         Wire(_view.build, EnterBuild);
         Wire(_view.bed, DayFlow.GoToBed);
         Wire(_view.trackerButton, QuestLogPopup.Show);
+        Wire(_view.trackerTuck, TuckNote);
+        Wire(_view.trackerTab, UntuckNote);
+        _tucked = PlayerPrefs.GetInt(TuckedKey, 0) == 1;
+        if (_view.dial && _view.dayInfo) _view.dial.Tapped += _view.dayInfo.Toggle;
         if (_view.forage) _view.forage.gameObject.SetActive(forageButton);
         if (_view.build) _view.build.gameObject.SetActive(false);
         if (_view.bed) _view.bed.gameObject.SetActive(false);
@@ -90,37 +102,51 @@ public class GameHud : MonoBehaviour
         if (session == null || !_view.trackerText || !_view.tracker) return;
         QuestData main = session.Quests.CurrentMainQuest();
         QuestData waiting = main == null ? session.Quests.WaitingMainQuest() : null;
-        _view.tracker.gameObject.SetActive((main != null || waiting != null) && (!_view.bar || _view.bar.gameObject.activeSelf));
-        if (waiting != null)
-        {
-            _view.trackerText.text = $"<b>{waiting.title}</b>\n{QuestLogPopup.NpcName(session.Design, waiting.giver)} will have something for you tomorrow.";
-            return;
-        }
-        if (main == null) return;
 
-        string next;
-        QuestStatus status = session.Quests.GetStatus(main.id);
-        string giver = QuestLogPopup.NpcName(session.Design, main.giver);
-        if (status == QuestStatus.NotStarted) next = $"Talk to {giver}{Visitors.WhenAbout(session.Design, session.State, main.giver)}";
-        else if (status == QuestStatus.ReadyToClaim) next = $"Go and see {giver}";
-        else
-        {
-            next = "";
-            for (int i = 0; i < main.objectives.Count; i++)
-            {
-                (int current, int required) = session.Quests.GetProgress(main.id, i);
-                if (current >= required) continue;
-                next = DialogueBox.ObjectiveLine(session, main, i);
-                break;
-            }
-        }
-        _view.trackerText.text = $"<b>{main.title}</b>\n{next}";
+        string note = waiting != null
+            ? $"<b>{waiting.title}</b>\n{QuestLogPopup.NpcName(session.Design, waiting.giver)} will have something for you tomorrow."
+            : main != null ? $"<b>{main.title}</b>\n{QuestLogPopup.NextStep(session, main)}" : "";
+        _view.trackerText.text = note;
+
+        // Tucked away, it still says when something changes.
+        if (_lastNote != null && note != _lastNote && note.Length > 0 && _tucked) _peekUntil = Time.unscaledTime + PeekSeconds;
+        _lastNote = note;
+
+        bool showing = note.Length > 0 && (!_view.bar || _view.bar.gameObject.activeSelf);
+        bool peeking = Time.unscaledTime < _peekUntil;
+        _view.tracker.gameObject.SetActive(showing && (!_tucked || peeking));
+        if (_view.trackerTab) _view.trackerTab.gameObject.SetActive(showing && _tucked && !peeking);
+
+        bool mainReady = main != null && IsReadyAndHere(session, main);
+        if (_view.trackerTabMarker) _view.trackerTabMarker.SetActive(mainReady);
+        if (_view.questsMarker) _view.questsMarker.SetActive(mainReady || session.Quests.ActiveSideQuests().Exists(q => IsReadyAndHere(session, q)));
+    }
+
+    private static bool IsReadyAndHere(GameSession session, QuestData quest) =>
+        session.Quests.GetStatus(quest.id) == QuestStatus.ReadyToClaim && Visitors.IsPresent(session.Design, session.State, session.Quests, quest.giver);
+
+    private void TuckNote()
+    {
+        _tucked = true;
+        _peekUntil = 0f;
+        PlayerPrefs.SetInt(TuckedKey, 1);
+        RefreshTracker();
+    }
+
+    private void UntuckNote()
+    {
+        _tucked = false;
+        PlayerPrefs.SetInt(TuckedKey, 0);
+        RefreshTracker();
     }
 
     private void OnBuildModeChanged(bool building)
     {
         if (_view.bar) _view.bar.gameObject.SetActive(!building);
         if (_view.tracker) _view.tracker.gameObject.SetActive(!building);
+        if (_view.trackerTab && building) _view.trackerTab.gameObject.SetActive(false);
+        if (_view.dayInfo && building) _view.dayInfo.Hide();
+        if (_view.coins) _view.coins.gameObject.SetActive(!building);
         if (_view.dial) _view.dial.gameObject.SetActive(!building);
     }
 

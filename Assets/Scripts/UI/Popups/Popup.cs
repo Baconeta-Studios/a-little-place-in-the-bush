@@ -40,11 +40,13 @@ namespace UI.Popups
 
         public virtual void Open()
         {
+            if (!IsOpen) GameAudio.Play(Bush.Core.GameSound.PaperOpen);
             gameObject.SetActive(true);
         }
 
         public virtual void Close()
         {
+            if (IsOpen) GameAudio.Play(Bush.Core.GameSound.PaperClose);
             gameObject.SetActive(false);
         }
 

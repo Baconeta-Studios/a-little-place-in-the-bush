@@ -28,6 +28,13 @@ public class ItemCardView : MonoBehaviour
         button.interactable = false;
     }
 
+    /// <summary>For a plain number in the corner, rather than a green pill.</summary>
+    public void MakePlainCount()
+    {
+        ((RectTransform)badge.transform).GetComponent<Image>().color = Color.clear;
+        badgeText.color = GameUi.Ink;
+    }
+
     /// <summary>For cards with no background over something dark.</summary>
     public void SetNameColor(Color color) => title.color = color;
 

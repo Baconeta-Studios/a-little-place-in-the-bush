@@ -15,7 +15,7 @@ MonoBehaviour:
   id: npc.weka
   displayName: Weka
   description: Cheeky, always hanging around the cafe, and steals anything shiny.
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 9a7d2db6abe10ee4ea6e407dc60c6eb0, type: 3}
   species: Weka
   visits: 2
   visitChance: 0.25

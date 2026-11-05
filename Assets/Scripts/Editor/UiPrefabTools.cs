@@ -30,7 +30,29 @@ public static class UiPrefabTools
         Save(HudView.ResourcePath, () => HudView.Build(null).gameObject, sprites, made);
         Save(ForagePopup.ResourcePath, BuildForageScreen, sprites, made);
         Save(CafePopup.ResourcePath, BuildMenuBoard, sprites, made);
+        SaveScreens(sprites, made);
         Finish(made);
+    }
+
+    /// <summary>The HUD and the screens built from the shared pieces. Asks before replacing each one.</summary>
+    [MenuItem("Tools/Bush/Rebuild HUD, Quests, Bag, Upgrades and Talking", priority = 46)]
+    public static void RebuildScreens()
+    {
+        Directory.CreateDirectory(PrefabFolder);
+        Directory.CreateDirectory(SpriteFolder);
+        AssetDatabase.Refresh();
+        var made = new List<string>();
+        Save(HudView.ResourcePath, () => HudView.Build(null).gameObject, SavedSprites(), made);
+        SaveScreens(SavedSprites(), made);
+        Finish(made);
+    }
+
+    private static void SaveScreens(Dictionary<Sprite, Sprite> sprites, List<string> made)
+    {
+        Save(QuestLogPopup.ResourcePath, () => QuestLogPopup.BuildDefault(null).gameObject, sprites, made);
+        Save(InventoryPopup.ResourcePath, () => InventoryPopup.BuildDefault(null).gameObject, sprites, made);
+        Save(UpgradesPopup.ResourcePath, () => UpgradesPopup.BuildDefault(null).gameObject, sprites, made);
+        Save(DialogueBox.ResourcePath, () => DialogueBox.BuildDefault(null).gameObject, sprites, made);
     }
 
     [MenuItem("Tools/Bush/Rebuild Menu Board Prefab", priority = 45)]
@@ -108,6 +130,41 @@ public static class UiPrefabTools
 
     private static Sprite LoadSprite(string path) => AssetDatabase.LoadAssetAtPath<Sprite>(path);
 
+    /// <summary>Gives the shared pieces their art, going by what they're called: anything starting Paper is the torn paper, tiled.</summary>
+    private static void UseSharedArt(GameObject root)
+    {
+        foreach (Image image in root.GetComponentsInChildren<Image>(true))
+        {
+            string name = image.name;
+            if (name.StartsWith("Paper"))
+            {
+                image.sprite = LoadSprite("Assets/Images/UI/Panel.png");
+                image.type = Image.Type.Tiled;
+                continue;
+            }
+            string art = name switch
+            {
+                "Backdrop" => image.sprite ? null : "Assets/Images/Backgrounds/Background (1).png",
+                "Sign" => "Assets/Images/Placeables/Cafe sign.png",
+                "BagBack" => "Assets/Images/UI/Basket-back.png",
+                "BagFront" => "Assets/Images/UI/Basket-front.png",
+                "RecipeIcon" => "Assets/Images/UI/Icons/Recipe.png",
+                "ScrapIcon" => "Assets/Images/UI/Icons/Recipe-scrap.png",
+                "StumpIcon" => "Assets/Images/Placeables/Stump.png",
+                "BushIcon" => "Assets/Images/Placeables/Bush.png",
+                "Gecko" => "Assets/Images/Characters/Gecko.png",
+                "PipTemplate" => "Assets/Images/UI/Icons/Koru-icon.png",
+                _ => null
+            };
+            if (art == null) continue;
+            image.sprite = LoadSprite(art);
+            image.color = name == "PipTemplate" ? Color.white : image.color;
+            if (name is "Backdrop" or "Sign") image.color = Color.white;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = name != "Backdrop";
+        }
+    }
+
     /// <summary>Gives each piece of text the font for its job (see <see cref="UiFonts"/>).</summary>
     private static void UseFonts(GameObject root)
     {
@@ -127,6 +184,7 @@ public static class UiPrefabTools
             root.SetActive(true); // saved turned on, so it shows when you open the prefab
             UseFonts(root);
             UseSavedSprites(root, sprites);
+            UseSharedArt(root);
             PrefabUtility.SaveAsPrefabAsset(root, path);
             made.Add(path);
         }

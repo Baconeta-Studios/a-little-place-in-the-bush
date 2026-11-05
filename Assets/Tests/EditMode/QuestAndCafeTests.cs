@@ -54,6 +54,17 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void QuestHints_SayWhereThingsComeFrom()
+        {
+            TestGame game = GameWantingBugs(1);
+            Assert.IsTrue(QuestHints.WhereToGet(game.design, TestDesign.Bug).foraged);
+            Assert.IsFalse(QuestHints.WhereToGet(game.design, TestDesign.Scrap2).foraged);
+
+            game.design.quests.Find(q => q.id == TestDesign.Trade).rewards.Add(new QuestReward { type = RewardType.Item, target = TestDesign.Scrap2 });
+            Assert.AreEqual(game.design.GetQuest(TestDesign.Trade).giver, QuestHints.WhereToGet(game.design, TestDesign.Scrap2).fromNpc);
+        }
+
+        [Test]
         public void ForageGoal_ReadsNaturally()
         {
             var leaves = new ItemData { id = "a", name = "Leaves" };

@@ -20,6 +20,14 @@ public static class GeneratedSprites
         return Mathf.Clamp01((32f - distance) / 6f);
     }, new Vector2(0.5f, 0.5f));
 
+    /// <summary>A white blob that fades away from the middle, one unit across: a shadow on the floor. Tint it.</summary>
+    public static Sprite SoftShadow => _softShadow ? _softShadow : _softShadow = Make(128, 128f, (x, y) =>
+    {
+        float distance = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(64f, 64f)) / 64f;
+        return Mathf.SmoothStep(1f, 0f, Mathf.InverseLerp(0.5f, 1f, distance));
+    }, new Vector2(0.5f, 0.5f));
+    private static Sprite _softShadow;
+
     /// <summary>A white rounded rectangle for UI panels and buttons, sliced so it stretches cleanly.</summary>
     public static Sprite RoundedPanel
     {

@@ -8,10 +8,15 @@ using UnityEngine.UI;
 /// <summary>
 /// The bag: everything the player owns, in tabs (Larder, Materials, Treasures, Satchel, Placeables),
 /// plus coins. Read-only for now: using, selling and sorting come later. Tap an item to read about it.
-/// A template <see cref="Popup"/>, so it pauses the game and Escape closes it. Built in code.
+/// A template <see cref="Popup"/>, so it pauses the game and Escape closes it.
+///
+/// How it looks is in Resources/UI/InventoryPopup.prefab (see docs/UI.md), made from <see cref="BuildDefault"/>,
+/// which is also used if there's no prefab.
 /// </summary>
 public class InventoryPopup : Popup
 {
+    public const string ResourcePath = "UI/InventoryPopup";
+
     private static readonly (string label, ItemCategory category)[] Tabs =
     {
         ("Larder", ItemCategory.Ingredient),
@@ -21,23 +26,30 @@ public class InventoryPopup : Popup
         ("Placeables", ItemCategory.Placeable)
     };
 
+    [SerializeField] private RectTransform _tabRow;
+    [SerializeField] private Button _tabTemplate;
+    [SerializeField] private Color _tabColor = GameUi.Cream;
+    [SerializeField] private Color _tabTextColor = GameUi.Ink;
+    [SerializeField] private Color _chosenTabColor = new(0.18f, 0.32f, 0.19f);
+    [SerializeField] private Color _chosenTabTextColor = GameUi.Cream;
+    [SerializeField] private ItemGridView _grid;
+    [SerializeField] private TextMeshProUGUI _coins;
+    [SerializeField] private TextMeshProUGUI _empty;
+    [SerializeField] private Image _detailIcon;
+    [SerializeField] private TextMeshProUGUI _detailName;
+    [SerializeField] private TextMeshProUGUI _detailMeta;
+    [SerializeField] private TextMeshProUGUI _detailText;
+    [SerializeField] private Button _back;
+
     private ItemCategory _tab = ItemCategory.Ingredient;
     private string _selected;
-    private RectTransform _tabRow;
-    private ItemGridView _grid;
-    private TextMeshProUGUI _coins;
-    private TextMeshProUGUI _details;
-    private TextMeshProUGUI _empty;
 
-    public static InventoryPopup Create()
+    public static InventoryPopup Create() => GameUi.LoadPopup(ResourcePath, BuildDefault);
+
+    protected override void Awake()
     {
-        GameUi ui = GameUi.Current;
-        RectTransform root = GameUi.NewRect("Bag", ui.SafeRoot);
-        GameUi.Stretch(root);
-        root.gameObject.SetActive(false); // a popup is "open" while active
-        var popup = root.gameObject.AddComponent<InventoryPopup>();
-        popup.Build(root);
-        return popup;
+        base.Awake();
+        _back.onClick.AddListener(Close);
     }
 
     protected override void OnEnable()
@@ -74,7 +86,7 @@ public class InventoryPopup : Popup
             {
                 key = id,
                 title = data.name,
-                badge = data.unique ? "" : "x" + stack.qty,
+                badge = data.unique ? "" : stack.qty.ToString(),
                 icon = icon,
                 iconTint = tint,
                 selected = id == _selected,
@@ -89,26 +101,51 @@ public class InventoryPopup : Popup
             ? "Nothing here yet. Building is in unlimited mode while we prototype, so you don't need any."
             : "Nothing here yet.";
 
+        RefreshDetails(session);
+    }
+
+    private void RefreshDetails(GameSession session)
+    {
         ItemData selected = session.Design.GetItem(_selected);
-        _details.text = selected == null || selected.category != _tab
-            ? "Tap something to read about it."
-            : $"<b>{selected.name}</b>  <color=#6b5c47>{selected.rarity} {CategoryName(selected.category)}" +
-              (selected.sellValue > 0 && selected.category != ItemCategory.KeyItem ? $", worth {selected.sellValue} coins" : "") +
-              $"</color>\n{selected.description}";
+        bool show = selected != null && selected.category == _tab;
+        _detailIcon.gameObject.SetActive(show);
+        _detailMeta.gameObject.SetActive(show);
+        if (!show)
+        {
+            _detailName.text = "";
+            _detailText.text = "Tap something to read about it.";
+            return;
+        }
+
+        ItemDefinition item = session.Database.Find<ItemDefinition>(selected.id);
+        PlaceableDefinition placeable = session.Database.placeables.Find(p => p && p.item == item);
+        Sprite icon = ItemGridView.IconFor(item, placeable, out Color tint);
+        _detailIcon.gameObject.SetActive(icon);
+        _detailIcon.sprite = icon;
+        _detailIcon.color = tint;
+        _detailName.text = selected.name;
+        _detailMeta.text = $"{selected.rarity} {CategoryName(selected.category)}" +
+                           (selected.sellValue > 0 && selected.category != ItemCategory.KeyItem ? $", worth {selected.sellValue} coins" : "");
+        _detailText.text = selected.description;
     }
 
     private void RefreshTabs(GameSession session)
     {
-        for (int i = _tabRow.childCount - 1; i >= 0; i--) Destroy(_tabRow.GetChild(i).gameObject);
+        GameUi.ClearExcept(_tabRow, _tabTemplate.transform);
         foreach ((string label, ItemCategory category) in Tabs)
         {
             int count = 0;
             foreach (ItemStack stack in session.Economy.Inventory)
                 if (session.Design.GetItem(stack.itemId)?.category == category) count++;
-            bool selected = category == _tab;
+            bool chosen = category == _tab;
             ItemCategory tab = category;
-            GameUi.AddButton(_tabRow, count > 0 ? $"{label} ({count})" : label, () => { _tab = tab; Refresh(); },
-                new Vector2(230f, 70f), selected ? GameUi.Moss : GameUi.Cream, selected ? GameUi.Cream : GameUi.Ink, 28f);
+            Button button = Instantiate(_tabTemplate, _tabRow);
+            button.gameObject.SetActive(true);
+            button.targetGraphic.color = chosen ? _chosenTabColor : _tabColor;
+            var text = button.GetComponentInChildren<TextMeshProUGUI>();
+            text.text = count > 0 ? $"{label} ({count})" : label;
+            text.color = chosen ? _chosenTabTextColor : _tabTextColor;
+            button.onClick.AddListener(() => { _tab = tab; Refresh(); });
         }
     }
 
@@ -121,56 +158,58 @@ public class InventoryPopup : Popup
         _ => "placeable"
     };
 
-    private void Build(RectTransform root)
+    // ----- The default layout -----
+
+    public static InventoryPopup BuildDefault(Transform parent)
     {
-        // Dim the game behind, and block clicks to it.
-        GameUi.AddPanel(root, new Color(0.08f, 0.07f, 0.05f, 0.55f), false);
+        RectTransform root = GameUi.NewRect("InventoryPopup", parent);
+        GameUi.Stretch(root);
+        root.gameObject.SetActive(false); // a popup is "open" while active
+        var popup = root.gameObject.AddComponent<InventoryPopup>();
+        GameUi.AddBackdrop(root);
 
-        // Stretches with the screen (4:3 tablets are narrower than 16:9), with a margin all round.
-        RectTransform panel = GameUi.NewRect("Panel", root);
-        panel.anchorMin = new Vector2(0.03f, 0.04f);
-        panel.anchorMax = new Vector2(0.97f, 0.96f);
-        panel.offsetMin = panel.offsetMax = Vector2.zero;
-        GameUi.AddPanel(panel, GameUi.Panel);
+        RectTransform paper = GameUi.NewRect("PaperItems", root);
+        GameUi.Anchor(paper, Vector2.zero, new Vector2(0.625f, 1f), new Vector2(-4f, -8f), new Vector2(8f, 8f));
+        GameUi.AddPanel(paper, GameUi.Panel2);
 
-        TextMeshProUGUI title = GameUi.AddText(panel, "Bag", 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
-        title.rectTransform.offsetMin = new Vector2(40f, 0f);
-        title.rectTransform.offsetMax = new Vector2(0f, -28f);
+        TextMeshProUGUI title = GameUi.AddText(paper, "Bag", 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
+        GameUi.Anchor(title.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(64f, -130f), new Vector2(-64f, -60f));
+        popup._coins = GameUi.AddText(paper, "", 30f, GameUi.Ink, TextAlignmentOptions.TopRight, "Coins");
+        GameUi.Anchor(popup._coins.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(64f, -130f), new Vector2(-64f, -70f));
 
-        _coins = GameUi.AddText(panel, "", 36f, GameUi.Bark, TextAlignmentOptions.TopRight, "Coins");
-        _coins.rectTransform.offsetMin = new Vector2(0f, 0f);
-        _coins.rectTransform.offsetMax = new Vector2(-250f, -38f);
+        popup._tabRow = GameUi.NewRect("Tabs", paper);
+        GameUi.Anchor(popup._tabRow, new Vector2(0f, 1f), Vector2.one, new Vector2(60f, -206f), new Vector2(-60f, -130f));
+        GameUi.AddLayout<HorizontalLayoutGroup>(popup._tabRow, 8f).childAlignment = TextAnchor.MiddleLeft;
+        popup._tabTemplate = GameUi.AddButton(popup._tabRow, "Tab", null, new Vector2(205f, 72f), GameUi.Cream, GameUi.Ink, 24f);
+        popup._tabTemplate.name = "TabTemplate";
+        popup._tabTemplate.gameObject.SetActive(false);
 
-        Button close = GameUi.AddButton(panel, "Close", Close, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
-        GameUi.Place((RectTransform)close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
+        RectTransform list = GameUi.NewRect("List", paper);
+        GameUi.Anchor(list, Vector2.zero, Vector2.one, new Vector2(46f, 56f), new Vector2(-46f, -210f));
+        popup._grid = ItemGridView.Create(list, false, new Vector2(196f, 214f), true);
+        popup._grid.MakeCardsCounted();
+        popup._empty = GameUi.AddText(list, "", 30f, GameUi.InkSoft, TextAlignmentOptions.Center, "Empty");
 
-        _tabRow = GameUi.NewRect("Tabs", panel);
-        _tabRow.anchorMin = new Vector2(0f, 1f);
-        _tabRow.anchorMax = new Vector2(1f, 1f);
-        _tabRow.pivot = new Vector2(0.5f, 1f);
-        _tabRow.offsetMin = new Vector2(32f, -200f);
-        _tabRow.offsetMax = new Vector2(-32f, -124f);
-        HorizontalLayoutGroup row = GameUi.AddLayout<HorizontalLayoutGroup>(_tabRow, 12f);
-        row.childAlignment = TextAnchor.MiddleLeft;
+        RectTransform side = GameUi.NewRect("Side", root);
+        GameUi.Anchor(side, new Vector2(0.625f, 0f), Vector2.one, new Vector2(16f, 112f), new Vector2(-26f, 0f));
+        GameUi.AddSign(side, "What you've got");
 
-        RectTransform list = GameUi.NewRect("List", panel);
-        list.anchorMin = Vector2.zero;
-        list.anchorMax = Vector2.one;
-        list.offsetMin = new Vector2(24f, 170f);
-        list.offsetMax = new Vector2(-24f, -214f);
-        _grid = ItemGridView.Create(list, false, new Vector2(190f, 210f));
+        RectTransform details = GameUi.NewRect("PaperDetails", side);
+        GameUi.Anchor(details, new Vector2(0f, 1f), Vector2.one, new Vector2(0f, -640f), new Vector2(0f, -262f));
+        GameUi.AddPanel(details, GameUi.Panel2).raycastTarget = false;
+        RectTransform icon = GameUi.NewRect("Icon", details);
+        GameUi.Place(icon, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(50f, -52f), new Vector2(120f, 120f));
+        popup._detailIcon = icon.gameObject.AddComponent<Image>();
+        popup._detailIcon.preserveAspect = true;
+        popup._detailIcon.raycastTarget = false;
+        popup._detailName = GameUi.AddText(details, "", 32f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Name");
+        GameUi.Anchor(popup._detailName.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(184f, -130f), new Vector2(-50f, -60f));
+        popup._detailMeta = GameUi.AddText(details, "", 25f, GameUi.InkSoft, TextAlignmentOptions.TopLeft, "Meta");
+        GameUi.Anchor(popup._detailMeta.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(184f, -176f), new Vector2(-50f, -126f));
+        popup._detailText = GameUi.AddText(details, "", 28f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Description");
+        GameUi.Anchor(popup._detailText.rectTransform, Vector2.zero, Vector2.one, new Vector2(50f, 50f), new Vector2(-50f, -184f));
 
-        _empty = GameUi.AddText(list, "", 30f, GameUi.InkSoft, TextAlignmentOptions.Center, "Empty");
-
-        RectTransform details = GameUi.NewRect("Details", panel);
-        details.anchorMin = new Vector2(0f, 0f);
-        details.anchorMax = new Vector2(1f, 0f);
-        details.pivot = new Vector2(0.5f, 0f);
-        details.offsetMin = new Vector2(24f, 24f);
-        details.offsetMax = new Vector2(-24f, 150f);
-        GameUi.AddPanel(details, GameUi.Cream);
-        _details = GameUi.AddText(details, "", 28f, GameUi.Ink, TextAlignmentOptions.MidlineLeft, "DetailsText");
-        _details.rectTransform.offsetMin = new Vector2(24f, 8f);
-        _details.rectTransform.offsetMax = new Vector2(-24f, -8f);
+        popup._back = GameUi.AddBack(root);
+        return popup;
     }
 }
