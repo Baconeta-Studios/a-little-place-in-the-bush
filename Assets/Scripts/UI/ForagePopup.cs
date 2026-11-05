@@ -97,6 +97,7 @@ public class ForagePopup : Popup
     [SerializeField] private GameObject _questCard;
     [SerializeField] private TextMeshProUGUI _questLabel;
     [SerializeField] private Image _questBar;
+    private GameObject _companionCard;
     [SerializeField] private RectTransform _resultPips;
     [SerializeField] private Button _nextMain;
     [SerializeField] private Button _nextOther;
@@ -534,6 +535,7 @@ public class ForagePopup : Popup
         int found = result.TotalItems();
         _resultsTitle.text = found == 0 ? "Nothing this time" : $"{found} find{(found == 1 ? "" : "s")}, in your bag";
         _resultsNote.text = ResultNotes(session, result);
+        RefreshCompanionCard(session); // before Claim, which teaches the perk
 
         Claim(session);
         RefreshQuestCard(session);
@@ -557,16 +559,6 @@ public class ForagePopup : Popup
             RecipeData recipe = item != null ? session.Design.GetRecipe(item.teachesRecipe) : null;
             if (recipe != null && !Unlocks.IsRecipeUnlocked(session.Design, session.State, recipe.id))
                 notes.Add($"<b>{item.name}</b> has taught you a recipe: {recipe.name}.");
-        }
-        // A companion about to teach their perk (Claim does it).
-        CompanionData companion = session.Design.GetCompanion(session.State.pendingExpedition.setup.companionId);
-        PerkData perk = companion != null ? session.Design.GetPerk(companion.teachesPerk) : null;
-        if (perk != null && !Unlocks.IsPerkUnlocked(session.Design, session.State, perk.id))
-        {
-            int trips = session.State.GetOrAddCompanion(companion.id).trips + 1;
-            notes.Add(trips >= companion.tripsToTeach
-                ? $"<b>{companion.name} has taught you a perk: {perk.name}!</b> You can use it without them now."
-                : $"Trips with {companion.name}: {trips} of {companion.tripsToTeach} before they teach you {perk.name}.");
         }
         if (_bonus != null)
         {
@@ -625,7 +617,34 @@ public class ForagePopup : Popup
         _questBar.fillAmount = goal.needed > 0 ? (float)goal.have / goal.needed : 1f;
     }
 
-    /// <summary>One main button for what to do next: see whoever has finished work for you, go again, or head home.</summary>
+    /// <summary>
+    /// A companion teaching their perk gets a card of its own, under the quest's. It's a copy of the quest card,
+    /// so restyling that one in the prefab restyles both.
+    /// </summary>
+    private void RefreshCompanionCard(GameSession session)
+    {
+        if (!_companionCard)
+        {
+            _companionCard = Instantiate(_questCard, _questCard.transform.parent);
+            _companionCard.name = "CompanionCard";
+            _companionCard.transform.SetSiblingIndex(_questCard.transform.GetSiblingIndex() + 1);
+        }
+        CompanionData companion = session.Design.GetCompanion(session.State.pendingExpedition.setup.companionId);
+        PerkData perk = companion != null ? session.Design.GetPerk(companion.teachesPerk) : null;
+        bool teaching = perk != null && !Unlocks.IsPerkUnlocked(session.Design, session.State, perk.id);
+        _companionCard.SetActive(teaching);
+        if (!teaching) return;
+
+        int trips = session.State.GetOrAddCompanion(companion.id).trips + 1;
+        _companionCard.GetComponentInChildren<TextMeshProUGUI>(true).text = trips >= companion.tripsToTeach
+            ? $"<b>{companion.name} has taught you a perk: {perk.name}!</b>"
+            : $"Trips with {companion.name}: {trips} of {companion.tripsToTeach} to learn {perk.name}";
+        Image bar = _companionCard.transform.Find("Bar/Fill").GetComponent<Image>();
+        if (!bar.sprite) bar.sprite = GeneratedSprites.Square;
+        bar.fillAmount = companion.tripsToTeach > 0 ? Mathf.Clamp01((float)trips / companion.tripsToTeach) : 1f;
+    }
+
+    /// <summary>One main button for what to do next: see whoever has finished work for you if they're here, go again, or head home.</summary>
     private void SetNextSteps(GameSession session)
     {
         int tripsLeft = ForagingService.TripsLeftToday(session.Design, session.State);
@@ -636,10 +655,20 @@ public class ForagePopup : Popup
         System.Action again = sameTrip ? Go : ShowSetup;
         QuestData ready = ForageGoals.ReadyToHandIn(session.Quests);
 
-        if (ready != null)
+        bool giverHere = ready != null && Visitors.IsPresent(session.Design, session.State, session.Quests, ready.giver);
+        if (ready != null && !giverHere)
+        {
+            string name = QuestLogPopup.NpcName(session.Design, ready.giver);
+            string when = Visitors.WhenAbout(session.Design, session.State, ready.giver);
+            _resultsNote.text += $"\n<color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>" +
+                                 (when.Length > 0 ? $"You can hand in {ready.title} to {name}{when}." : $"{name} isn't here today. {ready.title} can wait until they visit.") +
+                                 "</color>";
+        }
+
+        if (giverHere)
         {
             string giver = QuestLogPopup.NpcName(session.Design, ready.giver);
-            SetNext(_nextMain, $"Go and see {giver}{Visitors.WhenAbout(session.Design, session.State, ready.giver)}", ref _mainAction, Close);
+            SetNext(_nextMain, $"Go and see {giver}", ref _mainAction, Close);
             SetNext(_nextOther, canGoAgain ? againLabel : null, ref _otherAction, again);
         }
         else if (canGoAgain)
