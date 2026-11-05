@@ -46,6 +46,7 @@ The main cafe view should show as little as it can. The recipe shop and build tr
 - The text in `CoinsText` and `TrackerText` is filled in by the game.
 - **The job note:** `PaperTracker` is the note and `JobButton` is what's left when it's tucked away. Whether it's tucked is remembered on the device. When it's tucked, it peeks out for a few seconds if the step changes.
 - **Day dial:** tapping it opens `DayInfo`, with the part of the day, trips left, today's event and who's around. Its colours are on `DayDial` in the HUD prefab: *Day Colors* (morning, midday, afternoon and late afternoon, spread over however many trips there are), *Evening Color* and *Night Color*.
+- **Build's `!`:** `Marker` on `BuildButton` shows while a quest under way wants something placed and you have something it would count.
 - **Settings:** the cog is `PauseButton` in `PopupCanvas.prefab`, with `Placeholder-cog.png` for now.
 - `DayDial`: the ring's parts are made when the game runs, one per part of the day, by filling and tinting *Segment Sprite* (a white circle). The hand, the middle and the label are in the prefab. The hand has to stay a child of the ring. The label's outline is added when the game runs, so it doesn't show while editing: set it on `DayDial` (0 for none).
 
