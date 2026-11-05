@@ -3,10 +3,9 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
-/// Put on a Light 2D over the path into the bush: it fades on and slowly pulses while you can go foraging,
-/// and fades off while you can't (no trips left today, or someone wants a word first).
+/// Put on a Light 2D over the path into the bush, or on a parent of one: it fades on and slowly pulses while you
+/// can go foraging, and fades off while you can't (no trips left today, or someone wants a word first).
 /// </summary>
-[RequireComponent(typeof(Light2D))]
 public class ForageGlow : MonoBehaviour
 {
     [Tooltip("How fast it pulses. Higher is quicker.")]
@@ -20,7 +19,13 @@ public class ForageGlow : MonoBehaviour
 
     private void Awake()
     {
-        _light = GetComponent<Light2D>();
+        _light = GetComponentInChildren<Light2D>(true);
+        if (!_light)
+        {
+            Debug.LogWarning($"[ForageGlow] No Light 2D on {name} or its children.", this);
+            enabled = false;
+            return;
+        }
         _fullIntensity = _light.intensity;
         _light.intensity = 0f;
     }
