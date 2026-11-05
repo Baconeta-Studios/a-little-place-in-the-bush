@@ -86,6 +86,14 @@ public class ForagePopup : Popup
     [Tooltip("Finds land here, above the front of the basket.")]
     [SerializeField] private RectTransform _pile;
     [SerializeField] private ItemCardView _foundTemplate;
+    [Tooltip("Finds in one row before they split into a front and a back row.")]
+    [SerializeField, Min(1)] private int _findsInARow = 5;
+    [Tooltip("How far above the front row the back row sits.")]
+    [SerializeField] private float _backRowRise = 70f;
+    [Tooltip("The most a find leans either way, in degrees.")]
+    [SerializeField] private float _findTilt = 10f;
+    [Tooltip("The most a find sits above or below its row.")]
+    [SerializeField] private float _findJitter = 10f;
     [SerializeField] private GameObject _questCard;
     [SerializeField] private TextMeshProUGUI _questLabel;
     [SerializeField] private Image _questBar;
@@ -521,7 +529,7 @@ public class ForagePopup : Popup
         foreach (ItemStack stack in result.stacks)
         {
             ItemData item = session.Design.GetItem(stack.itemId);
-            if (item != null) cards.Add(Card(session, item, item.unique ? "" : "x" + stack.qty));
+            if (item != null) cards.Add(Card(session, item, stack.qty > 1 ? "x" + stack.qty : ""));
         }
         int found = result.TotalItems();
         _resultsTitle.text = found == 0 ? "Nothing this time" : $"{found} find{(found == 1 ? "" : "s")}, in your bag";
@@ -537,6 +545,7 @@ public class ForagePopup : Popup
     private string ResultNotes(GameSession session, ForageResult result)
     {
         var notes = new List<string>();
+        if (result.stacks.Count > 0) notes.Add(FindsLine(session, result));
         foreach (string rareId in result.rareFinds)
         {
             ItemData rare = session.Design.GetItem(rareId);
@@ -582,6 +591,18 @@ public class ForagePopup : Popup
         }
         if (Debug.isDebugBuild) notes.Add($"<size=70%><color=#{ColorUtility.ToHtmlStringRGB(GameUi.InkSoft)}>seed {result.seed}</color></size>");
         return string.Join("\n", notes);
+    }
+
+    /// <summary>What's in the basket, by name: "Leaves x5, Mushroom, Fern frond".</summary>
+    private static string FindsLine(GameSession session, ForageResult result)
+    {
+        var finds = new List<string>();
+        foreach (ItemStack stack in result.stacks)
+        {
+            string name = session.Design.GetItem(stack.itemId)?.name ?? stack.itemId;
+            finds.Add(stack.qty > 1 ? $"{name} x{stack.qty}" : name);
+        }
+        return string.Join(", ", finds);
     }
 
     private void Claim(GameSession session)
@@ -647,15 +668,21 @@ public class ForagePopup : Popup
     {
         Clear(_pile);
         var dropping = new List<RectTransform>();
-        foreach (ItemCard card in cards)
+        var resting = new List<Vector2>();
+        // Too many for one row: the first half go in behind, so they're covered by the rest.
+        int backRow = cards.Count > _findsInARow ? cards.Count / 2 : 0;
+        for (int i = 0; i < cards.Count; i++)
         {
-            RectTransform cell = GameUi.NewRect(card.key, _pile);
-            ItemCardView view = Instantiate(_foundTemplate, cell);
+            ItemCardView view = Instantiate(_foundTemplate, _pile);
             view.gameObject.SetActive(true);
-            view.Fill(card);
+            view.Fill(cards[i]);
             var rect = (RectTransform)view.transform;
-            GameUi.Stretch(rect);
-            rect.anchoredPosition = new Vector2(0f, DropHeight * 2f);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0f);
+            rect.localRotation = Quaternion.Euler(0f, 0f, Random.Range(-_findTilt, _findTilt));
+            bool back = i < backRow;
+            float x = RowPosition(back ? i : i - backRow, back ? backRow : cards.Count - backRow, rect.rect.width);
+            resting.Add(new Vector2(x, (back ? _backRowRise : 0f) + Random.Range(-_findJitter, _findJitter)));
+            rect.anchoredPosition = resting[i] + new Vector2(0f, DropHeight * 2f);
             dropping.Add(rect);
         }
 
@@ -667,11 +694,19 @@ public class ForagePopup : Popup
                 float k = Mathf.Clamp01((t - i * DropGap) / DropSeconds);
                 float fall = 1f - k;
                 float bounce = Mathf.Sin(k * Mathf.PI) * 0.06f * (1f - k);
-                dropping[i].anchoredPosition = new Vector2(0f, (k <= 0f ? 2f : fall * fall + bounce) * DropHeight);
+                dropping[i].anchoredPosition = resting[i] + new Vector2(0f, (k <= 0f ? 2f : fall * fall + bounce) * DropHeight);
             }
             yield return null;
         }
-        foreach (RectTransform rect in dropping) rect.anchoredPosition = Vector2.zero;
+        for (int i = 0; i < dropping.Count; i++) dropping[i].anchoredPosition = resting[i];
+    }
+
+    /// <summary>Where a find sits along its row, centred in the pile: side by side, overlapping if the pile's too narrow for that.</summary>
+    private float RowPosition(int index, int count, float findWidth)
+    {
+        if (count <= 1) return 0f;
+        float step = Mathf.Min(findWidth * 0.85f, (_pile.rect.width - findWidth) / (count - 1));
+        return (index - (count - 1) * 0.5f) * step;
     }
 
     // ----- Small helpers -----
@@ -974,13 +1009,15 @@ public class ForagePopup : Popup
     private void BuildResults()
     {
         // The basket: finds land in the pile above its front, which draws over them.
+        RectTransform shadow = GameUi.NewRect("BasketShadow", _results);
+        GameUi.Place(shadow, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(530f, 5f), new Vector2(720f, 70f));
+        Image shadowImage = shadow.gameObject.AddComponent<Image>();
+        shadowImage.sprite = GeneratedSprites.Circle;
+        shadowImage.color = new Color(0f, 0f, 0f, 0.28f);
+        shadowImage.raycastTarget = false;
+
         _pile = GameUi.NewRect("Pile", _results);
-        GameUi.Place(_pile, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(530f, 226f), new Vector2(860f, 760f));
-        var pile = _pile.gameObject.AddComponent<GridLayoutGroup>();
-        pile.cellSize = new Vector2(190f, 210f);
-        pile.spacing = new Vector2(8f, 0f);
-        pile.startCorner = GridLayoutGroup.Corner.LowerLeft;
-        pile.childAlignment = TextAnchor.LowerCenter;
+        GameUi.Place(_pile, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(530f, 172f), new Vector2(570f, 300f));
 
         RectTransform basket = GameUi.NewRect("BasketFront", _results);
         GameUi.Place(basket, new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(530f, 36f), new Vector2(760f, 200f));
@@ -988,7 +1025,8 @@ public class ForagePopup : Popup
 
         _foundTemplate = ItemCardView.Build(_results, "FoundTemplate");
         _foundTemplate.MakeFlat();
-        _foundTemplate.SetNameColor(GameUi.Cream); // these sit on the bush, not on paper
+        _foundTemplate.MakeIconOnly();
+        ((RectTransform)_foundTemplate.transform).sizeDelta = new Vector2(210f, 210f);
         _foundTemplate.gameObject.SetActive(false);
 
         // Beside it: what happened, and what to do next.

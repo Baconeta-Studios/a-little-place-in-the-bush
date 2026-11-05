@@ -31,6 +31,14 @@ public class ItemCardView : MonoBehaviour
     /// <summary>For cards with no background over something dark.</summary>
     public void SetNameColor(Color color) => title.color = color;
 
+    /// <summary>For finds in a pile: just the picture, with the badge top left, where the next one along won't cover it.</summary>
+    public void MakeIconOnly()
+    {
+        title.gameObject.SetActive(false);
+        GameUi.Stretch(icon.rectTransform);
+        GameUi.Place((RectTransform)badge.transform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(64f, 36f));
+    }
+
     public void Fill(ItemCard card)
     {
         background.color = card.selected ? selectedColor : normalColor;
