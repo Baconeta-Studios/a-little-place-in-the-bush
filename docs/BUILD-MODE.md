@@ -138,3 +138,12 @@ In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`)
 - Rug placement.
 - Real art and a designed UI (the build tray and bag are still built in code, in `UI/BuildUi.cs` and `UI/InventoryPopup.cs`; the HUD is a prefab, see [UI.md](UI.md)).
 - Using, selling and sorting from the bag (set aside for later).
+
+## Shadows and bases
+
+**Tools > Bush > Placeable Shadows and Bases** lists every floor placeable with its art, its base (green) and its shadow.
+
+- **Base:** what blocks walking. *Fit Base To Art* measures the bottom of the picture, and you can type over it. It's saved to the asset and to `Design/design-data.json`, so an import keeps it. If the gecko clips round everything, raise *Clearance* on `WalkableGrid` too.
+- **Shadow:** every floor placeable gets one by itself, sized from its base. Change the size, position and strength here, or untick it.
+- **Your own shadow art:** add a child called `Shadow` to the prefab, and that's used instead.
+- **Anything else:** add a **GroundShadow** component to the gecko, a character or a scene prop.

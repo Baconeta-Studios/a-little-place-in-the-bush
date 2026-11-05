@@ -18,7 +18,8 @@ public class PlacedObject : MonoBehaviour
     private readonly List<BoxCollider2D> _footprints = new();
     private readonly List<GameObject> _footprintMarkers = new();
     private readonly List<SpriteRenderer> _footprintMarkerRenderers = new();
-    private GameObject _shadow;
+    private GameObject _ghostShadow;
+    private bool _hasGroundShadow;
     private Transform _poleLeft;
     private Transform _poleRight;
     private Coroutine _plop;
@@ -84,8 +85,21 @@ public class PlacedObject : MonoBehaviour
             _baseOrders[i] = _renderers[i].sortingOrder;
         }
 
+        SetUpShadow(definition);
+
         if (GetComponentInChildren<SurfacePoint>(true) && !GetComponent<SortingGroup>())
             gameObject.AddComponent<SortingGroup>().sortingLayerName = "World";
+    }
+
+    /// <summary>After the renderers are collected, so build mode's tint leaves it alone.</summary>
+    private void SetUpShadow(PlaceableDefinition definition)
+    {
+        if (!definition || definition.placement != PlacementType.Floor || definition.chainSpan > 0f) return;
+        _hasGroundShadow = true;
+        if (transform.Find("Shadow")) return; // its own art
+        bool hasArt = System.Array.Exists(_renderers, r => r && r.sprite);
+        if (definition.groundShadow && hasArt) GroundShadow.Create(transform, definition.ShadowSize, definition.ShadowCentre, definition.shadowStrength);
+        else _hasGroundShadow = false;
     }
 
     private const int WallSortingOrder = 10;
@@ -162,7 +176,7 @@ public class PlacedObject : MonoBehaviour
 
         EnsureMarkers();
         foreach (GameObject marker in _footprintMarkers) marker.SetActive(true);
-        _shadow.SetActive(true);
+        if (_ghostShadow) _ghostShadow.SetActive(true);
         foreach (SpriteRenderer marker in _footprintMarkerRenderers)
             marker.color = valid ? new Color(0.35f, 0.85f, 0.4f, 0.45f) : new Color(0.95f, 0.3f, 0.25f, 0.5f);
     }
@@ -172,7 +186,7 @@ public class PlacedObject : MonoBehaviour
         for (int i = 0; i < _renderers.Length; i++)
             if (_renderers[i]) _renderers[i].color = _baseColors[i];
         foreach (GameObject marker in _footprintMarkers) if (marker) marker.SetActive(false);
-        if (_shadow) _shadow.SetActive(false);
+        if (_ghostShadow) _ghostShadow.SetActive(false);
     }
 
     /// <summary>A quick squash and settle when it's put down.</summary>
@@ -200,7 +214,7 @@ public class PlacedObject : MonoBehaviour
 
     private void EnsureMarkers()
     {
-        if (_shadow) return;
+        if (_footprintMarkers.Count > 0) return;
         Vector2 size = Definition ? Definition.footprintSize : new Vector2(1f, 0.4f);
 
         foreach (Rect rect in FootprintsAt(Definition, Vector2.zero))
@@ -217,11 +231,12 @@ public class PlacedObject : MonoBehaviour
             _footprintMarkerRenderers.Add(renderer);
         }
 
-        _shadow = new GameObject("Shadow");
-        _shadow.transform.SetParent(transform, false);
-        _shadow.transform.localPosition = new Vector3(0f, size.y * 0.35f, 0f);
-        _shadow.transform.localScale = new Vector3(size.x * 1.15f, Mathf.Max(0.2f, size.y * 0.9f), 1f);
-        var shadowRenderer = _shadow.AddComponent<SpriteRenderer>();
+        if (_hasGroundShadow) return; // it already has one
+        _ghostShadow = new GameObject("GhostShadow");
+        _ghostShadow.transform.SetParent(transform, false);
+        _ghostShadow.transform.localPosition = new Vector3(0f, size.y * 0.35f, 0f);
+        _ghostShadow.transform.localScale = new Vector3(size.x * 1.15f, Mathf.Max(0.2f, size.y * 0.9f), 1f);
+        var shadowRenderer = _ghostShadow.AddComponent<SpriteRenderer>();
         shadowRenderer.sprite = GeneratedSprites.Circle;
         shadowRenderer.color = new Color(0.1f, 0.08f, 0.05f, 0.35f);
         shadowRenderer.sortingLayerName = "FloorDecals";
