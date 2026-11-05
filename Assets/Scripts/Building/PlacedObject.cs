@@ -96,9 +96,11 @@ public class PlacedObject : MonoBehaviour
 
         SetUpShadow(definition);
 
-        // Fairy lights too: the lights hang high up, but the whole set should draw in order from its feet.
+        // Things whose art sorts from high up (fairy lights, or art with its pivot moved up, like the fern
+        // light) should still draw in order from their feet, so the whole thing sorts from its root.
         bool hasChain = definition && definition.chainSpan > 0f;
-        if ((hasChain || GetComponentInChildren<SurfacePoint>(true)) && !GetComponent<SortingGroup>())
+        bool sortsFromHigh = _visual && transform.TransformVector(_visualBasePosition).y > HighSortPoint;
+        if ((hasChain || sortsFromHigh || GetComponentInChildren<SurfacePoint>(true)) && !onWall && !GetComponent<SortingGroup>())
             gameObject.AddComponent<SortingGroup>().sortingLayerName = "World";
     }
 
@@ -118,6 +120,8 @@ public class PlacedObject : MonoBehaviour
         else _hasGroundShadow = false;
     }
 
+    // How far above its feet the art can sort from before the whole thing sorts from its feet instead.
+    private const float HighSortPoint = 0.5f;
     private const int WallSortingOrder = 10;
     private const int OnSurfaceSortingOrder = 10;
 
@@ -161,6 +165,7 @@ public class PlacedObject : MonoBehaviour
         }
         for (int i = 0; i < _renderers.Length; i++)
             if (_renderers[i]) _renderers[i].sortingOrder = _baseOrders[i] + (onSurface ? OnSurfaceSortingOrder : 0);
+        if (TryGetComponent(out SortingGroup group)) group.sortingOrder = onSurface ? OnSurfaceSortingOrder : 0; // a group sorts as one
     }
 
     /// <summary>Hides the pole at an end that shares a neighbour's: the piece on the left keeps the shared pole.</summary>
