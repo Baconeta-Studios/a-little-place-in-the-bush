@@ -49,7 +49,7 @@ public class SoundLibrary : ScriptableObject
 
     [Header("How it behaves")]
     [Tooltip("Scenes that play the main menu music.")]
-    public string[] menuScenes = { "MenuTemplate" };
+    public string[] menuScenes = { "MenuTemplate", "Title" };
     [Min(0f)] public float musicFadeSeconds = 1.5f;
     [Tooltip("Time between footsteps while the gecko walks.")]
     [Min(0.05f)] public float footstepSeconds = 0.32f;

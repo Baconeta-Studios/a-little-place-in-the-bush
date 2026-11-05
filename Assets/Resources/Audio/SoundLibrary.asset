@@ -18,6 +18,7 @@ MonoBehaviour:
   audioManagerPrefab: {fileID: 4629262566429204678, guid: 17f4b0f6aa0dcea41a71ca43a789d2fe, type: 3}
   menuScenes:
   - MenuTemplate
+  - Title
   musicFadeSeconds: 1.5
   footstepSeconds: 0.32
   sounds:
