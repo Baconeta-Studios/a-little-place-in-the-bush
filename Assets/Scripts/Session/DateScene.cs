@@ -9,7 +9,7 @@ using UnityEngine.Events;
 /// <summary>
 /// The date at the end of the story. Talking to the character for that quest plays this instead of the usual
 /// conversation: a fade into night, the two of you at the table with everyone else gone and the lights on, the
-/// lines from <see cref="SceneScript"/> (Resources/Scenes/DateScene), a quiet moment, and a fade back out.
+/// lines from <see cref="SceneScript"/> (Resources/Scenes/DateScene), a quiet moment, and a fade into the next morning.
 /// What you get shows on the beat that gives the rewards, and the quest is handed in behind the last fade, so the
 /// character is still there for the quiet moment (finishing her story would send her home).
 /// </summary>
@@ -92,7 +92,9 @@ public class DateScene : MonoBehaviour
         if (follow) follow.ExtraBelow = 0f; // eases back up for the quiet moment
 
         if (!_cut) yield return new WaitForSecondsRealtime(_script.quietSeconds);
-        yield return Fade(_script.endCard, Restore);
+        // Behind the last fade the day ends and the next morning starts, so the card says which day it is.
+        int nextDay = Session.State.day + 1;
+        yield return Fade(_script.endCard, Restore, $"Day {nextDay}");
 
         InputLock.Unlock(this);
         Playing = false;
@@ -113,16 +115,25 @@ public class DateScene : MonoBehaviour
         if (_waiting) _cut = true;
     }
 
-    private IEnumerator Fade(string card, System.Action atBlack)
+    private IEnumerator Fade(string card, System.Action atBlack, string subtitle = null)
     {
         AreaTravel travel = AreaTravel.Instance;
         for (int i = 0; i < 600 && travel.IsTravelling; i++) yield return null; // let anything already fading finish
-        if (!travel.PassTime(card, atBlack))
+        if (!travel.PassTime(card, atBlack, subtitle))
         {
             atBlack();
             yield break;
         }
         while (travel.IsTravelling) yield return null;
+    }
+
+    /// <summary>Closes the cafe for the day (today's sales still count) and goes to bed, so you wake up the next morning.</summary>
+    private static void NextMorning()
+    {
+        GameSession session = Session;
+        session.Cafe.CloseDay();
+        if (session.State.isNight) session.Cafe.GoToBed();
+        session.SaveNow();
     }
 
     private void HandIn()
@@ -227,6 +238,7 @@ public class DateScene : MonoBehaviour
     private void Restore()
     {
         HandIn();
+        NextMorning();
         DayNightLighting.Forced = null;
         DayNightLighting.SnapNow();
         InteractionPrompt.Hidden = false;
