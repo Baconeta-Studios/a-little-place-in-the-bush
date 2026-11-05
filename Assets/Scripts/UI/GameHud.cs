@@ -120,6 +120,7 @@ public class GameHud : MonoBehaviour
         bool mainReady = main != null && IsReadyAndHere(session, main);
         if (_view.trackerTabMarker) _view.trackerTabMarker.SetActive(mainReady);
         if (_view.questsMarker) _view.questsMarker.SetActive(mainReady || session.Quests.ActiveSideQuests().Exists(q => IsReadyAndHere(session, q)));
+        if (_view.buildMarker) _view.buildMarker.SetActive(BuildPrompt.IsWanted(session.Design, session.Quests, session.Build));
     }
 
     private static bool IsReadyAndHere(GameSession session, QuestData quest) =>

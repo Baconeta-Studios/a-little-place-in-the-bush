@@ -194,6 +194,49 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void BuildPrompt_OnlyWhenAQuestWantsSomethingYouHave()
+        {
+            _game.design.quests.Add(new QuestData
+            {
+                id = "quest.decorate", title = "Decorate", giver = TestDesign.Ruru,
+                objectives = { new QuestObjective { type = ObjectiveType.PlaceObject, target = TestDesign.ChairItem, qty = 1 } }
+            });
+            _game.design.RebuildIndex();
+            bool Wanted() => BuildPrompt.IsWanted(_game.design, _game.quests, Build);
+
+            _game.economy.Add(TestDesign.ChairItem, 1);
+            Assert.IsFalse(Wanted(), "Owning a chair isn't enough without the quest.");
+
+            _game.economy.TryRemove(TestDesign.ChairItem, 1);
+            _game.quests.Start("quest.decorate");
+            Assert.IsFalse(Wanted(), "Nothing to place yet.");
+
+            _game.economy.Add(TestDesign.FernItem, 1);
+            Assert.IsFalse(Wanted(), "A fern doesn't count for this quest.");
+
+            _game.economy.Add(TestDesign.ChairItem, 2);
+            Assert.IsTrue(Wanted());
+
+            Build.Place(TestDesign.Area, TestDesign.Chair, 0f, 0f, false);
+            Assert.IsFalse(Wanted(), "Done, even with another chair left over.");
+        }
+
+        [Test]
+        public void BuildPrompt_AnythingCountsWhenTheQuestDoesntSay()
+        {
+            _game.design.quests.Add(new QuestData
+            {
+                id = "quest.anything", title = "Anything", giver = TestDesign.Ruru,
+                objectives = { new QuestObjective { type = ObjectiveType.PlaceObject, target = "", qty = 1 } }
+            });
+            _game.design.RebuildIndex();
+            _game.quests.Start("quest.anything");
+            Assert.IsFalse(BuildPrompt.IsWanted(_game.design, _game.quests, Build));
+            _game.economy.Add(TestDesign.FernItem, 1);
+            Assert.IsTrue(BuildPrompt.IsWanted(_game.design, _game.quests, Build));
+        }
+
+        [Test]
         public void Normalise_KeepsIdsUniqueAndDropsUnknownPlaceables()
         {
             _game.state.placed.Add(new PlacedObjectData { instanceId = 7, area = TestDesign.Area, placeableId = TestDesign.Chair });

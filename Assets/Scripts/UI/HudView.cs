@@ -19,6 +19,8 @@ public class HudView : MonoBehaviour
     public GameObject questsMarker;
     public Button forage;
     public Button build;
+    [Tooltip("A ! on Build, while a quest wants something placed and you have something to place.")]
+    public GameObject buildMarker;
     public Button bed;
     [Tooltip("The job note: the story's current step. Tap it for the quests, or its x to tuck it away.")]
     public RectTransform tracker;
@@ -56,6 +58,7 @@ public class HudView : MonoBehaviour
         view.questsMarker = Marker(view.quests.transform);
         view.forage = Tool(view.bar, "Forage", "BushIcon", out TextMeshProUGUI forageLabel);
         view.build = Tool(view.bar, "Build", "StumpIcon", out TextMeshProUGUI buildLabel);
+        view.buildMarker = Marker(view.build.transform);
         view.bed = GameUi.AddButton(view.bar, "Go to bed", null, new Vector2(230f, 96f), GameUi.PanelDark, GameUi.Cream, 30f);
 
         // The day dial, top right. Tap it for what's on today.
