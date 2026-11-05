@@ -40,6 +40,17 @@ Every screen uses the same few pieces, each with one job. Use these before addin
 
 The main cafe view should show as little as it can. The recipe shop and build tray have the fonts, but not the rest of this yet.
 
+### The title screen (`Assets/Scenes/Title.unity`)
+
+The first scene in the build, and where Main Menu in the pause menu goes. Pressing Play with `Cafe` open still starts in the cafe. Everything is a plain object in the scene, so move, resize or swap whatever you like. `TitleScreen` on `TitleCanvas` wires up the buttons when the game runs, and its slots say which is which.
+
+- `Buttons` lays out New game, Continue, Settings and Credits in a row. Continue only shows if there's a save, and the row closes the gap.
+- `SafeArea` holds what should stay clear of phone notches. `Background` sits outside it and always fills the screen.
+- `ConfirmNew` asks before a new game replaces a save. `Credits` holds the credits text. Both are switched off in the scene: turn one on to edit it, and turn it off again before saving.
+- Settings comes from the `PopupCanvas` in the scene, with *Allow Pause* off on its `PauseInput`, which also hides the cog.
+
+**Tools > Bush > Build Title Scene** makes the scene again from the default layout and puts it first in the build. It asks first, because that loses your edits.
+
 ### The HUD (`HUD.prefab`)
 
 - `HudBar` lays its buttons out in a row. Build and Go to bed are hidden until they're needed, and Forage only shows where `GameHud` has *Forage Button* ticked.

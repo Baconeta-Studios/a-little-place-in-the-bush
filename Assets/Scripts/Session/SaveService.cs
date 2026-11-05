@@ -85,6 +85,33 @@ public class SaveService
             ? new PlayerPrefsSaveStorage("bush.save.v1.backup")
             : new FileSaveStorage("bush-save.backup.json");
 
+    /// <summary>Whether there's a save to go back to, without starting a game.</summary>
+    public static bool HasSave()
+    {
+        try
+        {
+            return !string.IsNullOrEmpty(CreateDefaultStorage().Read());
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[Save] Couldn't check for a save: {e.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>Deletes the save, for starting a new game from the title screen.</summary>
+    public static void DeleteSave()
+    {
+        try
+        {
+            CreateDefaultStorage().Delete();
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[Save] Couldn't delete the save: {e.Message}");
+        }
+    }
+
     public GameState Load(DesignData design)
     {
         string json;
