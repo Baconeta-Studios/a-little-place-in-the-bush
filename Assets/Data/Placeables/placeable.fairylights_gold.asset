@@ -21,7 +21,7 @@ MonoBehaviour:
   alsoOnTables: 0
   scaleOnTable: 1
   footprintSize: {x: 0.25, y: 0.2}
-  chainSpan: 3
+  chainSpan: 8.25
   canFlip: 1
   category: Decor
   seats: 0
