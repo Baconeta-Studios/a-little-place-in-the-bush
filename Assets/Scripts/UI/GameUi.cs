@@ -111,6 +111,7 @@ public class GameUi : MonoBehaviour
         label.alignment = align;
         label.raycastTarget = false;
         label.textWrappingMode = TextWrappingModes.Normal;
+        UiFonts.Apply(label);
         return label;
     }
 
@@ -131,8 +132,7 @@ public class GameUi : MonoBehaviour
         colors.disabledColor = new Color(1f, 1f, 1f, 0.45f);
         button.colors = colors;
         if (onClick != null) button.onClick.AddListener(onClick);
-        TextMeshProUGUI text = AddText(rect, label, fontSize, textColor);
-        text.fontStyle = FontStyles.Bold;
+        AddText(rect, label, fontSize, textColor);
         return button;
     }
 

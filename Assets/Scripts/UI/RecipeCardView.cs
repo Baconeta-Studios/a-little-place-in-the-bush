@@ -90,7 +90,6 @@ public class RecipeCardView : MonoBehaviour, IPointerClickHandler, IBeginDragHan
         view.background = GameUi.AddPanel(rect, GameUi.CardBack);
 
         view.dishName = GameUi.AddText(rect, "", 27f, GameUi.Ink, TextAlignmentOptions.TopLeft, "DishName");
-        view.dishName.fontStyle = FontStyles.Bold;
         Offsets(view.dishName.rectTransform, new Vector2(0f, 0.68f), Vector2.one, new Vector2(14f, 0f), new Vector2(-14f, -14f));
 
         view.ingredients = GameUi.NewRect("Ingredients", rect);
@@ -112,7 +111,6 @@ public class RecipeCardView : MonoBehaviour, IPointerClickHandler, IBeginDragHan
         view.coins = GameUi.AddText(rect, "", 23f, GameUi.Ink, TextAlignmentOptions.BottomLeft, "Coins");
         Offsets(view.coins.rectTransform, Vector2.zero, new Vector2(0.55f, 0.28f), new Vector2(14f, 12f), Vector2.zero);
         view.canMake = GameUi.AddText(rect, "", 23f, GameUi.Ink, TextAlignmentOptions.BottomRight, "CanMake");
-        view.canMake.fontStyle = FontStyles.Bold;
         Offsets(view.canMake.rectTransform, new Vector2(0.45f, 0f), new Vector2(1f, 0.28f), new Vector2(0f, 12f), new Vector2(-14f, 0f));
 
         RectTransform tape = GameUi.NewRect("Wanted", rect);

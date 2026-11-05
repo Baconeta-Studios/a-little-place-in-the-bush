@@ -118,7 +118,6 @@ public class RecipeShopPopup : Popup
         GameUi.AddPanel(panel, GameUi.Panel);
 
         _title = GameUi.AddText(panel, "", 50f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
-        _title.fontStyle = FontStyles.Bold;
         _title.rectTransform.offsetMin = new Vector2(40f, 0f);
         _title.rectTransform.offsetMax = new Vector2(-480f, -28f);
         _coins = GameUi.AddText(panel, "", 34f, GameUi.Bark, TextAlignmentOptions.TopRight, "Coins");

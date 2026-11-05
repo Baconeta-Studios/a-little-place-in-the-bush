@@ -40,7 +40,6 @@ public class MenuSlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         page.sprite = pageSprite;
         label.text = name;
         label.color = GameUi.Ink;
-        label.fontStyle = FontStyles.Bold;
         remove.gameObject.SetActive(true);
     }
 
@@ -50,7 +49,6 @@ public class MenuSlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         page.gameObject.SetActive(false);
         label.text = "Drop a dish here";
         label.color = GameUi.Cream;
-        label.fontStyle = FontStyles.Normal;
         remove.gameObject.SetActive(false);
     }
 
@@ -60,7 +58,6 @@ public class MenuSlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         page.gameObject.SetActive(false);
         label.text = text;
         label.color = new Color(1f, 0.98f, 0.92f, 0.75f);
-        label.fontStyle = FontStyles.Normal;
         remove.gameObject.SetActive(false);
     }
 

@@ -688,7 +688,6 @@ public class CafePopup : Popup
         inside.childAlignment = TextAnchor.UpperLeft;
         inside.childForceExpandWidth = true;
         TextMeshProUGUI heading = GameUi.AddText(forecast, "While you're out", 29f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Heading");
-        heading.fontStyle = FontStyles.Bold;
 
         _sales = GameUi.NewRect("Sales", forecast);
         GameUi.AddLayout<HorizontalLayoutGroup>(_sales, 8f).childAlignment = TextAnchor.MiddleLeft;
@@ -746,7 +745,6 @@ public class CafePopup : Popup
         _dragGhostPage.preserveAspect = true;
         _dragGhostPage.raycastTarget = false;
         _dragGhostName = GameUi.AddText(_dragGhost, "", 24f, GameUi.Ink, TextAlignmentOptions.Center, "DishName");
-        _dragGhostName.fontStyle = FontStyles.Bold;
         Anchor(_dragGhostName.rectTransform, new Vector2(0f, 0.04f), new Vector2(1f, 0.42f), new Vector2(8f, 0f), new Vector2(-8f, 0f));
         _dragGhost.gameObject.SetActive(false);
     }

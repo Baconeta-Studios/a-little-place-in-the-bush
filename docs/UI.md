@@ -35,10 +35,10 @@ Every screen uses the same few pieces, each with one job. Use these before addin
 - **Gold tape:** someone in the game is asking for something. Only that.
 - **Hanging sign** (`Placeables/Cafe sign.png`): names a board, once per screen at most.
 - **Koru markers:** trips left today, and nothing else.
-- **Fonts:** Caveat Brush for titles, Grandstander for buttons and names, Pangolin for reading, Mynerve only for characters' handwriting.
+- **Fonts:** Caveat Brush for titles, Grandstander for buttons and names, Pangolin for reading, Mynerve only for characters' handwriting. They're set on `Resources/UI/UiFonts.asset`, and text built in code gets its font from there by what it's called and what it's on (`UiFonts`), so name text for its job: `Title`, `Name`, `DishName`, `Nudge`. Pangolin is also the project's default in TMP Settings.
 - **Colours:** green means done or ready, and red means a problem or shortage.
 
-The main cafe view should show as little as it can. Screens built in code (bag, quest log, dialogue, upgrades, recipe shop, cafe sign, build tray) don't match this yet.
+The main cafe view should show as little as it can. Screens built in code (bag, quest log, dialogue, upgrades, recipe shop, cafe sign, build tray) have the fonts, but not the rest of this yet.
 
 ### The HUD (`HUD.prefab`)
 

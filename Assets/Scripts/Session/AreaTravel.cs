@@ -178,7 +178,7 @@ public class AreaTravel : EverlastingSingleton<AreaTravel>
         _fadeText = fadeTextObject.GetComponent<TextMeshProUGUI>();
         _fadeText.alignment = TextAlignmentOptions.Center;
         _fadeText.fontSize = 96f;
-        _fadeText.fontStyle = FontStyles.Bold;
+        UiFonts.UseTitle(_fadeText);
         _fadeText.color = new Color(1f, 0.98f, 0.92f);
         _fadeText.raycastTarget = false;
         _fadeText.text = "";
