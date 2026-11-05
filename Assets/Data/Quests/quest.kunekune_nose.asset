@@ -34,7 +34,10 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 15
+  - type: 0
+    target: {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
+    qty: 1
   offerLine: Snff. Snff snff. You've been in the bush. I can smell it. I love the bush. Find me some mushrooms, fresh ones, and I'll come with you next time.
   activeLine: Mushrooms! Three! Fresh! Snff!
-  readyLine: Oh, they're perfect. Oh, I'm coming with you. I've decided. Nobody's stopping me. I'm very fast, in a way.
+  readyLine: Oh, they're perfect. Oh, I'm coming with you. I've decided. Nobody's stopping me. I'm very fast, in a way. Here, I sat on this rock for a year. You have it.
   doneLine: Take me foraging! I'm ready!

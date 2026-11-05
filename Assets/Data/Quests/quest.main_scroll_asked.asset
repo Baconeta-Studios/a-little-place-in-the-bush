@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.main_scroll_asked
   displayName: That old recipe
-  description: "K\u014Dwhai has something on their mind. Hear them out."
+  description: "K\u014Dwhai has something on her mind. Hear her out."
   giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
   isMain: 1
   prerequisites:

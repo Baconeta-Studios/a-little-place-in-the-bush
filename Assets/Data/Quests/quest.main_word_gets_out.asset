@@ -28,13 +28,10 @@ MonoBehaviour:
     target: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
     qty: 1
   rewards:
-  - type: 0
-    target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
-    qty: 2
-  - type: 0
-    target: {fileID: 11400000, guid: 0c1ed726a108271428bb6340aaaddc8c, type: 2}
-    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 10
   offerLine: It IS you. I heard you were back, and I said no, that one never comes back for anything. And then I heard about this... place.
   activeLine: Don't just stand there with your mouth open. Come here.
-  readyLine: You're really doing this? Here. It's not a housewarming gift, it's a mercy. Those walls need hiding.
+  readyLine: You're really doing this? With two chairs and a plant? If you want this place looking like anything, you'll need help. You've got visitors now. Be useful to them, and they'll be useful to you.
   doneLine: We'll see. I'm staying a while.

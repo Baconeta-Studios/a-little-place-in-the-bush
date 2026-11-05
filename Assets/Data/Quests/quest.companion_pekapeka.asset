@@ -31,7 +31,10 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 20
+  - type: 0
+    target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
+    qty: 1
   offerLine: Um. Sorry. Hello. I don't want to be any trouble. It's just that it smells nice. I'll just watch. Is that all right? Maybe... a few dishes? I'll stay over here.
   activeLine: No rush! Sorry. Sorry to ask. It smells lovely.
-  readyLine: I've been watching, and I think you're kind. That's all. Sorry. Here. It's not much.
+  readyLine: I've been watching, and I think you're kind. That's all. Sorry. Here, I grew this. It's not much.
   doneLine: You could call me Peka. If you want.

@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 /// On the root of every placed thing (and on build mode's ghost). Keeps its footprint collider in
 /// line with its <see cref="PlaceableDefinition"/>, flips it, and tints it for build mode. Only Floor
 /// things have a footprint. Things that have <see cref="SurfacePoint"/>s sort as one group, so what's
-/// on them always draws on top of them.
+/// on them always draws on top of them. So do fairy lights, so they draw in order from their feet.
 /// </summary>
 public class PlacedObject : MonoBehaviour
 {
@@ -96,7 +96,9 @@ public class PlacedObject : MonoBehaviour
 
         SetUpShadow(definition);
 
-        if (GetComponentInChildren<SurfacePoint>(true) && !GetComponent<SortingGroup>())
+        // Fairy lights too: the lights hang high up, but the whole set should draw in order from its feet.
+        bool hasChain = definition && definition.chainSpan > 0f;
+        if ((hasChain || GetComponentInChildren<SurfacePoint>(true)) && !GetComponent<SortingGroup>())
             gameObject.AddComponent<SortingGroup>().sortingLayerName = "World";
     }
 

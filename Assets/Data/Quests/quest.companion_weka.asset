@@ -31,7 +31,13 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 15
+  - type: 0
+    target: {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 0c1ed726a108271428bb6340aaaddc8c, type: 2}
+    qty: 1
   offerLine: You, foraging? With those feet? Go on then. Six trips. I'll be watching. You won't see me. Nobody ever sees me.
   activeLine: I saw you out there. Terrible. Keep going.
-  readyLine: Not bad. For a gecko. I'm not coming with you, mind. Yet. But I'll tell you a secret, if you've got something shiny.
+  readyLine: Not bad. For a gecko. I'm not coming with you, mind. Yet. Here, take these rocks. Don't ask whose garden they're from. I'll tell you a secret, too, if you've got something shiny.
   doneLine: Got anything shiny on you?

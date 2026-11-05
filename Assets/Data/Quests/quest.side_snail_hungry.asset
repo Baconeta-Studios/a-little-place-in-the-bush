@@ -34,7 +34,10 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 10
+  - type: 0
+    target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
+    qty: 1
   offerLine: Hungry... so... hungry. I have... a bit of paper. It's yours... for worm pie. Two.
   activeLine: Still... hungry...
-  readyLine: Mmmm. Worthwhile. Here's... the paper. It tastes awful. I tried.
+  readyLine: Mmmm. Worthwhile. Here's... the paper. It tastes awful. I tried. And a plant. I was going to... eat it. Later.
   doneLine: Have you thought... about more pie?

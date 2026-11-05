@@ -2334,16 +2334,6 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "rewards": [
         {
-          "type": "Item",
-          "target": "item.chair",
-          "qty": 2
-        },
-        {
-          "type": "Item",
-          "target": "item.mossy_rock",
-          "qty": 1
-        },
-        {
           "type": "Coins",
           "target": "",
           "qty": 30
@@ -2352,7 +2342,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "dialogue": {
         "offer": "I've minded this place long enough, and my own tree's a mess. You don't need an old owl hanging about. Come and say goodbye.",
         "active": "Come on, then. Say it. I won't cry.",
-        "ready": "Here, a few more seats for you. I'll still drop in, some nights. I've got recipes I'd sell to the right gecko, at the right price. Oh, and word gets around. I may have told someone you're back.",
+        "ready": "I'll still drop in, some nights. I've got recipes I'd sell to the right gecko, at the right price. Oh, and word gets around. I may have told someone you're back.",
         "done": "Well? Off you go. Someone might be coming."
       }
     },
@@ -2378,20 +2368,15 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "rewards": [
         {
-          "type": "Item",
-          "target": "item.potted_fern",
-          "qty": 2
-        },
-        {
-          "type": "Item",
-          "target": "item.boulder",
-          "qty": 1
+          "type": "Coins",
+          "target": "",
+          "qty": 10
         }
       ],
       "dialogue": {
         "offer": "It IS you. I heard you were back, and I said no, that one never comes back for anything. And then I heard about this... place.",
         "active": "Don't just stand there with your mouth open. Come here.",
-        "ready": "You're really doing this? Here. It's not a housewarming gift, it's a mercy. Those walls need hiding.",
+        "ready": "You're really doing this? With two chairs and a plant? If you want this place looking like anything, you'll need help. You've got visitors now. Be useful to them, and they'll be useful to you.",
         "done": "We'll see. I'm staying a while."
       }
     },
@@ -2407,7 +2392,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "minDay": 0,
       "requiresItem": "",
       "giverComes": false,
-      "summary": "Kōwhai won't eat here until it's got enough seats and looks like somebody cares.",
+      "summary": "Kōwhai won't eat here until it's got enough seats and looks like somebody cares. Help the visitors to your cafe: they might have furniture to spare.",
       "objectives": [
         {
           "type": "HaveSeats",
@@ -2433,8 +2418,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
         }
       ],
       "dialogue": {
-        "offer": "I'm not eating standing up, and I'm not eating in a ruin. Get some proper seats out and make it look like somebody cares. Then we'll talk.",
-        "active": "Still looks like a ruin. A slightly nicer ruin. More seats. More everything.",
+        "offer": "I'm not eating standing up, and I'm not eating in a ruin. Get some proper seats out and make it look like somebody cares. Your visitors all have odd jobs going and sheds full of junk. Start there. Then we'll talk.",
+        "active": "Still looks like a ruin. More seats. More everything. Go and help your visitors, they've got more furniture than sense.",
         "ready": "Hm. All right, this is better. I'll say it once. Now, can you actually cook? Your mum's moss toast was the best thing in this bush. Here's how it goes, if you've forgotten.",
         "done": "Don't get smug."
       }
@@ -2573,7 +2558,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "minDay": 0,
       "requiresItem": "",
       "giverComes": false,
-      "summary": "Kōwhai has something on their mind. Hear them out.",
+      "summary": "Kōwhai has something on her mind. Hear her out.",
       "objectives": [
         {
           "type": "TalkTo",
@@ -2845,12 +2830,17 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "Coins",
           "target": "",
           "qty": 15
+        },
+        {
+          "type": "Item",
+          "target": "item.chair",
+          "qty": 1
         }
       ],
       "dialogue": {
         "offer": "Snff. Snff snff. You've been in the bush. I can smell it. I love the bush. Find me some mushrooms, fresh ones, and I'll come with you next time.",
         "active": "Mushrooms! Three! Fresh! Snff!",
-        "ready": "Oh, they're perfect. Oh, I'm coming with you. I've decided. Nobody's stopping me. I'm very fast, in a way.",
+        "ready": "Oh, they're perfect. Oh, I'm coming with you. I've decided. Nobody's stopping me. I'm very fast, in a way. Here, I sat on this rock for a year. You have it.",
         "done": "Take me foraging! I'm ready!"
       }
     },
@@ -3001,12 +2991,17 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "Coins",
           "target": "",
           "qty": 10
+        },
+        {
+          "type": "Item",
+          "target": "item.potted_fern",
+          "qty": 1
         }
       ],
       "dialogue": {
         "offer": "Hungry... so... hungry. I have... a bit of paper. It's yours... for worm pie. Two.",
         "active": "Still... hungry...",
-        "ready": "Mmmm. Worthwhile. Here's... the paper. It tastes awful. I tried.",
+        "ready": "Mmmm. Worthwhile. Here's... the paper. It tastes awful. I tried. And a plant. I was going to... eat it. Later.",
         "done": "Have you thought... about more pie?"
       }
     },
@@ -3250,12 +3245,22 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "Coins",
           "target": "",
           "qty": 15
+        },
+        {
+          "type": "Item",
+          "target": "item.chair",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.boulder",
+          "qty": 1
         }
       ],
       "dialogue": {
         "offer": "You, foraging? With those feet? Go on then. Six trips. I'll be watching. You won't see me. Nobody ever sees me.",
         "active": "I saw you out there. Terrible. Keep going.",
-        "ready": "Not bad. For a gecko. I'm not coming with you, mind. Yet. But I'll tell you a secret, if you've got something shiny.",
+        "ready": "Not bad. For a gecko. I'm not coming with you, mind. Yet. Here, take these rocks. Don't ask whose garden they're from. I'll tell you a secret, too, if you've got something shiny.",
         "done": "Got anything shiny on you?"
       }
     },
@@ -3372,12 +3377,17 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
           "type": "Coins",
           "target": "",
           "qty": 20
+        },
+        {
+          "type": "Item",
+          "target": "item.potted_fern",
+          "qty": 1
         }
       ],
       "dialogue": {
         "offer": "Um. Sorry. Hello. I don't want to be any trouble. It's just that it smells nice. I'll just watch. Is that all right? Maybe... a few dishes? I'll stay over here.",
         "active": "No rush! Sorry. Sorry to ask. It smells lovely.",
-        "ready": "I've been watching, and I think you're kind. That's all. Sorry. Here. It's not much.",
+        "ready": "I've been watching, and I think you're kind. That's all. Sorry. Here, I grew this. It's not much.",
         "done": "You could call me Peka. If you want."
       }
     },

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.main_fix_it_up
   displayName: Somewhere worth sitting
-  description: "K\u014Dwhai won't eat here until it's got enough seats and looks like somebody cares."
+  description: "K\u014Dwhai won't eat here until it's got enough seats and looks like somebody cares. Help the visitors to your cafe: they might have furniture to spare."
   giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
   isMain: 1
   prerequisites:
@@ -37,7 +37,7 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 40
-  offerLine: I'm not eating standing up, and I'm not eating in a ruin. Get some proper seats out and make it look like somebody cares. Then we'll talk.
-  activeLine: Still looks like a ruin. A slightly nicer ruin. More seats. More everything.
+  offerLine: I'm not eating standing up, and I'm not eating in a ruin. Get some proper seats out and make it look like somebody cares. Your visitors all have odd jobs going and sheds full of junk. Start there. Then we'll talk.
+  activeLine: Still looks like a ruin. More seats. More everything. Go and help your visitors, they've got more furniture than sense.
   readyLine: Hm. All right, this is better. I'll say it once. Now, can you actually cook? Your mum's moss toast was the best thing in this bush. Here's how it goes, if you've forgotten.
   doneLine: Don't get smug.

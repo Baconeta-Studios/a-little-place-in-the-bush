@@ -242,6 +242,33 @@ namespace Bush.Core.Tests
             System.Console.WriteLine($"[Whole game] seed {seed}: everything done on day {player.game.state.day}, story done: {player.game.quests.IsMainStoryComplete()}.");
         }
 
+        /// <summary>Kōwhai's seats and cosiness have to come from helping visitors, not just from following the story.</summary>
+        [Test]
+        public void KowhaisRequest_TakesSideQuests()
+        {
+            DesignData design = LoadRealDesign();
+            int seats = 0, score = 0;
+            var kinds = new HashSet<string>();
+            foreach (QuestData quest in design.quests)
+            {
+                if (quest.id == "quest.main_fix_it_up") break;
+                if (!quest.isMain) continue;
+                foreach (QuestReward reward in quest.rewards)
+                {
+                    PlaceableData placeable = design.placeables.Find(p => p.itemId == reward.target);
+                    if (reward.type != RewardType.Item || placeable == null) continue;
+                    seats += placeable.seats * reward.qty;
+                    score += placeable.cosiness * reward.qty;
+                    kinds.Add(placeable.id);
+                }
+            }
+            QuestData request = design.GetQuest("quest.main_fix_it_up");
+            int seatsNeeded = request.objectives.Find(o => o.type == ObjectiveType.HaveSeats).qty;
+            int cosyNeeded = request.objectives.Find(o => o.type == ObjectiveType.ReachCosiness).qty;
+            Assert.Less(seats, seatsNeeded, "The story alone gives enough seats.");
+            Assert.Less(score + kinds.Count, cosyNeeded, "The story alone makes it cosy enough.");
+        }
+
         [Test]
         public void TheDate_ComesLast_InTheStory()
         {

@@ -10,7 +10,7 @@ You've come home to find the old cafe falling down, and you mean to fix it up to
 |---|---|---|
 | Coming home | Coming home, Leaves for the salad, Open for business sort of, Closing time, Somewhere to sit, Open for guests, After dark | Ruru |
 | Ruru moves on | Ruru moves on. She then visits at random, at night, and sells recipes | Ruru |
-| Someone's back | Someone's back, Somewhere worth sitting (4 seats and cosiness 20) | Kōwhai |
+| Someone's back | Someone's back, Somewhere worth sitting (4 seats and cosiness 20, which takes help from visitors' side quests) | Kōwhai |
 | Impressing them | A little taste (moss toast), Something sweet (berry cake), A proper menu (3 dishes up at once), That old recipe, The torn recipe (the 4 scraps), The kawakawa scroll | Kōwhai |
 | The date | A table for two, A little place in the bush. The game carries on afterwards | Kōwhai |
 

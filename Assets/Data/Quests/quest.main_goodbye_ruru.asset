@@ -28,16 +28,10 @@ MonoBehaviour:
     target: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
     qty: 1
   rewards:
-  - type: 0
-    target: {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
-    qty: 2
-  - type: 0
-    target: {fileID: 11400000, guid: 014aa3277ebc21d4aacf267fb796213f, type: 2}
-    qty: 1
   - type: 1
     target: {fileID: 0}
     qty: 30
   offerLine: I've minded this place long enough, and my own tree's a mess. You don't need an old owl hanging about. Come and say goodbye.
   activeLine: Come on, then. Say it. I won't cry.
-  readyLine: Here, a few more seats for you. I'll still drop in, some nights. I've got recipes I'd sell to the right gecko, at the right price. Oh, and word gets around. I may have told someone you're back.
+  readyLine: I'll still drop in, some nights. I've got recipes I'd sell to the right gecko, at the right price. Oh, and word gets around. I may have told someone you're back.
   doneLine: Well? Off you go. Someone might be coming.
