@@ -26,6 +26,20 @@ namespace Bush.Core.Tests
         // ----- Visitors -----
 
         [Test]
+        public void CosinessLevels_SayWhatComesNext()
+        {
+            Assert.AreEqual("Bare", CafeStyle.CosinessLevel(14));
+            Assert.AreEqual("Getting there", CafeStyle.CosinessLevel(15));
+            Assert.AreEqual("The cosiest spot in the bush", CafeStyle.CosinessLevel(500));
+            Assert.AreEqual(1, CafeStyle.CosinessStep(16));
+
+            Assert.IsTrue(CafeStyle.TryNextLevel(16, out string next, out int more));
+            Assert.AreEqual("Cosy", next);
+            Assert.AreEqual(24, more);
+            Assert.IsFalse(CafeStyle.TryNextLevel(140, out _, out _));
+        }
+
+        [Test]
         public void StoryGuest_StaysWhileTheStoryIsTheirs()
         {
             Assert.IsTrue(Visitors.IsPresent(_game.design, _game.state, _game.quests, TestDesign.Ruru), "Ruru gives the first story quest.");

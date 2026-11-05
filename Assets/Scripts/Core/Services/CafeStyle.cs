@@ -28,9 +28,37 @@ namespace Bush.Core
             return score + kinds.Count; // a bit extra for each different kind of thing
         }
 
-        /// <summary>"Bare", "Getting there", "Cosy", "Very cosy" or "The cosiest spot in the bush".</summary>
-        public static string CosinessLevel(int score) =>
-            score < 15 ? "Bare" : score < 40 ? "Getting there" : score < 80 ? "Cosy" : score < 140 ? "Very cosy" : "The cosiest spot in the bush";
+        /// <summary>The levels of cosiness, and the score each starts at, lowest first.</summary>
+        private static readonly (string name, int from)[] Levels =
+        {
+            ("Bare", 0),
+            ("Getting there", 15),
+            ("Cosy", 40),
+            ("Very cosy", 80),
+            ("The cosiest spot in the bush", 140)
+        };
+
+        public static int CosinessSteps => Levels.Length;
+
+        /// <summary>Which level this score is at, from 0.</summary>
+        public static int CosinessStep(int score)
+        {
+            int step = 0;
+            for (int i = 0; i < Levels.Length; i++)
+                if (score >= Levels[i].from) step = i;
+            return step;
+        }
+
+        public static string CosinessLevel(int score) => Levels[CosinessStep(score)].name;
+
+        /// <summary>The level after this score's, and how much more it takes. False at the top.</summary>
+        public static bool TryNextLevel(int score, out string name, out int more)
+        {
+            int next = CosinessStep(score) + 1;
+            name = next < Levels.Length ? Levels[next].name : null;
+            more = next < Levels.Length ? Levels[next].from - score : 0;
+            return next < Levels.Length;
+        }
 
         /// <summary>
         /// Random visitors' chances are multiplied by this: 1 for a bare cafe, up to 2 at 150 cosiness.
