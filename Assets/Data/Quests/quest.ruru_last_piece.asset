@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.ruru_last_piece
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.ruru_last_piece
+  displayName: One for the road
+  description: Ruru's holding on to something from that old recipe card, and she'll only part with it for a proper supper.
+  giver: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 9795d963b6807f849b4f7c117c7a5709, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: e9f301cc6060e4c4985b84ef29435784, type: 2}
+    qty: 3
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: b26579b96f4166b429c92751e78521f7, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 90998f63e43086e4daa74fcebc62c8b9, type: 2}
+    qty: 1
+  offerLine: 'Word is you''re after that old recipe card. This bit? Been using it as a bookmark for years. You can have it, but an owl''s got to eat. Three beetles, fresh from the night bush. Not the ones in your bag: I want to know they''re fresh.'
+  activeLine: Three fresh beetles. You'll find them at night, on your trips.
+  readyLine: Ahh. Crunchy. Right, here's your bit of card. See that R at the bottom? That's me. Took you long enough to ask.
+  doneLine: Tell that young gecko I said hello.

@@ -17,7 +17,7 @@ MonoBehaviour:
   description: A swish table for a cafe.
   icon: {fileID: 21300000, guid: 003b15efd8fd065488bcfaa63c1bc349, type: 3}
   category: 4
-  rarity: 1
+  rarity: 2
   tags:
   - furniture
   sellValue: 20

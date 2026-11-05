@@ -79,7 +79,15 @@ namespace Bush.Core
         CompleteExpeditions, // target unused
         TalkTo,              // target = npc id
         PlaceObject,         // target = placeable item id, or empty for anything
-        CloseDay             // target unused; closing the cafe for the day
+        CloseDay,            // target unused; closing the cafe for the day
+        // New ones go on the end: assets save these by number.
+        FindItems,           // target = item id; only finds on trips after taking the quest count, so what's in the bag doesn't
+        TripWith,            // target = companion id; forage trips with them along
+        CloseWithOnMenu,     // target = recipe id, or empty for any; closing for the day with it on the menu
+        HaveOnMenu,          // target = recipe id, or empty to count dishes on the menu now
+        ReachCosiness,       // target unused; qty is the cafe's cosiness
+        HaveSeats,           // target unused; seats out at the cafe now
+        HavePlaced           // target = placeable item id; out at the cafe now, however long ago it was placed
     }
 
     public enum RewardType

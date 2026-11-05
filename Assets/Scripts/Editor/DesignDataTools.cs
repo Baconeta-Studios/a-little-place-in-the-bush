@@ -166,6 +166,7 @@ public static class DesignDataTools
                 ItemData item = design.GetItem(x.itemId);
                 SetBasics(asset, x.id, item?.name ?? x.id, item?.description);
                 asset.placement = x.placement;
+                asset.alsoOnTables = x.alsoOnTables;
                 asset.footprintSize = new Vector2(x.footprintWidth, x.footprintDepth);
                 asset.chainSpan = x.chainSpan;
                 asset.canFlip = x.canFlip;
@@ -205,6 +206,7 @@ public static class DesignDataTools
                 var asset = assets.Get<NpcDefinition>(x.id);
                 asset.afterQuest = assets.Get<QuestDefinition>(x.afterQuest);
                 asset.shop = x.shop.Select(assets.Get<RecipeDefinition>).Where(r => r).ToList();
+                asset.shopAfterQuest = assets.Get<QuestDefinition>(x.shopAfterQuest);
             }
             foreach (UpgradeData x in design.rules.upgrades)
                 assets.Get<UpgradeDefinition>(x.id).requires = assets.Get<UpgradeDefinition>(x.requires);
@@ -226,6 +228,8 @@ public static class DesignDataTools
                 asset.isMain = x.isMain;
                 asset.nextDay = x.nextDay;
                 asset.minDay = x.minDay;
+                asset.requiresItem = assets.Get<ItemDefinition>(x.requiresItem);
+                asset.giverComes = x.giverComes;
                 asset.prerequisites = x.prerequisites.Select(assets.Get<QuestDefinition>).Where(q => q).ToList();
                 asset.objectives = x.objectives.Select(o => new ObjectiveEntry { type = o.type, target = assets.GetAny(o.target), qty = o.qty }).ToList();
                 asset.rewards = x.rewards.Select(r => new RewardEntry { type = r.type, target = assets.GetAny(r.target), qty = r.qty }).ToList();
@@ -309,7 +313,9 @@ public static class DesignDataTools
                 Type expected = objective.type switch
                 {
                     ObjectiveType.HaveItems or ObjectiveType.DeliverItems or ObjectiveType.PlaceObject => typeof(ItemDefinition),
-                    ObjectiveType.CookRecipe => typeof(RecipeDefinition),
+                    ObjectiveType.CookRecipe or ObjectiveType.CloseWithOnMenu or ObjectiveType.HaveOnMenu => typeof(RecipeDefinition),
+                    ObjectiveType.FindItems or ObjectiveType.HavePlaced => typeof(ItemDefinition),
+                    ObjectiveType.TripWith => typeof(CompanionDefinition),
                     ObjectiveType.TalkTo => typeof(NpcDefinition),
                     _ => null
                 };

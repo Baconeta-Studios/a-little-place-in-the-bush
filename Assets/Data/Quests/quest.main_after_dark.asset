@@ -21,6 +21,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
   nextDay: 1
   minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
   objectives:
   - type: 2
     target: {fileID: 0}
@@ -30,9 +32,9 @@ MonoBehaviour:
     target: {fileID: 0}
     qty: 1
   - type: 0
-    target: {fileID: 11400000, guid: b56afdc5703376f4a9469240776a12ae, type: 2}
+    target: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
     qty: 1
   offerLine: You're getting the hang of this. Keep the guests fed a few more days, and then stay up after closing sometime. Night's when the bush really wakes up.
   activeLine: Serve a few more dishes. Then stay up late with me.
-  readyLine: Well done. I've kept day hours long enough for you. From now on, find me after dark.
-  doneLine: Tonight, don't rush off to bed. Come and find me. Night's when the bush really wakes up.
+  readyLine: Well done. I've kept day hours long enough for you. From now on, find me after dark. Take this lantern, too.
+  doneLine: Tonight, don't rush off to bed. Come and find me.

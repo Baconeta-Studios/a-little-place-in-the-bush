@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: quest.main_hello
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.main_hello
-  displayName: Hello, Ruru
-  description: Ruru, who used to run the cafe, wants to meet you. She'll teach you your first recipe.
+  displayName: Coming home
+  description: You've come home to find the old cafe falling down. Ruru, your old neighbour, wants a word.
   giver: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
   isMain: 1
   prerequisites: []
   nextDay: 0
   minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
   objectives:
   - type: 4
     target: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
@@ -28,7 +30,7 @@ MonoBehaviour:
   - type: 2
     target: {fileID: 11400000, guid: fca9e2ef2c795124082e02373b8bd0f6, type: 2}
     qty: 1
-  offerLine: Oh! A new face in my old cafe. Come and say hello properly.
+  offerLine: Well, well. Look who's finally come home. And I see you've found the old cafe. Not much left of it, is there?
   activeLine: Come here, let me have a look at you.
-  readyLine: 'Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that''s all it takes.'
+  readyLine: 'Fix it up? You? ...Hah! It''s that gecko you used to moon over, isn''t it? Don''t answer. A cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that''s all it takes.'
   doneLine: A recipe's no good without leaves, mind.

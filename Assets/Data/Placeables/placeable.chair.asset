@@ -18,6 +18,8 @@ MonoBehaviour:
   item: {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
   prefab: {fileID: 4620762537711841443, guid: 9b78072948ac4f74cbec7423a87176e8, type: 3}
   placement: 0
+  alsoOnTables: 0
+  scaleOnTable: 1
   footprintSize: {x: 1.85, y: 0.55}
   chainSpan: 0
   canFlip: 1
@@ -26,6 +28,6 @@ MonoBehaviour:
   cosiness: 1
   style: rustic
   groundShadow: 1
-  shadowSize: {x: 0, y: 0}
-  shadowOffset: {x: 0, y: 0}
+  shadowSize: {x: 3.1, y: 0.9}
+  shadowOffset: {x: 0, y: 0.1}
   shadowStrength: 0.45

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.chair
   displayName: Stone chair
   description: A little stone chair. One guest can perch here.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b0e9865e41e2bc548bded3d77e6f4c9d, type: 3}
   category: 4
   rarity: 0
   tags:

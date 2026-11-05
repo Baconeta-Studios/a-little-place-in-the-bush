@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.map_show_kunekune
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.map_show_kunekune
+  displayName: A tattered map
+  description: You found a tattered old map in the bush, with a big X on it. Kunekune has a nose for this sort of thing.
+  giver: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 3e2e8c15adda4e440aa20bf1319c9801, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 11400000, guid: b3513eff5cabd4e4ba767547cac9af1c, type: 2}
+  giverComes: 1
+  objectives:
+  - type: 0
+    target: {fileID: 11400000, guid: b3513eff5cabd4e4ba767547cac9af1c, type: 2}
+    qty: 1
+  rewards:
+  - type: 1
+    target: {fileID: 0}
+    qty: 10
+  offerLine: Snff? Is that a map? It smells like dirt. It smells like VERY OLD dirt. Show me!
+  activeLine: Show me the map! Show me, show me!
+  readyLine: I know that dirt! It's the deep kind. We'd have to go out and dig for days. Let's go! Let's go now!
+  doneLine: It's THAT way. Or that way.

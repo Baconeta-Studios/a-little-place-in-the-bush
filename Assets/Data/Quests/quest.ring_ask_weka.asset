@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.ring_ask_weka
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.ring_ask_weka
+  displayName: Finders keepers
+  description: Ruru thinks Weka knows something about the ring.
+  giver: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 83e35cc9705c31d4dabd756f9181595a, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 0
+    target: {fileID: 11400000, guid: 1da8ed4138f6b374ca962db3c6f97e6f, type: 2}
+    qty: 1
+  rewards:
+  - type: 1
+    target: {fileID: 0}
+    qty: 10
+  offerLine: That wasn't me. I didn't take that. Which ring? Where'd you get that? Give it here. No, fine, don't.
+  activeLine: I've never seen that ring in my life. Show me again.
+  readyLine: All right. All RIGHT. I nicked it years ago, off Snail's gran. Then I dropped it. Then I felt bad. Take it back, would you? Tell Snail I'm sorry. Actually, don't.
+  doneLine: I'm not talking about it.

@@ -18,12 +18,14 @@ MonoBehaviour:
   item: {fileID: 11400000, guid: 3080cb37c4088cc42bd25fe3d9416dbe, type: 2}
   prefab: {fileID: 8261507659864829758, guid: 7b3d0954e96e35a44b58323b2d2f89cc, type: 3}
   placement: 0
+  alsoOnTables: 0
+  scaleOnTable: 1
   footprintSize: {x: 2.25, y: 0.6}
   chainSpan: 0
   canFlip: 1
   category: Furniture
   seats: 0
-  cosiness: 2
+  cosiness: 5
   style: fancy
   groundShadow: 1
   shadowSize: {x: 0, y: 0}

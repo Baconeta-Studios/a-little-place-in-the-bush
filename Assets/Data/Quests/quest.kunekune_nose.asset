@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.kunekune_nose
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.kunekune_nose
+  displayName: Follow your nose
+  description: Kunekune smells mushrooms on you and wants in. Find 3 mushrooms on foraging trips, and Kunekune will come along.
+  giver: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: a07aecd8570d619419e001f2df5e27c5, type: 2}
+    qty: 3
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 15
+  - type: 0
+    target: {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
+    qty: 1
+  offerLine: Snff. Snff snff. You've been in the bush. I can smell it. I love the bush. Find me some mushrooms, fresh ones, and I'll come with you next time.
+  activeLine: Mushrooms! Three! Fresh! Snff!
+  readyLine: Oh, they're perfect. Oh, I'm coming with you. I've decided. Nobody's stopping me. I'm very fast, in a way. Here, I sat on this rock for a year. You have it.
+  doneLine: Take me foraging! I'm ready!

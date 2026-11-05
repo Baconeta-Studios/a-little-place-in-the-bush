@@ -49,19 +49,19 @@ MonoBehaviour:
     qty: 1
     weight: 1
     exclusive: 0
-  - item: {fileID: 11400000, guid: b56afdc5703376f4a9469240776a12ae, type: 2}
-    qty: 1
-    weight: 2
-    exclusive: 1
-  - item: {fileID: 11400000, guid: 065a04bfe78f599439857d2ad6df4b8a, type: 2}
-    qty: 1
-    weight: 2
-    exclusive: 1
-  - item: {fileID: 11400000, guid: 62cc489b5161ff24886a92c9f5f906ad, type: 2}
+  - item: {fileID: 11400000, guid: e2aa67cc0cc56b547a8b2d538de27678, type: 2}
     qty: 1
     weight: 1
     exclusive: 1
-  - item: {fileID: 11400000, guid: e2aa67cc0cc56b547a8b2d538de27678, type: 2}
+  - item: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+    qty: 1
+    weight: 2
+    exclusive: 1
+  - item: {fileID: 11400000, guid: 9a575740677255e40aeb520055aae797, type: 2}
+    qty: 1
+    weight: 2
+    exclusive: 1
+  - item: {fileID: 11400000, guid: 5a840df99ef9e23469536178e090148a, type: 2}
     qty: 1
     weight: 1
     exclusive: 1

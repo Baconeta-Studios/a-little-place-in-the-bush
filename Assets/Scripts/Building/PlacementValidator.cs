@@ -47,7 +47,7 @@ public class PlacementContext
 /// Build mode's rules for where a placeable can go. Floor: on the open ground, not overlapping anything,
 /// not covering a stand point or spawn point, and not cutting off the gecko's path to any of them (for
 /// fairy lights, that's each pole, and a pole shared at a join is already there). Surface: on a free
-/// <see cref="SurfacePoint"/>. Wall: wholly on a <see cref="PlacementZone"/>, clear of other Wall things.
+/// <see cref="SurfacePoint"/>. Floor things that also go on tables can be on either. Wall: wholly on a <see cref="PlacementZone"/>, clear of other Wall things.
 /// </summary>
 public static class PlacementValidator
 {
@@ -63,7 +63,9 @@ public static class PlacementValidator
         {
             case PlacementType.Surface: return CheckSurface(area, basePosition, ignore);
             case PlacementType.Wall: return CheckWall(area, definition, basePosition, ignore);
-            case PlacementType.Floor: break;
+            case PlacementType.Floor:
+                if (definition.alsoOnTables && area.FreeSurfaceNear(basePosition, 0.01f, ignore)) return PlacementCheck.Valid;
+                break;
             default: return PlacementCheck.Invalid($"{definition.placement} placement isn't built yet.");
         }
 

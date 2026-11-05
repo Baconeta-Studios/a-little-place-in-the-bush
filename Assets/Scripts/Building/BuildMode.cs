@@ -244,7 +244,7 @@ public class BuildMode : MonoBehaviour
             return;
         }
 
-        SurfacePoint surface = _candidate.definition.placement == PlacementType.Surface
+        SurfacePoint surface = _candidate.definition.CanGoOnTable
             ? _area.FreeSurfaceNear(_candidate.position, 0.01f, _candidate.obj)
             : null;
 
@@ -271,6 +271,7 @@ public class BuildMode : MonoBehaviour
             Session.Build.Move(result.InstanceId, _candidate.position.x, _candidate.position.y);
             Session.Build.SetFlipped(result.InstanceId, _candidate.flipped);
             if (surface) Session.Build.Attach(result.InstanceId, surface.Owner.InstanceId, surface.Index);
+            else Session.Build.Detach(result.InstanceId);
             result.SetFootprintActive(true);
             result.ClearBuildState();
             _candidate = null;
@@ -304,7 +305,7 @@ public class BuildMode : MonoBehaviour
         }
         else
         {
-            if (_candidate.definition.placement == PlacementType.Surface)
+            if (_candidate.definition.CanGoOnTable)
                 _area.SitOn(_candidate.obj, _candidate.originalParent ? _candidate.originalParent.GetComponent<SurfacePoint>() : null);
             _candidate.obj.transform.position = _candidate.originalPosition;
             _candidate.obj.SetFlipped(_candidate.originalFlipped);
@@ -418,7 +419,8 @@ public class BuildMode : MonoBehaviour
         }
 
         // Holding something for a table, a tap on the table means "put it here", not "pick up the table".
-        bool holdingForSurface = _candidate != null && _candidate.definition.placement == PlacementType.Surface;
+        bool holdingForSurface = _candidate != null && (_candidate.definition.placement == PlacementType.Surface
+            || (_candidate.definition.alsoOnTables && _area.FreeSurfaceNear(world, surfaceSnapRadius, _candidate.obj)));
         PlacedObject placed = holdingForSurface ? null : FindPlacedAt(world);
         if (placed)
         {
@@ -449,10 +451,16 @@ public class BuildMode : MonoBehaviour
     {
         PlacedObject best = null;
         float bestY = float.MaxValue;
+        PlacedObject lights = null;
         foreach (PlacedObject placed in _area.Spawned)
         {
             if (!placed || !Hits(placed, world)) continue;
-            if (placed.Definition && placed.Definition.placement == PlacementType.Surface) return placed; // it's on top of whatever it's on
+            if (placed.IsOnSurface) return placed; // it's on top of whatever it's on
+            if (IsChain(placed)) // they hang over everything, so anything else here comes first
+            {
+                lights = placed;
+                continue;
+            }
             float y = placed.transform.position.y; // lowest on screen is in front
             if (y < bestY)
             {
@@ -460,12 +468,15 @@ public class BuildMode : MonoBehaviour
                 best = placed;
             }
         }
-        return best;
+        return best ? best : lights;
     }
+
+    private static bool IsChain(PlacedObject placed) => placed.Definition && placed.Definition.chainSpan > 0f;
 
     private bool Hits(PlacedObject placed, Vector2 world)
     {
         if (!placed) return false;
+        if (IsChain(placed)) return HitsChainArt(placed, world);
         Rect footprint = placed.FootprintRect;
         bool any = false;
         Bounds bounds = new(footprint.center, footprint.size);
@@ -481,6 +492,29 @@ public class BuildMode : MonoBehaviour
         return bounds.Contains(new Vector3(world.x, world.y, bounds.center.z));
     }
 
+    /// <summary>Only the poles and the string count, not all the open space between them.</summary>
+    private bool HitsChainArt(PlacedObject placed, Vector2 world)
+    {
+        foreach (SpriteRenderer renderer in placed.GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (renderer.sortingLayerName == "FloorDecals") continue; // the build markers and shadows
+            if (!renderer.sprite) continue;
+            Bounds bounds = PaintedBounds(renderer);
+            bounds.Expand(tapTolerance * 2f);
+            if (bounds.Contains(new Vector3(world.x, world.y, bounds.center.z))) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Around the painted part of a sprite, leaving out the blank space in its image.</summary>
+    private static Bounds PaintedBounds(SpriteRenderer renderer)
+    {
+        Vector2[] vertices = renderer.sprite.vertices;
+        var bounds = new Bounds(renderer.transform.TransformPoint(vertices[0]), Vector3.zero);
+        foreach (Vector2 vertex in vertices) bounds.Encapsulate(renderer.transform.TransformPoint(vertex));
+        return bounds;
+    }
+
     // ----- Position and validity -----
 
     private Vector2 Snap(Vector2 world)
@@ -490,6 +524,12 @@ public class BuildMode : MonoBehaviour
         {
             SurfacePoint point = _area.FreeSurfaceNear(world, surfaceSnapRadius, _candidate?.obj);
             return point ? point.transform.position : world;
+        }
+
+        if (_candidate?.definition && _candidate.definition.alsoOnTables)
+        {
+            SurfacePoint point = _area.FreeSurfaceNear(world, surfaceSnapRadius, _candidate.obj);
+            if (point) return point.transform.position;
         }
 
         Vector2 cell = _area.Grid.CellSize;
@@ -527,7 +567,7 @@ public class BuildMode : MonoBehaviour
         if (_candidate == null) return;
         bool moved = (position - _candidate.position).sqrMagnitude > 0.0001f;
         _candidate.position = position;
-        if (_candidate.definition.placement == PlacementType.Surface) // sit it on the spot, to draw over the table
+        if (_candidate.definition.CanGoOnTable) // sit it on the spot, to draw over the table
             _area.SitOn(_candidate.obj, _area.FreeSurfaceNear(position, 0.01f, _candidate.obj));
         _candidate.obj.transform.position = new Vector3(position.x, position.y, 0f);
         _candidate.obj.SetFlipped(_candidate.flipped);

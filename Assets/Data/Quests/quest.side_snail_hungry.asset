@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
   id: quest.side_snail_hungry
   displayName: A very hungry snail
-  description: Snail will share something it found if you cook two worm pies.
+  description: Snail says it has found something and will share it, if you serve two worm pies.
   giver: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
   isMain: 0
   prerequisites:
-  - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
+  - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
   nextDay: 0
   minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
   objectives:
   - type: 2
     target: {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
@@ -32,16 +34,10 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 0}
     qty: 10
-  - type: 3
-    target: {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
-    qty: 1
-  - type: 4
-    target: {fileID: 11400000, guid: 1cb5e24027b17664f9ff6acb5aee4358, type: 2}
-    qty: 1
   - type: 0
-    target: {fileID: 11400000, guid: 065a04bfe78f599439857d2ad6df4b8a, type: 2}
+    target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
     qty: 1
-  offerLine: Worm... pie...? Two, please. I found some old paper you can have.
+  offerLine: Hungry... so... hungry. I have... a bit of paper. It's yours... for worm pie. Two.
   activeLine: Still... hungry...
-  readyLine: Mmmmm. Here. The paper. Slowly. And my friend the kunekune pig wants to forage with you.
-  doneLine: Same time tomorrow?
+  readyLine: Mmmm. Worthwhile. Here's... the paper. It tastes awful. I tried. And a plant. I was going to... eat it. Later.
+  doneLine: Have you thought... about more pie?

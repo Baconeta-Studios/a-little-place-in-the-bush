@@ -67,7 +67,7 @@ namespace Bush.Core
             for (int i = 0; i < quest.objectives.Count; i++)
             {
                 QuestObjective objective = quest.objectives[i];
-                if (objective.type != ObjectiveType.HaveItems && objective.type != ObjectiveType.DeliverItems) continue;
+                if (objective.type is not (ObjectiveType.HaveItems or ObjectiveType.DeliverItems or ObjectiveType.FindItems)) continue;
                 ItemData item = design.GetItem(objective.target);
                 if (item == null || !CanBeForaged(design, item)) continue;
                 (int current, int required) = quests.GetProgress(quest.id, i);

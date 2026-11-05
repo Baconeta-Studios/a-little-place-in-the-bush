@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.letter_show_gus
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.letter_show_gus
+  displayName: A sealed letter
+  description: You found a sealed letter in the night bush, addressed to "G". There's only one gecko strange enough.
+  giver: {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
+  isMain: 0
+  prerequisites: []
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 11400000, guid: 974658fe46c7df742990fe6f8b2906ed, type: 2}
+  giverComes: 1
+  objectives:
+  - type: 0
+    target: {fileID: 11400000, guid: 974658fe46c7df742990fe6f8b2906ed, type: 2}
+    qty: 1
+  rewards:
+  - type: 1
+    target: {fileID: 0}
+    qty: 10
+  offerLine: Don't say anything. Is that letter sealed? Did anyone see you? Bring it here, and keep your voice down.
+  activeLine: Hand it over. Quietly.
+  readyLine: It's in code. I can't read it, I didn't write it. But the seal's a little bat. Take it to Pekapeka, and you never saw me.
+  doneLine: Who are you? I've never met you.

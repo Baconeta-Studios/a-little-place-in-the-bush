@@ -93,6 +93,17 @@ namespace Bush.Core
             return true;
         }
 
+        /// <summary>Takes it off whatever it's sitting on, to stand on its own.</summary>
+        public bool Detach(int instanceId)
+        {
+            PlacedObjectData placed = Find(instanceId);
+            if (placed == null) return false;
+            placed.parentId = 0;
+            placed.slot = 0;
+            _events?.RaiseBuildChanged(placed.area);
+            return true;
+        }
+
         /// <summary>Takes it out of the space, with anything sitting on it. They go back to the inventory if they came from there.</summary>
         public bool Remove(int instanceId)
         {

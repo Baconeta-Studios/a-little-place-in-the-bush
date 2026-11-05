@@ -227,3 +227,24 @@ MonoBehaviour:
     time: 0
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 1da8ed4138f6b374ca962db3c6f97e6f, type: 2}
+    weight: 0.35
+    min: 1
+    max: 1
+    time: 0
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: b3513eff5cabd4e4ba767547cac9af1c, type: 2}
+    weight: 0.35
+    min: 1
+    max: 1
+    time: 1
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}
+  - item: {fileID: 11400000, guid: 974658fe46c7df742990fe6f8b2906ed, type: 2}
+    weight: 0.35
+    min: 1
+    max: 1
+    time: 2
+    requiresQuest: {fileID: 0}
+    requiresCompanion: {fileID: 0}

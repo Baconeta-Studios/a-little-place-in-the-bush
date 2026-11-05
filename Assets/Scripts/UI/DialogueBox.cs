@@ -108,7 +108,15 @@ public class DialogueBox : Popup
         }
     }
 
-    private bool HasShop => Session.Design.GetNpc(_npc.id)?.shop.Count > 0;
+    private bool HasShop
+    {
+        get
+        {
+            NpcData npc = Session.Design.GetNpc(_npc.id);
+            if (npc == null || npc.shop.Count == 0) return false;
+            return string.IsNullOrEmpty(npc.shopAfterQuest) || Session.Quests.GetStatus(npc.shopAfterQuest) == QuestStatus.Completed;
+        }
+    }
 
     private void OpenShop()
     {

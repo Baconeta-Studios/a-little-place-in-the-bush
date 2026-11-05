@@ -21,6 +21,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 389153578eedaaf419fbed858a8cd3e8, type: 2}
   nextDay: 0
   minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
   objectives:
   - type: 4
     target: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
@@ -35,7 +37,7 @@ MonoBehaviour:
   - type: 0
     target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
     qty: 1
-  offerLine: A cafe with nowhere to sit isn't much of a cafe. I've some old bits in the shed. Want them?
+  offerLine: Nobody's going to fall in love with a cafe that has nowhere to sit. I've some old bits in the shed. Want them?
   activeLine: The shed's round the back. Well, I'll fetch them.
-  readyLine: 'Here: two chairs, a table, and a fern to make it homely. They''re in your bag.'
+  readyLine: 'Here: two seats, a table, and a plant to hide the worst of that wall. They''re in your bag.'
   doneLine: Set them out and see who drops by.

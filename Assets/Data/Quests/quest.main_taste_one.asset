@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.main_taste_one
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.main_taste_one
+  displayName: A little taste
+  description: "K\u014Dwhai wants to see if you can really cook. Serve moss toast twice."
+  giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  isMain: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 57279c11312dfce4d9b2315fe9cd8369, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 2
+    target: {fileID: 11400000, guid: 88efc5a638f5d474b94bfb72eaef2b2f, type: 2}
+    qty: 2
+  rewards:
+  - type: 2
+    target: {fileID: 11400000, guid: cdd10fb6e76c6fc4590c64ac33fb8054, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 40
+  offerLine: Moss toast. Twice. Once could be luck.
+  activeLine: I'm still waiting on that toast. Moss and mushrooms, it's not hard.
+  readyLine: ...All right, that's good. That's actually good. Don't look at me like that. I've got a sweet tooth, and you've got a recipe book now. Berry cake next.
+  doneLine: I'm not saying I'm impressed.

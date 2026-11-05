@@ -79,6 +79,10 @@ namespace Bush.Core
         public int visitorsDay;
         /// <summary>Random visitors at the cafe today.</summary>
         public List<string> visitorsToday = new();
+        /// <summary>The day <see cref="dueVisitors"/> was worked out for.</summary>
+        public int dueVisitorsDay;
+        /// <summary>Characters sure to come today, because a quest of theirs was waiting this morning.</summary>
+        public List<string> dueVisitors = new();
 
         /// <summary>
         /// A fresh game. Default unlocks aren't copied in: <see cref="Unlocks"/> reads them from the design
@@ -109,6 +113,7 @@ namespace Bush.Core
             servedWhileOut ??= new List<DishSale>();
             upgrades ??= new List<string>();
             visitorsToday ??= new List<string>();
+            dueVisitors ??= new List<string>();
             foreach (PlacedObjectData p in placed)
                 if (p.instanceId >= nextPlacedId) nextPlacedId = p.instanceId + 1;
 

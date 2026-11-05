@@ -7,7 +7,7 @@ using UnityEngine;
 public struct ObjectiveEntry
 {
     public ObjectiveType type;
-    [Tooltip("Item for Have/Deliver, recipe for Cook (empty = any), NPC for TalkTo, placeable item for Place (empty = any).")]
+    [Tooltip("Item for Have, Deliver or Find. Recipe for Cook or the menu ones (empty = any). NPC for TalkTo. Placeable item for Place (empty = any) or Have Placed. Companion for Trip With. Nothing for Reach Cosiness or Have Seats, where Qty is the number.")]
     public GameDefinition target;
     [Min(1)] public int qty;
 }
@@ -33,6 +33,10 @@ public class QuestDefinition : GameDefinition
     public bool nextDay;
     [Tooltip("Doesn't open before this day. 0 for any day.")]
     [Min(0)] public int minDay;
+    [Tooltip("Hidden until you own this item: a quest you start by finding something. Empty for none.")]
+    public ItemDefinition requiresItem;
+    [Tooltip("While this can be taken on, its giver is sure to turn up, from the next morning. For the next step of a chain.")]
+    public bool giverComes;
     public List<ObjectiveEntry> objectives = new();
     public List<RewardEntry> rewards = new();
 
@@ -46,7 +50,7 @@ public class QuestDefinition : GameDefinition
     {
         var data = new QuestData
         {
-            id = id, title = displayName, summary = description, giver = Definitions.Id(giver), isMain = isMain, nextDay = nextDay, minDay = minDay,
+            id = id, title = displayName, summary = description, giver = Definitions.Id(giver), isMain = isMain, requiresItem = Definitions.Id(requiresItem), giverComes = giverComes, nextDay = nextDay, minDay = minDay,
             dialogue = new QuestDialogue { offer = offerLine, active = activeLine, ready = readyLine, done = doneLine }
         };
         foreach (QuestDefinition prerequisite in prerequisites) data.prerequisites.Add(Definitions.Id(prerequisite));

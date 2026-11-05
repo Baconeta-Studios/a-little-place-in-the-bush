@@ -18,8 +18,9 @@ MonoBehaviour:
   portrait: {fileID: 0}
   species: Snail
   visits: 2
-  visitChance: 0.25
+  visitChance: 0.3
   firstDay: 0
   afterQuest: {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
   activeAt: 0
   shop: []
+  shopAfterQuest: {fileID: 0}

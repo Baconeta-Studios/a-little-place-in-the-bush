@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.spider_moonlight
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.spider_moonlight
+  displayName: Silk by moonlight
+  description: Spider will show you how to work silk if you can gather enough of it. Find 4 silk on foraging trips.
+  giver: {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: b774d6852c4d8c441b3dc16573c9e48c, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: 5fef92819bc9cd541bc4ace75ef76865, type: 2}
+    qty: 4
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: 4a3116d55d123c84ebb2c53c7813a3a5, type: 2}
+    qty: 1
+  - type: 4
+    target: {fileID: 11400000, guid: 9115dc7932850fd479a362b8aa76fad9, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 06af21899ddf7b243ae94c410ef214be, type: 2}
+    qty: 1
+  offerLine: You've got an eye for this. Bring me four good lengths of silk and I'll show you what I know. In fact, I'll come along. I'm sick of this trunk.
+  activeLine: Four lengths. Fresh, mind.
+  readyLine: Good. You're a natural, which is annoying. I'll come foraging. I'll tell you where the silk is, and how to carry more. And here are some more lights. Don't thank me.
+  doneLine: Have you considered more lanterns?

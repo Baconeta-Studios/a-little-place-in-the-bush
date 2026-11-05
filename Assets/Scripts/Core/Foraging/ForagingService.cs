@@ -351,6 +351,7 @@ namespace Bush.Core
 
             PendingExpedition pending = state.pendingExpedition;
             ForageResult result = pending.result ?? new ForageResult();
+            result.companionId = pending.setup.companionId;
             state.hasPendingExpedition = false;
             state.pendingExpedition = new PendingExpedition();
 

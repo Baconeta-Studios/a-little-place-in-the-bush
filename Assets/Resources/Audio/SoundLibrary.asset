@@ -225,26 +225,32 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     pitchVariation: 0.04
-  - name: "W\u0113t\u0101"
-    npc: {fileID: 11400000, guid: b558caa69688ba5439b48ee795767966, type: 2}
-    clips: []
-    volume: 1
-    pitch: 1
-    pitchVariation: 0.04
-  - name: Kea
-    npc: {fileID: 11400000, guid: 4e97348bcbbd19e41935c1d8c2edac72, type: 2}
-    clips: []
-    volume: 1
-    pitch: 1
-    pitchVariation: 0.04
   - name: Pekapeka
     npc: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
     clips: []
     volume: 1
     pitch: 1
     pitchVariation: 0.04
-  - name: "Kerer\u016B"
-    npc: {fileID: 11400000, guid: 9e437eedccaaa7544befad1ac425d94d, type: 2}
+  - name: Kōwhai
+    npc: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Kunekune
+    npc: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Spider
+    npc: {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Gus
+    npc: {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
     clips: []
     volume: 1
     pitch: 1

@@ -354,19 +354,6 @@
       "teachesRecipe": ""
     },
     {
-      "id": "item.bench",
-      "name": "Log bench",
-      "category": "Placeable",
-      "rarity": "Uncommon",
-      "tags": [
-        "furniture"
-      ],
-      "sellValue": 15,
-      "unique": false,
-      "description": "A split log on stumps. Room for two.",
-      "teachesRecipe": ""
-    },
-    {
       "id": "item.potted_fern",
       "name": "Potted plant",
       "category": "Placeable",
@@ -377,32 +364,6 @@
       "sellValue": 6,
       "unique": false,
       "description": "A happy plant in a clay pot.",
-      "teachesRecipe": ""
-    },
-    {
-      "id": "item.flower_barrel",
-      "name": "Flower barrel",
-      "category": "Placeable",
-      "rarity": "Uncommon",
-      "tags": [
-        "plant"
-      ],
-      "sellValue": 10,
-      "unique": false,
-      "description": "An old barrel spilling with flowers.",
-      "teachesRecipe": ""
-    },
-    {
-      "id": "item.lantern_post",
-      "name": "Lantern post",
-      "category": "Placeable",
-      "rarity": "Uncommon",
-      "tags": [
-        "decor"
-      ],
-      "sellValue": 12,
-      "unique": false,
-      "description": "A warm glow for the evenings.",
       "teachesRecipe": ""
     },
     {
@@ -437,7 +398,7 @@
       "id": "item.cafe_fancy_table",
       "name": "Fancy table",
       "category": "Placeable",
-      "rarity": "Uncommon",
+      "rarity": "Rare",
       "tags": [
         "furniture"
       ],
@@ -448,7 +409,7 @@
     },
     {
       "id": "item.mossy_rock",
-      "name": "Mossy Rock",
+      "name": "Mossy seat",
       "category": "Placeable",
       "rarity": "Uncommon",
       "tags": [
@@ -457,6 +418,201 @@
       "sellValue": 15,
       "unique": false,
       "description": "A nice mossy stone seat.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.boulder",
+      "name": "Big rock",
+      "category": "Placeable",
+      "rarity": "Common",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 6,
+      "unique": false,
+      "description": "A good solid rock.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.mossy_boulder",
+      "name": "Mossy big rock",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "A big rock with a soft green coat.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.round_bush",
+      "name": "Round bush",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 12,
+      "unique": false,
+      "description": "A plump little bush, heavy with fruit.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.fern_umbrella",
+      "name": "Fern umbrella",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 14,
+      "unique": false,
+      "description": "A little dark fern for a table, good for keeping the frogs off.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.glow_lantern",
+      "name": "Stalk lantern",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 14,
+      "unique": false,
+      "description": "A little green lantern on a bending stalk.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.fairylights",
+      "name": "Fairy lights",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 16,
+      "unique": false,
+      "description": "A string of little lights. Sets join up end to end.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.toadstool",
+      "name": "Red toadstool",
+      "category": "Placeable",
+      "rarity": "Uncommon",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 16,
+      "unique": false,
+      "description": "Big enough to sit on. Don't eat it.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.paper_lantern",
+      "name": "Tree lantern",
+      "category": "Placeable",
+      "rarity": "Rare",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 30,
+      "unique": false,
+      "description": "A rough old lantern, carved from bark. It glows like a window.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.fairylights_blue",
+      "name": "Blue fairy lights",
+      "category": "Placeable",
+      "rarity": "Rare",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 35,
+      "unique": false,
+      "description": "Little blue lights. Sets join up end to end, in any colour.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.toadstool_blue",
+      "name": "Blue toadstool",
+      "category": "Placeable",
+      "rarity": "Rare",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 35,
+      "unique": false,
+      "description": "Nobody knows why it's blue. Big enough to sit on.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.fairylights_gold",
+      "name": "Gold fairy lights",
+      "category": "Placeable",
+      "rarity": "Legendary",
+      "tags": [
+        "decor"
+      ],
+      "sellValue": 80,
+      "unique": false,
+      "description": "The nicest lights in the bush. Sets join up end to end, in any colour.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.toadstool_green",
+      "name": "Green toadstool",
+      "category": "Placeable",
+      "rarity": "Legendary",
+      "tags": [
+        "plant"
+      ],
+      "sellValue": 80,
+      "unique": false,
+      "description": "There's only ever been one, as far as anyone knows. Well, one at a time.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.lost_ring",
+      "name": "Tiny ring",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "encounter"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "A tiny old ring, worn smooth. Somebody must have loved this.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.tattered_map",
+      "name": "Tattered map",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "encounter"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "An old map of the bush, with a big X on it.",
+      "teachesRecipe": ""
+    },
+    {
+      "id": "item.sealed_letter",
+      "name": "Sealed letter",
+      "category": "KeyItem",
+      "rarity": "Rare",
+      "tags": [
+        "encounter"
+      ],
+      "sellValue": 0,
+      "unique": true,
+      "description": "A sealed letter with a little bat on the wax, addressed to \"G\".",
       "teachesRecipe": ""
     }
   ],
@@ -701,28 +857,76 @@
   ],
   "companions": [
     {
-      "id": "companion.kea",
-      "name": "Kea",
-      "description": "Uses its beak as a hammer. Finds much more bark.",
+      "id": "companion.kunekune",
+      "name": "Kunekune pig",
+      "description": "Slow and friendly, with a nose for fungi. Sniffs out truffles.",
       "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
-          "tag": "bark",
+          "tag": "fungi",
+          "rarity": "",
+          "value": 2.5
+        },
+        {
+          "type": "RarityWeight",
+          "tag": "",
+          "rarity": "Rare",
+          "value": 1.5
+        }
+      ],
+      "teachesPerk": "perk.truffle_nose",
+      "tripsToTeach": 5,
+      "tripCost": 0,
+      "activeAt": "Day"
+    },
+    {
+      "id": "companion.snail",
+      "name": "Snail",
+      "description": "Slow, but knows where every worm in the bush lives. Finds many more worms.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "worm",
           "rarity": "",
           "value": 3
         },
         {
           "type": "TagQuantity",
-          "tag": "bark",
+          "tag": "worm",
           "rarity": "",
           "value": 1
         }
       ],
-      "teachesPerk": "perk.bark_knowhow",
+      "teachesPerk": "perk.early_bird",
       "tripsToTeach": 5,
       "tripCost": 0,
       "activeAt": "Day"
+    },
+    {
+      "id": "companion.spider",
+      "name": "Spider",
+      "description": "Spins silk wherever it goes.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "silk",
+          "rarity": "",
+          "value": 3
+        },
+        {
+          "type": "TagQuantity",
+          "tag": "silk",
+          "rarity": "",
+          "value": 1
+        }
+      ],
+      "teachesPerk": "perk.silk_sense",
+      "tripsToTeach": 5,
+      "tripCost": 0,
+      "activeAt": "Both"
     },
     {
       "id": "companion.weka",
@@ -773,16 +977,16 @@
       "activeAt": "Night"
     },
     {
-      "id": "companion.kunekune",
-      "name": "Kunekune pig",
-      "description": "Slow and friendly, with a nose for fungi. Sniffs out truffles.",
+      "id": "companion.firefly",
+      "name": "Firefly",
+      "description": "A tiny light that likes you. Lights up the night bush, so rare things are easier to spot.",
       "unlockedByDefault": false,
       "modifiers": [
         {
           "type": "TagWeight",
-          "tag": "fungi",
+          "tag": "encounter",
           "rarity": "",
-          "value": 2.5
+          "value": 2
         },
         {
           "type": "RarityWeight",
@@ -791,34 +995,10 @@
           "value": 1.5
         }
       ],
-      "teachesPerk": "perk.truffle_nose",
+      "teachesPerk": "perk.glow_sense",
       "tripsToTeach": 5,
       "tripCost": 0,
-      "activeAt": "Day"
-    },
-    {
-      "id": "companion.spider",
-      "name": "Spider",
-      "description": "Spins silk wherever it goes.",
-      "unlockedByDefault": false,
-      "modifiers": [
-        {
-          "type": "TagWeight",
-          "tag": "silk",
-          "rarity": "",
-          "value": 3
-        },
-        {
-          "type": "TagQuantity",
-          "tag": "silk",
-          "rarity": "",
-          "value": 1
-        }
-      ],
-      "teachesPerk": "perk.silk_sense",
-      "tripsToTeach": 5,
-      "tripCost": 0,
-      "activeAt": "Both"
+      "activeAt": "Night"
     }
   ],
   "perks": [
@@ -859,7 +1039,7 @@
     {
       "id": "perk.early_bird",
       "name": "Early bird",
-      "description": "Up before the worms are. More worms, and more of them.",
+      "description": "Learned from Snail. More worms, and more of them.",
       "unlockedByDefault": false,
       "modifiers": [
         {
@@ -899,26 +1079,6 @@
           "tag": "",
           "rarity": "Legendary",
           "value": 2
-        }
-      ]
-    },
-    {
-      "id": "perk.bark_knowhow",
-      "name": "Bark know-how",
-      "description": "Learned from Kea. A little extra bark every time.",
-      "unlockedByDefault": false,
-      "modifiers": [
-        {
-          "type": "TagQuantity",
-          "tag": "bark",
-          "rarity": "",
-          "value": 1
-        },
-        {
-          "type": "TagWeight",
-          "tag": "bark",
-          "rarity": "",
-          "value": 1.5
         }
       ]
     },
@@ -981,6 +1141,20 @@
           "tag": "silk",
           "rarity": "Common",
           "value": 1.75
+        }
+      ]
+    },
+    {
+      "id": "perk.glow_sense",
+      "name": "Glow sense",
+      "description": "Firefly taught you to look for what shines at night.",
+      "unlockedByDefault": false,
+      "modifiers": [
+        {
+          "type": "TagWeight",
+          "tag": "encounter",
+          "rarity": "",
+          "value": 1.5
         }
       ]
     }
@@ -1306,6 +1480,33 @@
           "time": "Any",
           "requiresQuest": "",
           "requiresCompanion": ""
+        },
+        {
+          "item": "item.lost_ring",
+          "weight": 0.35,
+          "min": 1,
+          "max": 1,
+          "time": "Any",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.tattered_map",
+          "weight": 0.35,
+          "min": 1,
+          "max": 1,
+          "time": "Day",
+          "requiresQuest": "",
+          "requiresCompanion": ""
+        },
+        {
+          "item": "item.sealed_letter",
+          "weight": 0.35,
+          "min": 1,
+          "max": 1,
+          "time": "Night",
+          "requiresQuest": "",
+          "requiresCompanion": ""
         }
       ]
     }
@@ -1315,24 +1516,43 @@
       "id": "npc.ruru",
       "name": "Ruru",
       "species": "Ruru (morepork)",
-      "description": "The old cafe owner. Wise, sleepy by day, and missing her famous recipe.",
-      "visits": "Story",
-      "visitChance": 0,
+      "description": "Your old neighbour. Wise, sleepy by day, and far nosier than she lets on.",
+      "visits": "Random",
+      "visitChance": 0.3,
       "firstDay": 0,
-      "afterQuest": "",
-      "shop": [],
-      "activeAt": "DayUntilNight"
+      "afterQuest": "quest.main_goodbye_ruru",
+      "shop": [
+        "recipe.fern_fritters",
+        "recipe.cricket_croissants",
+        "recipe.mushroom_soup"
+      ],
+      "activeAt": "DayUntilNight",
+      "shopAfterQuest": "quest.main_goodbye_ruru"
     },
     {
-      "id": "npc.weka",
-      "name": "Weka",
-      "species": "Weka",
-      "description": "Cheeky, always hanging around the cafe, and steals anything shiny.",
+      "id": "npc.kowhai",
+      "name": "Kōwhai",
+      "species": "Gecko",
+      "description": "You grew up together. Back in the bush, and hard to impress.",
       "visits": "Random",
-      "visitChance": 0.25,
-      "firstDay": 6,
+      "visitChance": 0.4,
+      "firstDay": 0,
+      "afterQuest": "quest.main_date",
+      "shop": [],
+      "shopAfterQuest": "",
+      "activeAt": "Day"
+    },
+    {
+      "id": "npc.kunekune",
+      "name": "Kunekune",
+      "species": "Kunekune pig",
+      "description": "Round, friendly and led everywhere by a very excellent nose.",
+      "visits": "Random",
+      "visitChance": 0.3,
+      "firstDay": 0,
       "afterQuest": "quest.main_set_out",
       "shop": [],
+      "shopAfterQuest": "",
       "activeAt": "Day"
     },
     {
@@ -1341,35 +1561,38 @@
       "species": "Snail",
       "description": "Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu.",
       "visits": "Random",
+      "visitChance": 0.3,
+      "firstDay": 0,
+      "afterQuest": "quest.main_set_out",
+      "shop": [],
+      "activeAt": "Day",
+      "shopAfterQuest": ""
+    },
+    {
+      "id": "npc.spider",
+      "name": "Spider",
+      "species": "Spider",
+      "description": "Busy, blunt, and very handy with silk. Lives in a hollow trunk that needs fixing.",
+      "visits": "Random",
       "visitChance": 0.25,
       "firstDay": 0,
       "afterQuest": "quest.main_set_out",
       "shop": [],
-      "activeAt": "Day"
+      "shopAfterQuest": "",
+      "activeAt": "Both"
     },
     {
-      "id": "npc.weta",
-      "name": "Wētā",
-      "species": "Wētā",
-      "description": "Nocturnal, lives in a hollow tree trunk that badly needs fixing.",
+      "id": "npc.weka",
+      "name": "Weka",
+      "species": "Weka",
+      "description": "Cheeky, always hanging around the cafe, and steals anything shiny.",
       "visits": "Random",
-      "visitChance": 0.2,
-      "firstDay": 0,
+      "visitChance": 0.3,
+      "firstDay": 3,
       "afterQuest": "quest.main_set_out",
       "shop": [],
-      "activeAt": "Night"
-    },
-    {
-      "id": "npc.kea",
-      "name": "Kea",
-      "species": "Kea (mountain parrot)",
-      "description": "Clever, nosy and always up for a dare. Knows every bit of bark in the bush.",
-      "visits": "Random",
-      "visitChance": 0.2,
-      "firstDay": 4,
-      "afterQuest": "quest.main_set_out",
-      "shop": [],
-      "activeAt": "Day"
+      "activeAt": "Day",
+      "shopAfterQuest": ""
     },
     {
       "id": "npc.pekapeka",
@@ -1377,39 +1600,39 @@
       "species": "Pekapeka (bat)",
       "description": "Shy, hungry, and very good at finding bugs.",
       "visits": "Random",
-      "visitChance": 0.18,
-      "firstDay": 8,
-      "afterQuest": "quest.main_set_out",
+      "visitChance": 0.3,
+      "firstDay": 0,
+      "afterQuest": "quest.main_after_dark",
       "shop": [],
-      "activeAt": "Night"
+      "activeAt": "Night",
+      "shopAfterQuest": ""
     },
     {
-      "id": "npc.kereru",
-      "name": "Kererū",
-      "species": "Kererū (wood pigeon)",
-      "description": "A well-fed travelling cook who trades recipes for coins.",
+      "id": "npc.gus",
+      "name": "Gus",
+      "species": "Gecko",
+      "description": "Only comes out at night. Has a Theory. Will not explain it.",
       "visits": "Random",
-      "visitChance": 0.25,
+      "visitChance": 0.3,
       "firstDay": 0,
-      "afterQuest": "quest.main_set_out",
-      "shop": [
-        "recipe.moss_toast",
-        "recipe.fern_fritters",
-        "recipe.cricket_croissants",
-        "recipe.mushroom_soup",
-        "recipe.berry_cake"
-      ],
-      "activeAt": "Day"
+      "afterQuest": "quest.main_after_dark",
+      "shop": [],
+      "shopAfterQuest": "",
+      "activeAt": "Night"
     }
   ],
   "quests": [
     {
       "id": "quest.main_hello",
-      "title": "Hello, Ruru",
+      "title": "Coming home",
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [],
-      "summary": "Ruru, who used to run the cafe, wants to meet you. She'll teach you your first recipe.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "You've come home to find the old cafe falling down. Ruru, your old neighbour, wants a word.",
       "objectives": [
         {
           "type": "TalkTo",
@@ -1425,13 +1648,11 @@
         }
       ],
       "dialogue": {
-        "offer": "Oh! A new face in my old cafe. Come and say hello properly.",
+        "offer": "Well, well. Look who's finally come home. And I see you've found the old cafe. Not much left of it, is there?",
         "active": "Come here, let me have a look at you.",
-        "ready": "Every cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all it takes.",
+        "ready": "Fix it up? You? ...Hah! It's that gecko you used to moon over, isn't it? Don't answer. A cafe needs a first dish. Here: my leaf salad. Three handfuls of leaves, that's all it takes.",
         "done": "A recipe's no good without leaves, mind."
-      },
-      "nextDay": false,
-      "minDay": 0
+      }
     },
     {
       "id": "quest.main_gather",
@@ -1441,6 +1662,10 @@
       "prerequisites": [
         "quest.main_hello"
       ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
       "summary": "A leaf salad needs 3 leaves. Take the path at the side of the cafe into the bush. On the forage screen, choose Greens under Look out for: you find more of whatever you look out for.",
       "objectives": [
         {
@@ -1457,22 +1682,24 @@
         }
       ],
       "dialogue": {
-        "offer": "Your larder's empty! Take the path at the side of the cafe into the bush. Here's a trick: decide what you're looking out for before you go. Choose Greens, and you'll find far more leaves.",
+        "offer": "That larder's been empty for years! Take the path at the side of the cafe into the bush. Here's a trick: decide what you're looking out for before you go. Choose Greens, and you'll find far more leaves.",
         "active": "Three handfuls of leaves. Remember: look out for Greens, and they'll practically jump into your basket.",
         "ready": "See? Look out for something, and you'll find more of it. Keep the leaves, they're for your salad.",
         "done": "Off you go. You set the menu at the cafe door."
-      },
-      "nextDay": false,
-      "minDay": 0
+      }
     },
     {
       "id": "quest.main_welcome",
-      "title": "A cafe of my own",
+      "title": "Open for business, sort of",
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
         "quest.main_gather"
       ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
       "summary": "Go to the cafe door and put leaf salad on the menu, then go foraging. The cafe serves what's on the menu while you're out.",
       "objectives": [
         {
@@ -1494,13 +1721,11 @@
         }
       ],
       "dialogue": {
-        "offer": "Now let's see you serve it. Go to the cafe door and put leaf salad on the menu, then head out foraging. I'll mind the cafe while you're gone, and the guests will eat whatever's on the menu.",
+        "offer": "Now let's see you serve it. Go to the cafe door and put leaf salad on the menu, then head out foraging. I'll mind the place while you're gone, and anyone passing will eat whatever's on the menu.",
         "active": "Leaf salad on the menu at the cafe door, then off you go foraging. The guests will do the rest.",
-        "ready": "Ah, I heard the guests liked your salad. You'll do.",
-        "done": "The cafe's in good claws."
-      },
-      "nextDay": false,
-      "minDay": 0
+        "ready": "Ah, I heard somebody finished your salad. On purpose, even. Here, this was your family's worm pie. You'll do.",
+        "done": "Your folks would be glad to see the lights on."
+      }
     },
     {
       "id": "quest.main_first_close",
@@ -1512,6 +1737,8 @@
       ],
       "nextDay": false,
       "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
       "summary": "When the day's foraging is done, go to the cafe door and close for the day.",
       "objectives": [
         {
@@ -1542,6 +1769,10 @@
       "prerequisites": [
         "quest.main_first_close"
       ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
       "summary": "Ruru has some old furniture in the shed for you.",
       "objectives": [
         {
@@ -1568,13 +1799,11 @@
         }
       ],
       "dialogue": {
-        "offer": "A cafe with nowhere to sit isn't much of a cafe. I've some old bits in the shed. Want them?",
+        "offer": "Nobody's going to fall in love with a cafe that has nowhere to sit. I've some old bits in the shed. Want them?",
         "active": "The shed's round the back. Well, I'll fetch them.",
-        "ready": "Here: two chairs, a table, and a fern to make it homely. They're in your bag.",
+        "ready": "Here: two seats, a table, and a plant to hide the worst of that wall. They're in your bag.",
         "done": "Set them out and see who drops by."
-      },
-      "nextDay": false,
-      "minDay": 0
+      }
     },
     {
       "id": "quest.main_set_out",
@@ -1584,7 +1813,11 @@
       "prerequisites": [
         "quest.main_furnish"
       ],
-      "summary": "Press Build and set out the chairs, table and fern. Guests sit on chairs you've placed, and a cosier cafe brings them more often.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Press Build and set out the seats, table and plant. Guests sit on seats you've placed, and a cosier cafe brings them more often.",
       "objectives": [
         {
           "type": "PlaceObject",
@@ -1600,13 +1833,11 @@
         }
       ],
       "dialogue": {
-        "offer": "Press Build and set them out however you like. Guests need a chair to sit on, and the cosier it looks, the more often they'll come.",
-        "active": "Set out the chairs, the table and the fern. Press Build.",
-        "ready": "Now that looks like a cafe. Folk will start dropping by, you'll see.",
+        "offer": "Press Build and set them out however you like. Guests need a seat, and the cosier it looks, the more often they'll come.",
+        "active": "Set out the seats, the table and the plant. Press Build.",
+        "ready": "Now that looks almost like a cafe. Folk will start dropping by, you'll see. Be nice to them. They know things.",
         "done": "More things, and nicer things, make it cosier. Cosy brings guests."
-      },
-      "nextDay": false,
-      "minDay": 0
+      }
     },
     {
       "id": "quest.main_after_dark",
@@ -1616,6 +1847,10 @@
       "prerequisites": [
         "quest.main_set_out"
       ],
+      "nextDay": true,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
       "summary": "Ruru says the bush wakes up at night. Serve a few more dishes and she'll show you.",
       "objectives": [
         {
@@ -1632,28 +1867,298 @@
         },
         {
           "type": "Item",
-          "target": "item.lantern_post",
+          "target": "item.glow_lantern",
           "qty": 1
         }
       ],
       "dialogue": {
         "offer": "You're getting the hang of this. Keep the guests fed a few more days, and then stay up after closing sometime. Night's when the bush really wakes up.",
         "active": "Serve a few more dishes. Then stay up late with me.",
-        "ready": "Well done. I've kept day hours long enough for you. From now on, find me after dark.",
-        "done": "Tonight, don't rush off to bed. Come and find me. Night's when the bush really wakes up."
-      },
-      "nextDay": true,
-      "minDay": 0
+        "ready": "Well done. I've kept day hours long enough for you. From now on, find me after dark. Take this lantern, too.",
+        "done": "Tonight, don't rush off to bed. Come and find me."
+      }
     },
     {
-      "id": "quest.main_lost_recipe",
-      "title": "The lost recipe",
+      "id": "quest.main_goodbye_ruru",
+      "title": "Ruru moves on",
       "giver": "npc.ruru",
       "isMain": true,
       "prerequisites": [
         "quest.main_after_dark"
       ],
-      "summary": "Ruru's famous kawakawa scroll recipe was torn into four scraps and scattered. Find all four and bring them to her.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Ruru reckons you can manage without her now. Have a word before she goes.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.ruru",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 30
+        }
+      ],
+      "dialogue": {
+        "offer": "I've minded this place long enough, and my own tree's a mess. You don't need an old owl hanging about. Come and say goodbye.",
+        "active": "Come on, then. Say it. I won't cry.",
+        "ready": "I'll still drop in, some nights. I've got recipes I'd sell to the right gecko, at the right price. Oh, and word gets around. I may have told someone you're back.",
+        "done": "Well? Off you go. Someone might be coming."
+      }
+    },
+    {
+      "id": "quest.main_word_gets_out",
+      "title": "Someone's back",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_goodbye_ruru"
+      ],
+      "nextDay": true,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Word has reached Kōwhai that you're home, and that you're fixing up the old cafe.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.kowhai",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "It IS you. I heard you were back, and I said no, that one never comes back for anything. And then I heard about this... place.",
+        "active": "Don't just stand there with your mouth open. Come here.",
+        "ready": "You're really doing this? With two chairs and a plant? If you want this place looking like anything, you'll need help. You've got visitors now. Be useful to them, and they'll be useful to you.",
+        "done": "We'll see. I'm staying a while."
+      }
+    },
+    {
+      "id": "quest.main_fix_it_up",
+      "title": "Somewhere worth sitting",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_word_gets_out"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Kōwhai won't eat here until it's got enough seats and looks like somebody cares. Help the visitors to your cafe: they might have furniture to spare.",
+      "objectives": [
+        {
+          "type": "HaveSeats",
+          "target": "",
+          "qty": 4
+        },
+        {
+          "type": "ReachCosiness",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.moss_toast",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 40
+        }
+      ],
+      "dialogue": {
+        "offer": "I'm not eating standing up, and I'm not eating in a ruin. Get some proper seats out and make it look like somebody cares. Your visitors all have odd jobs going and sheds full of junk. Start there. Then we'll talk.",
+        "active": "Still looks like a ruin. More seats. More everything. Go and help your visitors, they've got more furniture than sense.",
+        "ready": "Hm. All right, this is better. I'll say it once. Now, can you actually cook? Your mum's moss toast was the best thing in this bush. Here's how it goes, if you've forgotten.",
+        "done": "Don't get smug."
+      }
+    },
+    {
+      "id": "quest.main_taste_one",
+      "title": "A little taste",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_fix_it_up"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Kōwhai wants to see if you can really cook. Serve moss toast twice.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.moss_toast",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.berry_cake",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 40
+        }
+      ],
+      "dialogue": {
+        "offer": "Moss toast. Twice. Once could be luck.",
+        "active": "I'm still waiting on that toast. Moss and mushrooms, it's not hard.",
+        "ready": "...All right, that's good. That's actually good. Don't look at me like that. I've got a sweet tooth, and you've got a recipe book now. Berry cake next.",
+        "done": "I'm not saying I'm impressed."
+      }
+    },
+    {
+      "id": "quest.main_taste_two",
+      "title": "Something sweet",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_taste_one"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Kōwhai has a sweet tooth. Serve berry cake twice.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.berry_cake",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.cafe_fancy_table",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 60
+        }
+      ],
+      "dialogue": {
+        "offer": "Berry cake. Twice, because I'll want seconds. You'll need nectar, so good luck.",
+        "active": "Berries and nectar. I'll be sat right here, not waiting for you at all.",
+        "ready": "Oh, that's unfair. How is that unfair? Here, I had this table made. Don't read anything into it. It's just a table.",
+        "done": "It's just a table."
+      }
+    },
+    {
+      "id": "quest.main_full_menu",
+      "title": "A proper menu",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_taste_two"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "A proper cafe has a proper menu. Get 3 dishes on the board at once and close up for the day. Upgrades on the menu board add more menu slots.",
+      "objectives": [
+        {
+          "type": "HaveOnMenu",
+          "target": "",
+          "qty": 3
+        },
+        {
+          "type": "CloseDay",
+          "target": "",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.glow_lantern",
+          "qty": 2
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 40
+        }
+      ],
+      "dialogue": {
+        "offer": "One dish at a time isn't a cafe, it's a stunt. I want to walk in and have to choose. Three dishes on that board, all at once, for a whole day.",
+        "active": "Three dishes up on the board at once. The board can hold more if you pay for it. And then see the day out.",
+        "ready": "Now I'm walking in and having to choose. Do you know how long it's been since anyone made me choose anything?",
+        "done": "Come and see me tomorrow. I've been thinking about something."
+      }
+    },
+    {
+      "id": "quest.main_scroll_asked",
+      "title": "That old recipe",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_full_menu"
+      ],
+      "nextDay": true,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Kōwhai has something on her mind. Hear her out.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.kowhai",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "There's one thing I've never stopped thinking about. Do you remember the kawakawa scroll? Off this very menu, when we were small.",
+        "active": "Come and sit down a minute.",
+        "ready": "The recipe's gone. The card got torn up and scattered years ago, they say, in four pieces. If anyone would know where they went, it's the folk who come through this cafe. Try talking to your visitors.",
+        "done": "Try talking to your visitors. Somebody's got to know something."
+      }
+    },
+    {
+      "id": "quest.main_lost_recipe",
+      "title": "The torn recipe",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_scroll_asked"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Kōwhai's favourite dish was the kawakawa scroll, but its recipe card was torn into four pieces. Try talking to the visitors to your cafe.",
       "objectives": [
         {
           "type": "DeliverItems",
@@ -1683,61 +2188,344 @@
           "qty": 1
         },
         {
-          "type": "Coins",
-          "target": "",
-          "qty": 50
-        },
-        {
           "type": "UnlockPerk",
           "target": "perk.keen_eye",
           "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 50
         }
       ],
       "dialogue": {
-        "offer": "My kawakawa scroll recipe... the wind took it, and it tore into four. One blew into the bush. I'd bet that weka has another.",
-        "active": "Any luck with the scraps? Try the bush, and ask around the neighbours.",
-        "ready": "All four! Let me piece them together...",
-        "done": "The kawakawa scroll is yours now. Make the village proud."
-      },
-      "nextDay": false,
-      "minDay": 0
+        "offer": "Four pieces. Find them, and we'll put it back together. Try talking to the visitors to your cafe. Keep your eyes open in the bush, too.",
+        "active": "Any luck? Try talking to the visitors to your cafe. And keep looking in the bush.",
+        "ready": "You found them. All four? Here, give them to me. That's not an R, it's a K. Oh. Oh, it IS an R. Well, that old owl. Look, it all fits.",
+        "done": "Now, can you make it?"
+      }
     },
     {
-      "id": "quest.side_weka_trade",
-      "title": "A fair trade",
-      "giver": "npc.weka",
-      "isMain": false,
+      "id": "quest.main_scroll_dish",
+      "title": "The kawakawa scroll",
+      "giver": "npc.kowhai",
+      "isMain": true,
       "prerequisites": [
-        "quest.companion_weka"
+        "quest.main_lost_recipe"
       ],
-      "summary": "Weka has a recipe scrap and will swap it for a shiny button.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Now that you have the recipe, serve the kawakawa scroll.",
       "objectives": [
         {
-          "type": "DeliverItems",
-          "target": "item.shiny_button",
+          "type": "CookRecipe",
+          "target": "recipe.kawakawa_scroll",
           "qty": 1
         }
       ],
       "rewards": [
         {
           "type": "Item",
-          "target": "item.recipe_scrap_2",
+          "target": "item.toadstool",
+          "qty": 2
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 60
+        }
+      ],
+      "dialogue": {
+        "offer": "Kawakawa, honeydew and berries. It's not easy to get right. Put it on the menu. I'll know if you've cut a corner.",
+        "active": "I can wait. I've waited this long.",
+        "ready": "...It tastes exactly the same. I was seven, the last time I had this. I'm not crying. It's the kawakawa.",
+        "done": "Keep that one on the menu for me, would you?"
+      }
+    },
+    {
+      "id": "quest.main_table_for_two",
+      "title": "A table for two",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_scroll_dish"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Set out the fancy table, put the kawakawa scroll on the menu, and close up for the evening. Kōwhai wants to ask you something.",
+      "objectives": [
+        {
+          "type": "HavePlaced",
+          "target": "item.cafe_fancy_table",
           "qty": 1
         },
         {
-          "type": "UnlockPerk",
-          "target": "perk.sweet_tooth",
+          "type": "HaveOnMenu",
+          "target": "recipe.kawakawa_scroll",
+          "qty": 1
+        },
+        {
+          "type": "CloseDay",
+          "target": "",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 40
+        }
+      ],
+      "dialogue": {
+        "offer": "So. That table I had made. It's for two, you know. Get it out where it can be seen, put the scroll on the menu, and when you close up tonight, don't lock the door. Just this once, I'd like to be your last customer.",
+        "active": "The table's to be out, the scroll's on the menu, and then close up. I'll be there.",
+        "ready": "You came. Of course you came, it's your cafe. I've been wanting to say this since you got back...",
+        "done": "...it's a lovely cafe, you know."
+      }
+    },
+    {
+      "id": "quest.main_date",
+      "title": "A little place in the bush",
+      "giver": "npc.kowhai",
+      "isMain": true,
+      "prerequisites": [
+        "quest.main_table_for_two"
+      ],
+      "nextDay": true,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "It's just the two of you, and the whole of the bush lit up. Sit down.",
+      "objectives": [
+        {
+          "type": "TalkTo",
+          "target": "npc.kowhai",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.fairylights_gold",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 100
+        }
+      ],
+      "dialogue": {
+        "offer": "Sit down. No, opposite me. I want to see your face. There we are, two geckos, one scroll and one very good table. You did this. All of it.",
+        "active": "Sit down. It's getting cold.",
+        "ready": "I came to laugh at you, you know. And then you made me choose. So here's me choosing. I'll stay. Keep the lights on, won't you? Here, these are for the door.",
+        "done": "There's always more to do around here. I'll bring the good berries."
+      }
+    },
+    {
+      "id": "quest.ruru_last_piece",
+      "title": "One for the road",
+      "giver": "npc.ruru",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_scroll_asked"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Ruru's holding on to something from that old recipe card, and she'll only part with it for a proper supper.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.beetle",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_4",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.mossy_boulder",
           "qty": 1
         }
       ],
       "dialogue": {
-        "offer": "Paper? Oh, THIS paper. It's not stolen, it's... found. One shiny button and it's yours.",
-        "active": "A button. A shiny one.",
-        "ready": "Ooh, shiny! Deal. Take your paper.",
-        "done": "Got anything else shiny? No? Hmph."
-      },
+        "offer": "Word is you're after that old recipe card. This bit? Been using it as a bookmark for years. You can have it, but an owl's got to eat. Three beetles, fresh from the night bush. Not the ones in your bag: I want to know they're fresh.",
+        "active": "Three fresh beetles. You'll find them at night, on your trips.",
+        "ready": "Ahh. Crunchy. Right, here's your bit of card. See that R at the bottom? That's me. Took you long enough to ask.",
+        "done": "Tell that young gecko I said hello."
+      }
+    },
+    {
+      "id": "quest.kunekune_nose",
+      "title": "Follow your nose",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_set_out"
+      ],
       "nextDay": false,
-      "minDay": 0
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Kunekune smells mushrooms on you and wants in. Find 3 mushrooms on foraging trips, and Kunekune will come along.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.mushroom",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.kunekune",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 15
+        },
+        {
+          "type": "Item",
+          "target": "item.chair",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Snff. Snff snff. You've been in the bush. I can smell it. I love the bush. Find me some mushrooms, fresh ones, and I'll come with you next time.",
+        "active": "Mushrooms! Three! Fresh! Snff!",
+        "ready": "Oh, they're perfect. Oh, I'm coming with you. I've decided. Nobody's stopping me. I'm very fast, in a way. Here, I sat on this rock for a year. You have it.",
+        "done": "Take me foraging! I'm ready!"
+      }
+    },
+    {
+      "id": "quest.kunekune_dig",
+      "title": "Dig here",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.kunekune_nose"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Kunekune wants to show you all the best spots. Take Kunekune foraging 3 times.",
+      "objectives": [
+        {
+          "type": "TripWith",
+          "target": "companion.kunekune",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.toadstool",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "I know all the spots. All of them. There's so many. Take me out a few times and I'll show you where the good dirt is.",
+        "active": "Three trips, and I'll show you everything. Take me foraging!",
+        "ready": "See? Good dirt. Look what I dug up while you weren't watching. It's for your cafe. I don't know why it's so big.",
+        "done": "There's one more smell I've been meaning to find."
+      }
+    },
+    {
+      "id": "quest.kunekune_truffle",
+      "title": "Something smells amazing",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.kunekune_dig"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Kunekune has picked up the scent of something wonderful. Find a truffle on a foraging trip.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.truffle",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.truffle_toast",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.round_bush",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "It's in the bush somewhere. It smells like the best day of my life. It's a truffle. I've never actually found one. Help me?",
+        "active": "It's out there. Take me along, my nose will help. Probably.",
+        "ready": "THAT'S IT. That's the smell! Do you know what you could make with this? I do. Here. It's the only recipe I know.",
+        "done": "Now cook it! Please! For me!"
+      }
+    },
+    {
+      "id": "quest.kunekune_toast",
+      "title": "Pig's breakfast",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.kunekune_truffle"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Kunekune has been dreaming of truffle toast. Serve it at the cafe.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.truffle_toast",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.toadstool_blue",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 40
+        }
+      ],
+      "dialogue": {
+        "offer": "Truffle toast. I've told everyone. I may have told everyone you'd make it for free.",
+        "active": "Is it ready? Is it ready now? How about now?",
+        "ready": "It's better than I smelled it would be. Here. I found this deep in the good dirt, and I think it's the blue that matters.",
+        "done": "Snff. You smell like a friend."
+      }
     },
     {
       "id": "quest.side_snail_hungry",
@@ -1745,9 +2533,13 @@
       "giver": "npc.snail",
       "isMain": false,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.main_set_out"
       ],
-      "summary": "Snail will share something it found if you cook two worm pies.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Snail says it has found something and will share it, if you serve two worm pies.",
       "objectives": [
         {
           "type": "CookRecipe",
@@ -1767,47 +2559,122 @@
           "qty": 10
         },
         {
-          "type": "UnlockCompanion",
-          "target": "companion.kunekune",
-          "qty": 1
-        },
-        {
-          "type": "UnlockPerk",
-          "target": "perk.early_bird",
-          "qty": 1
-        },
-        {
           "type": "Item",
-          "target": "item.flower_barrel",
+          "target": "item.potted_fern",
           "qty": 1
         }
       ],
       "dialogue": {
-        "offer": "Worm... pie...? Two, please. I found some old paper you can have.",
+        "offer": "Hungry... so... hungry. I have... a bit of paper. It's yours... for worm pie. Two.",
         "active": "Still... hungry...",
-        "ready": "Mmmmm. Here. The paper. Slowly. And my friend the kunekune pig wants to forage with you.",
-        "done": "Same time tomorrow?"
-      },
-      "nextDay": false,
-      "minDay": 0
+        "ready": "Mmmm. Worthwhile. Here's... the paper. It tastes awful. I tried. And a plant. I was going to... eat it. Later.",
+        "done": "Have you thought... about more pie?"
+      }
     },
     {
-      "id": "quest.side_weta_repairs",
-      "title": "Hollow home",
-      "giver": "npc.weta",
+      "id": "quest.snail_slow_food",
+      "title": "Slow food",
+      "giver": "npc.snail",
       "isMain": false,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.side_snail_hungry"
       ],
-      "summary": "Wētā's hollow tree trunk is falling apart. Bring 4 bark and 2 silk to patch it up.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Snail likes to know where its next pie is coming from. Close up with worm pie on the menu on 3 days.",
       "objectives": [
         {
-          "type": "DeliverItems",
+          "type": "CloseWithOnMenu",
+          "target": "recipe.worm_pie",
+          "qty": 3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.round_bush",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.potted_fern",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "I'm thinking... of staying. Keep worm pie... on the menu. Three closings. I need to know... I can rely on you. I'm slow. It might be gone... by the time I arrive.",
+        "active": "Three closings... with pie... on the board. No rush. I never do.",
+        "ready": "You didn't take it off. Not once. Nobody's ever... waited for me. Here. For your garden.",
+        "done": "It's nice... here."
+      }
+    },
+    {
+      "id": "quest.snail_somewhere_damp",
+      "title": "Somewhere damp",
+      "giver": "npc.snail",
+      "isMain": false,
+      "prerequisites": [
+        "quest.snail_slow_food"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Snail would stay for good if the cafe had a shady spot. Set out a bush, and get the cafe's cosiness up.",
+      "objectives": [
+        {
+          "type": "HavePlaced",
+          "target": "item.round_bush",
+          "qty": 1
+        },
+        {
+          "type": "ReachCosiness",
+          "target": "",
+          "qty": 30
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.snail",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.mossy_rock",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "It's too... dry. Out there. And bare. I'd need a bush... to sit under, and a place that feels... like someone lives there.",
+        "active": "A bush, please. And cosy. I can wait. I'm very good at it.",
+        "ready": "Oh. Oh, this is the spot. You know what, I'll come foraging. Eventually. I know where the worms are. They don't... run from me.",
+        "done": "We'll get there."
+      }
+    },
+    {
+      "id": "quest.spider_repairs",
+      "title": "Hollow home",
+      "giver": "npc.spider",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_set_out"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Spider's home in the old hollow trunk is falling apart. Find 4 bark and 2 silk on foraging trips to patch it up.",
+      "objectives": [
+        {
+          "type": "FindItems",
           "target": "item.bark",
           "qty": 4
         },
         {
-          "type": "DeliverItems",
+          "type": "FindItems",
           "target": "item.silk",
           "qty": 2
         }
@@ -1815,9 +2682,87 @@
       "rewards": [
         {
           "type": "Item",
-          "target": "item.recipe_scrap_4",
+          "target": "item.glow_lantern",
           "qty": 1
         },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "My trunk is falling apart, and I'm too busy to fix it, so you're going to. Fresh bark and fresh silk, please, not whatever's been sitting in your bag.",
+        "active": "Four bark and two silk, straight off the trees.",
+        "ready": "That'll hold. You're handier than you look. Take this, it was only attracting the wrong sort of moth.",
+        "done": "Actually, about moths."
+      }
+    },
+    {
+      "id": "quest.spider_moths",
+      "title": "A light for the moths",
+      "giver": "npc.spider",
+      "isMain": false,
+      "prerequisites": [
+        "quest.spider_repairs"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Spider wants the moths to come to the cafe. Have 2 lanterns out at the cafe, and close up for the night.",
+      "objectives": [
+        {
+          "type": "HavePlaced",
+          "target": "item.glow_lantern",
+          "qty": 2
+        },
+        {
+          "type": "CloseDay",
+          "target": "",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.fairylights",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 25
+        }
+      ],
+      "dialogue": {
+        "offer": "Here's a business idea. You put lanterns out. Moths come to the lanterns. I come to the moths. Everyone's happy, except the moths. Two lanterns ought to do it.",
+        "active": "Two lanterns out where they can be seen, then close up and let's see who turns up.",
+        "ready": "Look at them all! I haven't eaten this well in years. I strung up some of my good thread in thanks. Don't ask about the little lights. I don't know how they work.",
+        "done": "One last thing. It's a bit of a stretch."
+      }
+    },
+    {
+      "id": "quest.spider_moonlight",
+      "title": "Silk by moonlight",
+      "giver": "npc.spider",
+      "isMain": false,
+      "prerequisites": [
+        "quest.spider_moths"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Spider will show you how to work silk if you can gather enough of it. Find 4 silk on foraging trips.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.silk",
+          "qty": 4
+        }
+      ],
+      "rewards": [
         {
           "type": "UnlockCompanion",
           "target": "companion.spider",
@@ -1830,50 +2775,16 @@
         },
         {
           "type": "Item",
-          "target": "item.bench",
+          "target": "item.fairylights",
           "qty": 1
         }
       ],
       "dialogue": {
-        "offer": "*rubs hind legs* My trunk is full of holes. Four bark and two silk would fix it. I'll give you a scrap I found inside.",
-        "active": "Four bark, two silk. Kea is good at finding bark.",
-        "ready": "Snug again! Here, take this scrap. And my friend Spider wants to go foraging with you.",
-        "done": "Come by at night. I'm awake then."
-      },
-      "nextDay": false,
-      "minDay": 0
-    },
-    {
-      "id": "quest.companion_kea",
-      "title": "Kea's dare",
-      "giver": "npc.kea",
-      "isMain": false,
-      "prerequisites": [
-        "quest.main_welcome"
-      ],
-      "summary": "Kea dares you to find five bits of bark. Do it, and Kea will come foraging with you.",
-      "objectives": [
-        {
-          "type": "DeliverItems",
-          "target": "item.bark",
-          "qty": 5
-        }
-      ],
-      "rewards": [
-        {
-          "type": "UnlockCompanion",
-          "target": "companion.kea",
-          "qty": 1
-        }
-      ],
-      "dialogue": {
-        "offer": "Bet you can't find five bits of bark. Go on. I dare you.",
-        "active": "Five bits of bark. Still waiting!",
-        "ready": "Ha! Not bad for a gecko.",
-        "done": "Fine, I'll come foraging with you. For a few coins. I'm a professional."
-      },
-      "nextDay": false,
-      "minDay": 0
+        "offer": "You've got an eye for this. Bring me four good lengths of silk and I'll show you what I know. In fact, I'll come along. I'm sick of this trunk.",
+        "active": "Four lengths. Fresh, mind.",
+        "ready": "Good. You're a natural, which is annoying. I'll come foraging. I'll tell you where the silk is, and how to carry more. And here are some more lights. Don't thank me.",
+        "done": "Have you considered more lanterns?"
+      }
     },
     {
       "id": "quest.companion_weka",
@@ -1881,9 +2792,13 @@
       "giver": "npc.weka",
       "isMain": false,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.main_set_out"
       ],
-      "summary": "Weka wants to see you forage six times before trusting you as a partner.",
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Weka wants to see you forage six times before taking you seriously.",
       "objectives": [
         {
           "type": "CompleteExpeditions",
@@ -1893,19 +2808,115 @@
       ],
       "rewards": [
         {
-          "type": "UnlockCompanion",
-          "target": "companion.weka",
+          "type": "Coins",
+          "target": "",
+          "qty": 15
+        },
+        {
+          "type": "Item",
+          "target": "item.chair",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.boulder",
           "qty": 1
         }
       ],
       "dialogue": {
-        "offer": "You forage? Prove it. Go out six times, and then we'll talk.",
-        "active": "Six trips. Out in the bush. I'll be counting. Probably.",
-        "ready": "Not bad. Not bad at all.",
-        "done": "Take me along any time. I'll find the shiny things."
-      },
+        "offer": "You, foraging? With those feet? Go on then. Six trips. I'll be watching. You won't see me. Nobody ever sees me.",
+        "active": "I saw you out there. Terrible. Keep going.",
+        "ready": "Not bad. For a gecko. I'm not coming with you, mind. Yet. Here, take these rocks. Don't ask whose garden they're from. I'll tell you a secret, too, if you've got something shiny.",
+        "done": "Got anything shiny on you?"
+      }
+    },
+    {
+      "id": "quest.side_weka_trade",
+      "title": "A fair trade",
+      "giver": "npc.weka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.companion_weka"
+      ],
       "nextDay": false,
-      "minDay": 0
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Weka has something you might want, and will swap it for a shiny button. Keep an eye out on foraging trips.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.shiny_button",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.recipe_scrap_2",
+          "qty": 1
+        },
+        {
+          "type": "UnlockPerk",
+          "target": "perk.sweet_tooth",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.glow_lantern",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "I've got something. Doesn't matter what. I'll swap it for a button, a nice shiny one. Now that I've told you, you might even start noticing them out there.",
+        "active": "Button. Shiny. Then we'll talk.",
+        "ready": "Ooh. Yes. Here, take this bit of old paper, it's no good to me. And this lantern. Don't ask whose it was.",
+        "done": "Pleasure doing business."
+      }
+    },
+    {
+      "id": "quest.weka_bait",
+      "title": "The bait",
+      "giver": "npc.weka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.side_weka_trade"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Weka has a scheme and needs your cafe to look shiny. Have 3 lanterns out and close up 2 nights in a row.",
+      "objectives": [
+        {
+          "type": "HavePlaced",
+          "target": "item.glow_lantern",
+          "qty": 3
+        },
+        {
+          "type": "CloseDay",
+          "target": "",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.weka",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.fairylights",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Your cafe's boring to look at. Boring things don't get robbed, you know. Sorry, I mean visited. Three lanterns out. Two nights. Let's see what wanders in.",
+        "active": "Three lanterns, two closings. Leave the rest to me. Don't check the bins.",
+        "ready": "Beautiful. I've found so many things. Right, you've got an eye, I've got a beak. Partners. I'll bring back anything that isn't nailed down. Those lights were just lying around, I swear.",
+        "done": "So what's shiny today?"
+      }
     },
     {
       "id": "quest.companion_pekapeka",
@@ -1913,8 +2924,12 @@
       "giver": "npc.pekapeka",
       "isMain": false,
       "prerequisites": [
-        "quest.main_welcome"
+        "quest.main_after_dark"
       ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
       "summary": "Pekapeka is too shy to order. Serve six dishes of anything and they'll warm to you.",
       "objectives": [
         {
@@ -1925,19 +2940,491 @@
       ],
       "rewards": [
         {
-          "type": "UnlockCompanion",
-          "target": "companion.pekapeka",
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        },
+        {
+          "type": "Item",
+          "target": "item.potted_fern",
           "qty": 1
         }
       ],
       "dialogue": {
-        "offer": "Um. Hello. I'm... just looking. Do you, um, serve food here?",
-        "active": "I'll just... wait here. Until there's lots of food.",
-        "ready": "That was delicious. Thank you.",
-        "done": "If you ever go out looking for bugs... I could come?"
-      },
+        "offer": "Um. Sorry. Hello. I don't want to be any trouble. It's just that it smells nice. I'll just watch. Is that all right? Maybe... a few dishes? I'll stay over here.",
+        "active": "No rush! Sorry. Sorry to ask. It smells lovely.",
+        "ready": "I've been watching, and I think you're kind. That's all. Sorry. Here, I grew this. It's not much.",
+        "done": "You could call me Peka. If you want."
+      }
+    },
+    {
+      "id": "quest.pekapeka_midnight",
+      "title": "Midnight snack",
+      "giver": "npc.pekapeka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.companion_pekapeka"
+      ],
       "nextDay": false,
-      "minDay": 0
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Pekapeka has worked up the courage to ask for something. Find 4 crickets on foraging trips at night.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.cricket",
+          "qty": 4
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.toadstool",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "I wondered, if it's not too much trouble. You go out at night, don't you? I can hear crickets, always just out of reach. Would you... find me a few?",
+        "active": "Only if you're going out anyway. Crickets come out at night.",
+        "ready": "Oh! You really did. Nobody ever really does. I found this when I was hiding. You can sit on it, I think.",
+        "done": "I can show you where they go, if you like."
+      }
+    },
+    {
+      "id": "quest.pekapeka_bold",
+      "title": "Not so shy",
+      "giver": "npc.pekapeka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.pekapeka_midnight"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Pekapeka wants to prove something to themselves. Find 2 beetles at night, then see them about coming foraging.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.beetle",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.pekapeka",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.paper_lantern",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "I've been practising. I was going to ask. I'm going to ask. Bring back two beetles, and I'll come out with you next time. I'll say it right to your face. I'm saying it now.",
+        "active": "Two beetles. I'm not nervous. Are you nervous?",
+        "ready": "I did it! I'm coming! Oh no, I'm coming. Here, you keep this. I don't need a light. That's rather my whole thing.",
+        "done": "I can hear everything out there. It's quite overwhelming."
+      }
+    },
+    {
+      "id": "quest.gus_theory",
+      "title": "Gus has a theory",
+      "giver": "npc.gus",
+      "isMain": false,
+      "prerequisites": [
+        "quest.main_after_dark"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": false,
+      "summary": "Gus, a gecko who only comes out at night, needs samples. He says 5 crickets. He won't say why.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.cricket",
+          "qty": 5
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockRecipe",
+          "target": "recipe.beetlejuice",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 20
+        }
+      ],
+      "dialogue": {
+        "offer": "You. Yes, you. You're out at night, you've got a basket, you'll do. I need five crickets. Live ones, from the bush. It's for the Theory. Don't write this down.",
+        "active": "Five crickets. They're listening to us, you know. So act natural.",
+        "ready": "Excellent. Excellent! The Theory holds. In return I'll give you my most secret recipe. I got it from a beetle. It tastes awful. That's how you know it's working.",
+        "done": "Cook it. Don't taste it."
+      }
+    },
+    {
+      "id": "quest.gus_beetlejuice",
+      "title": "Stinky science",
+      "giver": "npc.gus",
+      "isMain": false,
+      "prerequisites": [
+        "quest.gus_theory"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Gus says your cafe has to serve beetlejuice. It's for science. Serve it twice.",
+      "objectives": [
+        {
+          "type": "CookRecipe",
+          "target": "recipe.beetlejuice",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.fern_umbrella",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 25
+        }
+      ],
+      "dialogue": {
+        "offer": "Next phase. Serve the juice to the public, twice. Watch their faces. If anyone smiles, tell me immediately. I'm not joking. Nobody has ever smiled.",
+        "active": "Have you served it? Did they smile? Did YOU smile?",
+        "ready": "Nobody smiled. Perfect. Take this umbrella. You'll need it when the frogs start. I can't say more.",
+        "done": "It won't be long now. Look up, sometimes."
+      }
+    },
+    {
+      "id": "quest.gus_lights",
+      "title": "Visitors from the sky",
+      "giver": "npc.gus",
+      "isMain": false,
+      "prerequisites": [
+        "quest.gus_beetlejuice"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Gus needs something that glows, to signal the Visitors. Find a glowworm on a night trip, and have lanterns out to light their way.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.glowworm",
+          "qty": 1
+        },
+        {
+          "type": "HavePlaced",
+          "target": "item.glow_lantern",
+          "qty": 2
+        }
+      ],
+      "rewards": [
+        {
+          "type": "UnlockCompanion",
+          "target": "companion.firefly",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.fairylights_blue",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "They come tonight. Or soon. Or they already have. Find me something that glows, and put your lanterns out. We need to signal them. Whatever you do, don't lock the door.",
+        "active": "Something that glows. From the night bush. And lanterns out, or they'll never find us.",
+        "ready": "LOOK. They came! ...All right, it's just a firefly. But LOOK at it! It likes you. It's yours now. I've got no use for it, it knows too much. Keep the lights. They're how they find you.",
+        "done": "I told you. Everyone said Gus, you're mad. Who's mad now?"
+      }
+    },
+    {
+      "id": "quest.ring_show_ruru",
+      "title": "A lost ring",
+      "giver": "npc.ruru",
+      "isMain": false,
+      "prerequisites": [],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "item.lost_ring",
+      "giverComes": true,
+      "summary": "You found a tiny ring in the bush. Ruru knows everything about everyone. Show it to her.",
+      "objectives": [
+        {
+          "type": "HaveItems",
+          "target": "item.lost_ring",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "What've you got there? Bring it into the light. Well, now.",
+        "active": "Let me see that ring.",
+        "ready": "That's old, that is. I've seen it, too, on a very sticky pair of feet. Take it to Weka, and watch your pockets.",
+        "done": "Weka, I'm telling you."
+      }
+    },
+    {
+      "id": "quest.ring_ask_weka",
+      "title": "Finders keepers",
+      "giver": "npc.weka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.ring_show_ruru"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Ruru thinks Weka knows something about the ring.",
+      "objectives": [
+        {
+          "type": "HaveItems",
+          "target": "item.lost_ring",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "That wasn't me. I didn't take that. Which ring? Where'd you get that? Give it here. No, fine, don't.",
+        "active": "I've never seen that ring in my life. Show me again.",
+        "ready": "All right. All RIGHT. I nicked it years ago, off Snail's gran. Then I dropped it. Then I felt bad. Take it back, would you? Tell Snail I'm sorry. Actually, don't.",
+        "done": "I'm not talking about it."
+      }
+    },
+    {
+      "id": "quest.ring_return",
+      "title": "Gran's ring",
+      "giver": "npc.snail",
+      "isMain": false,
+      "prerequisites": [
+        "quest.ring_ask_weka"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "The ring belonged to Snail's grandmother. Give it back.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.lost_ring",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.toadstool_green",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 50
+        }
+      ],
+      "dialogue": {
+        "offer": "Is that... no. It can't be. Gran... turned this house upside down... for that. It took her... eleven years.",
+        "active": "Take... your time. I would.",
+        "ready": "She'd want you... to have this. It grew... on her shell, in the end. There's only ever... been the one.",
+        "done": "Thank you. From both... of us."
+      }
+    },
+    {
+      "id": "quest.map_show_kunekune",
+      "title": "A tattered map",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.kunekune_nose"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "item.tattered_map",
+      "giverComes": true,
+      "summary": "You found a tattered old map in the bush, with a big X on it. Kunekune has a nose for this sort of thing.",
+      "objectives": [
+        {
+          "type": "HaveItems",
+          "target": "item.tattered_map",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "Snff? Is that a map? It smells like dirt. It smells like VERY OLD dirt. Show me!",
+        "active": "Show me the map! Show me, show me!",
+        "ready": "I know that dirt! It's the deep kind. We'd have to go out and dig for days. Let's go! Let's go now!",
+        "done": "It's THAT way. Or that way."
+      }
+    },
+    {
+      "id": "quest.map_dig",
+      "title": "X marks the spot",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.map_show_kunekune"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "Take Kunekune foraging 4 times to dig where the map says.",
+      "objectives": [
+        {
+          "type": "TripWith",
+          "target": "companion.kunekune",
+          "qty": 4
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.tattered_map",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.fairylights_blue",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.paper_lantern",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 30
+        }
+      ],
+      "dialogue": {
+        "offer": "Four good digs, and the map comes with us. It's right under here. Or here. I'll know it when I smell it.",
+        "active": "It's close! Take me foraging again! Bring the map!",
+        "ready": "FOUND IT. It's a box! It's full of lights! There's a lantern! I don't know who buried this, but they had lovely taste, and they can't have it back.",
+        "done": "I'm keeping the box."
+      }
+    },
+    {
+      "id": "quest.letter_show_gus",
+      "title": "A sealed letter",
+      "giver": "npc.gus",
+      "isMain": false,
+      "prerequisites": [],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "item.sealed_letter",
+      "giverComes": true,
+      "summary": "You found a sealed letter in the night bush, addressed to \"G\". There's only one gecko strange enough.",
+      "objectives": [
+        {
+          "type": "HaveItems",
+          "target": "item.sealed_letter",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 10
+        }
+      ],
+      "dialogue": {
+        "offer": "Don't say anything. Is that letter sealed? Did anyone see you? Bring it here, and keep your voice down.",
+        "active": "Hand it over. Quietly.",
+        "ready": "It's in code. I can't read it, I didn't write it. But the seal's a little bat. Take it to Pekapeka, and you never saw me.",
+        "done": "Who are you? I've never met you."
+      }
+    },
+    {
+      "id": "quest.letter_deliver",
+      "title": "Please don't read it",
+      "giver": "npc.pekapeka",
+      "isMain": false,
+      "prerequisites": [
+        "quest.letter_show_gus"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "",
+      "giverComes": true,
+      "summary": "The seal on the letter is a little bat. Pekapeka looks very worried about it. Find something that glows, for reading it by, then hand it over.",
+      "objectives": [
+        {
+          "type": "FindItems",
+          "target": "item.glowworm",
+          "qty": 1
+        },
+        {
+          "type": "DeliverItems",
+          "target": "item.sealed_letter",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.fairylights_gold",
+          "qty": 1
+        },
+        {
+          "type": "Item",
+          "target": "item.paper_lantern",
+          "qty": 1
+        },
+        {
+          "type": "Coins",
+          "target": "",
+          "qty": 60
+        }
+      ],
+      "dialogue": {
+        "offer": "Oh no. Oh, that's mine. I wrote that. I wrote it to Gus, ages ago, and I lost my nerve and dropped it. I can't read it in this dark, which is ridiculous. Could you find me a glowworm?",
+        "active": "A glowworm, to read by. And then I suppose I have to give it to him. Oh dear.",
+        "ready": "It only says thank you. All this time. It says thank you for talking to me, when nobody did. Please don't tell him. Here. These are the nicest things I own.",
+        "done": "I gave it to him. He said it's in code. It's the nicest thing anyone's ever said to me."
+      }
     }
   ],
   "placeables": [
@@ -1951,7 +3438,9 @@
       "category": "Furniture",
       "seats": 1,
       "cosiness": 1,
-      "style": "rustic"
+      "style": "rustic",
+      "chainSpan": 0,
+      "alsoOnTables": false
     },
     {
       "id": "placeable.cafe_table",
@@ -1963,19 +3452,9 @@
       "category": "Furniture",
       "seats": 0,
       "cosiness": 1,
-      "style": "rustic"
-    },
-    {
-      "id": "placeable.bench",
-      "item": "item.bench",
-      "placement": "Floor",
-      "footprintWidth": 1.8,
-      "footprintDepth": 0.4,
-      "canFlip": true,
-      "category": "Furniture",
-      "seats": 2,
-      "cosiness": 1,
-      "style": "rustic"
+      "style": "rustic",
+      "chainSpan": 0,
+      "alsoOnTables": false
     },
     {
       "id": "placeable.potted_fern",
@@ -1987,31 +3466,9 @@
       "category": "Plants",
       "seats": 0,
       "cosiness": 2,
-      "style": "garden"
-    },
-    {
-      "id": "placeable.flower_barrel",
-      "item": "item.flower_barrel",
-      "placement": "Floor",
-      "footprintWidth": 0.9,
-      "footprintDepth": 0.5,
-      "canFlip": true,
-      "category": "Plants",
-      "seats": 0,
-      "cosiness": 2,
-      "style": "garden"
-    },
-    {
-      "id": "placeable.lantern_post",
-      "item": "item.lantern_post",
-      "placement": "Floor",
-      "footprintWidth": 0.4,
-      "footprintDepth": 0.3,
-      "canFlip": true,
-      "category": "Decor",
-      "seats": 0,
-      "cosiness": 3,
-      "style": "glow"
+      "style": "garden",
+      "chainSpan": 0,
+      "alsoOnTables": true
     },
     {
       "id": "placeable.cafe_fancy_table",
@@ -2023,8 +3480,9 @@
       "canFlip": true,
       "category": "Furniture",
       "seats": 0,
-      "cosiness": 2,
-      "style": "fancy"
+      "cosiness": 5,
+      "style": "fancy",
+      "alsoOnTables": false
     },
     {
       "id": "placeable.mossy_rock",
@@ -2036,8 +3494,177 @@
       "canFlip": true,
       "category": "Furniture",
       "seats": 1,
+      "cosiness": 2,
+      "style": "rustic",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.boulder",
+      "item": "item.boulder",
+      "placement": "Floor",
+      "footprintWidth": 1.1,
+      "footprintDepth": 0.35,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
       "cosiness": 1,
-      "style": "rustic"
+      "style": "rustic",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.mossy_boulder",
+      "item": "item.mossy_boulder",
+      "placement": "Floor",
+      "footprintWidth": 1.1,
+      "footprintDepth": 0.35,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
+      "cosiness": 3,
+      "style": "garden",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.round_bush",
+      "item": "item.round_bush",
+      "placement": "Floor",
+      "footprintWidth": 1.35,
+      "footprintDepth": 0.4,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Plants",
+      "seats": 0,
+      "cosiness": 3,
+      "style": "garden",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.fern_umbrella",
+      "item": "item.fern_umbrella",
+      "placement": "Surface",
+      "footprintWidth": 0.5,
+      "footprintDepth": 0.25,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Plants",
+      "seats": 0,
+      "cosiness": 3,
+      "style": "garden",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.glow_lantern",
+      "item": "item.glow_lantern",
+      "placement": "Floor",
+      "footprintWidth": 0.5,
+      "footprintDepth": 0.25,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
+      "cosiness": 3,
+      "style": "glow",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.paper_lantern",
+      "item": "item.paper_lantern",
+      "placement": "Floor",
+      "footprintWidth": 0.75,
+      "footprintDepth": 0.25,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
+      "cosiness": 6,
+      "style": "glow",
+      "alsoOnTables": true
+    },
+    {
+      "id": "placeable.toadstool",
+      "item": "item.toadstool",
+      "placement": "Floor",
+      "footprintWidth": 0.45,
+      "footprintDepth": 0.25,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 1,
+      "cosiness": 3,
+      "style": "garden",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.toadstool_blue",
+      "item": "item.toadstool_blue",
+      "placement": "Floor",
+      "footprintWidth": 0.45,
+      "footprintDepth": 0.25,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 1,
+      "cosiness": 6,
+      "style": "fancy",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.toadstool_green",
+      "item": "item.toadstool_green",
+      "placement": "Floor",
+      "footprintWidth": 0.45,
+      "footprintDepth": 0.25,
+      "chainSpan": 0,
+      "canFlip": true,
+      "category": "Furniture",
+      "seats": 1,
+      "cosiness": 12,
+      "style": "fancy",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.fairylights",
+      "item": "item.fairylights",
+      "placement": "Floor",
+      "footprintWidth": 0.25,
+      "footprintDepth": 0.2,
+      "chainSpan": 8.25,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
+      "cosiness": 3,
+      "style": "glow",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.fairylights_blue",
+      "item": "item.fairylights_blue",
+      "placement": "Floor",
+      "footprintWidth": 0.25,
+      "footprintDepth": 0.2,
+      "chainSpan": 8.25,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
+      "cosiness": 6,
+      "style": "glow",
+      "alsoOnTables": false
+    },
+    {
+      "id": "placeable.fairylights_gold",
+      "item": "item.fairylights_gold",
+      "placement": "Floor",
+      "footprintWidth": 0.25,
+      "footprintDepth": 0.2,
+      "chainSpan": 8.25,
+      "canFlip": true,
+      "category": "Decor",
+      "seats": 0,
+      "cosiness": 12,
+      "style": "fancy",
+      "alsoOnTables": false
     }
   ],
   "upgrades": [

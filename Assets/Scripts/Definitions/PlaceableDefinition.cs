@@ -16,6 +16,10 @@ public class PlaceableDefinition : GameDefinition
     public GameObject prefab;
     [Tooltip("Floor: on the ground. Surface: on a SurfacePoint (a spot on a table). Wall: on a PlacementZone (the tree). Rug isn't built yet.")]
     public PlacementType placement;
+    [Tooltip("Floor things only: it can also sit on a table's spot.")]
+    public bool alsoOnTables;
+    [Tooltip("Its size while it's on a table, compared with on the ground.")]
+    [Range(0.1f, 1f)] public float scaleOnTable = 1f;
     [Tooltip("Floor: the base that blocks walking, in world units: x = width, y = depth (front to back). Wall: the rectangle that has to fit on the zone, with the root at its bottom middle. Surface: not used.")]
     public Vector2 footprintSize = new(1f, 0.4f);
     [Tooltip("Fairy lights: above 0 makes it snap end to end. The distance between its two poles, in world units. The footprint is then each pole's. Children called PoleLeft and PoleRight hide when they'd double up at a join.")]
@@ -45,9 +49,12 @@ public class PlaceableDefinition : GameDefinition
 
     public Vector2 ShadowCentre => shadowOffset + new Vector2(0f, footprintSize.y * 0.1f);
 
+    /// <summary>Whether it can sit on a table's spot, only or as well as the ground.</summary>
+    public bool CanGoOnTable => placement == PlacementType.Surface || alsoOnTables;
+
     public PlaceableData ToData() => new()
     {
-        id = id, itemId = Definitions.Id(item), placement = placement, footprintWidth = footprintSize.x,
+        id = id, itemId = Definitions.Id(item), placement = placement, alsoOnTables = alsoOnTables, footprintWidth = footprintSize.x,
         footprintDepth = footprintSize.y, chainSpan = chainSpan, canFlip = canFlip, category = category, seats = seats,
         cosiness = cosiness, style = style
     };

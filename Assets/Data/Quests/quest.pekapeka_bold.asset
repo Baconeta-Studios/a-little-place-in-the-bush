@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.pekapeka_bold
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.pekapeka_bold
+  displayName: Not so shy
+  description: Pekapeka wants to prove something to themselves. Find 2 beetles at night, then see them about coming foraging.
+  giver: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 15114abec4674ea4baa529f0e7aca85f, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: e9f301cc6060e4c4985b84ef29435784, type: 2}
+    qty: 2
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: afc7dbd6a5c9d68498cd8de5500df9ff, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 4c3a2fc8898b8eb468ae2dea35f9aa84, type: 2}
+    qty: 1
+  offerLine: I've been practising. I was going to ask. I'm going to ask. Bring back two beetles, and I'll come out with you next time. I'll say it right to your face. I'm saying it now.
+  activeLine: Two beetles. I'm not nervous. Are you nervous?
+  readyLine: I did it! I'm coming! Oh no, I'm coming. Here, you keep this. I don't need a light. That's rather my whole thing.
+  doneLine: I can hear everything out there. It's quite overwhelming.

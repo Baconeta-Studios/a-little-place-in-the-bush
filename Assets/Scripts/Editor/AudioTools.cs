@@ -63,6 +63,7 @@ public static class AudioTools
     {
         var database = AssetDatabase.LoadAssetAtPath<GameDatabase>(DatabasePath);
         if (!database) return;
+        library.voices.RemoveAll(v => !v.npc);
         foreach (NpcDefinition npc in database.npcs)
             if (npc && library.VoiceOf(npc) == null) library.voices.Add(new SoundLibrary.Voice { npc = npc });
     }

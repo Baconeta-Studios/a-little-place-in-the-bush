@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.spider_repairs
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.spider_repairs
+  displayName: Hollow home
+  description: Spider's home in the old hollow trunk is falling apart. Find 4 bark and 2 silk on foraging trips to patch it up.
+  giver: {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: fc26b2473433eac4693daf2178c95979, type: 2}
+    qty: 4
+  - type: 7
+    target: {fileID: 11400000, guid: 5fef92819bc9cd541bc4ace75ef76865, type: 2}
+    qty: 2
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 20
+  offerLine: My trunk is falling apart, and I'm too busy to fix it, so you're going to. Fresh bark and fresh silk, please, not whatever's been sitting in your bag.
+  activeLine: Four bark and two silk, straight off the trees.
+  readyLine: That'll hold. You're handier than you look. Take this, it was only attracting the wrong sort of moth.
+  doneLine: Actually, about moths.

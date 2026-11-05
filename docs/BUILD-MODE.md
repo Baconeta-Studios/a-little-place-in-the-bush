@@ -81,7 +81,11 @@ If a save can't be read (broken, or from a newer build), the game starts fresh a
 
 **Importing overwrites these numbers.** `placement`, the footprint and `chainSpan` come from `Design/design-data.json`, so put them there as well as on the asset, or the next import resets them.
 
-### On a table (`"placement": "Surface"`): pot plants, little umbrellas
+### On a table (`"placement": "Surface"`): the fern umbrella
+
+**On the ground or a table:** set `"placement": "Floor"` and `"alsoOnTables": true`, as the potted plant and tree lantern are. Held near a free spot on a table, it snaps there; anywhere else, it goes on the ground. On a table it doesn't block walking and has no ground shadow. *Scale On Table* on the placeable asset sets its size up there.
+
+The table's spots are `SurfacePoint`s, as below. The stump and the fancy table have one each, so each holds one thing. The game supports more, if a big table ever wants them.
 
 1. **On the table's prefab:** add an empty child of the root (not inside `Visual`) for each spot, with the **SurfacePoint** component, where the small thing's base should touch. They show as small blue circles in the Scene view. Leave their order alone once saves exist: a save remembers things by which spot they're on.
 2. **On the small thing's prefab:** root at the point its base touches, art in `Visual`, as usual. No footprint: the footprint numbers aren't used.
@@ -97,6 +101,8 @@ In play: it snaps to the nearest free spot (*Surface Snap Radius* on `BuildMode`
 In play: it snaps to the grid, goes red if any of it is off the polygon or on another window. It draws just above the backdrop (the Background sorting layer, order 10), set automatically, so anything in the world goes in front of it.
 
 ### Fairy lights (`"placement": "Floor"` with `"chainSpan"`)
+
+In build mode, a tap on anything else under the lights picks that up first. Only the poles and the string pick up the lights, so the space between them is free.
 
 A set is one placeable: the lights with a pole at each end.
 
@@ -147,3 +153,7 @@ In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`)
 - **Shadow:** every floor placeable gets one by itself, sized from its base. Change the size, position and strength here, or untick it.
 - **Your own shadow art:** add a child called `Shadow` to the prefab, and that's used instead.
 - **Anything else:** add a **GroundShadow** component to the gecko, a character or a scene prop. On a character, a child called `Shadow` or `GroundShadow` beside `Visual` turns round with them by itself, and highlighting leaves it alone.
+
+## Little lights
+
+Add **NightLight** to any object, on a placeable prefab or in a scene. It brings a Light 2D with it, off by day, fading on at dusk and night, with a gentle flicker. Set the colour, brightness and size on the Light 2D, and *Flicker Amount* and *Flicker Speed* on NightLight. Include `World` and the floor layers in the light's *Target Sorting Layers*, or it won't light the ground. On something that can go on a table, make it a child of `Visual`, so it moves with the art. One soft light for a set of fairy lights is enough: lots of lights are slow on phones.
