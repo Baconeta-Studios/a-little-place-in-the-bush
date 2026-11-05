@@ -17,7 +17,7 @@ Volumes go through `Assets/Audio/AudioMixer.mixer`, so the Settings sliders work
 One line of gibberish plays each time a creature says something, and the next line cuts it off.
 
 - **Recording:** 4 to 8 short clips per creature, 1 to 3 seconds each, is plenty. Leave a tiny bit of silence at each end, and record somewhere quiet.
-- **Filing:** put them in `Assets/Audio/Voices/Ruru`, `Weka`, `Snail`, `Weta`, `Kea`, `Pekapeka` or `Kereru`, then run Fill. Any file name works here.
+- **Filing:** put them in `Assets/Audio/Voices/Ruru`, `Kowhai`, `Kunekune`, `Snail`, `Spider`, `Weka`, `Pekapeka` or `Gus`, then run Fill. Any file name works here.
 - **Sharing:** each creature's *Pitch* (0.5 to 2) can turn one recording into several voices. Clips in `Voices/Default` are for anyone without their own.
 
 ## The sounds

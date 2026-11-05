@@ -8,7 +8,8 @@ namespace Bush.Core
     /// the current story quest, and move on when the story does. Random visitors drop by on some days:
     /// each morning they're rolled once (so a reload doesn't change who's in), with their chance raised
     /// by how cosy the cafe is (<see cref="CafeStyle"/>) and by having a quest of theirs under way.
-    /// Anyone who gives the current story quest is there regardless.
+    /// Anyone who gives the current story quest is there regardless. So is anyone a quest was waiting on that morning:
+    /// one ready to hand in, or the next step of a chain (<see cref="QuestData.giverComes"/>).
     /// </summary>
     public static class Visitors
     {
@@ -22,6 +23,7 @@ namespace Bush.Core
             NpcData npc = design.GetNpc(npcId);
             if (npc == null || !AboutNow(npc, state)) return false;
             if (quests?.CurrentMainQuest()?.giver == npcId) return true;
+            if (quests != null && npc.visits == VisitType.Random && IsDue(design, state, quests, npcId)) return true;
             switch (npc.visits)
             {
                 case VisitType.Always: return true;
@@ -30,6 +32,22 @@ namespace Bush.Core
                     EnsureRolled(design, state);
                     return state.visitorsToday.Contains(npcId);
             }
+        }
+
+        /// <summary>Worked out once a day, so someone doesn't pop up the moment you finish their quest: they come the next morning.</summary>
+        private static bool IsDue(DesignData design, GameState state, QuestService quests, string npcId)
+        {
+            if (state.dueVisitorsDay != state.day)
+            {
+                state.dueVisitorsDay = state.day;
+                state.dueVisitors.Clear();
+                foreach (QuestData quest in design.quests)
+                {
+                    bool waiting = quests.GetStatus(quest.id) == QuestStatus.ReadyToClaim || (quest.giverComes && quests.CanStart(quest.id));
+                    if (waiting && !string.IsNullOrEmpty(quest.giver) && !state.dueVisitors.Contains(quest.giver)) state.dueVisitors.Add(quest.giver);
+                }
+            }
+            return state.dueVisitors.Contains(npcId);
         }
 
         /// <summary>Day characters by day, nocturnal ones at night, "both" any time.</summary>

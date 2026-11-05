@@ -20,6 +20,19 @@ namespace Bush.Core
                 case ObjectiveType.PlaceObject:
                     string thing = string.IsNullOrEmpty(objective.target) ? "something" : design.GetItem(objective.target)?.name ?? objective.target;
                     return qty == 1 ? $"Place {thing} in the cafe" : $"Place {qty} x {thing} in the cafe";
+                case ObjectiveType.FindItems:
+                    return qty == 1 ? $"Find {Amount(design, objective.target, 1)} on a foraging trip" : $"Find {Amount(design, objective.target, qty)} on foraging trips";
+                case ObjectiveType.TripWith:
+                    string who = design.GetCompanion(objective.target)?.name ?? objective.target;
+                    return qty == 1 ? $"Go foraging with {who}" : $"Go foraging with {who} {qty} times";
+                case ObjectiveType.CloseWithOnMenu:
+                    string shown = string.IsNullOrEmpty(objective.target) ? "a dish" : design.GetRecipe(objective.target)?.name ?? objective.target;
+                    return qty == 1 ? $"Close the cafe with {shown} on the menu" : $"Close the cafe with {shown} on the menu, {qty} times";
+                case ObjectiveType.HaveOnMenu:
+                    return string.IsNullOrEmpty(objective.target) ? $"Have {qty} dishes on the menu" : $"Have {design.GetRecipe(objective.target)?.name ?? objective.target} on the menu";
+                case ObjectiveType.ReachCosiness: return $"Get the cafe's cosiness to {qty}";
+                case ObjectiveType.HaveSeats: return qty == 1 ? "Have a seat out at the cafe" : $"Have {qty} seats out at the cafe";
+                case ObjectiveType.HavePlaced: return $"Have {Amount(design, objective.target, qty)} out at the cafe";
                 default: return objective.type.ToString();
             }
         }

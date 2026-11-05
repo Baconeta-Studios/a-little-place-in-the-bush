@@ -18,8 +18,9 @@ MonoBehaviour:
   portrait: {fileID: 0}
   species: Pekapeka (bat)
   visits: 2
-  visitChance: 0.18
-  firstDay: 8
-  afterQuest: {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
+  visitChance: 0.3
+  firstDay: 0
+  afterQuest: {fileID: 11400000, guid: 885c453432c69494eb010b72c9d41fb6, type: 2}
   activeAt: 1
   shop: []
+  shopAfterQuest: {fileID: 0}

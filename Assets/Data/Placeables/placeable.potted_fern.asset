@@ -18,6 +18,8 @@ MonoBehaviour:
   item: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
   prefab: {fileID: 6703021867451032119, guid: 6678e1045496388408fc9f9eb1b5e5c8, type: 3}
   placement: 0
+  alsoOnTables: 1
+  scaleOnTable: 0.55
   footprintSize: {x: 1.2, y: 0.35}
   chainSpan: 0
   canFlip: 1

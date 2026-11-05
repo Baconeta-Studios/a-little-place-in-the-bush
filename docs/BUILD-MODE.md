@@ -81,7 +81,11 @@ If a save can't be read (broken, or from a newer build), the game starts fresh a
 
 **Importing overwrites these numbers.** `placement`, the footprint and `chainSpan` come from `Design/design-data.json`, so put them there as well as on the asset, or the next import resets them.
 
-### On a table (`"placement": "Surface"`): pot plants, little umbrellas
+### On a table (`"placement": "Surface"`): the fern umbrella
+
+**On the ground or a table:** set `"placement": "Floor"` and `"alsoOnTables": true`, as the potted plant and tree lantern are. Held near a free spot on a table, it snaps there; anywhere else, it goes on the ground. On a table it doesn't block walking and has no ground shadow. *Scale On Table* on the placeable asset sets its size up there.
+
+The table's spots are `SurfacePoint`s, as below. The stump and the fancy table have two each.
 
 1. **On the table's prefab:** add an empty child of the root (not inside `Visual`) for each spot, with the **SurfacePoint** component, where the small thing's base should touch. They show as small blue circles in the Scene view. Leave their order alone once saves exist: a save remembers things by which spot they're on.
 2. **On the small thing's prefab:** root at the point its base touches, art in `Visual`, as usual. No footprint: the footprint numbers aren't used.

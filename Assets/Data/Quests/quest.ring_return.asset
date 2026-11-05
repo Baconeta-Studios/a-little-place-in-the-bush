@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.ring_return
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.ring_return
+  displayName: Gran's ring
+  description: The ring belonged to Snail's grandmother. Give it back.
+  giver: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 7b7d429242222d847b3186cd8634b3a9, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 1
+    target: {fileID: 11400000, guid: 1da8ed4138f6b374ca962db3c6f97e6f, type: 2}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: f3a56bf79d4b8b646a203daa635ae531, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 50
+  offerLine: Is that... no. It can't be. Gran... turned this house upside down... for that. It took her... eleven years.
+  activeLine: Take... your time. I would.
+  readyLine: She'd want you... to have this. It grew... on her shell, in the end. There's only ever... been the one.
+  doneLine: Thank you. From both... of us.

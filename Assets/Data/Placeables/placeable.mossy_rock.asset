@@ -13,17 +13,19 @@ MonoBehaviour:
   m_Name: placeable.mossy_rock
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
   id: placeable.mossy_rock
-  displayName: mossy_rock
+  displayName: Mossy seat
   description: A nice mossy stone seat.
   item: {fileID: 11400000, guid: 014aa3277ebc21d4aacf267fb796213f, type: 2}
   prefab: {fileID: 5306815587540510334, guid: 0f0e2b05503f6ce4d8ff6c3bad30140e, type: 3}
   placement: 0
+  alsoOnTables: 0
+  scaleOnTable: 1
   footprintSize: {x: 1.85, y: 0.55}
   chainSpan: 0
   canFlip: 1
   category: Furniture
   seats: 1
-  cosiness: 1
+  cosiness: 2
   style: rustic
   groundShadow: 1
   shadowSize: {x: 0, y: 0}

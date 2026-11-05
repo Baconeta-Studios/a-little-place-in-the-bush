@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.main_table_for_two
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.main_table_for_two
+  displayName: A table for two
+  description: "Set out the fancy table, put the kawakawa scroll on the menu, and close up for the evening. K\u014Dwhai wants to ask you something."
+  giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  isMain: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 5be8685a134a2dc4aae8b5ca14677b19, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 13
+    target: {fileID: 11400000, guid: 3080cb37c4088cc42bd25fe3d9416dbe, type: 2}
+    qty: 1
+  - type: 10
+    target: {fileID: 11400000, guid: 04bf8760921b23546b96fc99aa4ec00d, type: 2}
+    qty: 1
+  - type: 6
+    target: {fileID: 0}
+    qty: 1
+  rewards:
+  - type: 1
+    target: {fileID: 0}
+    qty: 40
+  offerLine: So. That table I had made. It's for two, you know. Get it out where it can be seen, put the scroll on the menu, and when you close up tonight, don't lock the door. Just this once, I'd like to be your last customer.
+  activeLine: The table's to be out, the scroll's on the menu, and then close up. I'll be there.
+  readyLine: You came. Of course you came, it's your cafe. I've been wanting to say this since you got back...
+  doneLine: ...it's a lovely cafe, you know.

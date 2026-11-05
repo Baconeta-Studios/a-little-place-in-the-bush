@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: item.mossy_rock
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: item.mossy_rock
-  displayName: Mossy Rock
+  displayName: Mossy seat
   description: A nice mossy stone seat.
   icon: {fileID: 21300000, guid: d03016c90623e6a41af1535048860e24, type: 3}
   category: 4

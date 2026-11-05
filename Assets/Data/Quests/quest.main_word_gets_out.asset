@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.main_word_gets_out
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.main_word_gets_out
+  displayName: Someone's back
+  description: "Word has reached K\u014Dwhai that you're home, and that you're fixing up the old cafe."
+  giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  isMain: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 6e4cc2bfbb5ea804c8c80fe68677ae2d, type: 2}
+  nextDay: 1
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 4
+    target: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
+    qty: 2
+  - type: 0
+    target: {fileID: 11400000, guid: 0c1ed726a108271428bb6340aaaddc8c, type: 2}
+    qty: 1
+  offerLine: It IS you. I heard you were back, and I said no, that one never comes back for anything. And then I heard about this... place.
+  activeLine: Don't just stand there with your mouth open. Come here.
+  readyLine: You're really doing this? Here. It's not a housewarming gift, it's a mercy. Those walls need hiding.
+  doneLine: We'll see. I'm staying a while.

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.letter_deliver
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.letter_deliver
+  displayName: Please don't read it
+  description: The seal on the letter is a little bat. Pekapeka looks very worried about it. Find something that glows, for reading it by, then hand it over.
+  giver: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 49368504dbe26674e973304794141023, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: ac7a5df089bde4345b07c92187115f15, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 11400000, guid: 974658fe46c7df742990fe6f8b2906ed, type: 2}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 3f449bcdec75e7b41833ee25c42f3357, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 4c3a2fc8898b8eb468ae2dea35f9aa84, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 60
+  offerLine: Oh no. Oh, that's mine. I wrote that. I wrote it to Gus, ages ago, and I lost my nerve and dropped it. I can't read it in this dark, which is ridiculous. Could you find me a glowworm?
+  activeLine: A glowworm, to read by. And then I suppose I have to give it to him. Oh dear.
+  readyLine: It only says thank you. All this time. It says thank you for talking to me, when nobody did. Please don't tell him. Here. These are the nicest things I own.
+  doneLine: I gave it to him. He said it's in code. It's the nicest thing anyone's ever said to me.

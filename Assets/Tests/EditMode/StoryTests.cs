@@ -101,6 +101,9 @@ namespace Bush.Core.Tests
                     case ObjectiveType.CloseDay:
                         for (int i = 0; i < qty; i++) NextDay(game);
                         break;
+                    default: // the kinds that look at what's out at the cafe, or at what's found on trips (WholeGameTests does them for real)
+                        game.quests.MarkObjectiveDone(quest.id, objective);
+                        break;
                 }
             }
         }

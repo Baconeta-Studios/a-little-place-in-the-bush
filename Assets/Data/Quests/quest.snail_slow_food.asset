@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.snail_slow_food
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.snail_slow_food
+  displayName: Slow food
+  description: Snail likes to know where its next pie is coming from. Close up with worm pie on the menu on 3 days.
+  giver: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 4f817d13caacfa34384265157e7d2d3b, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 9
+    target: {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
+    qty: 3
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 9a575740677255e40aeb520055aae797, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
+    qty: 1
+  offerLine: I'm thinking... of staying. Keep worm pie... on the menu. Three closings. I need to know... I can rely on you. I'm slow. It might be gone... by the time I arrive.
+  activeLine: Three closings... with pie... on the board. No rush. I never do.
+  readyLine: You didn't take it off. Not once. Nobody's ever... waited for me. Here. For your garden.
+  doneLine: It's nice... here.

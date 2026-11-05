@@ -115,8 +115,7 @@ public class QuestDetailView : MonoBehaviour
         ItemSource source = QuestHints.WhereToGet(session.Design, objective.target);
         piece.Find("Where").GetComponent<TextMeshProUGUI>().text = found ? "Found"
             : source.foraged ? "Find it foraging"
-            : !string.IsNullOrEmpty(source.fromNpc) ? $"{QuestLogPopup.NpcName(session.Design, source.fromNpc)} has it"
-            : "";
+            : "Try talking to the visitors to your cafe";
     }
 
     private void AddReward(GameSession session, QuestReward reward)

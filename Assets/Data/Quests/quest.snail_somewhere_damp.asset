@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.snail_somewhere_damp
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.snail_somewhere_damp
+  displayName: Somewhere damp
+  description: Snail would stay for good if the cafe had a shady spot. Set out a bush, and get the cafe's cosiness up.
+  giver: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: fbf608aa2a2e36f489ac3ede108cabed, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 13
+    target: {fileID: 11400000, guid: 9a575740677255e40aeb520055aae797, type: 2}
+    qty: 1
+  - type: 11
+    target: {fileID: 0}
+    qty: 30
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: 9c42923ec13d97e439af2b74a61c2fbc, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 014aa3277ebc21d4aacf267fb796213f, type: 2}
+    qty: 1
+  offerLine: It's too... dry. Out there. And bare. I'd need a bush... to sit under, and a place that feels... like someone lives there.
+  activeLine: A bush, please. And cosy. I can wait. I'm very good at it.
+  readyLine: Oh. Oh, this is the spot. You know what, I'll come foraging. Eventually. I know where the worms are. They don't... run from me.
+  doneLine: We'll get there.

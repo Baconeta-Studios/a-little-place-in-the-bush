@@ -47,7 +47,14 @@ namespace Bush.Core
         }
 
         /// <summary>Not started yet, every prerequisite quest is completed, and it's the right day (see <see cref="QuestData.nextDay"/>, <see cref="QuestData.minDay"/>).</summary>
-        public bool CanStart(string questId) => PrerequisitesDone(questId) && !WaitingForAnotherDay(questId);
+        public bool CanStart(string questId) => PrerequisitesDone(questId) && !WaitingForAnotherDay(questId) && ItemFound(questId);
+
+        /// <summary>A quest that starts from something you've found stays out of sight until you have it.</summary>
+        private bool ItemFound(string questId)
+        {
+            string item = _design.GetQuest(questId)?.requiresItem;
+            return string.IsNullOrEmpty(item) || _economy.Count(item) > 0;
+        }
 
         /// <summary>Not started yet and every prerequisite quest is completed (whatever the day).</summary>
         public bool PrerequisitesDone(string questId)
@@ -117,6 +124,10 @@ namespace Bush.Core
             int current = objective.type switch
             {
                 ObjectiveType.HaveItems or ObjectiveType.DeliverItems => _economy.Count(objective.target),
+                ObjectiveType.HaveOnMenu => Math.Max(GetCounter(progress, objective), DishesOnMenu(objective.target)),
+                ObjectiveType.ReachCosiness => Math.Max(GetCounter(progress, objective), CafeStyle.Cosiness(_design, _state)),
+                ObjectiveType.HaveSeats => Math.Max(GetCounter(progress, objective), CafeStyle.Describe(_design, _state).seats),
+                ObjectiveType.HavePlaced => Math.Max(GetCounter(progress, objective), PlacedAtTheCafe(objective.target)),
                 _ => GetCounter(progress, objective)
             };
             return (Math.Min(current, required), required);
@@ -149,6 +160,31 @@ namespace Bush.Core
             foreach (KeyValuePair<string, int> total in itemTotals)
                 if (_economy.Count(total.Key) < total.Value) return false;
             return true;
+        }
+
+        private int DishesOnMenu(string recipeId)
+        {
+            if (string.IsNullOrEmpty(recipeId)) return _state.menu.Count;
+            return _state.menu.Contains(recipeId) ? 1 : 0;
+        }
+
+        private int PlacedAtTheCafe(string itemId)
+        {
+            int count = 0;
+            foreach (PlacedObjectData placed in _state.placed)
+                if (placed.area == CafeStyle.CafeArea && _design.GetPlaceable(placed.placeableId)?.itemId == itemId) count++;
+            return count;
+        }
+
+        /// <summary>Counts an objective as done without doing it. For the story shortcuts used in testing.</summary>
+        public void MarkObjectiveDone(string questId, QuestObjective objective)
+        {
+            QuestProgress progress = _state.FindQuest(questId);
+            if (progress == null) return;
+            string key = CounterKey(objective);
+            QuestCounter counter = progress.counters.Find(c => c.key == key);
+            if (counter == null) progress.counters.Add(counter = new QuestCounter { key = key });
+            counter.count = Math.Max(counter.count, Math.Max(1, objective.qty));
         }
 
         public bool Claim(string questId) => Claim(questId, out _);
@@ -324,16 +360,25 @@ namespace Bush.Core
         private void OnRecipeCooked(string recipeId) =>
             Count(ObjectiveType.CookRecipe, o => string.IsNullOrEmpty(o.target) || o.target == recipeId);
 
-        private void OnExpeditionCompleted(ForageResult _) => Count(ObjectiveType.CompleteExpeditions, _ => true);
+        private void OnExpeditionCompleted(ForageResult result)
+        {
+            Count(ObjectiveType.CompleteExpeditions, _ => true);
+            if (!string.IsNullOrEmpty(result.companionId)) Count(ObjectiveType.TripWith, o => o.target == result.companionId);
+            foreach (ItemStack stack in result.stacks) Count(ObjectiveType.FindItems, o => o.target == stack.itemId, stack.qty);
+        }
 
         private void OnTalkedTo(string npcId) => Count(ObjectiveType.TalkTo, o => o.target == npcId);
 
-        private void OnDayEnded(DaySummary _) => Count(ObjectiveType.CloseDay, _ => true);
+        private void OnDayEnded(DaySummary _)
+        {
+            Count(ObjectiveType.CloseDay, _ => true);
+            Count(ObjectiveType.CloseWithOnMenu, o => DishesOnMenu(o.target) > 0);
+        }
 
         private void OnObjectPlaced(string itemId) =>
             Count(ObjectiveType.PlaceObject, o => string.IsNullOrEmpty(o.target) || o.target == itemId);
 
-        private void Count(ObjectiveType type, Func<QuestObjective, bool> matches)
+        private void Count(ObjectiveType type, Func<QuestObjective, bool> matches, int amount = 1)
         {
             foreach (QuestProgress progress in _state.quests)
             {
@@ -350,7 +395,7 @@ namespace Bush.Core
 
                     QuestCounter counter = progress.counters.Find(c => c.key == key);
                     if (counter == null) progress.counters.Add(counter = new QuestCounter { key = key });
-                    counter.count++;
+                    counter.count += amount;
                 }
             }
         }

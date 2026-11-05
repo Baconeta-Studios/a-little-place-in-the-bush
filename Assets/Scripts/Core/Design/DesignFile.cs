@@ -32,13 +32,13 @@ namespace Bush.Core
         [Serializable] public class Focus { public string id; public string name; public List<string> tags = new(); public double multiplier; }
         [Serializable] public class Entry { public string item; public double weight; public int min; public int max; public string time; public string requiresQuest; public string requiresCompanion; }
         [Serializable] public class Table { public string id; public string name; public int rolls; public List<Entry> entries = new(); }
-        [Serializable] public class Npc { public string id; public string name; public string species; public string description; public string visits; public double visitChance; public int firstDay; public string afterQuest; public string activeAt; public List<string> shop = new(); }
+        [Serializable] public class Npc { public string id; public string name; public string species; public string description; public string visits; public double visitChance; public int firstDay; public string afterQuest; public string activeAt; public List<string> shop = new(); public string shopAfterQuest; }
         [Serializable] public class Objective { public string type; public string target; public int qty; }
         [Serializable] public class Reward { public string type; public string target; public int qty; }
         [Serializable] public class Dialogue { public string offer; public string active; public string ready; public string done; }
-        [Serializable] public class Placeable { public string id; public string item; public string placement; public float footprintWidth; public float footprintDepth; public float chainSpan; public bool canFlip; public string category; public int seats; public int cosiness; public string style; }
+        [Serializable] public class Placeable { public string id; public string item; public string placement; public bool alsoOnTables; public float footprintWidth; public float footprintDepth; public float chainSpan; public bool canFlip; public string category; public int seats; public int cosiness; public string style; }
         [Serializable] public class Upgrade { public string id; public string name; public string description; public string effect; public int amount; public int price; public string requires; }
-        [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public bool nextDay; public int minDay; public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
+        [Serializable] public class Quest { public string id; public string title; public string giver; public bool isMain; public List<string> prerequisites = new(); public bool nextDay; public int minDay; public string requiresItem; public bool giverComes; public string summary; public List<Objective> objectives = new(); public List<Reward> rewards = new(); public Dialogue dialogue = new(); }
 
         /// <summary>Converts to the model. Unknown enum names are reported in <paramref name="errors"/> and fall back to the first value.</summary>
         public DesignData ToDesign(List<string> errors)
@@ -105,7 +105,7 @@ namespace Bush.Core
                     visits = string.IsNullOrEmpty(x.visits) ? VisitType.Always : Parse(x.visits, VisitType.Always, errors, x.id),
                     visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "",
                     activeAt = string.IsNullOrEmpty(x.activeAt) ? ActiveTime.Day : Parse(x.activeAt, ActiveTime.Day, errors, x.id),
-                    shop = new List<string>(x.shop ?? new List<string>())
+                    shop = new List<string>(x.shop ?? new List<string>()), shopAfterQuest = x.shopAfterQuest ?? ""
                 });
 
             foreach (Quest x in quests)
@@ -113,6 +113,7 @@ namespace Bush.Core
                 var quest = new QuestData
                 {
                     id = x.id, title = x.title, giver = x.giver, isMain = x.isMain, summary = x.summary, nextDay = x.nextDay, minDay = x.minDay,
+                    requiresItem = x.requiresItem ?? "", giverComes = x.giverComes,
                     prerequisites = new List<string>(x.prerequisites ?? new List<string>()),
                     dialogue = new QuestDialogue
                     {
@@ -137,7 +138,7 @@ namespace Bush.Core
                 foreach (Placeable x in placeables)
                     design.placeables.Add(new PlaceableData
                     {
-                        id = x.id, itemId = x.item, placement = Parse(x.placement, PlacementType.Floor, errors, x.id),
+                        id = x.id, itemId = x.item, placement = Parse(x.placement, PlacementType.Floor, errors, x.id), alsoOnTables = x.alsoOnTables,
                         footprintWidth = x.footprintWidth, footprintDepth = x.footprintDepth, chainSpan = x.chainSpan, canFlip = x.canFlip,
                         category = x.category, seats = x.seats, cosiness = x.cosiness, style = x.style ?? ""
                     });
@@ -216,7 +217,7 @@ namespace Bush.Core
                 {
                     id = x.id, name = x.name, species = x.species, description = x.description, visits = x.visits.ToString(),
                     visitChance = x.visitChance, firstDay = x.firstDay, afterQuest = x.afterQuest ?? "", activeAt = x.activeAt.ToString(),
-                    shop = new List<string>(x.shop)
+                    shop = new List<string>(x.shop), shopAfterQuest = x.shopAfterQuest ?? ""
                 });
 
             foreach (QuestData x in design.quests)
@@ -224,6 +225,7 @@ namespace Bush.Core
                 var quest = new Quest
                 {
                     id = x.id, title = x.title, giver = x.giver, isMain = x.isMain, summary = x.summary, nextDay = x.nextDay, minDay = x.minDay,
+                    requiresItem = x.requiresItem ?? "", giverComes = x.giverComes,
                     prerequisites = new List<string>(x.prerequisites),
                     dialogue = new Dialogue { offer = x.dialogue?.offer, active = x.dialogue?.active, ready = x.dialogue?.ready, done = x.dialogue?.done }
                 };
@@ -237,7 +239,7 @@ namespace Bush.Core
             foreach (PlaceableData x in design.placeables)
                 file.placeables.Add(new Placeable
                 {
-                    id = x.id, item = x.itemId, placement = x.placement.ToString(), footprintWidth = x.footprintWidth,
+                    id = x.id, item = x.itemId, placement = x.placement.ToString(), alsoOnTables = x.alsoOnTables, footprintWidth = x.footprintWidth,
                     footprintDepth = x.footprintDepth, chainSpan = x.chainSpan, canFlip = x.canFlip, category = x.category ?? "", seats = x.seats,
                     cosiness = x.cosiness, style = x.style ?? ""
                 });

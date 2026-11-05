@@ -14,12 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcDefinition
   id: npc.ruru
   displayName: Ruru
-  description: The old cafe owner. Wise, sleepy by day, and missing her famous recipe.
+  description: Your old neighbour. Wise, sleepy by day, and far nosier than she lets on.
   portrait: {fileID: 21300000, guid: 8655101493f190249861fe316030cd62, type: 3}
   species: Ruru (morepork)
-  visits: 1
-  visitChance: 0
+  visits: 2
+  visitChance: 0.3
   firstDay: 0
-  afterQuest: {fileID: 0}
+  afterQuest: {fileID: 11400000, guid: 6e4cc2bfbb5ea804c8c80fe68677ae2d, type: 2}
   activeAt: 3
-  shop: []
+  shop:
+  - {fileID: 11400000, guid: 2f958f2b8540b814ca9cd070c75dfbbc, type: 2}
+  - {fileID: 11400000, guid: 9ff8240dc9e99f248a66d3e2a8310770, type: 2}
+  - {fileID: 11400000, guid: ca8b00c001dff5a4f84f5636ce326935, type: 2}
+  shopAfterQuest: {fileID: 11400000, guid: 6e4cc2bfbb5ea804c8c80fe68677ae2d, type: 2}

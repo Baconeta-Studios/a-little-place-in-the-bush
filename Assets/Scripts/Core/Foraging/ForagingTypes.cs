@@ -67,6 +67,8 @@ namespace Bush.Core
     public class ForageResult
     {
         public uint seed;
+        /// <summary>Who came along, filled in when the trip is paid out.</summary>
+        public string companionId;
         public int rollCount;
         public List<ForageRoll> rolls = new();
         /// <summary>Rolls merged by item, in the order they were first found.</summary>

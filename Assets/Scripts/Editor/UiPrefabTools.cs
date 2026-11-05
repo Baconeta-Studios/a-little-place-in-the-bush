@@ -125,7 +125,7 @@ public static class UiPrefabTools
     {
         CafePopup popup = CafePopup.BuildDefault(null);
         popup.UseArt(LoadSprite("Assets/Images/Backgrounds/Background (1).png"), LoadSprite("Assets/Images/UI/Panel.png"),
-            LoadSprite("Assets/Images/Placeables/Cafe sign.png"), LoadSprite("Assets/Images/UI/Icons/Koru-icon.png"));
+            LoadSprite("Assets/Images/UI/Cafe sign.png"), LoadSprite("Assets/Images/UI/Icons/Koru-icon.png"));
         return popup.gameObject;
     }
 
@@ -146,7 +146,7 @@ public static class UiPrefabTools
             string art = name switch
             {
                 "Backdrop" => image.sprite ? null : "Assets/Images/Backgrounds/Background (1).png",
-                "Sign" => "Assets/Images/Placeables/Cafe sign.png",
+                "Sign" => "Assets/Images/UI/Cafe sign.png",
                 "BagBack" => "Assets/Images/UI/Basket-back.png",
                 "BagFront" => "Assets/Images/UI/Basket-front.png",
                 "RecipeIcon" => "Assets/Images/UI/Icons/Recipe.png",

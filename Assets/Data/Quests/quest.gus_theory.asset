@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.gus_theory
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.gus_theory
+  displayName: Gus has a theory
+  description: Gus, a gecko who only comes out at night, needs samples. He says 5 crickets. He won't say why.
+  giver: {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 885c453432c69494eb010b72c9d41fb6, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: 80c3f9a27f00d324680d999e67636f33, type: 2}
+    qty: 5
+  rewards:
+  - type: 2
+    target: {fileID: 11400000, guid: fde4bbabc08f90e4ca6a53d170041b39, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 20
+  offerLine: You. Yes, you. You're out at night, you've got a basket, you'll do. I need five crickets. Live ones, from the bush. It's for the Theory. Don't write this down.
+  activeLine: Five crickets. They're listening to us, you know. So act natural.
+  readyLine: Excellent. Excellent! The Theory holds. In return I'll give you my most secret recipe. I got it from a beetle. It tastes awful. That's how you know it's working.
+  doneLine: Cook it. Don't taste it.

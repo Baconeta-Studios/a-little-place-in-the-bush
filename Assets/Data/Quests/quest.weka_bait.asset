@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.weka_bait
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.weka_bait
+  displayName: The bait
+  description: Weka has a scheme and needs your cafe to look shiny. Have 3 lanterns out and close up 2 nights in a row.
+  giver: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 883796afaccf8cc47be41ab8b17209fb, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 13
+    target: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+    qty: 3
+  - type: 6
+    target: {fileID: 0}
+    qty: 2
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: 3ca94a1faab314c40a2bb162f40137bc, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 06af21899ddf7b243ae94c410ef214be, type: 2}
+    qty: 1
+  offerLine: Your cafe's boring to look at. Boring things don't get robbed, you know. Sorry, I mean visited. Three lanterns out. Two nights. Let's see what wanders in.
+  activeLine: Three lanterns, two closings. Leave the rest to me. Don't check the bins.
+  readyLine: Beautiful. I've found so many things. Right, you've got an eye, I've got a beak. Partners. I'll bring back anything that isn't nailed down. Those lights were just lying around, I swear.
+  doneLine: So what's shiny today?

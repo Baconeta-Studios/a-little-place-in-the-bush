@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.kunekune_truffle
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.kunekune_truffle
+  displayName: Something smells amazing
+  description: Kunekune has picked up the scent of something wonderful. Find a truffle on a foraging trip.
+  giver: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 8cccb5a606fa82e42923d0982a968f96, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: 9c2998cfb49b1fd48a691cbafb89d395, type: 2}
+    qty: 1
+  rewards:
+  - type: 2
+    target: {fileID: 11400000, guid: 6bf9482be144b6e4e96126f0e121791d, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: 9a575740677255e40aeb520055aae797, type: 2}
+    qty: 1
+  offerLine: It's in the bush somewhere. It smells like the best day of my life. It's a truffle. I've never actually found one. Help me?
+  activeLine: It's out there. Take me along, my nose will help. Probably.
+  readyLine: THAT'S IT. That's the smell! Do you know what you could make with this? I do. Here. It's the only recipe I know.
+  doneLine: Now cook it! Please! For me!

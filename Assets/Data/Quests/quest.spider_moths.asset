@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.spider_moths
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.spider_moths
+  displayName: A light for the moths
+  description: Spider wants the moths to come to the cafe. Have 2 lanterns out at the cafe, and close up for the night.
+  giver: {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 0f73231ff18b145419a94b4fc2088639, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 13
+    target: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+    qty: 2
+  - type: 6
+    target: {fileID: 0}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 06af21899ddf7b243ae94c410ef214be, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 25
+  offerLine: Here's a business idea. You put lanterns out. Moths come to the lanterns. I come to the moths. Everyone's happy, except the moths. Two lanterns ought to do it.
+  activeLine: Two lanterns out where they can be seen, then close up and let's see who turns up.
+  readyLine: Look at them all! I haven't eaten this well in years. I strung up some of my good thread in thanks. Don't ask about the little lights. I don't know how they work.
+  doneLine: One last thing. It's a bit of a stretch.

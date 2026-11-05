@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.kunekune_dig
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.kunekune_dig
+  displayName: Dig here
+  description: Kunekune wants to show you all the best spots. Take Kunekune foraging 3 times.
+  giver: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 3e2e8c15adda4e440aa20bf1319c9801, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 8
+    target: {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
+    qty: 3
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 5a840df99ef9e23469536178e090148a, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 20
+  offerLine: I know all the spots. All of them. There's so many. Take me out a few times and I'll show you where the good dirt is.
+  activeLine: Three trips, and I'll show you everything. Take me foraging!
+  readyLine: See? Good dirt. Look what I dug up while you weren't watching. It's for your cafe. I don't know why it's so big.
+  doneLine: There's one more smell I've been meaning to find.

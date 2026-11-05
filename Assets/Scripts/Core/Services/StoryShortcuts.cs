@@ -51,6 +51,9 @@ namespace Bush.Core
                     case ObjectiveType.CloseDay:
                         for (int i = 0; i < qty; i++) events.RaiseDayEnded(new DaySummary { day = state.day }); // counts without moving the day on
                         break;
+                    default: // the kinds that look at what's out at the cafe, or at what's found on trips
+                        quests.MarkObjectiveDone(questId, objective);
+                        break;
                 }
             }
 

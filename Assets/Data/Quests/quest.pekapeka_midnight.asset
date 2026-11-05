@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.pekapeka_midnight
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.pekapeka_midnight
+  displayName: Midnight snack
+  description: Pekapeka has worked up the courage to ask for something. Find 4 crickets on foraging trips at night.
+  giver: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: f4dedde8b4da8e6458ba0821d36c9014, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: 80c3f9a27f00d324680d999e67636f33, type: 2}
+    qty: 4
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 5a840df99ef9e23469536178e090148a, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 20
+  offerLine: I wondered, if it's not too much trouble. You go out at night, don't you? I can hear crickets, always just out of reach. Would you... find me a few?
+  activeLine: Only if you're going out anyway. Crickets come out at night.
+  readyLine: Oh! You really did. Nobody ever really does. I found this when I was hiding. You can sit on it, I think.
+  doneLine: I can show you where they go, if you like.

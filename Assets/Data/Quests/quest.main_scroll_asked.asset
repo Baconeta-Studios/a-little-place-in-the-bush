@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.main_scroll_asked
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.main_scroll_asked
+  displayName: That old recipe
+  description: "K\u014Dwhai has something on their mind. Hear them out."
+  giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  isMain: 1
+  prerequisites:
+  - {fileID: 11400000, guid: ffd50aa4654d18247b8da4a8f9d31ad1, type: 2}
+  nextDay: 1
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 4
+    target: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+    qty: 1
+  rewards:
+  - type: 1
+    target: {fileID: 0}
+    qty: 20
+  offerLine: There's one thing I've never stopped thinking about. Do you remember the kawakawa scroll? Off this very menu, when we were small.
+  activeLine: Come and sit down a minute.
+  readyLine: The recipe's gone. The card got torn up and scattered years ago, they say, in four pieces. If anyone would know where they went, it's the folk who come through this cafe. Try talking to your visitors.
+  doneLine: Try talking to your visitors. Somebody's got to know something.

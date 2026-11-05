@@ -21,6 +21,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 506e7d398cfb92b47b6dc4e8ac16b246, type: 2}
   nextDay: 0
   minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
   objectives:
   - type: 6
     target: {fileID: 0}

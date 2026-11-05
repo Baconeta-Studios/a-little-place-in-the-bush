@@ -19,10 +19,13 @@ public class NpcDefinition : GameDefinition
     public ActiveTime activeAt;
     [Tooltip("Recipes they sell (each recipe's price is on the recipe). Empty for no shop.")]
     public List<RecipeDefinition> shop = new();
+    [Tooltip("The shop only opens once this quest is completed. Empty for straight away.")]
+    public QuestDefinition shopAfterQuest;
 
     public NpcData ToData() => new()
     {
         id = id, name = displayName, species = species, description = description, visits = visits, visitChance = visitChance,
-        firstDay = firstDay, afterQuest = Definitions.Id(afterQuest), activeAt = activeAt, shop = shop.FindAll(r => r).ConvertAll(Definitions.Id)
+        firstDay = firstDay, afterQuest = Definitions.Id(afterQuest), activeAt = activeAt, shop = shop.FindAll(r => r).ConvertAll(Definitions.Id),
+        shopAfterQuest = Definitions.Id(shopAfterQuest)
     };
 }

@@ -136,7 +136,7 @@ namespace Bush.Core
                 {
                     string where = $"forage table {table.id}";
                     ItemData item = RequireItem(errors, design, entry.itemId, where);
-                    if (item != null && item.category == ItemCategory.KeyItem && string.IsNullOrEmpty(entry.requiresQuest) && string.IsNullOrEmpty(item.teachesRecipe))
+                    if (item != null && item.category == ItemCategory.KeyItem && !design.quests.Exists(q => q.requiresItem == item.id) && string.IsNullOrEmpty(entry.requiresQuest) && string.IsNullOrEmpty(item.teachesRecipe))
                         errors.Add($"{where}: key item {item.id} should only drop while its quest is active (set requiresQuest).");
                     if (!string.IsNullOrEmpty(entry.requiresCompanion) && design.GetCompanion(entry.requiresCompanion) == null)
                         errors.Add($"{where}: {entry.itemId} requires unknown companion {entry.requiresCompanion}.");
@@ -153,6 +153,7 @@ namespace Bush.Core
                 string where = $"quest {quest.id}";
                 if (!string.IsNullOrEmpty(quest.giver) && design.GetNpc(quest.giver) == null) errors.Add($"{where} has unknown giver {quest.giver}.");
                 if (quest.objectives.Count == 0) errors.Add($"{where} has no objectives.");
+                if (!string.IsNullOrEmpty(quest.requiresItem)) RequireItem(errors, design, quest.requiresItem, where);
                 foreach (string prerequisite in quest.prerequisites)
                 {
                     if (design.GetQuest(prerequisite) == null) errors.Add($"{where} has unknown prerequisite {prerequisite}.");
@@ -174,6 +175,18 @@ namespace Bush.Core
                             break;
                         case ObjectiveType.PlaceObject:
                             if (!string.IsNullOrEmpty(objective.target)) RequireItem(errors, design, objective.target, where);
+                            break;
+                        case ObjectiveType.FindItems:
+                        case ObjectiveType.HavePlaced:
+                            RequireItem(errors, design, objective.target, where);
+                            break;
+                        case ObjectiveType.TripWith:
+                            if (design.GetCompanion(objective.target) == null) errors.Add($"{where}: trip objective has unknown companion {objective.target}.");
+                            break;
+                        case ObjectiveType.CloseWithOnMenu:
+                        case ObjectiveType.HaveOnMenu:
+                            if (!string.IsNullOrEmpty(objective.target) && design.GetRecipe(objective.target) == null)
+                                errors.Add($"{where}: menu objective has unknown recipe {objective.target}.");
                             break;
                         case ObjectiveType.CookRecipe:
                             if (!string.IsNullOrEmpty(objective.target) && design.GetRecipe(objective.target) == null)
@@ -217,6 +230,7 @@ namespace Bush.Core
                 if (!placedItems.Add(placeable.itemId ?? "")) errors.Add($"{where}: item {placeable.itemId} is used by two placeables.");
                 if (placeable.footprintWidth <= 0 || placeable.footprintDepth <= 0) errors.Add($"{where}: footprint must be bigger than 0 both ways.");
                 if (placeable.seats < 0) errors.Add($"{where}: seats can't be negative.");
+                if (placeable.alsoOnTables && placeable.placement != PlacementType.Floor) errors.Add($"{where}: only Floor placeables can be set to also go on tables.");
                 if (placeable.placement == PlacementType.Rug) errors.Add($"{where}: Rug placement isn't built yet.");
                 if (placeable.chainSpan < 0) errors.Add($"{where}: chainSpan can't be negative.");
                 if (placeable.chainSpan > 0 && placeable.placement != PlacementType.Floor) errors.Add($"{where}: only Floor placeables can snap end to end.");

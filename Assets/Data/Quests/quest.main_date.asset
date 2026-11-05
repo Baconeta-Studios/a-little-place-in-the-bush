@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.main_date
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.main_date
+  displayName: A little place in the bush
+  description: It's just the two of you, and the whole of the bush lit up. Sit down.
+  giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  isMain: 1
+  prerequisites:
+  - {fileID: 11400000, guid: cc124a29e59456346ab3f40fbae37c3e, type: 2}
+  nextDay: 1
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 4
+    target: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 3f449bcdec75e7b41833ee25c42f3357, type: 2}
+    qty: 1
+  - type: 1
+    target: {fileID: 0}
+    qty: 100
+  offerLine: Sit down. No, opposite me. I want to see your face. There we are, two geckos, one scroll and one very good table. You did this. All of it.
+  activeLine: Sit down. It's getting cold.
+  readyLine: I came to laugh at you, you know. And then you made me choose. So here's me choosing. I'll stay. Keep the lights on, won't you? Here, these are for the door.
+  doneLine: There's always more to do around here. I'll bring the good berries.

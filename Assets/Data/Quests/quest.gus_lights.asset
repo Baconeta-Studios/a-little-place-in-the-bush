@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.gus_lights
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.gus_lights
+  displayName: Visitors from the sky
+  description: Gus needs something that glows, to signal the Visitors. Find a glowworm on a night trip, and have lanterns out to light their way.
+  giver: {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
+  isMain: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 408e211536a95064fbc4d4c426f1367c, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 1
+  objectives:
+  - type: 7
+    target: {fileID: 11400000, guid: ac7a5df089bde4345b07c92187115f15, type: 2}
+    qty: 1
+  - type: 13
+    target: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+    qty: 2
+  rewards:
+  - type: 3
+    target: {fileID: 11400000, guid: 48e79e2777c733e478124e2130a6c32d, type: 2}
+    qty: 1
+  - type: 0
+    target: {fileID: 11400000, guid: f7e4794a6f5b3ea429ad2af0bb964b9d, type: 2}
+    qty: 1
+  offerLine: They come tonight. Or soon. Or they already have. Find me something that glows, and put your lanterns out. We need to signal them. Whatever you do, don't lock the door.
+  activeLine: Something that glows. From the night bush. And lanterns out, or they'll never find us.
+  readyLine: LOOK. They came! ...All right, it's just a firefly. But LOOK at it! It likes you. It's yours now. I've got no use for it, it knows too much. Keep the lights. They're how they find you.
+  doneLine: I told you. Everyone said Gus, you're mad. Who's mad now?

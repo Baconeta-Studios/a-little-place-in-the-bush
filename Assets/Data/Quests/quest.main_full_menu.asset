@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a917a11879475d94ea3fa4125f4105, type: 3}
+  m_Name: quest.main_full_menu
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
+  id: quest.main_full_menu
+  displayName: A proper menu
+  description: A proper cafe has a proper menu. Get 3 dishes on the board at once and close up for the day. Upgrades on the menu board add more menu slots.
+  giver: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  isMain: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 7ed25acb558b3a4469f4242f98115878, type: 2}
+  nextDay: 0
+  minDay: 0
+  requiresItem: {fileID: 0}
+  giverComes: 0
+  objectives:
+  - type: 10
+    target: {fileID: 0}
+    qty: 3
+  - type: 6
+    target: {fileID: 0}
+    qty: 1
+  rewards:
+  - type: 0
+    target: {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+    qty: 2
+  - type: 1
+    target: {fileID: 0}
+    qty: 40
+  offerLine: One dish at a time isn't a cafe, it's a stunt. I want to walk in and have to choose. Three dishes on that board, all at once, for a whole day.
+  activeLine: Three dishes up on the board at once. The board can hold more if you pay for it. And then see the day out.
+  readyLine: Now I'm walking in and having to choose. Do you know how long it's been since anyone made me choose anything?
+  doneLine: Come and see me tomorrow. I've been thinking about something.

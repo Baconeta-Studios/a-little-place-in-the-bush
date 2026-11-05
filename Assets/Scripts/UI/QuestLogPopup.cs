@@ -146,11 +146,15 @@ public class QuestLogPopup : Popup
             case ObjectiveType.HaveItems:
             case ObjectiveType.DeliverItems:
             case ObjectiveType.PlaceObject:
+            case ObjectiveType.FindItems:
+            case ObjectiveType.HavePlaced:
                 ItemDefinition item = session.Database.Find<ItemDefinition>(objective.target);
                 if (!item) return null;
                 PlaceableDefinition placeable = session.Database.placeables.Find(p => p && p.item == item);
                 return ItemGridView.IconFor(item, placeable, out tint);
             case ObjectiveType.CookRecipe:
+            case ObjectiveType.CloseWithOnMenu:
+            case ObjectiveType.HaveOnMenu:
                 return session.Database.recipeIcon;
             case ObjectiveType.TalkTo:
                 return session.Database.Find<NpcDefinition>(objective.target)?.portrait;

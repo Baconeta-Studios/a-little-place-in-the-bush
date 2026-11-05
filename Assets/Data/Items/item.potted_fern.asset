@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item.potted_fern
   displayName: Potted plant
   description: A happy plant in a clay pot.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: cece215c5b696cb419108cbe896f46ae, type: 3}
   category: 4
   rarity: 0
   tags:

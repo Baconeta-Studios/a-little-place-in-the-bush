@@ -25,10 +25,15 @@ public class PlacedObject : MonoBehaviour
     private Coroutine _plop;
     private Transform _visual;
     private Vector3 _visualRestScale;
+    private Vector3 _visualBaseScale;
+    private Vector3 _visualBasePosition;
+    private GameObject _groundShadow;
+    private bool _onSurface;
 
     public int InstanceId { get; private set; }
     public PlaceableDefinition Definition { get; private set; }
     public bool Flipped { get; private set; }
+    public bool IsOnSurface => _onSurface;
     public string DisplayName => Definition && !string.IsNullOrEmpty(Definition.displayName) ? Definition.displayName : name;
 
     /// <summary>The footprint as a world rectangle (the base that blocks walking; for fairy lights, from pole to pole).</summary>
@@ -66,7 +71,11 @@ public class PlacedObject : MonoBehaviour
         SetUpFootprints(definition);
 
         _visual = transform.Find("Visual");
-        if (_visual) _visualRestScale = _visual.localScale;
+        if (_visual)
+        {
+            _visualRestScale = _visualBaseScale = _visual.localScale;
+            _visualBasePosition = _visual.localPosition;
+        }
         _poleLeft = transform.Find("PoleLeft");
         _poleRight = transform.Find("PoleRight");
 
@@ -96,9 +105,14 @@ public class PlacedObject : MonoBehaviour
     {
         if (!definition || definition.placement != PlacementType.Floor || definition.chainSpan > 0f) return;
         _hasGroundShadow = true;
-        if (transform.Find("Shadow")) return; // its own art
+        Transform ownShadow = transform.Find(GroundShadow.OwnArtName);
+        if (ownShadow) // its own art
+        {
+            _groundShadow = ownShadow.gameObject;
+            return;
+        }
         bool hasArt = System.Array.Exists(_renderers, r => r && r.sprite);
-        if (definition.groundShadow && hasArt) GroundShadow.Create(transform, definition.ShadowSize, definition.ShadowCentre, definition.shadowStrength);
+        if (definition.groundShadow && hasArt) _groundShadow = GroundShadow.Create(transform, definition.ShadowSize, definition.ShadowCentre, definition.shadowStrength);
         else _hasGroundShadow = false;
     }
 
@@ -133,6 +147,16 @@ public class PlacedObject : MonoBehaviour
     /// <summary>A Surface thing draws over what it's sitting on.</summary>
     public void SetOnSurface(bool onSurface)
     {
+        _onSurface = onSurface;
+        if (onSurface) foreach (BoxCollider2D footprint in _footprints) footprint.enabled = false; // it's up on the table: nothing to walk around
+        if (_groundShadow) _groundShadow.SetActive(!onSurface);
+        if (_visual)
+        {
+            float scale = onSurface && Definition ? Definition.scaleOnTable : 1f;
+            _visualRestScale = _visualBaseScale * scale;
+            _visual.localScale = _visualRestScale;
+            _visual.localPosition = _visualBasePosition * scale;
+        }
         for (int i = 0; i < _renderers.Length; i++)
             if (_renderers[i]) _renderers[i].sortingOrder = _baseOrders[i] + (onSurface ? OnSurfaceSortingOrder : 0);
     }
@@ -157,7 +181,7 @@ public class PlacedObject : MonoBehaviour
     /// <summary>Off while it's being dragged, so it doesn't block itself.</summary>
     public void SetFootprintActive(bool active)
     {
-        foreach (BoxCollider2D footprint in _footprints) footprint.enabled = active;
+        foreach (BoxCollider2D footprint in _footprints) footprint.enabled = active && !_onSurface;
     }
 
     /// <summary>The ghost look: a tint, a footprint outline on the floor and a soft shadow.</summary>
@@ -172,7 +196,12 @@ public class PlacedObject : MonoBehaviour
             _renderers[i].color = color;
         }
 
-        if (_footprints.Count == 0) return; // the tint is enough for things off the floor
+        if (_footprints.Count == 0 || _onSurface)
+        {
+            foreach (GameObject marker in _footprintMarkers) if (marker) marker.SetActive(false);
+            if (_ghostShadow) _ghostShadow.SetActive(false);
+            return; // the tint is enough for things off the floor
+        }
 
         EnsureMarkers();
         foreach (GameObject marker in _footprintMarkers) marker.SetActive(true);

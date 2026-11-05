@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkDefinition
   id: perk.early_bird
   displayName: Early bird
-  description: Up before the worms are. More worms, and more of them.
+  description: Learned from Snail. More worms, and more of them.
   icon: {fileID: 0}
   unlockedByDefault: 0
   modifiers:

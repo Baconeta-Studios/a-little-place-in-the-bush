@@ -1,5 +1,7 @@
 # Guests, companions, upgrades and cosiness (prototype)
 
+**The cast, chains and who gives what have moved on: see [MAIN-QUEST.md](MAIN-QUEST.md), which replaces the character, companion and quest details below.** The rules for visits, seats, upgrades, cosiness and the sign still hold.
+
 Everything here is placeholder content and numbers, made up to get the systems playable. Tweak freely in [`Design/design-data.json`](../Design/design-data.json) (then **Tools > Bush > Import Design Data**) or on the assets.
 
 ## Guests

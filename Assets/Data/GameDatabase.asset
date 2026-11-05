@@ -40,14 +40,26 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e63d68e2f5c0d664faccfed2b050a802, type: 2}
   - {fileID: 11400000, guid: 3ee804761681ef441a45538ef4d56c26, type: 2}
   - {fileID: 11400000, guid: d195deb54dd0eb943b13f569035cce42, type: 2}
-  - {fileID: 11400000, guid: 62cc489b5161ff24886a92c9f5f906ad, type: 2}
   - {fileID: 11400000, guid: 157e854328b2ff84197e822300821f17, type: 2}
-  - {fileID: 11400000, guid: 065a04bfe78f599439857d2ad6df4b8a, type: 2}
-  - {fileID: 11400000, guid: b56afdc5703376f4a9469240776a12ae, type: 2}
   - {fileID: 11400000, guid: 5f7e7d9b5fd169940ba55b21ba95bf02, type: 2}
   - {fileID: 11400000, guid: b3d05536aadf3354d8a1d03b4db623e1, type: 2}
   - {fileID: 11400000, guid: 3080cb37c4088cc42bd25fe3d9416dbe, type: 2}
   - {fileID: 11400000, guid: 014aa3277ebc21d4aacf267fb796213f, type: 2}
+  - {fileID: 11400000, guid: 0c1ed726a108271428bb6340aaaddc8c, type: 2}
+  - {fileID: 11400000, guid: 90998f63e43086e4daa74fcebc62c8b9, type: 2}
+  - {fileID: 11400000, guid: 9a575740677255e40aeb520055aae797, type: 2}
+  - {fileID: 11400000, guid: 5f7005a0ec089b444983786fa7020094, type: 2}
+  - {fileID: 11400000, guid: 2889736ed3020814f9131693303d8a26, type: 2}
+  - {fileID: 11400000, guid: 06af21899ddf7b243ae94c410ef214be, type: 2}
+  - {fileID: 11400000, guid: 5a840df99ef9e23469536178e090148a, type: 2}
+  - {fileID: 11400000, guid: 4c3a2fc8898b8eb468ae2dea35f9aa84, type: 2}
+  - {fileID: 11400000, guid: f7e4794a6f5b3ea429ad2af0bb964b9d, type: 2}
+  - {fileID: 11400000, guid: 93e0cf98c472f5d4cb1027564569ff51, type: 2}
+  - {fileID: 11400000, guid: 3f449bcdec75e7b41833ee25c42f3357, type: 2}
+  - {fileID: 11400000, guid: f3a56bf79d4b8b646a203daa635ae531, type: 2}
+  - {fileID: 11400000, guid: 1da8ed4138f6b374ca962db3c6f97e6f, type: 2}
+  - {fileID: 11400000, guid: b3513eff5cabd4e4ba767547cac9af1c, type: 2}
+  - {fileID: 11400000, guid: 974658fe46c7df742990fe6f8b2906ed, type: 2}
   recipes:
   - {fileID: 11400000, guid: fca9e2ef2c795124082e02373b8bd0f6, type: 2}
   - {fileID: 11400000, guid: dd54c4649690812478e9c3393f275896, type: 2}
@@ -62,21 +74,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fde4bbabc08f90e4ca6a53d170041b39, type: 2}
   - {fileID: 11400000, guid: 6bf9482be144b6e4e96126f0e121791d, type: 2}
   companions:
-  - {fileID: 11400000, guid: 7d1adf87ad8dd694994ada244cd9bb2d, type: 2}
+  - {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
+  - {fileID: 11400000, guid: 9c42923ec13d97e439af2b74a61c2fbc, type: 2}
+  - {fileID: 11400000, guid: 4a3116d55d123c84ebb2c53c7813a3a5, type: 2}
   - {fileID: 11400000, guid: 3ca94a1faab314c40a2bb162f40137bc, type: 2}
   - {fileID: 11400000, guid: afc7dbd6a5c9d68498cd8de5500df9ff, type: 2}
-  - {fileID: 11400000, guid: e9a5a269af48c2543ab52cf1cd3bd3f4, type: 2}
-  - {fileID: 11400000, guid: 4a3116d55d123c84ebb2c53c7813a3a5, type: 2}
+  - {fileID: 11400000, guid: 48e79e2777c733e478124e2130a6c32d, type: 2}
   perks:
   - {fileID: 11400000, guid: 9115dc7932850fd479a362b8aa76fad9, type: 2}
   - {fileID: 11400000, guid: 2be23f12fcba36f48b487c76f5d5cba3, type: 2}
   - {fileID: 11400000, guid: 1cb5e24027b17664f9ff6acb5aee4358, type: 2}
   - {fileID: 11400000, guid: ce6cff61240bd0f4caad33b29bfb8ca6, type: 2}
-  - {fileID: 11400000, guid: 60bea418e4879934eac3fbf86a585243, type: 2}
   - {fileID: 11400000, guid: 60b58b42b8e016b44851d94e8860d2c9, type: 2}
   - {fileID: 11400000, guid: 7484b90502491544d91d6c6f4b00cb63, type: 2}
   - {fileID: 11400000, guid: 75efc3bf40af69f4ea80f344c21e362a, type: 2}
   - {fileID: 11400000, guid: 23cfe9a29ecffb946b4f0bcd2881a0f0, type: 2}
+  - {fileID: 11400000, guid: f1ded7ee57bd3874d8f51833de528af4, type: 2}
   focuses:
   - {fileID: 11400000, guid: 42872b7af8b89354081eed48877847af, type: 2}
   - {fileID: 11400000, guid: 9df036d906d09f4488a2162ce325efd9, type: 2}
@@ -87,12 +100,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0f037d3c45c5ccd4f94520c901e600d2, type: 2}
   npcs:
   - {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
-  - {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
+  - {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
+  - {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
   - {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
-  - {fileID: 11400000, guid: b558caa69688ba5439b48ee795767966, type: 2}
-  - {fileID: 11400000, guid: 4e97348bcbbd19e41935c1d8c2edac72, type: 2}
+  - {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
+  - {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
   - {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
-  - {fileID: 11400000, guid: 9e437eedccaaa7544befad1ac425d94d, type: 2}
+  - {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
   quests:
   - {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}
   - {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}
@@ -101,22 +115,62 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fdfffad10a858fa48a6acde403b4a441, type: 2}
   - {fileID: 11400000, guid: ded461f5fc8e3dd47b3313fd62eea5c8, type: 2}
   - {fileID: 11400000, guid: 885c453432c69494eb010b72c9d41fb6, type: 2}
+  - {fileID: 11400000, guid: 6e4cc2bfbb5ea804c8c80fe68677ae2d, type: 2}
+  - {fileID: 11400000, guid: 8f96682675e7df64ea1d41ead425f0bd, type: 2}
+  - {fileID: 11400000, guid: 57279c11312dfce4d9b2315fe9cd8369, type: 2}
+  - {fileID: 11400000, guid: f94c5f09c60cf054f9a5e9a89b622930, type: 2}
+  - {fileID: 11400000, guid: 7ed25acb558b3a4469f4242f98115878, type: 2}
+  - {fileID: 11400000, guid: ffd50aa4654d18247b8da4a8f9d31ad1, type: 2}
+  - {fileID: 11400000, guid: 9795d963b6807f849b4f7c117c7a5709, type: 2}
   - {fileID: 11400000, guid: 68fa2deb035c85346afb899ff0d1d904, type: 2}
-  - {fileID: 11400000, guid: 883796afaccf8cc47be41ab8b17209fb, type: 2}
+  - {fileID: 11400000, guid: 5be8685a134a2dc4aae8b5ca14677b19, type: 2}
+  - {fileID: 11400000, guid: cc124a29e59456346ab3f40fbae37c3e, type: 2}
+  - {fileID: 11400000, guid: 54da497473d65af40a36ba24b163b2eb, type: 2}
+  - {fileID: 11400000, guid: 967b5f35d571d52408d973d33930b601, type: 2}
+  - {fileID: 11400000, guid: 3e2e8c15adda4e440aa20bf1319c9801, type: 2}
+  - {fileID: 11400000, guid: 8cccb5a606fa82e42923d0982a968f96, type: 2}
+  - {fileID: 11400000, guid: f74924e35fa96fd40988e83b65999131, type: 2}
+  - {fileID: 11400000, guid: 9cae0753292042a4096260e302c77ba0, type: 2}
   - {fileID: 11400000, guid: 4f817d13caacfa34384265157e7d2d3b, type: 2}
-  - {fileID: 11400000, guid: 487995c2d0832d94d8dea9c7432ca529, type: 2}
-  - {fileID: 11400000, guid: b385a3dec2267134a85a80cfbbd5ebb4, type: 2}
+  - {fileID: 11400000, guid: fbf608aa2a2e36f489ac3ede108cabed, type: 2}
+  - {fileID: 11400000, guid: b4832d5edf00d834386fc6f6d956a7e2, type: 2}
+  - {fileID: 11400000, guid: 0f73231ff18b145419a94b4fc2088639, type: 2}
+  - {fileID: 11400000, guid: b774d6852c4d8c441b3dc16573c9e48c, type: 2}
+  - {fileID: 11400000, guid: 018afeb699eddfb42b89a3efce219945, type: 2}
   - {fileID: 11400000, guid: f4c62688f3178dc49a9f377b0470380b, type: 2}
+  - {fileID: 11400000, guid: 883796afaccf8cc47be41ab8b17209fb, type: 2}
+  - {fileID: 11400000, guid: 238db24d6a6006c4a89952ed7341823b, type: 2}
   - {fileID: 11400000, guid: f4dedde8b4da8e6458ba0821d36c9014, type: 2}
+  - {fileID: 11400000, guid: 15114abec4674ea4baa529f0e7aca85f, type: 2}
+  - {fileID: 11400000, guid: 3830b829eac6c9b4294ff0f9d9d087d9, type: 2}
+  - {fileID: 11400000, guid: 15ce1409f8f598e4e934c4e99a27f1fa, type: 2}
+  - {fileID: 11400000, guid: 408e211536a95064fbc4d4c426f1367c, type: 2}
+  - {fileID: 11400000, guid: f5571f69a4e49aa41a1bef61feb879b3, type: 2}
+  - {fileID: 11400000, guid: 83e35cc9705c31d4dabd756f9181595a, type: 2}
+  - {fileID: 11400000, guid: 7b7d429242222d847b3186cd8634b3a9, type: 2}
+  - {fileID: 11400000, guid: bfc98257fd702fa4bad03d418518de59, type: 2}
+  - {fileID: 11400000, guid: 4ae3dfdd10fc4de43b2d6734a262104f, type: 2}
+  - {fileID: 11400000, guid: f28e55e92edd3db479b403524b339fa5, type: 2}
+  - {fileID: 11400000, guid: 49368504dbe26674e973304794141023, type: 2}
+  - {fileID: 11400000, guid: f0b662c79334e2e4a8ed83b466be9044, type: 2}
   placeables:
   - {fileID: 11400000, guid: 3798fb6a33eed9c45a1b3d1d26ca2c13, type: 2}
   - {fileID: 11400000, guid: df58b5943dbe9984da5027e05ebf7458, type: 2}
-  - {fileID: 11400000, guid: 15d12fe584a67cd4fbcc7100361a3de4, type: 2}
   - {fileID: 11400000, guid: 0b4d4f252873a4f4db75996db4e17819, type: 2}
-  - {fileID: 11400000, guid: 1fe74d0315ea2f442b0e0e20e3b784cb, type: 2}
-  - {fileID: 11400000, guid: 3df59951eda77c642a5e1d788dbaf31d, type: 2}
   - {fileID: 11400000, guid: f31edbee4d05d1544a6c9669cdc15dc1, type: 2}
   - {fileID: 11400000, guid: 1a499f9241f769b4e9864855094bd4d1, type: 2}
+  - {fileID: 11400000, guid: 059b4de2eeb0e3e498ad01ba282df7d1, type: 2}
+  - {fileID: 11400000, guid: 90c8cfa0fb21e364585c6d9a81fe45ea, type: 2}
+  - {fileID: 11400000, guid: b30dbc6d161f0934c923c8dcabc656d4, type: 2}
+  - {fileID: 11400000, guid: 8ba1bfaacf8fb564ea10c49819b3bfe8, type: 2}
+  - {fileID: 11400000, guid: dcbc95c50d185d045b8a0a264c1719dd, type: 2}
+  - {fileID: 11400000, guid: c42b6a9f76136bf4e864f6de103ed663, type: 2}
+  - {fileID: 11400000, guid: 9646f88315013c7438d7e45964b34bee, type: 2}
+  - {fileID: 11400000, guid: 0c4b750bd8c0d734fbd4399873d87bc9, type: 2}
+  - {fileID: 11400000, guid: 9d5c060052f5a224494eb692888035be, type: 2}
+  - {fileID: 11400000, guid: 480560247b927984caa9098c6ff0d01b, type: 2}
+  - {fileID: 11400000, guid: ebd9c9f8ceb328441bc0c210a1daf17d, type: 2}
+  - {fileID: 11400000, guid: e625e229a25e8cf4db376a4611d43ed5, type: 2}
   upgrades:
   - {fileID: 11400000, guid: 0dc42b32bd84fef4eac1edc24dc2b6d9, type: 2}
   - {fileID: 11400000, guid: bbbe6bf176503aa42b984c45b0352d60, type: 2}
@@ -148,6 +202,44 @@ MonoBehaviour:
     exclusiveChance: 0.05
     exclusiveFromCosiness: 0.3
     firstDay: 3
+  cafeSign:
+    cosinessPerKind: 1
+    levels:
+    - name: Bare
+      from: 0
+    - name: Getting there
+      from: 15
+    - name: Cosy
+      from: 40
+    - name: Very cosy
+      from: 80
+    - name: The cosiest spot in the bush
+      from: 140
+    extraVisitorsAtFull: 1
+    cosinessForFullVisitors: 150
+    luckyDayChanceAtFull: 0.25
+    cosinessForFullLuck: 150
+    mixedAt: 0.75
+    styles:
+    - style: garden
+      title: A garden cafe
+      blurb: More leaves than tables. The bugs love it.
+    - style: rustic
+      title: A rustic bush cafe
+      blurb: Sturdy wood, honest food, and a bench for everyone.
+    - style: glow
+      title: A lantern-lit cafe
+      blurb: It glows at dusk. Moths are already queueing.
+    - style: fancy
+      title: A rather fancy cafe
+      blurb: Is that a doily? In the bush?
+    mixedTitle: An eclectic little cafe
+    mixedBlurb: A bit of everything, and somehow it works.
+    otherTitle: A simple little cafe
+    otherBlurb: Nothing fancy, but the salad's fresh.
+    emptyTitle: An empty clearing
+    emptyBlurb: Just you, some dirt and a lot of potential.
+    noSeatsLine: Nowhere to sit, though.
   luckProtectedQuest: {fileID: 11400000, guid: 3c0526a97f19b76438f5f30d04a063a7, type: 2}
   closeUnlockedBy: {fileID: 11400000, guid: 389153578eedaaf419fbed858a8cd3e8, type: 2}
   forageUnlockedBy: {fileID: 11400000, guid: def074f32abaa064096f765b8a2ddcfd, type: 2}

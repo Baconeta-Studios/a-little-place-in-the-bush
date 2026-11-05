@@ -402,6 +402,8 @@ namespace Bush.Core
         public ActiveTime activeAt;
         /// <summary>Recipes they sell (each recipe's price is in the recipe). Empty for no shop.</summary>
         public List<string> shop = new();
+        /// <summary>The shop only opens once this quest is completed. Empty for straight away.</summary>
+        public string shopAfterQuest;
     }
 
     [Serializable]
@@ -442,6 +444,10 @@ namespace Bush.Core
         public bool nextDay;
         /// <summary>Doesn't open before this day. 0 for any day.</summary>
         public int minDay;
+        /// <summary>Hidden until you own this item: a quest you start by finding something. Empty for none.</summary>
+        public string requiresItem;
+        /// <summary>While this can be taken on, its giver is sure to turn up, from the next morning. For the next step of a chain.</summary>
+        public bool giverComes;
         public List<QuestObjective> objectives = new();
         public List<QuestReward> rewards = new();
         public QuestDialogue dialogue = new();
@@ -454,6 +460,8 @@ namespace Bush.Core
         /// <summary>The inventory item this places (category Placeable).</summary>
         public string itemId;
         public PlacementType placement;
+        /// <summary>A Floor thing that can also sit on a table's spot.</summary>
+        public bool alsoOnTables;
         /// <summary>Width of the base that blocks walking, in world units.</summary>
         public float footprintWidth = 1f;
         /// <summary>Depth (front to back) of the base that blocks walking, in world units.</summary>
