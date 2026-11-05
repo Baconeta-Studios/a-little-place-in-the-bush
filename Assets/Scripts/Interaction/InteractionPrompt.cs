@@ -85,7 +85,7 @@ public class InteractionPrompt : MonoBehaviour
         bool lit = hovered || targeted;
         for (int i = 0; i < _renderers.Length; i++)
         {
-            if (!_renderers[i] || _renderers[i].transform.IsChildOf(marker.transform)) continue;
+            if (!_renderers[i] || _renderers[i].transform.IsChildOf(marker.transform) || GroundShadow.IsShadow(_renderers[i])) continue;
             // Blend rather than multiply, so white art visibly lights up too.
             Color highlighted = Color.Lerp(_baseColors[i], highlightColor, highlightAmount);
             highlighted.a = _baseColors[i].a;

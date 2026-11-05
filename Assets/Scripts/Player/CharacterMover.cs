@@ -34,6 +34,8 @@ public class CharacterMover : MonoBehaviour
     private Vector2 _heading;
 
     /// <summary>Raised when a walk ends without arriving: a new destination, Stop() or Teleport().</summary>
+    private FacingShadow _shadow;
+
     public event Action Cancelled;
     public event Action Arrived;
 
@@ -67,6 +69,7 @@ public class CharacterMover : MonoBehaviour
             }
         }
         FacingRight = !visual || (visual.localScale.x >= 0) == artFacesRight;
+        _shadow = new FacingShadow(transform, visual);
     }
 
     /// <summary>
@@ -132,6 +135,7 @@ public class CharacterMover : MonoBehaviour
         float magnitude = Mathf.Abs(scale.x);
         scale.x = right == artFacesRight ? magnitude : -magnitude;
         visual.localScale = scale;
+        _shadow?.Match(visual);
     }
 
     private void Update()

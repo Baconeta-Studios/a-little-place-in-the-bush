@@ -166,7 +166,7 @@ public class PlacedObject : MonoBehaviour
         Color tint = valid ? new Color(0.75f, 1f, 0.75f, 0.9f) : new Color(1f, 0.55f, 0.5f, 0.85f);
         for (int i = 0; i < _renderers.Length; i++)
         {
-            if (!_renderers[i]) continue;
+            if (!_renderers[i] || GroundShadow.IsShadow(_renderers[i])) continue;
             Color color = Color.Lerp(_baseColors[i], tint, 0.4f);
             color.a = _baseColors[i].a * tint.a;
             _renderers[i].color = color;
