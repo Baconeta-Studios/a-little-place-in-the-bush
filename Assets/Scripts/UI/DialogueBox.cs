@@ -43,10 +43,29 @@ public class DialogueBox : Popup
     public static void Show(NpcDefinition npc)
     {
         if (!npc || GameSession.Current == null) return;
+        if (DateScene.TryStart(npc)) return; // the date plays as a scene of its own
         if (!_instance) _instance = GameUi.LoadPopup(ResourcePath, BuildDefault);
         _instance._npc = npc;
         _instance.Open();
         _instance.Begin();
+    }
+
+    /// <summary>Opens the box for a scene that says its own lines (<see cref="Script"/>), with no quest talk.</summary>
+    public static DialogueBox ShowScripted(NpcDefinition npc)
+    {
+        if (!npc || GameSession.Current == null) return null;
+        if (!_instance) _instance = GameUi.LoadPopup(ResourcePath, BuildDefault);
+        _instance._npc = npc;
+        _instance.Open();
+        _instance.ShowSpeaker();
+        return _instance;
+    }
+
+    /// <summary>A line from a scene, with its replies.</summary>
+    public void Script(string line, string detail, params (string label, UnityAction onClick)[] replies)
+    {
+        Say(line, detail);
+        Replies(replies);
     }
 
     private void OnDestroy()
@@ -61,7 +80,12 @@ public class DialogueBox : Popup
     {
         Session.Quests.BeginConversation(_npc.id); // counts for "talk to" objectives
         Session.RequestSave();
+        ShowSpeaker();
+        ShowTopic();
+    }
 
+    private void ShowSpeaker()
+    {
         // Species like "Ruru (morepork)" already have the name in them.
         _name.text = string.IsNullOrEmpty(_npc.species) ? NpcName
             : _npc.species.StartsWith(NpcName) ? _npc.species
@@ -70,8 +94,6 @@ public class DialogueBox : Popup
         _portrait.enabled = _npc.portrait;
         _noPortrait.SetActive(!_npc.portrait);
         _portraitLetter.text = NpcName.Substring(0, 1);
-
-        ShowTopic();
     }
 
     private void ShowTopic()

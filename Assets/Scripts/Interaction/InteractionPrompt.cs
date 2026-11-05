@@ -23,6 +23,12 @@ public class InteractionPrompt : MonoBehaviour
 
     private static Sprite _defaultMarkerSprite;
 
+    /// <summary>Hides every marker, for a scene (the date).</summary>
+    public static bool Hidden { get; set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Hidden = false;
+
     private Interactable _interactable;
     private SpriteRenderer[] _renderers;
     private Color[] _baseColors;
@@ -49,7 +55,7 @@ public class InteractionPrompt : MonoBehaviour
     {
         bool focused = _interactable.IsHovered || _interactable.IsTargeted;
         bool near = showDistance <= 0f || IsPlayerNear();
-        bool show = (near || focused) && _interactable.CanInteract(new InteractionContext(Interactor.Player));
+        bool show = !Hidden && (near || focused) && _interactable.CanInteract(new InteractionContext(Interactor.Player));
         if (marker.activeSelf != show) marker.SetActive(show);
         if (!show) return;
 

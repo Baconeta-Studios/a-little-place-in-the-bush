@@ -34,6 +34,12 @@ public class DayNightLighting : MonoBehaviour
     /// <summary>The time of day the world currently shows (lags the rules while a day is ending).</summary>
     public static Phase CurrentPhase { get; private set; } = Phase.Day;
 
+    /// <summary>Shows this time of day whatever the rules say, for a scene (the date). Null for the rules.</summary>
+    public static Phase? Forced { get; set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Forced = null;
+
     public static void Ensure()
     {
         if (_instance) return;
@@ -45,7 +51,7 @@ public class DayNightLighting : MonoBehaviour
     public static void SnapNow()
     {
         if (!_instance) return;
-        CurrentPhase = PhaseNow();
+        CurrentPhase = Forced ?? PhaseNow();
         _instance.Apply(1f);
     }
 
@@ -63,7 +69,8 @@ public class DayNightLighting : MonoBehaviour
 
     private void Update()
     {
-        if (!DayTransition.Holding) CurrentPhase = PhaseNow();
+        if (Forced.HasValue) CurrentPhase = Forced.Value;
+        else if (!DayTransition.Holding) CurrentPhase = PhaseNow();
         Apply(Time.unscaledDeltaTime / EaseSeconds);
     }
 

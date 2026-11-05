@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a5dfa640cd408d92d7630b727058ac, type: 3}
+  m_Name: DateScene
+  m_EditorClassIdentifier: Assembly-CSharp::SceneScript
+  questId: quest.main_date
+  npcId: npc.kowhai
+  tableId: placeable.cafe_fancy_table
+  introCard: "Later that night"
+  endCard: "The end, for now."
+  continueLabel: "..."
+  quietSeconds: 3.5
+  zoom: 1.3
+  beats:
+  - line: "Sit down. No, opposite me. I want to see your face."
+    givesRewards: 0
+    replies:
+    - label: "<i>Sit down</i>"
+      answer: ""
+  - line: "There we are. Two geckos, one scroll and one very good table."
+    givesRewards: 0
+    replies:
+    - label: "It's just a table."
+      answer: "Don't you dare. ...Fine. It was never just a table."
+    - label: "You had it made for tonight, didn't you?"
+      answer: "I had it made for a cafe that didn't exist yet. Don't let it go to your head."
+  - line: "Do you know what I said, when I heard you were back? I said that one never comes back for anything."
+    givesRewards: 0
+    replies:
+    - label: "I came back for this."
+      answer: "Smooth. Where did you learn smooth? Not round here."
+    - label: "I came back for the cafe."
+      answer: "Liar. Nobody fixes a roof that bad for a cafe."
+  - line: "I came to laugh at you, you know. Two chairs and a plant. I had a whole speech ready."
+    givesRewards: 0
+    replies:
+    - label: "<i>Wait</i>"
+      answer: ""
+  - line: "And then you made your mum's moss toast, and it was right. And the berry cake was just unfair. And then you made me choose."
+    givesRewards: 0
+    replies:
+    - label: "<i>Wait</i>"
+      answer: ""
+  - line: "<i>(a bite of the scroll)</i> I was seven, the last time. I thought it was gone for good, like everything else round here."
+    givesRewards: 0
+    replies:
+    - label: "Not everything."
+      answer: "...No. Not everything."
+    - label: "Ruru had a piece of it all along."
+      answer: "That old owl. She knew, didn't she? She's known the whole time."
+  - line: "So here's me choosing. I'll stay."
+    givesRewards: 0
+    replies:
+    - label: "For the scroll?"
+      answer: "For the scroll. And the toast. And the company, I suppose. Don't make me say it twice."
+    - label: "With me?"
+      answer: "...Yes. Obviously, yes. Don't make me say it twice."
+  - line: "Keep the lights on, won't you? Here, these are for the door."
+    givesRewards: 1
+    replies: []
