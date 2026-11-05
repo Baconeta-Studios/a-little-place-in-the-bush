@@ -19,7 +19,7 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("How far (world units, each way from the middle) the gecko can walk sideways before the camera moves.")]
     [SerializeField, Min(0f)] private float deadZoneWidth = 3f;
     [Tooltip("How far (world units) the gecko's feet stay above the bottom of the screen. Lower keeps more of the top in view.")]
-    [SerializeField, Min(0f)] private float bottomMargin = 1.5f;
+    [SerializeField, Min(0f)] private float bottomMargin = 2f;
     [Tooltip("How quickly the camera catches up once it does move. Lower is snappier.")]
     [SerializeField, Min(0.01f)] private float smoothTime = 0.3f;
 
