@@ -25,6 +25,21 @@ You don't wire up any buttons: the scripts do that when the game runs. The scrip
 
 Unity's UI package has a bug: pressing Play with a prefab containing buttons open used to flood the Console with `IndexOutOfRangeException`s from `Selectable`. `Editor/SelectableCountRepair.cs` works around it, so you can leave prefabs open. Delete it if a Unity update fixes the bug.
 
+## The shared look
+
+Every screen uses the same few pieces, each with one job. Use these before adding anything new.
+
+- **Torn paper** (`Images/UI/Panel.png`): the big sheet holding a screen's content. It has a clear edge, about 30 at the sides and 55 top and bottom, so leave room for it.
+- **Tan card** (`GameUi.CardBack`): something you can pick or open. Its colour is dark enough for the icons' pale line work to show.
+- **Three buttons:** `GameUi.Apron` for the one main action on a screen, `GameUi.Cream` for other choices, and `GameUi.PanelDark` for leaving, always called Back.
+- **Gold tape:** someone in the game is asking for something. Only that.
+- **Hanging sign** (`Placeables/Cafe sign.png`): names a board, once per screen at most.
+- **Koru markers:** trips left today, and nothing else.
+- **Fonts:** Caveat Brush for titles, Grandstander for buttons and names, Pangolin for reading, Mynerve only for characters' handwriting.
+- **Colours:** green means done or ready, and red means a problem or shortage.
+
+The main cafe view should show as little as it can. Screens built in code (bag, quest log, dialogue, upgrades, recipe shop, cafe sign, build tray) don't match this yet.
+
 ### The HUD (`HUD.prefab`)
 
 - `HudBar` lays its buttons out in a row. Build and Go to bed are hidden until they're needed, and Forage only shows where `GameHud` has *Forage Button* ticked.
