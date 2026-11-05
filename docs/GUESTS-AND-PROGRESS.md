@@ -59,15 +59,15 @@ Weka's trade quest now needs *Show me your moves* first.
 
 | Upgrade | Effect | Price |
 | --- | --- | --- |
-| A second menu slot | +1 menu slot | 150 |
-| A busier cafe | +1 dish sold a day | 200 |
-| An early start | +1 forage trip (and part of the day) | 300 |
-| A perk pouch | +1 perk slot | 350 |
-| A third menu slot | +1 menu slot (after the second) | 450 |
-| A bustling cafe | +1 dish a day (after a busier cafe) | 600 |
-| The talk of the bush | +1 dish a day (after a bustling cafe) | 900 |
+| A second menu slot | +1 menu slot | 75 |
+| A busier cafe | +1 dish sold a day | 100 |
+| An early start | +1 forage trip (and part of the day) | 175 |
+| A perk pouch | +1 perk slot | 200 |
+| A third menu slot | +1 menu slot (after the second) | 275 |
+| A bustling cafe | +1 dish a day (after a busier cafe) | 375 |
+| The talk of the bush | +1 dish a day (after a bustling cafe) | 550 |
 
-For scale: early on a day earns about 10-20 coins.
+For scale: early on a day earns about 20-30 coins, and the story pays about 550 coins in all.
 
 ## Cosiness, lucky days and the sign
 

@@ -17,5 +17,5 @@ MonoBehaviour:
   description: One more forage trip a day.
   effect: 2
   amount: 1
-  price: 150
+  price: 175
   requires: {fileID: 0}

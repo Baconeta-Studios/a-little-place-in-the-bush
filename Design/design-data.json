@@ -3692,7 +3692,7 @@
       "description": "One more forage trip a day.",
       "effect": "ForageTrip",
       "amount": 1,
-      "price": 150,
+      "price": 175,
       "requires": ""
     },
     {
@@ -3701,7 +3701,7 @@
       "description": "Take two perks foraging at once. They stack.",
       "effect": "PerkSlot",
       "amount": 1,
-      "price": 175,
+      "price": 200,
       "requires": ""
     },
     {
@@ -3710,7 +3710,7 @@
       "description": "Put three dishes on the menu.",
       "effect": "MenuSlot",
       "amount": 1,
-      "price": 225,
+      "price": 275,
       "requires": "upgrade.menu_2"
     },
     {
@@ -3719,7 +3719,7 @@
       "description": "Another dish sold a day.",
       "effect": "DailySale",
       "amount": 1,
-      "price": 300,
+      "price": 375,
       "requires": "upgrade.sales_1"
     },
     {
@@ -3728,7 +3728,7 @@
       "description": "Yet another dish sold a day.",
       "effect": "DailySale",
       "amount": 1,
-      "price": 450,
+      "price": 550,
       "requires": "upgrade.sales_2"
     }
   ]
