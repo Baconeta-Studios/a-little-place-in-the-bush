@@ -20,6 +20,74 @@ namespace Bush.Core.Tests
         private void Evening() => _game.state.forageTripsToday = 2;
 
         [Test]
+        public void PlaceOnMenu_FillsSwapsAndMoves()
+        {
+            LearnPie();
+            Assert.IsFalse(_game.cafe.PlaceOnMenu(TestDesign.Salad, 2), "Only two slots.");
+            Assert.IsTrue(_game.cafe.PlaceOnMenu(TestDesign.Salad, 1), "A free slot goes on the end of the list.");
+            CollectionAssert.AreEqual(new[] { TestDesign.Salad }, _game.state.menu);
+
+            Assert.IsTrue(_game.cafe.PlaceOnMenu(TestDesign.SecretPie, 1));
+            CollectionAssert.AreEqual(new[] { TestDesign.Salad, TestDesign.SecretPie }, _game.state.menu);
+
+            Assert.IsTrue(_game.cafe.PlaceOnMenu(TestDesign.Salad, 1), "On the menu already: they swap.");
+            CollectionAssert.AreEqual(new[] { TestDesign.SecretPie, TestDesign.Salad }, _game.state.menu);
+
+            _game.cafe.RemoveFromMenu(TestDesign.SecretPie);
+            _game.state.unlockedRecipes.Add(TestDesign.Salad);
+            Assert.IsFalse(_game.cafe.PlaceOnMenu(TestDesign.Salad, 0), "Already in that slot.");
+        }
+
+        [Test]
+        public void PlaceOnMenu_ReplacesADishThatWasntOnIt()
+        {
+            LearnPie();
+            _game.design.rules.menuSlots = 1;
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            Assert.IsTrue(_game.cafe.PlaceOnMenu(TestDesign.SecretPie, 0));
+            CollectionAssert.AreEqual(new[] { TestDesign.SecretPie }, _game.state.menu);
+        }
+
+        [Test]
+        public void PlanRestOfDay_MatchesWhatActuallySells()
+        {
+            _game.cafe.AddToMenu(TestDesign.Salad);
+            RecipeData salad = _game.design.GetRecipe(TestDesign.Salad);
+            int makeable = 2;
+            foreach (ItemAmount ingredient in salad.ingredients) _game.economy.Add(ingredient.itemId, ingredient.qty * makeable);
+
+            Assert.AreEqual(makeable, _game.cafe.CanMakeCount(TestDesign.Salad));
+            DayPlan plan = _game.cafe.PlanRestOfDay();
+            Assert.AreEqual(makeable, plan.sold);
+            Assert.AreEqual(3 - makeable, plan.missed, "Three guests today, and only enough for two.");
+            Assert.AreEqual(makeable * salad.coins, plan.coins);
+            Assert.AreEqual(makeable, _game.cafe.CanMakeCount(TestDesign.Salad), "Planning uses nothing.");
+
+            // Taking the day's trips sells what the plan said.
+            int before = _game.economy.Currency;
+            for (int trip = 0; trip < 2; trip++)
+            {
+                _game.state.forageTripsToday++;
+                _game.cafe.ServeWhileOut();
+            }
+            Assert.AreEqual(plan.coins, _game.economy.Currency - before);
+            Assert.AreEqual(0, _game.cafe.PlanRestOfDay().sold, "Nothing's left to come in the evening.");
+        }
+
+        [Test]
+        public void DishWantedBy_FindsADishAQuestAsksFor()
+        {
+            _game.design.quests.Find(q => q.id == TestDesign.Welcome).objectives[0] =
+                new QuestObjective { type = ObjectiveType.CookRecipe, target = TestDesign.Salad, qty = 2 };
+            Assert.IsNull(_game.quests.DishWantedBy(TestDesign.Salad, out _), "Not until it's taken on.");
+
+            _game.quests.Start(TestDesign.Welcome);
+            Assert.AreEqual(TestDesign.Welcome, _game.quests.DishWantedBy(TestDesign.Salad, out int still).id);
+            Assert.AreEqual(2, still);
+            Assert.IsNull(_game.quests.DishWantedBy(TestDesign.SecretPie, out _));
+        }
+
+        [Test]
         public void Menu_OnlyTakesKnownRecipes_UpToTheSlots()
         {
             Assert.IsFalse(_game.cafe.AddToMenu(TestDesign.SecretPie), "Not known yet.");

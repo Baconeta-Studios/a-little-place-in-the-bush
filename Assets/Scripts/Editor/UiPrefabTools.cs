@@ -6,12 +6,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Tools > Bush > Create UI Prefabs: saves the HUD and the forage screen's default layouts as prefabs in
+/// Tools > Bush > Create UI Prefabs: saves the HUD, forage screen and menu board's default layouts as prefabs in
 /// Assets/Resources/UI, to restyle in the Editor. The game uses the prefab when there is one, and builds
 /// the default layout in code when there isn't. Asks before replacing a prefab, since that loses its edits.
 /// The rounded panel and circle are drawn in code, which a prefab can't keep, so they're saved as images first.
-/// Text gets its font by job: titles Caveat Brush, buttons and numbers Grandstander, notes from characters
-/// Mynerve, everything else Pangolin. Tools > Bush > Rebuild Forage Screen Prefab replaces only that one.
+/// Text gets its font by job (<see cref="UiFonts"/>). Tools > Bush > Rebuild Forage Screen Prefab and Rebuild Menu Board Prefab
+/// replace only that one.
 /// </summary>
 public static class UiPrefabTools
 {
@@ -29,6 +29,18 @@ public static class UiPrefabTools
         var made = new List<string>();
         Save(HudView.ResourcePath, () => HudView.Build(null).gameObject, sprites, made);
         Save(ForagePopup.ResourcePath, BuildForageScreen, sprites, made);
+        Save(CafePopup.ResourcePath, BuildMenuBoard, sprites, made);
+        Finish(made);
+    }
+
+    [MenuItem("Tools/Bush/Rebuild Menu Board Prefab", priority = 45)]
+    public static void RebuildMenuBoard()
+    {
+        Directory.CreateDirectory(PrefabFolder);
+        Directory.CreateDirectory(SpriteFolder);
+        AssetDatabase.Refresh();
+        var made = new List<string>();
+        Save(CafePopup.ResourcePath, BuildMenuBoard, SavedSprites(), made);
         Finish(made);
     }
 
@@ -86,30 +98,21 @@ public static class UiPrefabTools
         return popup.gameObject;
     }
 
-    private static Sprite LoadSprite(string path) => AssetDatabase.LoadAssetAtPath<Sprite>(path);
-
-    /// <summary>Gives each piece of text the font for its job, going by what it's called and what it's on.</summary>
-    private static void UseFonts(GameObject root)
+    private static GameObject BuildMenuBoard()
     {
-        TMP_FontAsset title = LoadFont("Assets/Fonts/CaveatBrush-Regular SDF.asset");
-        TMP_FontAsset body = LoadFont("Assets/Fonts/Pangolin-Regular SDF.asset");
-        TMP_FontAsset bold = LoadFont("Assets/Fonts/Grandstander/Grandstander-Bold SDF.asset");
-        TMP_FontAsset note = LoadFont("Assets/Fonts/Mynerve-Regular SDF.asset");
-        foreach (TextMeshProUGUI text in root.GetComponentsInChildren<TextMeshProUGUI>(true))
-        {
-            string name = text.gameObject.name;
-            bool onButton = text.transform.parent && text.transform.parent.GetComponent<Button>();
-            TMP_FontAsset font = name is "Title" or "OutText" ? title
-                : name == "Nudge" ? note
-                : name is "Letter" or "BadgeText" || onButton ? bold
-                : body;
-            if (!font) continue;
-            text.font = font;
-            text.fontStyle = FontStyles.Normal;
-        }
+        CafePopup popup = CafePopup.BuildDefault(null);
+        popup.UseArt(LoadSprite("Assets/Images/Backgrounds/Background (1).png"), LoadSprite("Assets/Images/UI/Panel.png"),
+            LoadSprite("Assets/Images/Placeables/Cafe sign.png"), LoadSprite("Assets/Images/UI/Icons/Koru-icon.png"));
+        return popup.gameObject;
     }
 
-    private static TMP_FontAsset LoadFont(string path) => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
+    private static Sprite LoadSprite(string path) => AssetDatabase.LoadAssetAtPath<Sprite>(path);
+
+    /// <summary>Gives each piece of text the font for its job (see <see cref="UiFonts"/>).</summary>
+    private static void UseFonts(GameObject root)
+    {
+        foreach (TextMeshProUGUI text in root.GetComponentsInChildren<TextMeshProUGUI>(true)) UiFonts.Apply(text);
+    }
 
     private static void Save(string resourcePath, System.Func<GameObject> build, Dictionary<Sprite, Sprite> sprites, List<string> made)
     {

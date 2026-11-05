@@ -74,7 +74,7 @@ public class Npc : Interactable
         _marker = markerObject.AddComponent<TextMeshPro>();
         _marker.alignment = TextAlignmentOptions.Center;
         _marker.fontSize = 8f;
-        _marker.fontStyle = FontStyles.Bold;
+        UiFonts.UseBold(_marker);
         _marker.color = GameUi.Berry;
         _marker.text = "";
         _marker.sortingLayerID = SortingLayer.NameToID("Foreground");

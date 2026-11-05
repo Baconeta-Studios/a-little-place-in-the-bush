@@ -58,7 +58,7 @@ public class HudView : MonoBehaviour
         Image card = GameUi.AddPanel(view.tracker, GameUi.Panel);
         view.trackerButton = view.tracker.gameObject.AddComponent<Button>();
         view.trackerButton.targetGraphic = card;
-        view.trackerText = GameUi.AddText(view.tracker, "", 28f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Text");
+        view.trackerText = GameUi.AddText(view.tracker, "", 28f, GameUi.Ink, TextAlignmentOptions.TopLeft, "TrackerText");
         view.trackerText.rectTransform.offsetMin = new Vector2(22f, 12f);
         view.trackerText.rectTransform.offsetMax = new Vector2(-22f, -12f);
         view.trackerText.overflowMode = TextOverflowModes.Ellipsis;

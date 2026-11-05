@@ -202,10 +202,8 @@ public class DialogueBox : Popup
         _portrait = portrait.gameObject.AddComponent<Image>();
         _portrait.raycastTarget = false;
         _portraitLetter = GameUi.AddText(portrait, "", 140f, GameUi.Cream, TextAlignmentOptions.Center, "Letter");
-        _portraitLetter.fontStyle = FontStyles.Bold;
 
         _name = GameUi.AddText(panel, "", 44f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Name");
-        _name.fontStyle = FontStyles.Bold;
         _name.rectTransform.offsetMin = new Vector2(360f, 0f);
         _name.rectTransform.offsetMax = new Vector2(-370f, -24f);
 

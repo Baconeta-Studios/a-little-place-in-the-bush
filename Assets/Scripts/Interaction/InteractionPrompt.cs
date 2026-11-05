@@ -110,6 +110,7 @@ public class InteractionPrompt : MonoBehaviour
         // Above the dot (not over it, and not over the character's head), growing upwards.
         labelObject.transform.localPosition = new Vector3(0f, 0.28f, 0f);
         var text = labelObject.AddComponent<TextMeshPro>();
+        UiFonts.UseBold(text);
         text.fontSize = 3f;
         text.alignment = TextAlignmentOptions.Bottom;
         text.rectTransform.pivot = new Vector2(0.5f, 0f);

@@ -79,7 +79,6 @@ public class ItemCardView : MonoBehaviour
         view.icon.raycastTarget = false;
         view.icon.preserveAspect = true;
         view.letter = GameUi.AddText(iconRect, "", 54f, GameUi.Cream, TextAlignmentOptions.Center, "Letter");
-        view.letter.fontStyle = FontStyles.Bold;
 
         view.title = GameUi.AddText(rect, "", 24f, GameUi.Ink, TextAlignmentOptions.Center, "Name");
         RectTransform titleRect = view.title.rectTransform;
@@ -95,7 +94,6 @@ public class ItemCardView : MonoBehaviour
         GameUi.AddPanel(badge, GameUi.Moss).raycastTarget = false;
         view.badge = badge.gameObject;
         view.badgeText = GameUi.AddText(badge, "", 20f, GameUi.Cream, TextAlignmentOptions.Center, "BadgeText");
-        view.badgeText.fontStyle = FontStyles.Bold;
         return view;
     }
 }

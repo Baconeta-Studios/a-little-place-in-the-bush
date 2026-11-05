@@ -115,7 +115,6 @@ public class QuestLogPopup : Popup
         GameUi.AddPanel(panel, GameUi.Panel);
 
         TextMeshProUGUI title = GameUi.AddText(panel, "Quests", 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
-        title.fontStyle = FontStyles.Bold;
         title.rectTransform.offsetMin = new Vector2(40f, 0f);
         title.rectTransform.offsetMax = new Vector2(-260f, -28f);
 

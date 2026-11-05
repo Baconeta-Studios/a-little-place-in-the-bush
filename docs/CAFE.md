@@ -6,7 +6,8 @@ The core loop: **put dishes on the menu, go foraging while the cafe serves, clos
 
 - **No recipes at the start.** Ruru teaches leaf salad in the first conversation; others come from quests, rare forage encounters, or Kererū's recipe shop. The cheat **Cafe: learn every recipe** is there for testing.
 - **One dish on the menu to start.** The board has **Upgrades** (more menu slots, more sales a day, an extra trip, a perk pouch), bought with coins.
-- **The menu board** is behind the cafe door (`CafeSpot` opens `CafePopup`). Tap a recipe you know to see its ingredients (have/need), then **Add to menu** or **Take off menu**. Change it any time; changes count from your next trip. The board shows what the cafe will serve while you're out on your next trip, and what's sold today.
+- **The menu board** is behind the cafe door (`CafeSpot` opens `CafePopup`). Each recipe card shows its ingredients (have/need), coins, how many you can make, and any quest asking for it. Drag a card onto a page, or tap it to fill the next free page. Dropping on a full page swaps the dishes. Drag a page off the board, or press its x, to take it down. Pages you haven't bought show the upgrade and its price. Change it any time; changes count from your next trip. The board shows what the cafe will serve on your next trip, roughly what you'll earn by evening, and whether anyone would go hungry.
+- **Head out foraging** on the board closes it, and the gecko walks to the path (`ForageSpot`), so the trip always starts from the cafe.
 - **The forage trips are the day's clock.** A day has three parts, morning, midday and afternoon, and each forage trip uses one. When the last trip comes back it's evening.
 - **The cafe serves while you're out.** Each forage trip is a part of the day, and as you set off the cafe serves that part's share of the day's dishes (3 dishes over 3 trips: one each), shared evenly across the menu and across the day (each sale goes to the next dish in turn that can still be made). Each sale uses that dish's ingredients from what's in the larder as you leave, pays its coins straight away, and counts as cooking it for quests. If you run out, the sale goes to another dish, or is missed. The trip's results say what sold (*"While you were out, the cafe sold 1 Leaf salad. +6 coins"*), or that the menu was empty.
 - **Close for the day** (in the evening) tallies the day: what sold, coins, any missed guests, and a lucky-day tip. Then it's the next morning (or the night): the day number goes up, trips reset, and the menu stays.
@@ -34,7 +35,7 @@ A recipe's coins and ingredients are in the design data as before.
 
 ## Code
 
-- Rules: `CafeService` (`AddToMenu`, `RemoveFromMenu`, `PlanSales` (the next trip's), `ServeWhileOut`, `CloseDay`, `GoToBed`, `BuyUpgrade`), `ForagingService.TripsLeftToday`, `DayRules` (`SalesForPart`, `NextPartSales`, `IsEvening`, `PartsPassed`, `MenuSlots`, upgrade bonuses). Tests: `Assets/Tests/EditMode/DayTests.cs`.
+- Rules: `CafeService` (`AddToMenu`, `RemoveFromMenu`, `PlaceOnMenu`, `CanMakeCount`, `PlanSales` (the next trip's), `PlanRestOfDay`, `ServeWhileOut`, `CloseDay`, `GoToBed`, `BuyUpgrade`), `ForagingService.TripsLeftToday`, `DayRules` (`SalesForPart`, `NextPartSales`, `IsEvening`, `PartsPassed`, `MenuSlots`, upgrade bonuses). Tests: `Assets/Tests/EditMode/DayTests.cs`.
 - State: `GameState.day`, `menu`, `forageTripsToday`, `partsServed`, `soldToday`, `missedToday`, `menuTurn`, `servedWhileOut`, `isNight`, `upgrades`.
-- UI: `CafePopup`, `ForagePopup`. World: `CafeSpot`, `ForageSpot`.
+- UI: `CafePopup`, `RecipeCardView`, `MenuSlotView`, `ForagePopup`. World: `CafeSpot`, `ForageSpot`.
 - Cheats: *Cafe: learn every recipe*, *Cafe: close for the day*, *Forage: reset today's trips*, *Bag: give 100 coins*.

@@ -1,6 +1,6 @@
 # UI
 
-The HUD and the forage screen are prefabs you can lay out and restyle in the Editor. The rest of the UI (build tray, bag, quest log, cafe board, dialogue, upgrades, recipe shop, cafe sign) is still built in code, from the helpers in `UI/GameUi.cs`.
+The HUD, the forage screen and the menu board are prefabs you can lay out and restyle in the Editor. The rest of the UI (build tray, bag, quest log, dialogue, upgrades, recipe shop, cafe sign) is still built in code, from the helpers in `UI/GameUi.cs`.
 
 ## Make the prefabs (once)
 
@@ -25,6 +25,21 @@ You don't wire up any buttons: the scripts do that when the game runs. The scrip
 
 Unity's UI package has a bug: pressing Play with a prefab containing buttons open used to flood the Console with `IndexOutOfRangeException`s from `Selectable`. `Editor/SelectableCountRepair.cs` works around it, so you can leave prefabs open. Delete it if a Unity update fixes the bug.
 
+## The shared look
+
+Every screen uses the same few pieces, each with one job. Use these before adding anything new.
+
+- **Torn paper** (`Images/UI/Panel.png`): the big sheet holding a screen's content. It has a clear edge, about 30 at the sides and 55 top and bottom, so leave room for it.
+- **Tan card** (`GameUi.CardBack`): something you can pick or open. Its colour is dark enough for the icons' pale line work to show.
+- **Three buttons:** `GameUi.Apron` for the one main action on a screen, `GameUi.Cream` for other choices, and `GameUi.PanelDark` for leaving, always called Back.
+- **Gold tape:** someone in the game is asking for something. Only that.
+- **Hanging sign** (`Placeables/Cafe sign.png`): names a board, once per screen at most.
+- **Koru markers:** trips left today, and nothing else.
+- **Fonts:** Caveat Brush for titles, Grandstander for buttons and names, Pangolin for reading, Mynerve only for characters' handwriting. They're set on `Resources/UI/UiFonts.asset`, and text built in code gets its font from there by what it's called and what it's on (`UiFonts`), so name text for its job: `Title`, `Name`, `DishName`, `Nudge`. Pangolin is also the project's default in TMP Settings.
+- **Colours:** green means done or ready, and red means a problem or shortage.
+
+The main cafe view should show as little as it can. Screens built in code (bag, quest log, dialogue, upgrades, recipe shop, cafe sign, build tray) have the fonts, but not the rest of this yet.
+
 ### The HUD (`HUD.prefab`)
 
 - `HudBar` lays its buttons out in a row. Build and Go to bed are hidden until they're needed, and Forage only shows where `GameHud` has *Forage Button* ticked.
@@ -47,5 +62,19 @@ Three steps under the root, over one `Backdrop`, only one showing at a time when
 - **Companion art** comes from *Portrait* on each companion's asset (`Assets/Data/Companions`). Weka and Kunekune have theirs; a companion without one just doesn't appear beside the gecko.
 
 Fixed labels like "What are we after?" live in the prefab, so you can reword them there. Text that changes as you play comes from code.
+
+### The menu board (`CafePopup.prefab`)
+
+Three parts under the root: `Board`, `Summary` (the end of the day) and `ConfirmEarly` (the box asking before you close early). `Board` has `Recipes` on the left and `MenuColumn` on the right.
+
+- **Recipe cards:** `CardTemplate` (under `Recipes`, on `RecipeCardView`) is what they're copied from. Its *Normal*, *On Menu* and *Cant Make* colours are on the component, and `IngredientTemplate` is copied for each ingredient.
+- **Menu pages:** `Slot0` to `Slot2` under `Slots`, on `MenuSlotView`. All three always show: the ones you haven't bought are the locked state, with the upgrade's name and price.
+- **Dragging:** `DragGhost` is what follows your finger.
+- **While you're out:** `Forecast`, with `SaleTemplate` copied for each dish that will sell.
+- The recipe page picture comes from *Recipe Icon* on `GameDatabase`, and the trip markers are copies of `PipTemplate`.
+
+**Tools > Bush > Rebuild Menu Board Prefab** makes it again from the default layout in `CafePopup.cs`, which loses your edits, so it asks first.
+
+### Rebuilding the forage screen
 
 **Tools > Bush > Rebuild Forage Screen Prefab** makes this prefab again from the default layout in `ForagePopup.cs`. It asks first, because that loses your edits. **Rebuild Forage Trip Scene** replaces only the `Out` step and keeps your edits to the rest.

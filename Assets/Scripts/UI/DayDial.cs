@@ -171,8 +171,7 @@ public class DayDial : MonoBehaviour
         middleImage.color = GameUi.Cream;
         middleImage.raycastTarget = false;
         _day = GameUi.AddText(middle, "", 30f, GameUi.Ink, TextAlignmentOptions.Center, "Day");
-        _day.fontStyle = FontStyles.Bold;
-        _day.lineSpacing = -30f;
+        _day.lineSpacing = -8f;
 
         _label = GameUi.AddText(root, "", 24f, GameUi.Cream, TextAlignmentOptions.Top, "Label");
         _label.rectTransform.anchorMin = new Vector2(0f, 0f);

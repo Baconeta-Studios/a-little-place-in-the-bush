@@ -65,7 +65,6 @@ public class CafeSignPopup : Popup
         GameUi.AddPanel(panel, GameUi.Cream);
 
         _title = GameUi.AddText(panel, "", 56f, GameUi.Bark, TextAlignmentOptions.Top, "Title");
-        _title.fontStyle = FontStyles.Bold;
         _title.rectTransform.offsetMin = new Vector2(40f, 0f);
         _title.rectTransform.offsetMax = new Vector2(-40f, -36f);
 

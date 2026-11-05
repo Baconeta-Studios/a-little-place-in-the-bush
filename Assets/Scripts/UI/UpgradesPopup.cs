@@ -101,7 +101,6 @@ public class UpgradesPopup : Popup
         GameUi.AddPanel(panel, GameUi.Panel);
 
         TextMeshProUGUI title = GameUi.AddText(panel, "Cafe upgrades", 50f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
-        title.fontStyle = FontStyles.Bold;
         title.rectTransform.offsetMin = new Vector2(40f, 0f);
         title.rectTransform.offsetMax = new Vector2(-480f, -28f);
         _coins = GameUi.AddText(panel, "", 34f, GameUi.Bark, TextAlignmentOptions.TopRight, "Coins");

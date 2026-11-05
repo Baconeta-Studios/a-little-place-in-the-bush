@@ -134,7 +134,6 @@ public class InventoryPopup : Popup
         GameUi.AddPanel(panel, GameUi.Panel);
 
         TextMeshProUGUI title = GameUi.AddText(panel, "Bag", 54f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Title");
-        title.fontStyle = FontStyles.Bold;
         title.rectTransform.offsetMin = new Vector2(40f, 0f);
         title.rectTransform.offsetMax = new Vector2(0f, -28f);
 
