@@ -84,6 +84,70 @@ namespace Bush.Core
         public List<GiftEntry> gift = new();
     }
 
+    /// <summary>A level of cosiness, and the score it starts at.</summary>
+    [Serializable]
+    public class CosinessLevelData
+    {
+        public string name;
+        public int from;
+    }
+
+    /// <summary>What the cafe sign says when one style is the biggest.</summary>
+    [Serializable]
+    public class CafeStyleWording
+    {
+        /// <summary>The word on placeables, e.g. garden.</summary>
+        public string style;
+        public string title;
+        public string blurb;
+    }
+
+    /// <summary>How cosiness adds up, what it does, and what the cafe sign says.</summary>
+    [Serializable]
+    public class CafeSignSettings
+    {
+        /// <summary>Added for each different kind of thing placed, on top of each thing's own cosiness.</summary>
+        public int cosinessPerKind = 1;
+        /// <summary>The levels of cosiness. The sign shows one koru for each.</summary>
+        public List<CosinessLevelData> levels = new()
+        {
+            new CosinessLevelData { name = "Bare", from = 0 },
+            new CosinessLevelData { name = "Getting there", from = 15 },
+            new CosinessLevelData { name = "Cosy", from = 40 },
+            new CosinessLevelData { name = "Very cosy", from = 80 },
+            new CosinessLevelData { name = "The cosiest spot in the bush", from = 140 }
+        };
+
+        /// <summary>How much more often random visitors come at full cosiness. 1 is +100%.</summary>
+        public double extraVisitorsAtFull = 1;
+        /// <summary>The cosiness at which the visitor boost is full.</summary>
+        public int cosinessForFullVisitors = 150;
+        /// <summary>The chance of a lucky day at full cosiness. 0.25 is 25%.</summary>
+        public double luckyDayChanceAtFull = 0.25;
+        /// <summary>The cosiness at which the lucky day chance is full.</summary>
+        public int cosinessForFullLuck = 150;
+
+        /// <summary>The sign calls it a mix if the second biggest style has this share of the biggest. 0.75 is 75%.</summary>
+        public double mixedAt = 0.75;
+
+        public List<CafeStyleWording> styles = new()
+        {
+            new CafeStyleWording { style = "garden", title = "A garden cafe", blurb = "More leaves than tables. The bugs love it." },
+            new CafeStyleWording { style = "rustic", title = "A rustic bush cafe", blurb = "Sturdy wood, honest food, and a bench for everyone." },
+            new CafeStyleWording { style = "glow", title = "A lantern-lit cafe", blurb = "It glows at dusk. Moths are already queueing." },
+            new CafeStyleWording { style = "fancy", title = "A rather fancy cafe", blurb = "Is that a doily? In the bush?" }
+        };
+        public string mixedTitle = "An eclectic little cafe";
+        public string mixedBlurb = "A bit of everything, and somehow it works.";
+        /// <summary>For a style with no wording above.</summary>
+        public string otherTitle = "A simple little cafe";
+        public string otherBlurb = "Nothing fancy, but the salad's fresh.";
+        public string emptyTitle = "An empty clearing";
+        public string emptyBlurb = "Just you, some dirt and a lot of potential.";
+        /// <summary>Added to the line when nothing placed has a seat.</summary>
+        public string noSeatsLine = "Nowhere to sit, though.";
+    }
+
     /// <summary>How often day events happen, and how cosiness helps.</summary>
     [Serializable]
     public class DayEventSettings
@@ -158,6 +222,7 @@ namespace Bush.Core
         /// <summary>The day events (see <see cref="DayEvents"/>).</summary>
         public List<DayEventData> dayEvents = new();
         public DayEventSettings events = new();
+        public CafeSignSettings cafeSign = new();
 
         public DayEventData GetEvent(string id) => string.IsNullOrEmpty(id) ? null : dayEvents.Find(e => e.id == id);
 

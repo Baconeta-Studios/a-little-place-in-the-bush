@@ -60,8 +60,9 @@ public class CafeSignPopup : Popup
         _blurb.text = cafe.blurb;
 
         GameUi.ClearExcept(_pips, _pipTemplate.transform);
-        int reached = CafeStyle.CosinessStep(cafe.cosiness);
-        for (int i = 0; i < CafeStyle.CosinessSteps; i++)
+        int reached = CafeStyle.CosinessStep(session.Design, cafe.cosiness);
+        int steps = CafeStyle.CosinessSteps(session.Design);
+        for (int i = 0; i < steps; i++)
         {
             Image pip = Instantiate(_pipTemplate, _pips);
             pip.gameObject.SetActive(true);
@@ -70,7 +71,7 @@ public class CafeSignPopup : Popup
             pip.color = color;
         }
         _level.text = cafe.level;
-        _next.text = CafeStyle.TryNextLevel(cafe.cosiness, out string nextLevel, out int more)
+        _next.text = CafeStyle.TryNextLevel(session.Design, cafe.cosiness, out string nextLevel, out int more)
             ? $"Cosiness {cafe.cosiness}. {more} more for {nextLevel}."
             : $"Cosiness {cafe.cosiness}. It doesn't get cosier than this.";
 

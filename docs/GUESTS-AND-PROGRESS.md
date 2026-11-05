@@ -76,6 +76,8 @@ For scale: early on a day earns about 10-20 coins.
 - **Lucky days:** when you close, there's a chance (cosiness / 600, up to 25%) a happy guest leaves a tip of about a quarter of the day's takings. More kinds of special events can hook in here later.
 - **The sign** on the tree by the door (**CafeSign**) says what kind of cafe you've made, from the biggest style (*A garden cafe*, *A rustic bush cafe*, *A lantern-lit cafe*, *A rather fancy cafe*, or *An eclectic little cafe* when it's an even mix), how cosy it is, and what that does.
 
+**Tuning the sign:** select `Assets/Data/GameDatabase.asset` and open **Cafe Sign**. The cosiness levels, the bonus per kind, what cosiness does to visitors and lucky days, what counts as a mix, and every title and line are all there. To add a style, add a row to **Styles** and use its word as a placeable's `style`. **Tools > Bush > Validate Design Data** warns about a placeable whose style has no row.
+
 ## Setting it up in the cafe
 
 1. **Tools > Bush > Import Design Data.** Brings in the new characters, quests, perks, upgrades and the cosiness values.
