@@ -102,6 +102,65 @@ namespace Bush.Core
             return true;
         }
 
+        /// <summary>
+        /// Puts a known recipe on a slot of the menu. A slot with a dish on it swaps: with the dish's old slot if
+        /// it was on the menu already, otherwise that dish comes off. A free slot just takes it, at the end of the list.
+        /// </summary>
+        public bool PlaceOnMenu(string recipeId, int slot)
+        {
+            if (_design.GetRecipe(recipeId) == null || !IsUnlocked(recipeId)) return false;
+            if (slot < 0 || slot >= _design.rules.MenuSlots(_state)) return false;
+
+            int from = _state.menu.IndexOf(recipeId);
+            if (slot < _state.menu.Count)
+            {
+                if (from == slot) return false;
+                if (from >= 0) _state.menu[from] = _state.menu[slot];
+                _state.menu[slot] = recipeId;
+            }
+            else
+            {
+                if (from >= 0) _state.menu.RemoveAt(from);
+                _state.menu.Add(recipeId);
+            }
+            _events.RaiseMenuChanged();
+            return true;
+        }
+
+        /// <summary>How many of this dish the larder could make right now.</summary>
+        public int CanMakeCount(string recipeId)
+        {
+            RecipeData recipe = _design.GetRecipe(recipeId);
+            if (recipe == null || recipe.ingredients.Count == 0) return 0;
+            int most = int.MaxValue;
+            foreach (ItemAmount ingredient in recipe.ingredients)
+                most = Math.Min(most, _economy.Count(ingredient.itemId) / Math.Max(1, ingredient.qty));
+            return most;
+        }
+
+        /// <summary>What's still to come today if nothing else is foraged: coins, and guests who'd go without. Changes nothing.</summary>
+        public DayPlan PlanRestOfDay()
+        {
+            var plan = new DayPlan();
+            if (_state.isNight) return plan;
+            var counts = new Dictionary<string, int>();
+            int turn = _state.menuTurn;
+            int parts = _design.rules.TripsPerDay(_state);
+            int first = _design.rules.PartsPassed(_state) + 1;
+            for (int part = first; part <= Math.Max(parts, 1); part++)
+            {
+                int sales = parts <= 0 ? _design.rules.FullDaySales(_state) : _design.rules.SalesForPart(_state, part);
+                List<DishSale> dishes = PlanSales(sales, turn, out int unsold, out turn, counts);
+                plan.missed += unsold;
+                foreach (DishSale dish in dishes)
+                {
+                    plan.sold += dish.sold;
+                    plan.coins += dish.coins;
+                }
+            }
+            return plan;
+        }
+
         /// <summary>What the cafe would serve during the next part of the day, from what's in the larder now. Changes nothing.</summary>
         public List<DishSale> PlanSales(out int unsold) => PlanSales(_design.rules.NextPartSales(_state), _state.menuTurn, out unsold, out _);
 
@@ -109,11 +168,12 @@ namespace Bush.Core
         /// <paramref name="sales"/> dishes, dish by dish (in menu order), shared evenly: each sale goes to the
         /// next dish in turn (from <paramref name="turn"/>) that can still be made from what's left. Doesn't
         /// change anything. <paramref name="unsold"/> is how many sales were missed for want of ingredients.
+        /// Pass <paramref name="counts"/> to carry what's been used from one part of the day to the next.
         /// </summary>
-        private List<DishSale> PlanSales(int sales, int turn, out int unsold, out int nextTurn)
+        private List<DishSale> PlanSales(int sales, int turn, out int unsold, out int nextTurn, Dictionary<string, int> counts = null)
         {
             var plan = new List<DishSale>();
-            var counts = new Dictionary<string, int>();
+            counts ??= new Dictionary<string, int>();
             int Have(string itemId) => counts.TryGetValue(itemId, out int n) ? n : counts[itemId] = _economy.Count(itemId);
 
             // Only as many dishes as there are slots (a save from before the slots shrank may have more).
@@ -361,6 +421,14 @@ namespace Bush.Core
         public int coins;
         /// <summary>The food critic ate this one (it paid double).</summary>
         public bool critic;
+    }
+
+    /// <summary>What's still to come today, for the menu board.</summary>
+    public class DayPlan
+    {
+        public int sold;
+        public int coins;
+        public int missed;
     }
 
     /// <summary>What closing the day did, for the end-of-day screen.</summary>

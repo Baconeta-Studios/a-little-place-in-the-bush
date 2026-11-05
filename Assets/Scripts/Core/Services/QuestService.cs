@@ -79,6 +79,29 @@ namespace Bush.Core
             return true;
         }
 
+        /// <summary>A quest under way that asks for this dish by name, and how many it still wants. Null if none.</summary>
+        public QuestData DishWantedBy(string recipeId, out int still)
+        {
+            still = 0;
+            var quests = new List<QuestData>(ActiveSideQuests());
+            QuestData main = CurrentMainQuest();
+            if (main != null) quests.Insert(0, main);
+            foreach (QuestData quest in quests)
+            {
+                if (GetStatus(quest.id) != QuestStatus.Active) continue;
+                for (int i = 0; i < quest.objectives.Count; i++)
+                {
+                    QuestObjective objective = quest.objectives[i];
+                    if (objective.type != ObjectiveType.CookRecipe || objective.target != recipeId) continue;
+                    (int current, int required) = GetProgress(quest.id, i);
+                    if (current >= required) continue;
+                    still = required - current;
+                    return quest;
+                }
+            }
+            return null;
+        }
+
         /// <summary>Progress on one objective, for the quest log and dialogue.</summary>
         public (int current, int required) GetProgress(string questId, int objectiveIndex)
         {
