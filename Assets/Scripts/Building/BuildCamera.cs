@@ -7,8 +7,8 @@ using UnityEngine.InputSystem;
 /// - Touch: pinch with two fingers to zoom, drag with two fingers to pan.
 /// - Mouse: scroll to zoom (towards the pointer), drag with the right or middle button to pan.
 /// - Either: drag on empty ground (while not holding anything) to pan.
-/// Never zooms out past the normal view or shows past the backdrop. On entering, the camera slides
-/// down so the floor sits above the tray; on leaving it eases back to the normal view.
+/// Starts as far out as <see cref="CameraFit.BuildZoom"/> allows, and never goes further or shows past the backdrop.
+/// On entering, the camera slides down so the floor sits above the tray; on leaving it eases back to the normal view.
 /// Added and driven by <see cref="BuildMode"/>.
 /// </summary>
 public class BuildCamera : MonoBehaviour
@@ -68,9 +68,11 @@ public class BuildCamera : MonoBehaviour
         if (_follow) _follow.enabled = false;
 
         RefreshCovers();
-        float bottomWorld = _bottomCover * _camera.orthographicSize * 2f;
-        Vector3 target = Clamped(_restPosition + new Vector3(0f, -bottomWorld, 0f), _camera.orthographicSize);
-        EaseTo(target, 1f, null);
+        float buildZoom = _fit ? _fit.BuildZoom : 1f;
+        float buildSize = _fit ? _fit.FitSize / buildZoom : _camera.orthographicSize;
+        float bottomWorld = _bottomCover * buildSize * 2f;
+        Vector3 target = Clamped(_restPosition + new Vector3(0f, -bottomWorld, 0f), buildSize);
+        EaseTo(target, buildZoom, null);
     }
 
     public void End()
@@ -205,7 +207,7 @@ public class BuildCamera : MonoBehaviour
     {
         if (!_fit) return;
         Vector3 worldBefore = _camera.ScreenToWorldPoint(before);
-        _fit.Zoom = Mathf.Clamp(zoom, 1f, maxZoom);
+        _fit.Zoom = Mathf.Clamp(zoom, _fit.BuildZoom, maxZoom);
         _fit.ApplyNow();
         Vector3 worldAfter = _camera.ScreenToWorldPoint(after);
         MoveTo(_camera.transform.position + (worldBefore - worldAfter));

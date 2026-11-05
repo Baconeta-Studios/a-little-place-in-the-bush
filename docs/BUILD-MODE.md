@@ -151,3 +151,7 @@ In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`)
 - **Shadow:** every floor placeable gets one by itself, sized from its base. Change the size, position and strength here, or untick it.
 - **Your own shadow art:** add a child called `Shadow` to the prefab, and that's used instead.
 - **Anything else:** add a **GroundShadow** component to the gecko, a character or a scene prop. On a character, a child called `Shadow` or `GroundShadow` beside `Visual` turns round with them by itself, and highlighting leaves it alone.
+
+## Little lights
+
+Add **NightLight** to any object, on a placeable prefab or in a scene. It brings a Light 2D with it, off by day, fading on at dusk and night, with a gentle flicker. Set the colour, brightness and size on the Light 2D, and *Flicker Amount* and *Flicker Speed* on NightLight. Include `World` and the floor layers in the light's *Target Sorting Layers*, or it won't light the ground. On something that can go on a table, make it a child of `Visual`, so it moves with the art. One soft light for a set of fairy lights is enough: lots of lights are slow on phones.
