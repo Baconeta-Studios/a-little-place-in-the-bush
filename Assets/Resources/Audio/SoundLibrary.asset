@@ -1,0 +1,247 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a7507a77e85407fbaaa1740e1b1ad38, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SoundLibrary
+  music: {fileID: -9125522902173723532, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
+  ambient: {fileID: -2331718101565934472, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
+  sfx: {fileID: -8016216726190809901, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
+  audioManagerPrefab: {fileID: 4629262566429204678, guid: 17f4b0f6aa0dcea41a71ca43a789d2fe, type: 3}
+  menuScenes:
+  - MenuTemplate
+  musicFadeSeconds: 1.5
+  footstepSeconds: 0.32
+  sounds:
+  - name: MusicMainMenu
+    sound: 100
+    plays: The main menu.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: MusicCafeDay
+    sound: 101
+    plays: At the cafe, morning and afternoon.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: MusicCafeEvening
+    sound: 102
+    plays: At the cafe once the day's foraging is done.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: MusicCafeNight
+    sound: 103
+    plays: At the cafe at night.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: MusicForaging
+    sound: 104
+    plays: While the forage screen is open.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: AmbientBushDay
+    sound: 200
+    plays: 'Under the music all day: birds, wind in the trees.'
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: AmbientBushNight
+    sound: 201
+    plays: 'Under the music at night: crickets, moreporks.'
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: UiTap
+    sound: 300
+    plays: Tapping any button.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: UiBack
+    sound: 301
+    plays: Tapping Back, Bye, Not now or an x.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: UiNope
+    sound: 302
+    plays: Tapping a button that's greyed out.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: PaperOpen
+    sound: 303
+    plays: 'A screen opening: a soft paper rustle.'
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: PaperClose
+    sound: 304
+    plays: A screen closing.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: Footstep
+    sound: 400
+    plays: Each step the gecko takes. Keep it very quiet.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: ForageSetOff
+    sound: 401
+    plays: Pressing Go on a forage trip.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: ForageFind
+    sound: 402
+    plays: Each find dropping into the basket.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: ForageRareFind
+    sound: 403
+    plays: A rare find dropping into the basket.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: ForageHome
+    sound: 404
+    plays: Getting back from a forage trip.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: Coins
+    sound: 405
+    plays: Coins going up.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: QuestStarted
+    sound: 406
+    plays: Taking on a quest.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: QuestDone
+    sound: 407
+    plays: Finishing a quest.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: RecipeLearned
+    sound: 408
+    plays: Learning a recipe.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: PerkLearned
+    sound: 409
+    plays: Learning a companion's perk.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: UpgradeBought
+    sound: 410
+    plays: Buying a cafe upgrade.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: MenuChanged
+    sound: 411
+    plays: Putting a dish on the menu or taking it down.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: DayEnded
+    sound: 412
+    plays: Closing the cafe for the day.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: NightFalls
+    sound: 413
+    plays: Night starting.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: Morning
+    sound: 414
+    plays: A new morning.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: PlaceObject
+    sound: 415
+    plays: Putting something down in build mode.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: PickUpObject
+    sound: 416
+    plays: Picking something up in build mode.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  - name: PutAwayObject
+    sound: 417
+    plays: Putting something back in the bag in build mode.
+    clips: []
+    volume: 1
+    pitchVariation: 0.05
+  voices:
+  - name: Ruru
+    npc: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Weka
+    npc: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Snail
+    npc: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: "W\u0113t\u0101"
+    npc: {fileID: 11400000, guid: b558caa69688ba5439b48ee795767966, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Kea
+    npc: {fileID: 11400000, guid: 4e97348bcbbd19e41935c1d8c2edac72, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: Pekapeka
+    npc: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  - name: "Kerer\u016B"
+    npc: {fileID: 11400000, guid: 9e437eedccaaa7544befad1ac425d94d, type: 2}
+    clips: []
+    volume: 1
+    pitch: 1
+    pitchVariation: 0.04
+  defaultVoice: []

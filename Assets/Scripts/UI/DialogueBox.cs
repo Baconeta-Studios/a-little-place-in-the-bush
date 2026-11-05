@@ -169,8 +169,15 @@ public class DialogueBox : Popup
         return done ? $"<color={Hex(GameUi.Moss)}>{label}{count}  (done)</color>" : $"{label}{count}";
     }
 
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        GameAudio.StopVoice();
+    }
+
     private void Say(string line, string detail)
     {
+        GameAudio.Say(_npc);
         _text.text = string.IsNullOrEmpty(detail) ? line : $"{line}\n\n<size=85%>{detail}</size>";
     }
 

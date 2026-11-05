@@ -220,6 +220,7 @@ public class BuildMode : MonoBehaviour
     {
         if (!IsActive || !placed) return;
         Cancel();
+        GameAudio.Play(GameSound.PickUpObject);
         placed.SetFootprintActive(false);
         _area.Grid.Rebuild(); // so its old spot doesn't count against it
         _candidate = new Candidate
@@ -278,6 +279,7 @@ public class BuildMode : MonoBehaviour
         _area.RefreshChains();
         _area.Grid.Rebuild();
         result.PlayPlacedFeedback();
+        GameAudio.Play(GameSound.PlaceObject);
         onPlaced.Invoke();
         Session.RequestSave();
         _ui.Refresh();
@@ -340,6 +342,7 @@ public class BuildMode : MonoBehaviour
         _area.Grid.Rebuild();
         Session.RequestSave();
         _ui.Toast($"Put the {label.ToLowerInvariant()} away.");
+        GameAudio.Play(GameSound.PutAwayObject);
         _ui.Refresh();
     }
 

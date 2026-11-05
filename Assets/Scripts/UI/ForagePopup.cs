@@ -117,6 +117,9 @@ public class ForagePopup : Popup
 
     private static GameSession Session => GameSession.Current;
 
+    /// <summary>Whether the forage screen is up, for the music.</summary>
+    public static bool IsShowing => _instance && _instance.IsOpen;
+
     /// <summary>Opens the forage screen, creating it the first time.</summary>
     public static void Show()
     {
@@ -429,6 +432,7 @@ public class ForagePopup : Popup
         Debug.Log($"[Forage] Trip {trip.id} (day {session.State.day}): table {setup.tableId}, focus '{setup.focusId}', " +
                   $"companion '{setup.companionId}', perks [{string.Join(", ", setup.perkIds)}], {setup.time}, seed {seed}. " +
                   "The web sandbox gives the same result with the same seed.");
+        GameAudio.Play(GameSound.ForageSetOff);
         _trip = StartCoroutine(Trip());
     }
 
@@ -693,6 +697,17 @@ public class ForagePopup : Popup
     }
 
     /// <summary>Finds fall into the basket one at a time. They're already in the bag, so skipping this loses nothing.</summary>
+    private static IEnumerator FindSounds(List<ItemCard> cards)
+    {
+        yield return new WaitForSecondsRealtime(DropSeconds * 0.8f);
+        foreach (ItemCard card in cards)
+        {
+            Rarity? rarity = Session?.Design.GetItem(card.key)?.rarity;
+            GameAudio.Play(rarity is Rarity.Rare or Rarity.Legendary ? GameSound.ForageRareFind : GameSound.ForageFind);
+            yield return new WaitForSecondsRealtime(DropGap);
+        }
+    }
+
     private IEnumerator DropFinds(List<ItemCard> cards)
     {
         Clear(_pile);
@@ -715,6 +730,7 @@ public class ForagePopup : Popup
             dropping.Add(rect);
         }
 
+        StartCoroutine(FindSounds(cards));
         float end = cards.Count * DropGap + DropSeconds;
         for (float t = 0f; t < end; t += Time.unscaledDeltaTime)
         {
