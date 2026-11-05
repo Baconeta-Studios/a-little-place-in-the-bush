@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// The HUD's day dial: a ring split into the parts of the day (one per forage trip, then evening,
 /// then night once it's unlocked), the day number in the middle, and a hand that turns to the
-/// current part. Parts already passed are dimmed. Tap it for what's next. Part of the HUD prefab
+/// current part. Parts already passed are dimmed. Tap it for what's on today (<see cref="DayInfoCard"/>). Part of the HUD prefab
 /// (<see cref="HudView"/>): the parts are made at run time from <c>Segment Sprite</c>, one per part of the day.
 /// </summary>
 public class DayDial : MonoBehaviour
@@ -28,6 +28,9 @@ public class DayDial : MonoBehaviour
     [Tooltip("An outline on the label, added when the game runs: it needs its own material, which a prefab can't keep. 0 for none.")]
     [SerializeField, Min(0f)] private float _labelOutlineWidth = 0.2f;
     [SerializeField] private Color32 _labelOutlineColor = new(40, 30, 20, 255);
+    /// <summary>The dial was tapped.</summary>
+    public event System.Action Tapped;
+
     private Image[] _segments = new Image[0];
     private string _layout;
     private float _handAngle;
@@ -95,7 +98,7 @@ public class DayDial : MonoBehaviour
         _label.text = PartName(state, rules, trips) + (today != null ? $"\n<size=80%><color=#{ColorUtility.ToHtmlStringRGB(new Color(1f, 0.85f, 0.45f))}>{today.name}</color></size>" : "");
     }
 
-    private static string PartName(GameState state, DayRules rules, int trips)
+    public static string PartName(GameState state, DayRules rules, int trips)
     {
         if (state.isNight) return "Night";
         if (rules.TripsPerDay(state) <= 0) return "";
@@ -129,21 +132,17 @@ public class DayDial : MonoBehaviour
         _ring.Find("Middle")?.SetAsLastSibling();
     }
 
-    private void ShowHint()
+    private void ShowHint() => Tapped?.Invoke();
+
+    /// <summary>What's next today, in a line.</summary>
+    public static string Hint(GameSession session)
     {
-        GameSession session = GameSession.Current;
-        if (session == null) return;
         GameState state = session.State;
         int left = ForagingService.TripsLeftToday(session.Design, state);
-        string hint = state.isNight
-            ? left > 0 ? "Night. One forage trip tonight, then bed." : "Night. Time for bed."
-            : session.Design.rules.IsEvening(state) ? "Evening. Close the cafe for the day."
+        return state.isNight
+            ? left > 0 ? "One forage trip tonight, then bed." : "Time for bed."
+            : session.Design.rules.IsEvening(state) ? "Close the cafe for the day."
             : $"{left} forage trip{(left == 1 ? "" : "s")} left today.";
-        DayEventData today = DayEvents.Today(session.Design, state);
-        if (today != null) hint += $"\n{today.name}: {today.effect}";
-        Debug.Log($"[Day] {hint}");
-        _label.text = hint;
-        _nextRefresh = Time.unscaledTime + 3f; // leave the hint up for a moment
     }
 
     private void Build(RectTransform root)

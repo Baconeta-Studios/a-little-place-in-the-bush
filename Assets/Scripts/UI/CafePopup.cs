@@ -564,7 +564,7 @@ public class CafePopup : Popup
             if (image.name is "Recipes" or "Forecast" or "SummaryPaper" or "ConfirmPaper")
             {
                 image.sprite = paper;
-                image.type = Image.Type.Sliced;
+                image.type = Image.Type.Tiled;
             }
             else if (image.name == "Sign")
             {
@@ -645,8 +645,6 @@ public class CafePopup : Popup
         grid.cellSize = new Vector2(258f, 250f);
         grid.spacing = new Vector2(14f, 22f);
         grid.padding = new RectOffset(4, 4, 22, 8);
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = 4;
         grid.childAlignment = TextAnchor.UpperCenter;
         _cards.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         _scroll.content = _cards;

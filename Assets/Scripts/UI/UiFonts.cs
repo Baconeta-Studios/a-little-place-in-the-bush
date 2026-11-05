@@ -52,7 +52,7 @@ public class UiFonts : ScriptableObject
         string name = text.gameObject.name;
         bool onButton = text.transform.parent && text.transform.parent.GetComponent<Button>();
         if (name == "TrackerText") return body; // on a button, but it's something you read
-        return name is "Title" or "OutText" or "SignTitle" ? title
+        return name is "Title" or "OutText" or "SignTitle" or "CoinsText" ? title
             : name == "Nudge" ? note
             : name is "Letter" or "BadgeText" or "DishName" or "Heading" or "CanMake" or "Name" or "Day" || onButton ? bold
             : body;

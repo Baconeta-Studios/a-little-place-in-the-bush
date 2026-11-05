@@ -90,6 +90,12 @@ public class ItemGridView : MonoBehaviour
         return view;
     }
 
+    /// <summary>Cards in this grid show their count as a plain number (it needs a template).</summary>
+    public void MakeCardsCounted()
+    {
+        if (_cardTemplate) _cardTemplate.MakePlainCount();
+    }
+
     /// <summary>Cards in this grid are only there to look at (it needs a template).</summary>
     public void MakeCardsFlat()
     {

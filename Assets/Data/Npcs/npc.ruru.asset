@@ -15,7 +15,7 @@ MonoBehaviour:
   id: npc.ruru
   displayName: Ruru
   description: The old cafe owner. Wise, sleepy by day, and missing her famous recipe.
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 8655101493f190249861fe316030cd62, type: 3}
   species: Ruru (morepork)
   visits: 1
   visitChance: 0

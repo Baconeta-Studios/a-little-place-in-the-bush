@@ -12,38 +12,41 @@ using UnityEngine.UI;
 /// cafe stays in view: portrait, name, what they say, and replies on the right. What they say comes
 /// from <see cref="QuestService.GetTopic"/>: offering a quest (Sure! / Not now), asking how it's going
 /// (with your progress), or taking what you've brought and giving the rewards. A template popup, so
-/// it pauses the game and Escape closes it. Built in code.
+/// it pauses the game and Escape closes it.
+///
+/// How it looks is in Resources/UI/DialogueBox.prefab (see docs/UI.md), made from <see cref="BuildDefault"/>,
+/// which is also used if there's no prefab.
 /// </summary>
 public class DialogueBox : Popup
 {
+    public const string ResourcePath = "UI/DialogueBox";
+
     private static DialogueBox _instance;
 
     private NpcDefinition _npc;
 
-    private Image _portrait;
-    private TextMeshProUGUI _portraitLetter;
-    private TextMeshProUGUI _name;
-    private TextMeshProUGUI _text;
-    private RectTransform _replies;
+    [SerializeField] private Image _portrait;
+    [Tooltip("Shown instead of the portrait for anyone with no art yet.")]
+    [SerializeField] private GameObject _noPortrait;
+    [SerializeField] private TextMeshProUGUI _portraitLetter;
+    [SerializeField] private TextMeshProUGUI _name;
+    [SerializeField] private TextMeshProUGUI _text;
+    [SerializeField] private RectTransform _replies;
+    [Tooltip("The first reply: what the conversation is heading for.")]
+    [SerializeField] private Button _mainReply;
+    [Tooltip("Any other reply.")]
+    [SerializeField] private Button _otherReply;
+    [Tooltip("A reply that ends the conversation.")]
+    [SerializeField] private Button _leaveReply;
 
     /// <summary>Starts a conversation with this character.</summary>
     public static void Show(NpcDefinition npc)
     {
         if (!npc || GameSession.Current == null) return;
-        if (!_instance) _instance = Create();
+        if (!_instance) _instance = GameUi.LoadPopup(ResourcePath, BuildDefault);
         _instance._npc = npc;
         _instance.Open();
         _instance.Begin();
-    }
-
-    private static DialogueBox Create()
-    {
-        RectTransform root = GameUi.NewRect("Dialogue", GameUi.Current.SafeRoot);
-        GameUi.Stretch(root);
-        root.gameObject.SetActive(false); // a popup is "open" while active
-        var box = root.gameObject.AddComponent<DialogueBox>();
-        box.Build(root);
-        return box;
     }
 
     private void OnDestroy()
@@ -59,12 +62,14 @@ public class DialogueBox : Popup
         Session.Quests.BeginConversation(_npc.id); // counts for "talk to" objectives
         Session.RequestSave();
 
-        string name = string.IsNullOrEmpty(_npc.species) ? NpcName : $"{NpcName}  <size=70%><color={Hex(GameUi.InkSoft)}>{_npc.species}</color></size>";
-        _name.text = name;
-        _portrait.sprite = _npc.portrait ? _npc.portrait : GeneratedSprites.Circle;
-        _portrait.color = _npc.portrait ? Color.white : GameUi.Bark;
-        _portrait.preserveAspect = true;
-        _portraitLetter.text = _npc.portrait ? "" : NpcName.Substring(0, 1);
+        // Species like "Ruru (morepork)" already have the name in them.
+        _name.text = string.IsNullOrEmpty(_npc.species) ? NpcName
+            : _npc.species.StartsWith(NpcName) ? _npc.species
+            : $"{NpcName}  <size=70%><color={Hex(GameUi.InkSoft)}>{_npc.species}</color></size>";
+        _portrait.sprite = _npc.portrait;
+        _portrait.enabled = _npc.portrait;
+        _noPortrait.SetActive(!_npc.portrait);
+        _portraitLetter.text = NpcName.Substring(0, 1);
 
         ShowTopic();
     }
@@ -173,52 +178,84 @@ public class DialogueBox : Popup
 
     private void Replies(params (string label, UnityAction onClick)[] replies)
     {
-        for (int i = _replies.childCount - 1; i >= 0; i--) Destroy(_replies.GetChild(i).gameObject);
+        for (int i = _replies.childCount - 1; i >= 0; i--)
+        {
+            Transform child = _replies.GetChild(i);
+            if (child != _mainReply.transform && child != _otherReply.transform && child != _leaveReply.transform)
+            {
+                child.gameObject.SetActive(false);
+                child.SetParent(null, false);
+                Destroy(child.gameObject);
+            }
+        }
         for (int i = 0; i < replies.Length; i++)
         {
-            bool primary = i == 0;
-            GameUi.AddButton(_replies, replies[i].label, replies[i].onClick, new Vector2(300f, 96f),
-                primary ? GameUi.Moss : GameUi.Cream, primary ? GameUi.Cream : GameUi.Ink, 32f);
+            bool leaves = replies[i].label is "Bye" or "Not now";
+            Button reply = Instantiate(leaves ? _leaveReply : i == 0 ? _mainReply : _otherReply, _replies);
+            reply.gameObject.SetActive(true);
+            GameUi.SetLabel(reply, replies[i].label);
+            reply.onClick.AddListener(replies[i].onClick);
         }
     }
 
     private static string Hex(Color colour) => "#" + ColorUtility.ToHtmlStringRGB(colour);
 
-    private void Build(RectTransform root)
+    // ----- The default layout -----
+
+    public static DialogueBox BuildDefault(Transform parent)
     {
+        RectTransform root = GameUi.NewRect("DialogueBox", parent);
+        GameUi.Stretch(root);
+        root.gameObject.SetActive(false); // a popup is "open" while active
+        var box = root.gameObject.AddComponent<DialogueBox>();
+
         // Clear, but catches clicks so the gecko doesn't walk off mid-conversation.
         GameUi.AddPanel(root, new Color(0f, 0f, 0f, 0.15f), false);
 
-        RectTransform panel = GameUi.NewRect("Box", root);
-        panel.anchorMin = new Vector2(0.02f, 0f);
-        panel.anchorMax = new Vector2(0.98f, 0f);
-        panel.pivot = new Vector2(0.5f, 0f);
-        panel.offsetMin = new Vector2(0f, 24f);
-        panel.offsetMax = new Vector2(0f, 24f + 400f);
-        GameUi.AddPanel(panel, GameUi.Panel);
+        RectTransform panel = GameUi.NewRect("PaperBox", root);
+        GameUi.Anchor(panel, Vector2.zero, new Vector2(1f, 0f), new Vector2(-4f, -8f), new Vector2(4f, 470f));
+        GameUi.AddPanel(panel, GameUi.Panel2);
 
-        RectTransform portrait = GameUi.NewRect("Portrait", panel);
-        GameUi.Place(portrait, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(28f, 0f), new Vector2(300f, 300f));
-        _portrait = portrait.gameObject.AddComponent<Image>();
-        _portrait.raycastTarget = false;
-        _portraitLetter = GameUi.AddText(portrait, "", 140f, GameUi.Cream, TextAlignmentOptions.Center, "Letter");
+        // The character stands in front of the paper. Anyone with no art yet gets a circle with their initial.
+        RectTransform portrait = GameUi.NewRect("Portrait", root);
+        GameUi.Place(portrait, Vector2.zero, Vector2.zero, new Vector2(60f, 20f), new Vector2(420f, 560f));
+        box._portrait = portrait.gameObject.AddComponent<Image>();
+        box._portrait.raycastTarget = false;
+        box._portrait.preserveAspect = true;
+        RectTransform circle = GameUi.NewRect("NoPortrait", portrait);
+        GameUi.Place(circle, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -40f), new Vector2(260f, 260f));
+        var circleImage = circle.gameObject.AddComponent<Image>();
+        circleImage.sprite = GeneratedSprites.Circle;
+        circleImage.color = GameUi.Bark;
+        circleImage.raycastTarget = false;
+        box._noPortrait = circle.gameObject;
+        box._portraitLetter = GameUi.AddText(circle, "", 120f, GameUi.Cream, TextAlignmentOptions.CenterGeoAligned, "Letter");
 
-        _name = GameUi.AddText(panel, "", 44f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Name");
-        _name.rectTransform.offsetMin = new Vector2(360f, 0f);
-        _name.rectTransform.offsetMax = new Vector2(-370f, -24f);
+        box._name = GameUi.AddText(panel, "", 42f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Name");
+        GameUi.Anchor(box._name.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(490f, -116f), new Vector2(-400f, -58f));
 
-        _text = GameUi.AddText(panel, "", 36f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Text");
-        _text.rectTransform.offsetMin = new Vector2(360f, 24f);
-        _text.rectTransform.offsetMax = new Vector2(-370f, -86f);
-        _text.overflowMode = TextOverflowModes.Ellipsis;
+        box._text = GameUi.AddText(panel, "", 34f, GameUi.Ink, TextAlignmentOptions.TopLeft, "Text");
+        GameUi.Anchor(box._text.rectTransform, Vector2.zero, Vector2.one, new Vector2(490f, 62f), new Vector2(-400f, -118f));
+        box._text.enableAutoSizing = true;
+        box._text.fontSizeMin = 24f;
+        box._text.fontSizeMax = 34f;
+        box._text.overflowMode = TextOverflowModes.Ellipsis;
 
-        _replies = GameUi.NewRect("Replies", panel);
-        _replies.anchorMin = new Vector2(1f, 0f);
-        _replies.anchorMax = new Vector2(1f, 1f);
-        _replies.pivot = new Vector2(1f, 0.5f);
-        _replies.offsetMin = new Vector2(-340f, 24f);
-        _replies.offsetMax = new Vector2(-24f, -24f);
-        VerticalLayoutGroup column = GameUi.AddLayout<VerticalLayoutGroup>(_replies, 16f);
+        box._replies = GameUi.NewRect("Replies", panel);
+        GameUi.Anchor(box._replies, new Vector2(1f, 0f), Vector2.one, new Vector2(-380f, 62f), new Vector2(-60f, -62f));
+        VerticalLayoutGroup column = GameUi.AddLayout<VerticalLayoutGroup>(box._replies, 14f);
         column.childAlignment = TextAnchor.LowerRight;
+        box._mainReply = Reply(box._replies, "MainReply", GameUi.Apron, GameUi.Cream);
+        box._otherReply = Reply(box._replies, "OtherReply", GameUi.Cream, GameUi.Ink);
+        box._leaveReply = Reply(box._replies, "LeaveReply", GameUi.PanelDark, GameUi.Cream);
+        return box;
+    }
+
+    private static Button Reply(Transform parent, string name, Color background, Color text)
+    {
+        Button reply = GameUi.AddButton(parent, name, null, new Vector2(300f, 96f), background, text, 32f);
+        reply.name = name;
+        reply.gameObject.SetActive(false);
+        return reply;
     }
 }

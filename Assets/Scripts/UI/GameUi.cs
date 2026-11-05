@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -26,6 +27,7 @@ public class GameUi : MonoBehaviour
     // Dark enough for the pale line work on the item icons to show.
     public static readonly Color CardBack = new(0.73f, 0.63f, 0.47f);
     public static readonly Color CardSelected = new(0.55f, 0.68f, 0.45f);
+    public static readonly Color Tape = new(0.89f, 0.75f, 0.29f);
 
     private static GameUi _current;
     private RectTransform _safeRoot;
@@ -154,6 +156,97 @@ public class GameUi : MonoBehaviour
         layout.childForceExpandWidth = false;
         layout.childForceExpandHeight = false;
         return layout;
+    }
+
+    /// <summary>Copies a screen's prefab, closed, or builds its default layout if there's no prefab.</summary>
+    public static T LoadPopup<T>(string resourcePath, Func<Transform, T> buildDefault) where T : Component
+    {
+        Transform safeRoot = Current.SafeRoot;
+        var prefab = Resources.Load<T>(resourcePath);
+        if (!prefab) return buildDefault(safeRoot);
+
+        // A popup is "open" while active, and the prefab is saved on so it can be seen and edited:
+        // copy it under something switched off, so it arrives closed without ever opening.
+        var closed = new GameObject("Closed");
+        closed.SetActive(false);
+        T popup = Instantiate(prefab, closed.transform);
+        popup.gameObject.SetActive(false);
+        popup.transform.SetParent(safeRoot, false);
+        Destroy(closed);
+        return popup;
+    }
+
+    /// <summary>The painted backdrop with a dim over it, behind a full screen.</summary>
+    public static void AddBackdrop(RectTransform root)
+    {
+        RectTransform backdrop = NewRect("Backdrop", root);
+        Stretch(backdrop);
+        AddPanel(backdrop, new Color(0.3f, 0.27f, 0.18f), false);
+        RectTransform dim = NewRect("Dim", root);
+        Stretch(dim);
+        AddPanel(dim, new Color(0.08f, 0.07f, 0.05f, 0.42f), false);
+    }
+
+    /// <summary>The way out of a screen: always Back, always bottom right.</summary>
+    public static Button AddBack(Transform parent)
+    {
+        Button back = AddButton(parent, "Back", null, new Vector2(190f, 84f), PanelDark, Cream, 30f);
+        back.GetComponent<LayoutElement>().ignoreLayout = true;
+        Place((RectTransform)back.transform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-30f, 18f), new Vector2(190f, 84f));
+        return back;
+    }
+
+    /// <summary>The hanging sign that names a board, at the top of its column.</summary>
+    public static void AddSign(RectTransform column, string title)
+    {
+        RectTransform sign = NewRect("Sign", column);
+        Place(sign, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, 34f), new Vector2(456f, 456f));
+        AddPanel(sign, Bark, false).raycastTarget = false;
+        TextMeshProUGUI text = AddText(column, title, 50f, Ink, TextAlignmentOptions.Center, "SignTitle");
+        Anchor(text.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(0f, -262f), new Vector2(0f, -112f));
+    }
+
+    /// <summary>A vertical scrolling area, which drags on empty space too. Add the layout to what it hands back.</summary>
+    public static ScrollRect AddScroll(RectTransform area, out RectTransform content)
+    {
+        var scroll = area.gameObject.AddComponent<ScrollRect>();
+        scroll.horizontal = false;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+        scroll.scrollSensitivity = 30f;
+        RectTransform viewport = NewRect("Viewport", area);
+        Stretch(viewport);
+        viewport.gameObject.AddComponent<RectMask2D>();
+        viewport.gameObject.AddComponent<Image>().color = Color.clear;
+        scroll.viewport = viewport;
+        content = NewRect("Content", viewport);
+        content.anchorMin = new Vector2(0f, 1f);
+        content.anchorMax = Vector2.one;
+        content.pivot = new Vector2(0.5f, 1f);
+        content.offsetMin = content.offsetMax = Vector2.zero;
+        scroll.content = content;
+        return scroll;
+    }
+
+    public static void Anchor(RectTransform rect, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax)
+    {
+        rect.anchorMin = min;
+        rect.anchorMax = max;
+        rect.offsetMin = offsetMin;
+        rect.offsetMax = offsetMax;
+    }
+
+    /// <summary>Empties something made from a template, leaving the template.</summary>
+    public static void ClearExcept(Transform parent, Transform keep)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = parent.GetChild(i);
+            if (child == keep) continue;
+            // Off the layout now, rather than at the end of the frame.
+            child.gameObject.SetActive(false);
+            child.SetParent(null, false);
+            Destroy(child.gameObject);
+        }
     }
 
     public static void Place(RectTransform rect, Vector2 anchor, Vector2 pivot, Vector2 position, Vector2 size)

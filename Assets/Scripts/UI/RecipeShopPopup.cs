@@ -123,7 +123,7 @@ public class RecipeShopPopup : Popup
         _coins = GameUi.AddText(panel, "", 34f, GameUi.Bark, TextAlignmentOptions.TopRight, "Coins");
         _coins.rectTransform.offsetMax = new Vector2(-250f, -38f);
 
-        Button close = GameUi.AddButton(panel, "Close", Close, new Vector2(190f, 84f), GameUi.Bark, GameUi.Cream);
+        Button close = GameUi.AddButton(panel, "Back", Close, new Vector2(190f, 84f), GameUi.PanelDark, GameUi.Cream);
         GameUi.Place((RectTransform)close.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-28f, -24f), new Vector2(190f, 84f));
 
         RectTransform list = GameUi.NewRect("List", panel);
