@@ -56,6 +56,19 @@ public static class DesignDataTools
         Debug.LogError($"[Bush] Design data has {errors.Count} problem(s). See the warnings above.");
     }
 
+    /// <summary>On the asset, not in the file, so it's checked here rather than on import.</summary>
+    private static IEnumerable<string> ValidateCafeSign(GameDatabase database)
+    {
+        CafeSignSettings sign = database.cafeSign;
+        if (sign.levels.Count == 0) yield return "Cafe sign: it needs at least one cosiness level.";
+        if (sign.levels.Count > 0 && sign.levels.Min(l => l.from) > 0) yield return "Cafe sign: one cosiness level should start at 0, or a bare cafe has no level.";
+        foreach (var repeat in sign.levels.GroupBy(l => l.from).Where(g => g.Count() > 1))
+            yield return $"Cafe sign: two cosiness levels start at {repeat.Key}.";
+        foreach (PlaceableDefinition placeable in database.placeables)
+            if (placeable && !string.IsNullOrEmpty(placeable.style) && !sign.styles.Exists(w => w.style == placeable.style))
+                yield return $"{placeable.id}: no wording for style \"{placeable.style}\" on the GameDatabase's cafe sign, so it'd say \"{sign.otherTitle}\".";
+    }
+
     [MenuItem("Tools/Bush/Collect All Definitions Into Database", priority = 21)]
     public static void Collect()
     {
@@ -277,6 +290,8 @@ public static class DesignDataTools
 
     private static IEnumerable<string> ValidateAssets(GameDatabase database)
     {
+        foreach (string problem in ValidateCafeSign(database)) yield return problem;
+
         var seen = new Dictionary<string, GameDefinition>();
         foreach (string guid in AssetDatabase.FindAssets("t:GameDefinition"))
         {

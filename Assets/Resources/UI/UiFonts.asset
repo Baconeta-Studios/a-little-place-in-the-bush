@@ -14,5 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UiFonts
   title: {fileID: 11400000, guid: 29b3e5edd6ecbd84fb6dcfa4369ac463, type: 2}
   body: {fileID: 11400000, guid: 0a6d5fbc2cf498f42b2592dc02305fdd, type: 2}
-  bold: {fileID: 11400000, guid: a8efa034dc9fcc84bbdd6730bacb3429, type: 2}
-  note: {fileID: 11400000, guid: 899b7bc6cfc968a4fb03665bf6d1774b, type: 2}

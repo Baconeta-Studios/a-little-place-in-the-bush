@@ -36,6 +36,8 @@ public class GameDatabase : ScriptableObject
     [Min(0)] public int nightTrips = 1;
     [Header("Day events (how often, and how cosiness helps)")]
     public DayEventSettings dayEventTuning = new();
+    [Header("The cafe sign (how cosiness adds up, what it does, what the sign says)")]
+    public CafeSignSettings cafeSign = new();
 
     [Tooltip("Luck protection: while this quest is under way, a forage trip always finds what its item objectives still need.")]
     public QuestDefinition luckProtectedQuest;
@@ -68,6 +70,7 @@ public class GameDatabase : ScriptableObject
         foreach (UpgradeDefinition x in upgrades) if (x) design.rules.upgrades.Add(x.ToData());
         foreach (DayEventDefinition x in dayEvents) if (x) design.rules.dayEvents.Add(x.ToData());
         design.rules.events = dayEventTuning ?? new DayEventSettings();
+        design.rules.cafeSign = cafeSign ?? new CafeSignSettings();
         design.RebuildIndex();
         return design;
     }

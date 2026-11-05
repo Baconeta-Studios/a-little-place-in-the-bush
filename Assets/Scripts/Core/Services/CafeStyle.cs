@@ -7,7 +7,7 @@ namespace Bush.Core
     /// How cosy the cafe is, and what kind of cafe it looks like, from what's placed in it. Cosiness is
     /// each placed thing's <see cref="PlaceableData.cosiness"/> plus a little for variety; it raises the
     /// chance of random visitors and of lucky days. The style comes from the placed things' styles, for
-    /// the sign by the door. All placeholder numbers and names, to tweak.
+    /// the sign by the door. The numbers and wording are <see cref="CafeSignSettings"/>, on the GameDatabase.
     /// </summary>
     public static class CafeStyle
     {
@@ -25,25 +25,59 @@ namespace Bush.Core
                 score += Math.Max(0, placeable.cosiness);
                 kinds.Add(placeable.id);
             }
-            return score + kinds.Count; // a bit extra for each different kind of thing
+            return score + kinds.Count * design.rules.cafeSign.cosinessPerKind; // a bit extra for each different kind of thing
         }
 
-        /// <summary>"Bare", "Getting there", "Cosy", "Very cosy" or "The cosiest spot in the bush".</summary>
-        public static string CosinessLevel(int score) =>
-            score < 15 ? "Bare" : score < 40 ? "Getting there" : score < 80 ? "Cosy" : score < 140 ? "Very cosy" : "The cosiest spot in the bush";
+        public static int CosinessSteps(DesignData design) => design.rules.cafeSign.levels.Count;
 
-        /// <summary>
-        /// Random visitors' chances are multiplied by this: 1 for a bare cafe, up to 2 at 150 cosiness.
-        /// Basic furniture adds 1-3 each, so the big boosts need the special things earned later.
-        /// </summary>
-        public static double VisitorBoost(DesignData design, GameState state) => 1 + Math.Min(Cosiness(design, state), 150) / 150.0;
+        /// <summary>Which level this score is at, from 0.</summary>
+        public static int CosinessStep(DesignData design, int score)
+        {
+            int reached = 0;
+            foreach (CosinessLevelData level in design.rules.cafeSign.levels)
+                if (score >= level.from) reached++;
+            return Math.Max(0, reached - 1);
+        }
 
-        /// <summary>The chance a day ends with a happy guest's tip: up to 25%, at 150 cosiness.</summary>
-        public static double LuckyDayChance(DesignData design, GameState state) => Math.Min(0.25, Cosiness(design, state) / 600.0);
+        public static string CosinessLevel(DesignData design, int score)
+        {
+            CosinessLevelData best = null;
+            foreach (CosinessLevelData level in design.rules.cafeSign.levels)
+                if (score >= level.from && (best == null || level.from > best.from)) best = level;
+            return best?.name ?? "";
+        }
+
+        /// <summary>The level after this score's, and how much more it takes. False at the top.</summary>
+        public static bool TryNextLevel(DesignData design, int score, out string name, out int more)
+        {
+            CosinessLevelData next = null;
+            foreach (CosinessLevelData level in design.rules.cafeSign.levels)
+                if (level.from > score && (next == null || level.from < next.from)) next = level;
+            name = next?.name;
+            more = next != null ? next.from - score : 0;
+            return next != null;
+        }
+
+        /// <summary>Random visitors' chances are multiplied by this: 1 for a bare cafe, more as it gets cosier.</summary>
+        public static double VisitorBoost(DesignData design, GameState state)
+        {
+            CafeSignSettings sign = design.rules.cafeSign;
+            return 1 + sign.extraVisitorsAtFull * ShareOfFull(Cosiness(design, state), sign.cosinessForFullVisitors);
+        }
+
+        /// <summary>The chance a day ends with a happy guest's tip.</summary>
+        public static double LuckyDayChance(DesignData design, GameState state)
+        {
+            CafeSignSettings sign = design.rules.cafeSign;
+            return sign.luckyDayChanceAtFull * ShareOfFull(Cosiness(design, state), sign.cosinessForFullLuck);
+        }
+
+        private static double ShareOfFull(int cosiness, int full) => Math.Min(cosiness, Math.Max(1, full)) / (double)Math.Max(1, full);
 
         /// <summary>What the sign by the door says.</summary>
         public static CafeDescription Describe(DesignData design, GameState state)
         {
+            CafeSignSettings sign = design.rules.cafeSign;
             var styles = new Dictionary<string, int>();
             int things = 0, seats = 0;
             foreach (PlacedObjectData placed in state.placed)
@@ -59,11 +93,11 @@ namespace Bush.Core
             }
 
             int score = Cosiness(design, state);
-            var description = new CafeDescription { cosiness = score, level = CosinessLevel(score), things = things, seats = seats };
+            var description = new CafeDescription { cosiness = score, level = CosinessLevel(design, score), things = things, seats = seats };
             if (things == 0)
             {
-                description.title = "An empty clearing";
-                description.blurb = "Just you, some dirt and a lot of potential.";
+                description.title = sign.emptyTitle;
+                description.blurb = sign.emptyBlurb;
                 return description;
             }
 
@@ -74,17 +108,12 @@ namespace Bush.Core
                 if (top == null || style.Value > styles[top]) { second = top; top = style.Key; }
                 else if (second == null || style.Value > styles[second]) second = style.Key;
             }
-            bool mixed = second != null && styles[second] * 4 >= styles[top] * 3;
+            bool mixed = second != null && styles[second] >= styles[top] * sign.mixedAt;
 
-            (description.title, description.blurb) = mixed ? ("An eclectic little cafe", "A bit of everything, and somehow it works.") : top switch
-            {
-                "garden" => ("A garden cafe", "More leaves than tables. The bugs love it."),
-                "rustic" => ("A rustic bush cafe", "Sturdy wood, honest food, and a bench for everyone."),
-                "glow" => ("A lantern-lit cafe", "It glows at dusk. Moths are already queueing."),
-                "fancy" => ("A rather fancy cafe", "Is that a doily? In the bush?"),
-                _ => ("A simple little cafe", "Nothing fancy, but the salad's fresh.")
-            };
-            if (seats == 0) description.blurb += " Nowhere to sit, though.";
+            CafeStyleWording wording = sign.styles.Find(w => w.style == top);
+            description.title = mixed ? sign.mixedTitle : wording?.title ?? sign.otherTitle;
+            description.blurb = mixed ? sign.mixedBlurb : wording?.blurb ?? sign.otherBlurb;
+            if (seats == 0 && !string.IsNullOrEmpty(sign.noSeatsLine)) description.blurb += " " + sign.noSeatsLine;
             return description;
         }
     }

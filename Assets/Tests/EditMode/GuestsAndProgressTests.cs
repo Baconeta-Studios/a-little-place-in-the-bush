@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Bush.Core.Tests
@@ -24,6 +25,64 @@ namespace Bush.Core.Tests
         }
 
         // ----- Visitors -----
+
+        [Test]
+        public void CosinessLevels_SayWhatComesNext()
+        {
+            DesignData design = _game.design;
+            Assert.AreEqual("Bare", CafeStyle.CosinessLevel(design, 14));
+            Assert.AreEqual("Getting there", CafeStyle.CosinessLevel(design, 15));
+            Assert.AreEqual("The cosiest spot in the bush", CafeStyle.CosinessLevel(design, 500));
+            Assert.AreEqual(1, CafeStyle.CosinessStep(design, 16));
+
+            Assert.IsTrue(CafeStyle.TryNextLevel(design, 16, out string next, out int more));
+            Assert.AreEqual("Cosy", next);
+            Assert.AreEqual(24, more);
+            Assert.IsFalse(CafeStyle.TryNextLevel(design, 140, out _, out _));
+        }
+
+        [Test]
+        public void CafeSign_ComesFromTheSettings()
+        {
+            DesignData design = _game.design;
+            CafeSignSettings sign = design.rules.cafeSign;
+            sign.levels = new List<CosinessLevelData>
+            {
+                new() { name = "Top", from = 50 },
+                new() { name = "Low", from = 0 }
+            };
+            Assert.AreEqual("Low", CafeStyle.CosinessLevel(design, 49), "the order they're listed in doesn't matter");
+            Assert.AreEqual("Top", CafeStyle.CosinessLevel(design, 50));
+            Assert.AreEqual(2, CafeStyle.CosinessSteps(design));
+
+            sign.emptyTitle = "Nothing yet";
+            Assert.AreEqual("Nothing yet", CafeStyle.Describe(design, new GameState()).title);
+
+            sign.luckyDayChanceAtFull = 0.5;
+            sign.cosinessForFullLuck = 10;
+            sign.extraVisitorsAtFull = 2;
+            sign.cosinessForFullVisitors = 10;
+            var state = new GameState();
+            string id = design.placeables[0].id;
+            for (int i = 0; i < 20; i++) state.placed.Add(new PlacedObjectData { instanceId = i, area = CafeStyle.CafeArea, placeableId = id });
+            design.placeables[0].cosiness = 5;
+            Assert.AreEqual(0.5, CafeStyle.LuckyDayChance(design, state), 0.0001);
+            Assert.AreEqual(3.0, CafeStyle.VisitorBoost(design, state), 0.0001);
+        }
+
+        [Test]
+        public void CafeSign_NewStyleUsesItsOwnWording()
+        {
+            DesignData design = _game.design;
+            design.rules.cafeSign.styles.Add(new CafeStyleWording { style = "spooky", title = "A spooky cafe", blurb = "Something moved." });
+            design.placeables[0].style = "spooky";
+            var state = new GameState();
+            state.placed.Add(new PlacedObjectData { instanceId = 1, area = CafeStyle.CafeArea, placeableId = design.placeables[0].id });
+            Assert.AreEqual("A spooky cafe", CafeStyle.Describe(design, state).title);
+
+            design.placeables[0].style = "unknown";
+            Assert.AreEqual(design.rules.cafeSign.otherTitle, CafeStyle.Describe(design, state).title);
+        }
 
         [Test]
         public void StoryGuest_StaysWhileTheStoryIsTheirs()
