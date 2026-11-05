@@ -119,7 +119,7 @@ namespace Bush.Core
         };
 
         /// <summary>How much more often random visitors come at full cosiness. 1 is +100%.</summary>
-        public double extraVisitorsAtFull = 1;
+        public double extraVisitorsAtFull = 0.5;
         /// <summary>The cosiness at which the visitor boost is full.</summary>
         public int cosinessForFullVisitors = 150;
         /// <summary>The chance of a lucky day at full cosiness. 0.25 is 25%.</summary>

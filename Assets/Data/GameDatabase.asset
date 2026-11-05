@@ -215,7 +215,7 @@ MonoBehaviour:
       from: 80
     - name: The cosiest spot in the bush
       from: 140
-    extraVisitorsAtFull: 1
+    extraVisitorsAtFull: 0.5
     cosinessForFullVisitors: 150
     luckyDayChanceAtFull: 0.25
     cosinessForFullLuck: 150
