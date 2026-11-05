@@ -12,9 +12,15 @@ You've come home to find the old cafe falling down, and you mean to fix it up to
 | Ruru moves on | Ruru moves on. She then visits at random, at night, and sells recipes | Ruru |
 | Someone's back | Someone's back, Somewhere worth sitting (4 seats and cosiness 20, which takes help from visitors' side quests) | Kōwhai |
 | Impressing them | A little taste (moss toast), Something sweet (berry cake), A proper menu (3 dishes up at once), That old recipe, The torn recipe (the 4 scraps), The kawakawa scroll | Kōwhai |
-| The date | A table for two, A little place in the bush. The game carries on afterwards | Kōwhai |
+| The date | A table for two, A little place in the bush (the date, below). The game carries on afterwards | Kōwhai |
 
 Whoever gives the current story quest is always at the cafe, so Kōwhai is around for all of theirs.
+
+## The date
+
+Talking to Kōwhai for *A little place in the bush* plays the date instead of the usual conversation: a fade to "Later that night", the two of you either side of the fancy table with everyone else and the HUD out of the way and the lights on, her lines with your replies, a quiet moment, and a fade to "The end, for now." The quest is handed in behind that last fade, so you get the gold fairy lights and coins then. Pressing Escape skips to the end.
+
+The words are in `Assets/Resources/Scenes/DateScene.asset`. Select it to edit them in the Inspector: each **beat** is one thing she says and your replies, and a reply's **answer** is what she says back. A beat with no replies gets a single "..." button. Tick **Gives Rewards** on the beat that should show what you get. It also has the two cards, how long the quiet moment lasts and how close the camera comes in. Without the fancy table out, you sit either side of wherever she's standing.
 
 ## The recipe scraps
 

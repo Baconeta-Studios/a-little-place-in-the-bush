@@ -32,6 +32,12 @@ public class GuestSeating : MonoBehaviour
         if (!_instance) _instance = new GameObject("[GuestSeating]").AddComponent<GuestSeating>();
     }
 
+    /// <summary>Seats everyone again at the next check, after something moved a guest.</summary>
+    public static void Refresh()
+    {
+        if (_instance) _instance._signature = null;
+    }
+
     private void OnEnable() => BuildMode.ActiveChanged += OnBuildModeChanged;
     private void OnDisable() => BuildMode.ActiveChanged -= OnBuildModeChanged;
 

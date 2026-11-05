@@ -27,6 +27,19 @@ public class CameraFollow : MonoBehaviour
     private Vector3 _velocity;
     private float _focusX;
 
+    /// <summary>What the camera follows: the gecko, unless a scene points it somewhere else.</summary>
+    public Transform Target
+    {
+        get => target;
+        set => target = value;
+    }
+
+    /// <summary>Puts the target in the middle of the view (as far as the bounds allow), for a scene. Off: follows the gecko as usual.</summary>
+    public bool Centre { get; set; }
+
+    /// <summary>How far (world units) the view may go below the bounds: only for when something covers the bottom of the screen.</summary>
+    public float ExtraBelow { get; set; }
+
     private void Awake()
     {
         _camera = GetComponent<Camera>();
@@ -50,7 +63,8 @@ public class CameraFollow : MonoBehaviour
 
         // Move the focus only as far as needed to keep the gecko inside the dead zone.
         float x = target.position.x;
-        if (x > _focusX + deadZoneWidth) _focusX = x - deadZoneWidth;
+        if (Centre) _focusX = x;
+        else if (x > _focusX + deadZoneWidth) _focusX = x - deadZoneWidth;
         else if (x < _focusX - deadZoneWidth) _focusX = x + deadZoneWidth;
 
         // Game time, the same clock the gecko moves on, so the two never drift against each other.
@@ -62,14 +76,14 @@ public class CameraFollow : MonoBehaviour
 
     /// <summary>Where the camera wants to be: Clamp stops it at the top of the bounds, so this is as high as it can go with the gecko still in view.</summary>
     private Vector3 Goal() =>
-        Clamp(new Vector3(_focusX, target.position.y + _camera.orthographicSize - bottomMargin, transform.position.z));
+        Clamp(new Vector3(_focusX, Centre ? target.position.y : target.position.y + _camera.orthographicSize - bottomMargin, transform.position.z));
 
     private Vector3 Clamp(Vector3 position)
     {
         float halfHeight = _camera.orthographicSize;
         float halfWidth = halfHeight * _camera.aspect;
         position.x = ClampAxis(position.x, bounds.xMin, bounds.xMax, halfWidth);
-        position.y = ClampAxis(position.y, bounds.yMin, bounds.yMax, halfHeight);
+        position.y = ClampAxis(position.y, bounds.yMin - ExtraBelow, bounds.yMax, halfHeight);
         return position;
     }
 
