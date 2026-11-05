@@ -451,10 +451,16 @@ public class BuildMode : MonoBehaviour
     {
         PlacedObject best = null;
         float bestY = float.MaxValue;
+        PlacedObject lights = null;
         foreach (PlacedObject placed in _area.Spawned)
         {
             if (!placed || !Hits(placed, world)) continue;
             if (placed.IsOnSurface) return placed; // it's on top of whatever it's on
+            if (IsChain(placed)) // they hang over everything, so anything else here comes first
+            {
+                lights = placed;
+                continue;
+            }
             float y = placed.transform.position.y; // lowest on screen is in front
             if (y < bestY)
             {
@@ -462,12 +468,15 @@ public class BuildMode : MonoBehaviour
                 best = placed;
             }
         }
-        return best;
+        return best ? best : lights;
     }
+
+    private static bool IsChain(PlacedObject placed) => placed.Definition && placed.Definition.chainSpan > 0f;
 
     private bool Hits(PlacedObject placed, Vector2 world)
     {
         if (!placed) return false;
+        if (IsChain(placed)) return HitsChainArt(placed, world);
         Rect footprint = placed.FootprintRect;
         bool any = false;
         Bounds bounds = new(footprint.center, footprint.size);
@@ -481,6 +490,29 @@ public class BuildMode : MonoBehaviour
         bounds.Encapsulate(new Bounds(footprint.center, footprint.size));
         bounds.Expand(tapTolerance * 2f);
         return bounds.Contains(new Vector3(world.x, world.y, bounds.center.z));
+    }
+
+    /// <summary>Only the poles and the string count, not all the open space between them.</summary>
+    private bool HitsChainArt(PlacedObject placed, Vector2 world)
+    {
+        foreach (SpriteRenderer renderer in placed.GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (renderer.sortingLayerName == "FloorDecals") continue; // the build markers and shadows
+            if (!renderer.sprite) continue;
+            Bounds bounds = PaintedBounds(renderer);
+            bounds.Expand(tapTolerance * 2f);
+            if (bounds.Contains(new Vector3(world.x, world.y, bounds.center.z))) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Around the painted part of a sprite, leaving out the blank space in its image.</summary>
+    private static Bounds PaintedBounds(SpriteRenderer renderer)
+    {
+        Vector2[] vertices = renderer.sprite.vertices;
+        var bounds = new Bounds(renderer.transform.TransformPoint(vertices[0]), Vector3.zero);
+        foreach (Vector2 vertex in vertices) bounds.Encapsulate(renderer.transform.TransformPoint(vertex));
+        return bounds;
     }
 
     // ----- Position and validity -----

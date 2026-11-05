@@ -102,6 +102,8 @@ In play: it snaps to the grid, goes red if any of it is off the polygon or on an
 
 ### Fairy lights (`"placement": "Floor"` with `"chainSpan"`)
 
+In build mode, a tap on anything else under the lights picks that up first. Only the poles and the string pick up the lights, so the space between them is free.
+
 A set is one placeable: the lights with a pole at each end.
 
 1. **On the prefab:** root at the middle, on the ground line. `Visual` holds the lights (and no poles). Add two children called exactly **`PoleLeft`** and **`PoleRight`**, holding each pole's art, with each pole's base at the prefab's `chainSpan / 2` either side of the root.
