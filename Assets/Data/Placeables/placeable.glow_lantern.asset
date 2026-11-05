@@ -28,6 +28,6 @@ MonoBehaviour:
   cosiness: 3
   style: glow
   groundShadow: 1
-  shadowSize: {x: 0, y: 0}
-  shadowOffset: {x: 0, y: 0}
+  shadowSize: {x: 1.5, y: 0.5}
+  shadowOffset: {x: 0, y: -0.02}
   shadowStrength: 0.45
