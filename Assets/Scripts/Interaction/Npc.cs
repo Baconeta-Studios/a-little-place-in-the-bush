@@ -40,6 +40,7 @@ public class Npc : Interactable
     private BoxCollider2D _footprint;
     private Transform _sorter;
     private Vector3 _visualOffset;
+    private FacingShadow _shadow;
 
     public bool TakesSeats => takesSeats;
     /// <summary>Their own spot, where they were placed in the scene.</summary>
@@ -58,6 +59,7 @@ public class Npc : Interactable
         _colliders = GetComponentsInChildren<Collider2D>(true);
         CreateFootprint(); // after collecting the click areas: the footprint is switched on and off separately
         _visual = transform.Find("Visual");
+        _shadow = new FacingShadow(transform, _visual);
         SetUpSorting();
         _stand = GetComponentInChildren<StandPoint>(true);
         HomePosition = transform.position;
@@ -138,6 +140,7 @@ public class Npc : Interactable
             float size = Mathf.Abs(scale.x);
             scale.x = faceRight == artFacesRight ? size : -size;
             _visual.localScale = scale;
+            _shadow?.Match(_visual);
         }
     }
 

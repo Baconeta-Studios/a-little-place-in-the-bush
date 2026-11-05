@@ -24,31 +24,36 @@ MonoBehaviour:
   - name: MusicMainMenu
     sound: 100
     plays: The main menu.
-    clips: []
+    clips: 
+    - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicCafeDay
     sound: 101
     plays: At the cafe, morning and afternoon.
-    clips: []
+    clips: 
+    - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicCafeEvening
     sound: 102
     plays: At the cafe once the day's foraging is done.
-    clips: []
+    clips: 
+    - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicCafeNight
     sound: 103
     plays: At the cafe at night.
-    clips: []
+    clips: 
+    - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicForaging
     sound: 104
     plays: While the forage screen is open.
-    clips: []
+    clips: 
+    - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: AmbientBushDay

@@ -11,6 +11,9 @@ namespace Audio
         private Coroutine _resetCoroutine;
         private Coroutine _fadeCoroutine;
 
+        /// <summary>The looping clip it's playing, if any.</summary>
+        public AudioClip LoopingClip => _self ? _self.clip : null;
+
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);

@@ -80,5 +80,16 @@ namespace Bush.Core.Tests
             errors.AddRange(DesignValidator.Validate(design));
             Assert.IsEmpty(errors, string.Join("\n", errors));
         }
+
+        /// <summary>The shiny button is only for Weka's trade, so it only turns up during that quest.</summary>
+        [Test]
+        public void ShinyButton_OnlyDropsDuringWekasTrade()
+        {
+            string path = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "..", "Design", "design-data.json"));
+            DesignData design = UnityEngine.JsonUtility.FromJson<DesignFile>(File.ReadAllText(path)).ToDesign(new List<string>());
+            foreach (ForageTableData table in design.forageTables)
+                foreach (ForageEntry entry in table.entries)
+                    if (entry.itemId == "item.shiny_button") Assert.AreEqual("quest.side_weka_trade", entry.requiresQuest);
+        }
     }
 }

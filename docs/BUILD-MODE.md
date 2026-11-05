@@ -146,4 +146,4 @@ In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`)
 - **Base:** what blocks walking. *Fit Base To Art* measures the bottom of the picture, and you can type over it. It's saved to the asset and to `Design/design-data.json`, so an import keeps it. If the gecko clips round everything, raise *Clearance* on `WalkableGrid` too.
 - **Shadow:** every floor placeable gets one by itself, sized from its base. Change the size, position and strength here, or untick it.
 - **Your own shadow art:** add a child called `Shadow` to the prefab, and that's used instead.
-- **Anything else:** add a **GroundShadow** component to the gecko, a character or a scene prop.
+- **Anything else:** add a **GroundShadow** component to the gecko, a character or a scene prop. On a character, a child called `Shadow` or `GroundShadow` beside `Visual` turns round with them by itself, and highlighting leaves it alone.

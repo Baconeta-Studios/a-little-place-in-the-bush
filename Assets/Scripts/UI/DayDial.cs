@@ -6,17 +6,20 @@ using UnityEngine.UI;
 /// <summary>
 /// The HUD's day dial: a ring split into the parts of the day (one per forage trip, then evening,
 /// then night once it's unlocked), the day number in the middle, and a hand that turns to the
-/// current part. Parts already passed are dimmed. Tap it for what's on today (<see cref="DayInfoCard"/>). Part of the HUD prefab
+/// current part. Tap it for what's on today (<see cref="DayInfoCard"/>). Part of the HUD prefab
 /// (<see cref="HudView"/>): the parts are made at run time from <c>Segment Sprite</c>, one per part of the day.
 /// </summary>
 public class DayDial : MonoBehaviour
 {
-    private static readonly Color[] DayColors =
+    [Tooltip("Morning, midday, afternoon and late afternoon. Spread over however many forage trips there are: with two, morning and afternoon. With four, all of them.")]
+    [SerializeField] private Color[] _dayColors =
     {
-        new(0.98f, 0.78f, 0.46f), new(0.94f, 0.62f, 0.15f), new(0.85f, 0.45f, 0.19f), new(0.72f, 0.36f, 0.2f)
+        new Color32(0xE8, 0xD2, 0x8A, 0xFF), new Color32(0xE3, 0xBF, 0x4A, 0xFF), new Color32(0xC9, 0x8F, 0x3A, 0xFF), new Color32(0xA9, 0x69, 0x2F, 0xFF)
     };
-    private static readonly Color EveningColor = new(0.6f, 0.4f, 0.55f);
-    private static readonly Color NightColor = new(0.24f, 0.2f, 0.54f);
+    [SerializeField] private Color _eveningColor = new Color32(0xA3, 0x3D, 0x1C, 0xFF);
+    [SerializeField] private Color _nightColor = new Color32(0x2C, 0x3B, 0x38, 0xFF);
+    [Tooltip("How see-through parts of the day that have passed are. 1 keeps them their full colour, and the hand shows where you are.")]
+    [SerializeField, Range(0f, 1f)] private float _passedPartAlpha = 1f;
 
     [SerializeField] private RectTransform _ring;
     [SerializeField] private Button _ringButton;
@@ -89,7 +92,7 @@ public class DayDial : MonoBehaviour
         for (int i = 0; i < _segments.Length; i++)
         {
             Color c = _segments[i].color;
-            c.a = i < _current ? 0.35f : 1f;
+            c.a = i < _current ? _passedPartAlpha : 1f;
             _segments[i].color = c;
         }
 
@@ -104,7 +107,12 @@ public class DayDial : MonoBehaviour
         if (rules.TripsPerDay(state) <= 0) return "";
         if (rules.IsEvening(state)) return "Evening";
         int part = rules.PartsPassed(state);
-        return trips == 3 ? new[] { "Morning", "Midday", "Afternoon" }[part] : part == 0 ? "Morning" : "Afternoon";
+        return trips switch
+        {
+            3 => new[] { "Morning", "Midday", "Afternoon" }[part],
+            4 => new[] { "Morning", "Midday", "Afternoon", "Late afternoon" }[part],
+            _ => part == 0 ? "Morning" : "Afternoon"
+        };
     }
 
     private void Rebuild(int trips, bool night)
@@ -124,7 +132,7 @@ public class DayDial : MonoBehaviour
             image.fillClockwise = true;
             image.fillAmount = 1f / count - 0.004f; // a hairline gap between parts
             image.raycastTarget = false;
-            image.color = i < trips ? DayColors[Mathf.Min(i * DayColors.Length / trips, DayColors.Length - 1)] : i == trips ? EveningColor : NightColor;
+            image.color = i < trips ? _dayColors[Mathf.Min(i * _dayColors.Length / trips, _dayColors.Length - 1)] : i == trips ? _eveningColor : _nightColor;
             rect.localRotation = Quaternion.Euler(0f, 0f, -i * 360f / count);
             _segments[i] = image;
         }
