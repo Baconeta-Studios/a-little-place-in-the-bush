@@ -8,13 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Title.unity
     guid: 17a3c5673b964674888a93b74d1f3ce6
+  - enabled: 1
+    path: Assets/Scenes/Cafe.unity
+    guid: 378c49222b356484ba4d520f8e64d8c0
   - enabled: 0
     path: Assets/Scenes/Templates/MenuTemplate.unity
     guid: d2fa76ed6cd169f498cb25d32cee7753
   - enabled: 0
     path: Assets/Scenes/Templates/VolumeTemplate.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Scenes/Cafe.unity
-    guid: 378c49222b356484ba4d520f8e64d8c0
   m_configObjects: {}
