@@ -32,7 +32,7 @@ How it fits together is in [ARCHITECTURE.md](ARCHITECTURE.md) (sections 4 and 5)
 ### Where things can't go
 
 The ghost goes red, with a reason, if it would:
-- go off the open ground (the walkable floor is the build area, so reshaping `WalkableArea` changes where you can build);
+- go off the open ground (the walkable floor is the build area, so reshaping `WalkableArea` changes where you can build). **Decorations**, the things you only look at (no seats, and not a table), can also go on the grass around it, in the `DecorZone` beside `WalkableArea`: select it and drag its polygon's points to fit the art. **Tools > Bush > Add Decor Zone To This Scene** makes one for another scene;
 - overlap something else;
 - cover a stand point (the cafe door, the forage path, a guest who's here today) or the spawn point (guests who aren't in today don't take up any room);
 - **cut off a path**: the gecko must still be able to walk from the spawn point to every stand point it can reach now.
@@ -142,7 +142,6 @@ In play: drag a set near another's free end (*Chain Snap Radius* on `BuildMode`)
 
 - More ways to earn placeables (more quest rewards, rare finds) and special high-cosiness pieces.
 - Rug placement.
-- Real art and a designed UI (the build tray and bag are still built in code, in `UI/BuildUi.cs` and `UI/InventoryPopup.cs`; the HUD is a prefab, see [UI.md](UI.md)).
 - Using, selling and sorting from the bag (set aside for later).
 
 ## Shadows and bases
