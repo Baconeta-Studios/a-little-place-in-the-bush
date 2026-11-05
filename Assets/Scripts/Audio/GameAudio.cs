@@ -96,10 +96,17 @@ public static class GameAudio
     {
         if (now == sound) return;
         now = sound;
+        SoundLibrary.Row row = Library ? Library.Get(sound) : null;
+
+        // The same track on both rows: it carries on rather than starting again.
+        if (source && row != null && System.Array.IndexOf(row.clips, source.LoopingClip) >= 0)
+        {
+            source.FadeTo(row.volume, Library.musicFadeSeconds);
+            return;
+        }
+
         FadeOut(source);
         source = null;
-
-        SoundLibrary.Row row = Library ? Library.Get(sound) : null;
         AudioClip clip = row != null ? Pick(row.clips, null) : null;
         if (!clip || !EnsureManager()) return;
         source = AudioManager.Instance.Setup(group);

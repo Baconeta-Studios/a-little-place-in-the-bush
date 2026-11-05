@@ -57,7 +57,7 @@ One line of gibberish plays each time a creature says something, and the next li
 
 ## How it works
 
-- `GameAudio.Play(GameSound.Coins)` is how the code asks for a sound. `PlayMusic` and `PlayAmbient` fade across. `Say(npc)` is a creature's voice.
+- `GameAudio.Play(GameSound.Coins)` is how the code asks for a sound. `PlayMusic` and `PlayAmbient` fade across. If the next row has the same track, it carries on rather than starting again. `Say(npc)` is a creature's voice.
 - `AudioDirector` makes itself at startup. It picks the music and background sound for the moment, plays a sound for every button by itself (including ones you add later), does footsteps, and plays the sounds for game events.
 - `SoundLibrary` holds the clips. `GameSound` in `Core/Services/SoundChoice.cs` lists every sound. To add one, add it there with a new number, say where it plays in `SoundLibrary.WhereItPlays`, and call `GameAudio.Play` where it happens.
 - They play through the existing `AudioManager`, `CustomAudioSource` and mixer. `AudioManager` is made from its prefab if the scene has none. `AudioWrapper` is left as it was, with its own empty list: nothing uses it.
