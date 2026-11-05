@@ -18,7 +18,7 @@ Whoever gives the current story quest is always at the cafe, so Kōwhai is aroun
 
 ## The date
 
-Talking to Kōwhai for *A little place in the bush* plays the date instead of the usual conversation: a fade to "Later that night", the two of you either side of the fancy table with everyone else and the HUD out of the way and the lights on, her lines with your replies, a quiet moment, and a fade to "The end, for now." The quest is handed in behind that last fade, so you get the gold fairy lights and coins then. Pressing Escape skips to the end.
+Talking to Kōwhai for *A little place in the bush* plays the date instead of the usual conversation: a fade to "Later that night", the two of you either side of the fancy table with everyone else and the HUD out of the way and the lights on, her lines with your replies, a quiet moment, and a fade to "The end, for now." with the next day under it. Behind that last fade the quest is handed in (the gold fairy lights and coins), the cafe closes for the day (today's sales still count, without the summary) and you wake up the next morning. Pressing Escape skips to the end.
 
 The words are in `Assets/Resources/Scenes/DateScene.asset`. Select it to edit them in the Inspector: each **beat** is one thing she says and your replies, and a reply's **answer** is what she says back. A beat with no replies gets a single "..." button. Tick **Gives Rewards** on the beat that should show what you get. It also has the two cards, how long the quiet moment lasts and how close the camera comes in. Without the fancy table out, you sit either side of wherever she's standing.
 

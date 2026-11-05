@@ -44,7 +44,8 @@ public class PlacementContext
 }
 
 /// <summary>
-/// Build mode's rules for where a placeable can go. Floor: on the open ground, not overlapping anything,
+/// Build mode's rules for where a placeable can go. Floor: on the open ground (or a <see cref="DecorZone"/>, for
+/// decorations), not overlapping anything,
 /// not covering a stand point or spawn point, and not cutting off the gecko's path to any of them (for
 /// fairy lights, that's each pole, and a pole shared at a join is already there). Surface: on a free
 /// <see cref="SurfacePoint"/>. Floor things that also go on tables can be on either. Wall: wholly on a <see cref="PlacementZone"/>, clear of other Wall things.
@@ -81,7 +82,7 @@ public static class PlacementValidator
 
         foreach (Rect footprint in footprints)
         {
-            PlacementCheck check = CheckFootprint(area, grid, footprint, ignore, context);
+            PlacementCheck check = CheckFootprint(area, grid, footprint, ignore, context, definition.IsDecoration);
             if (!check.ok) return check;
         }
 
@@ -129,9 +130,10 @@ public static class PlacementValidator
         return PlacementCheck.Valid;
     }
 
-    private static PlacementCheck CheckFootprint(BuildArea area, WalkableGrid grid, Rect footprint, PlacedObject ignore, PlacementContext context)
+    private static PlacementCheck CheckFootprint(BuildArea area, WalkableGrid grid, Rect footprint, PlacedObject ignore, PlacementContext context,
+        bool decoration)
     {
-        // 1. On the open ground: every corner and the middle of the base inside the floor.
+        // 1. On the open ground: every corner and the middle of the base inside the floor (or a decor zone, for decorations).
         Collider2D floor = grid.WalkableArea;
         const float inset = 0.02f;
         Vector2[] corners =
@@ -141,7 +143,11 @@ public static class PlacementValidator
             footprint.center
         };
         foreach (Vector2 corner in corners)
-            if (!floor || !floor.OverlapPoint(corner)) return PlacementCheck.Invalid("It needs to go on the open ground.");
+        {
+            if (floor && floor.OverlapPoint(corner)) continue;
+            if (decoration && DecorZone.Contains(corner)) continue;
+            return PlacementCheck.Invalid(decoration ? "It needs to go on the ground." : "It needs to go on the open ground.");
+        }
 
         // 2. Not overlapping another footprint.
         var filter = new ContactFilter2D { useTriggers = false };

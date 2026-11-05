@@ -539,6 +539,7 @@ public class BuildMode : MonoBehaviour
         // Keep it near where it can go so it can't be dragged off into the sky.
         Bounds limits = placement == PlacementType.Wall ? WallBounds()
             : _area.Grid.WalkableArea ? _area.Grid.WalkableArea.bounds : new Bounds(Vector3.zero, Vector3.one * 100f);
+        if (_candidate?.definition && _candidate.definition.IsDecoration) DecorZone.Encapsulate(ref limits); // decorations can go past the floor
         snapped.x = Mathf.Clamp(snapped.x, limits.min.x, limits.max.x);
         snapped.y = Mathf.Clamp(snapped.y, limits.min.y, limits.max.y);
 

@@ -7,47 +7,74 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Build mode's screen: a top bar with Done, the tray of placeables along the bottom (with category
-/// tabs), buttons that follow the held item (Place, Flip, Put away or Cancel), and a red label saying
-/// why it can't go somewhere. Built in code; driven by <see cref="BuildMode"/>.
+/// Build mode's screen: a strip along the top saying what to do, with Done, the tray of placeables along the
+/// bottom (with category tabs), buttons that follow the held item (Place, Flip, Put away or Cancel), and a red
+/// label saying why it can't go somewhere. Driven by <see cref="BuildMode"/>.
+///
+/// How it looks is in Resources/UI/BuildMode.prefab (see docs/UI.md), made from <see cref="BuildDefault"/>,
+/// which is also used if there's no prefab. Move and restyle anything: the camera keeps the floor clear of
+/// whatever <see cref="_topBar"/> and <see cref="_tray"/> cover, wherever they are.
 /// </summary>
 public class BuildUi : MonoBehaviour
 {
+    public const string ResourcePath = "UI/BuildMode";
     private const string AllTab = "All";
-    private const float TrayHeight = 330f;
+
+    [Header("Along the top")]
+    [SerializeField] private RectTransform _topBar;
+    [SerializeField] private TextMeshProUGUI _hint;
+    [SerializeField] private Button _doneButton;
+
+    [Header("The tray")]
+    [SerializeField] private RectTransform _tray;
+    [SerializeField] private ItemGridView _grid;
+    [Tooltip("Copied for each category with something in it.")]
+    [SerializeField] private RectTransform _tabRow;
+    [SerializeField] private Button _tabTemplate;
+    [SerializeField] private Color _tabColor = GameUi.Cream;
+    [SerializeField] private Color _tabTextColor = GameUi.Ink;
+    [SerializeField] private Color _chosenTabColor = new(0.18f, 0.32f, 0.19f);
+    [SerializeField] private Color _chosenTabTextColor = GameUi.Cream;
+
+    [Header("With something held")]
+    [Tooltip("Follows the held thing, above it (or below it at the back).")]
+    [SerializeField] private RectTransform _actions;
+    [SerializeField] private Button _placeButton;
+    [SerializeField] private Button _flipButton;
+    [SerializeField] private Button _removeButton;
+    [Tooltip("Why it can't go there. Sits just above the buttons.")]
+    [SerializeField] private RectTransform _reason;
+    [SerializeField] private TextMeshProUGUI _reasonText;
+
+    [Header("Short messages")]
+    [SerializeField] private RectTransform _toast;
+    [SerializeField] private TextMeshProUGUI _toastText;
 
     private BuildMode _mode;
-    private RectTransform _root;
-    private ItemGridView _tray;
-    private RectTransform _tabs;
-    private TextMeshProUGUI _hint;
-    private RectTransform _actions;
-    private Button _placeButton;
-    private Button _flipButton;
-    private Button _removeButton;
-    private RectTransform _reason;
-    private TextMeshProUGUI _reasonText;
-    private RectTransform _toast;
-    private TextMeshProUGUI _toastText;
     private Coroutine _toastRoutine;
     private string _tab = AllTab;
 
+    private RectTransform Root => (RectTransform)transform;
+
     public static BuildUi Create(BuildMode mode)
     {
-        GameUi ui = GameUi.Current;
-        RectTransform root = GameUi.NewRect("BuildMode", ui.SafeRoot);
-        GameUi.Stretch(root);
-        var buildUi = root.gameObject.AddComponent<BuildUi>();
-        buildUi._mode = mode;
-        buildUi._root = root;
-        buildUi.Build();
-        root.gameObject.SetActive(false);
-        return buildUi;
+        BuildUi ui = GameUi.LoadPopup(ResourcePath, BuildDefault);
+        ui._mode = mode;
+        ui._doneButton.onClick.AddListener(mode.Exit);
+        ui._placeButton.onClick.AddListener(mode.Confirm);
+        ui._flipButton.onClick.AddListener(mode.Flip);
+        ui._removeButton.onClick.AddListener(() =>
+        {
+            if (mode.CandidateIsNew) mode.Cancel();
+            else mode.PutAway();
+        });
+        ui._toast.gameObject.SetActive(false);
+        return ui;
     }
 
     public void Show()
     {
-        _root.gameObject.SetActive(true);
+        gameObject.SetActive(true);
         if (GameSession.Current != null)
         {
             GameSession.Current.Events.InventoryChanged -= Refresh;
@@ -62,40 +89,27 @@ public class BuildUi : MonoBehaviour
         if (_toastRoutine != null) StopCoroutine(_toastRoutine);
         _toastRoutine = null;
         _toast.gameObject.SetActive(false);
-        _root.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
-    /// <summary>How much of the screen's height the top bar covers, from the top: 0-1.</summary>
-    public float TopCoverFraction
-    {
-        get
-        {
-            Canvas.ForceUpdateCanvases();
-            var canvas = (RectTransform)GameUi.Current.Canvas.transform;
-            float canvasHeight = canvas.rect.height;
-            if (canvasHeight <= 0f) return 0.1f;
-            float safeTop = _root.TransformPoint(new Vector3(0f, _root.rect.yMax, 0f)).y;
-            float canvasTop = canvas.TransformPoint(new Vector3(0f, canvas.rect.yMax, 0f)).y;
-            float safeOffset = (canvasTop - safeTop) / canvas.lossyScale.y;
-            return Mathf.Clamp01((safeOffset + 16f + 110f + 10f) / canvasHeight);
-        }
-    }
+    /// <summary>How much of the screen's height the top strip (plus a margin) covers, from the top: 0-1.</summary>
+    public float TopCoverFraction => CoverFraction(_topBar, true, 10f, 0.1f);
 
     /// <summary>How much of the screen's height the tray (plus a margin) covers, from the bottom: 0-1.</summary>
-    public float BottomCoverFraction
+    public float BottomCoverFraction => CoverFraction(_tray, false, 30f, 0.3f);
+
+    /// <summary>From the screen's edge to the far edge of <paramref name="part"/>, as a share of the screen's height.</summary>
+    private static float CoverFraction(RectTransform part, bool fromTop, float margin, float fallback)
     {
-        get
-        {
-            Canvas.ForceUpdateCanvases();
-            var canvas = (RectTransform)GameUi.Current.Canvas.transform;
-            float canvasHeight = canvas.rect.height;
-            if (canvasHeight <= 0f) return 0.3f;
-            // The safe area can start above the screen's bottom edge (phones), so measure from the canvas.
-            float safeBottom = _root.TransformPoint(new Vector3(0f, _root.rect.yMin, 0f)).y;
-            float canvasBottom = canvas.TransformPoint(new Vector3(0f, canvas.rect.yMin, 0f)).y;
-            float safeOffset = (safeBottom - canvasBottom) / canvas.lossyScale.y;
-            return Mathf.Clamp01((safeOffset + 16f + TrayHeight + 30f) / canvasHeight);
-        }
+        Canvas.ForceUpdateCanvases();
+        var canvas = (RectTransform)GameUi.Current.Canvas.transform;
+        float canvasHeight = canvas.rect.height;
+        if (!part || canvasHeight <= 0f) return fallback;
+        // The safe area can be inset from the screen's edges (phones), so measure from the canvas.
+        float edge = canvas.TransformPoint(new Vector3(0f, fromTop ? canvas.rect.yMax : canvas.rect.yMin, 0f)).y;
+        float farSide = part.TransformPoint(new Vector3(0f, fromTop ? part.rect.yMin : part.rect.yMax, 0f)).y;
+        float covered = Mathf.Abs(edge - farSide) / canvas.lossyScale.y;
+        return Mathf.Clamp01((covered + margin) / canvasHeight);
     }
 
     private void OnDestroy()
@@ -105,7 +119,7 @@ public class BuildUi : MonoBehaviour
 
     public void Refresh()
     {
-        if (!_root || !_root.gameObject.activeSelf) return;
+        if (!_mode || !gameObject.activeSelf) return;
         RefreshTabs();
         RefreshTray();
         RefreshCandidate();
@@ -113,12 +127,13 @@ public class BuildUi : MonoBehaviour
 
     public void RefreshCandidate()
     {
+        if (!_mode) return;
         bool holding = _mode.HasCandidate;
         _actions.gameObject.SetActive(holding);
         if (!holding)
         {
             _reason.gameObject.SetActive(false);
-            _hint.text = "Build mode. Tap an item below to place it, or tap something already out to move it. Pinch or scroll to zoom; drag empty ground to look around.";
+            _hint.text = "Tap something below to place it, or tap something already out to move it. Pinch or scroll to zoom, and drag empty ground to look around.";
             return;
         }
 
@@ -134,7 +149,7 @@ public class BuildUi : MonoBehaviour
 
     public void Toast(string message)
     {
-        if (string.IsNullOrEmpty(message)) return;
+        if (string.IsNullOrEmpty(message) || !gameObject.activeInHierarchy) return;
         if (_toastRoutine != null) StopCoroutine(_toastRoutine);
         _toastRoutine = StartCoroutine(ShowToast(message));
     }
@@ -150,24 +165,40 @@ public class BuildUi : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!_mode.HasCandidate) return;
+        if (!_mode || !_mode.HasCandidate) return;
         Camera camera = Camera.main;
         if (!camera) return;
 
         // Buttons go above the held item, so they're never under a dragging finger (which is below it).
         // If there's no room above (it's at the back), they go just below its base instead.
-        Rect bounds = _root.rect;
-        Vector2 half = _actions.sizeDelta * 0.5f;
-        float trayTop = bounds.yMin + 16f + TrayHeight;
-        float topLimit = bounds.yMax - 140f; // under the top bar
-        Vector2 above = GameUi.Current.WorldToCanvas(_mode.CandidateTop, camera, _root) + new Vector2(0f, half.y + 70f);
+        RectTransform root = Root;
+        Rect bounds = root.rect;
+        Vector2 half = _actions.rect.size * 0.5f;
+        float trayTop = LocalEdge(_tray, true);
+        float topLimit = LocalEdge(_topBar, false) - 14f; // under the top strip
+        Vector2 above = GameUi.Current.WorldToCanvas(_mode.CandidateTop, camera, root) + new Vector2(0f, half.y + 70f);
         Vector2 local = above;
         if (above.y + half.y > topLimit)
-            local = GameUi.Current.WorldToCanvas(_mode.CandidateAnchor, camera, _root) - new Vector2(0f, half.y + 20f);
+            local = GameUi.Current.WorldToCanvas(_mode.CandidateAnchor, camera, root) - new Vector2(0f, half.y + 20f);
         local.x = Mathf.Clamp(local.x, bounds.xMin + half.x + 16f, bounds.xMax - half.x - 16f);
         local.y = Mathf.Clamp(local.y, trayTop + half.y + 10f, topLimit - half.y - 70f);
-        _actions.anchoredPosition = local;
-        _reason.anchoredPosition = local + new Vector2(0f, half.y + 45f);
+        SetCentre(_actions, local);
+        SetCentre(_reason, local + new Vector2(0f, half.y + _reason.rect.height * 0.5f + 10f));
+    }
+
+    /// <summary>The top (or bottom) edge of <paramref name="part"/>, in this screen's own space.</summary>
+    private float LocalEdge(RectTransform part, bool top)
+    {
+        Vector3 world = part.TransformPoint(new Vector3(0f, top ? part.rect.yMax : part.rect.yMin, 0f));
+        return Root.InverseTransformPoint(world).y;
+    }
+
+    /// <summary>Puts something's middle at a point in this screen's own space, however it's anchored.</summary>
+    private void SetCentre(RectTransform part, Vector2 local)
+    {
+        Vector3 world = Root.TransformPoint(local);
+        Vector3 middle = part.TransformPoint(part.rect.center);
+        part.position += world - middle;
     }
 
     // ----- Contents -----
@@ -183,13 +214,23 @@ public class BuildUi : MonoBehaviour
                 categories.Add(placeable.category);
         if (!categories.Contains(_tab)) _tab = AllTab;
 
-        for (int i = _tabs.childCount - 1; i >= 0; i--) Destroy(_tabs.GetChild(i).gameObject);
+        GameUi.ClearExcept(_tabRow, _tabTemplate.transform);
         foreach (string category in categories)
         {
-            bool selected = category == _tab;
+            bool chosen = category == _tab;
             string tab = category;
-            GameUi.AddButton(_tabs, category, () => { _tab = tab; Refresh(); }, new Vector2(200f, 64f),
-                selected ? GameUi.Moss : GameUi.Cream, selected ? GameUi.Cream : GameUi.Ink, 28f);
+            Button button = Instantiate(_tabTemplate, _tabRow);
+            button.gameObject.SetActive(true);
+            button.name = category;
+            button.targetGraphic.color = chosen ? _chosenTabColor : _tabColor;
+            var text = button.GetComponentInChildren<TextMeshProUGUI>();
+            text.text = category;
+            text.color = chosen ? _chosenTabTextColor : _tabTextColor;
+            button.onClick.AddListener(() =>
+            {
+                _tab = tab;
+                Refresh();
+            });
         }
     }
 
@@ -219,7 +260,7 @@ public class BuildUi : MonoBehaviour
         }
         if (cards.Count == 0)
             cards.Add(new ItemCard { key = "none", title = "Nothing to place yet", badge = "", dimmed = true, iconTint = GameUi.InkSoft });
-        _tray.SetItems(cards);
+        _grid.SetItems(cards);
     }
 
     /// <summary>
@@ -230,73 +271,69 @@ public class BuildUi : MonoBehaviour
     private static bool IsShown(GameSession session, PlaceableDefinition placeable) =>
         session.Build.UnlimitedItems || session.Build.CountAvailable(placeable.id) > 0;
 
-    // ----- Layout -----
+    // ----- The default layout -----
 
-    private void Build()
+    /// <summary>The shared pieces: torn paper for the strip and the tray, tan cards, Apron for the main action, dark for leaving.</summary>
+    public static BuildUi BuildDefault(Transform parent)
     {
-        // Top bar: what to do, and Done.
-        RectTransform top = GameUi.NewRect("TopBar", _root);
-        top.anchorMin = new Vector2(0f, 1f);
-        top.anchorMax = new Vector2(1f, 1f);
-        top.pivot = new Vector2(0.5f, 1f);
-        top.offsetMin = new Vector2(16f, -126f);
-        top.offsetMax = new Vector2(-16f, -16f);
-        GameUi.AddPanel(top, GameUi.PanelDark);
-        _hint = GameUi.AddText(top, "", 30f, GameUi.Cream, TextAlignmentOptions.MidlineLeft, "Hint");
-        _hint.rectTransform.offsetMin = new Vector2(32f, 0f);
-        _hint.rectTransform.offsetMax = new Vector2(-240f, 0f);
-        Button done = GameUi.AddButton(top, "Done", () => _mode.Exit(), new Vector2(200f, 84f), GameUi.Moss, GameUi.Cream, 34f);
-        GameUi.Place((RectTransform)done.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-14f, 0f), new Vector2(200f, 84f));
+        RectTransform root = GameUi.NewRect("BuildMode", parent);
+        GameUi.Stretch(root);
+        root.gameObject.SetActive(false);
+        var ui = root.gameObject.AddComponent<BuildUi>();
+
+        // Along the top: what to do, and Done.
+        ui._topBar = GameUi.NewRect("PaperTop", root);
+        GameUi.Anchor(ui._topBar, new Vector2(0f, 1f), Vector2.one, new Vector2(8f, -168f), new Vector2(-8f, 6f));
+        GameUi.AddPanel(ui._topBar, GameUi.Panel2);
+        ui._hint = GameUi.AddText(ui._topBar, "", 28f, GameUi.Ink, TextAlignmentOptions.MidlineLeft, "Hint");
+        GameUi.Anchor(ui._hint.rectTransform, Vector2.zero, Vector2.one, new Vector2(56f, 40f), new Vector2(-270f, -46f));
+        ui._doneButton = GameUi.AddButton(ui._topBar, "Done", null, new Vector2(190f, 84f), GameUi.PanelDark, GameUi.Cream, 30f);
+        ui._doneButton.name = "DoneButton";
+        GameUi.Place((RectTransform)ui._doneButton.transform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-50f, -4f), new Vector2(190f, 84f));
 
         // The tray along the bottom.
-        RectTransform tray = GameUi.NewRect("Tray", _root);
-        tray.anchorMin = new Vector2(0f, 0f);
-        tray.anchorMax = new Vector2(1f, 0f);
-        tray.pivot = new Vector2(0.5f, 0f);
-        tray.offsetMin = new Vector2(16f, 16f);
-        tray.offsetMax = new Vector2(-16f, 16f + TrayHeight);
-        GameUi.AddPanel(tray, GameUi.Panel);
+        ui._tray = GameUi.NewRect("PaperTray", root);
+        GameUi.Anchor(ui._tray, Vector2.zero, new Vector2(1f, 0f), new Vector2(8f, -6f), new Vector2(-8f, 380f));
+        GameUi.AddPanel(ui._tray, GameUi.Panel2);
 
-        _tabs = GameUi.NewRect("Tabs", tray);
-        _tabs.anchorMin = new Vector2(0f, 1f);
-        _tabs.anchorMax = new Vector2(1f, 1f);
-        _tabs.pivot = new Vector2(0.5f, 1f);
-        _tabs.offsetMin = new Vector2(16f, -78f);
-        _tabs.offsetMax = new Vector2(-16f, -10f);
-        HorizontalLayoutGroup tabRow = GameUi.AddLayout<HorizontalLayoutGroup>(_tabs, 12f);
-        tabRow.childAlignment = TextAnchor.MiddleLeft;
+        ui._tabRow = GameUi.NewRect("Tabs", ui._tray);
+        GameUi.Anchor(ui._tabRow, new Vector2(0f, 1f), Vector2.one, new Vector2(56f, -116f), new Vector2(-56f, -48f));
+        GameUi.AddLayout<HorizontalLayoutGroup>(ui._tabRow, 8f).childAlignment = TextAnchor.MiddleLeft;
+        ui._tabTemplate = GameUi.AddButton(ui._tabRow, "Tab", null, new Vector2(190f, 64f), GameUi.Cream, GameUi.Ink, 24f);
+        ui._tabTemplate.name = "TabTemplate";
+        ui._tabTemplate.gameObject.SetActive(false);
 
-        RectTransform list = GameUi.NewRect("List", tray);
-        list.anchorMin = Vector2.zero;
-        list.anchorMax = Vector2.one;
-        list.offsetMin = new Vector2(8f, 8f);
-        list.offsetMax = new Vector2(-8f, -84f);
-        _tray = ItemGridView.Create(list, true, new Vector2(190f, 210f));
+        RectTransform list = GameUi.NewRect("List", ui._tray);
+        GameUi.Anchor(list, Vector2.zero, Vector2.one, new Vector2(40f, 40f), new Vector2(-40f, -122f));
+        ui._grid = ItemGridView.Create(list, true, new Vector2(170f, 196f), true);
 
         // Buttons that follow the held item.
-        _actions = GameUi.NewRect("Actions", _root);
-        GameUi.Place(_actions, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(620f, 110f));
-        HorizontalLayoutGroup row = GameUi.AddLayout<HorizontalLayoutGroup>(_actions, 14f);
-        row.childAlignment = TextAnchor.MiddleCenter;
-        _placeButton = GameUi.AddButton(_actions, "Place", () => _mode.Confirm(), new Vector2(190f, 100f), GameUi.Moss, GameUi.Cream);
-        _flipButton = GameUi.AddButton(_actions, "Flip", () => _mode.Flip(), new Vector2(160f, 100f), GameUi.Cream, GameUi.Ink);
-        _removeButton = GameUi.AddButton(_actions, "Cancel", () =>
-        {
-            if (_mode.CandidateIsNew) _mode.Cancel();
-            else _mode.PutAway();
-        }, new Vector2(220f, 100f), GameUi.Cream, GameUi.Berry);
+        ui._actions = GameUi.NewRect("Actions", root);
+        GameUi.Place(ui._actions, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(600f, 100f));
+        GameUi.AddLayout<HorizontalLayoutGroup>(ui._actions, 14f).childAlignment = TextAnchor.MiddleCenter;
+        ui._placeButton = GameUi.AddButton(ui._actions, "Place", null, new Vector2(190f, 96f), GameUi.Apron, GameUi.Cream);
+        ui._placeButton.name = "PlaceButton";
+        ui._flipButton = GameUi.AddButton(ui._actions, "Flip", null, new Vector2(150f, 96f), GameUi.Cream, GameUi.Ink);
+        ui._flipButton.name = "FlipButton";
+        ui._removeButton = GameUi.AddButton(ui._actions, "Put away", null, new Vector2(210f, 96f), GameUi.Cream, GameUi.Ink);
+        ui._removeButton.name = "RemoveButton";
+        ui._actions.gameObject.SetActive(false);
 
-        // Why it can't go here.
-        _reason = GameUi.NewRect("Reason", _root);
-        GameUi.Place(_reason, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(760f, 70f));
-        GameUi.AddPanel(_reason, GameUi.Berry).raycastTarget = false;
-        _reasonText = GameUi.AddText(_reason, "", 28f, GameUi.Cream);
+        // Why it can't go here: red, for a problem.
+        ui._reason = GameUi.NewRect("Reason", root);
+        GameUi.Place(ui._reason, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(760f, 70f));
+        GameUi.AddPanel(ui._reason, GameUi.Berry).raycastTarget = false;
+        ui._reasonText = GameUi.AddText(ui._reason, "", 28f, GameUi.Cream);
+        ui._reason.gameObject.SetActive(false);
 
-        // Short messages above the tray.
-        _toast = GameUi.NewRect("Toast", _root);
-        GameUi.Place(_toast, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f + TrayHeight), new Vector2(900f, 70f));
-        GameUi.AddPanel(_toast, GameUi.PanelDark).raycastTarget = false;
-        _toastText = GameUi.AddText(_toast, "", 28f, GameUi.Cream);
-        _toast.gameObject.SetActive(false);
+        // Short messages, just above the tray.
+        ui._toast = GameUi.NewRect("Toast", root);
+        GameUi.Place(ui._toast, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 400f), new Vector2(900f, 70f));
+        GameUi.AddPanel(ui._toast, GameUi.PanelDark).raycastTarget = false;
+        ui._toastText = GameUi.AddText(ui._toast, "", 28f, GameUi.Cream);
+        ui._toast.gameObject.SetActive(false);
+
+        foreach (Button button in ui.GetComponentsInChildren<Button>(true)) UiFonts.UseBold(button.GetComponentInChildren<TextMeshProUGUI>());
+        return ui;
     }
 }

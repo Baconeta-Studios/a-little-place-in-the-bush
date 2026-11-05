@@ -52,6 +52,13 @@ public class PlaceableDefinition : GameDefinition
     /// <summary>Whether it can sit on a table's spot, only or as well as the ground.</summary>
     public bool CanGoOnTable => placement == PlacementType.Surface || alsoOnTables;
 
+    /// <summary>
+    /// Something you just look at: on the floor, with no seats and nowhere to put things (not a table). These can
+    /// also go past the walkable floor, in a <see cref="DecorZone"/>.
+    /// </summary>
+    public bool IsDecoration => placement == PlacementType.Floor && seats == 0 &&
+                                (!prefab || !prefab.GetComponentInChildren<SurfacePoint>(true));
+
     public PlaceableData ToData() => new()
     {
         id = id, itemId = Definitions.Id(item), placement = placement, alsoOnTables = alsoOnTables, footprintWidth = footprintSize.x,
