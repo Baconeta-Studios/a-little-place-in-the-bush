@@ -210,7 +210,7 @@ public class ForagePopup : Popup
         if (session == null) return;
 
         // The focus a quest needs is chosen for you once. After that, your choice sticks.
-        ForageGoal goal = ForageGoals.Current(session.Design, session.Quests);
+        ForageGoal goal = ForageGoals.Current(session.Design, session.Quests, Now(session));
         bool hint = goal != null && !goal.IsMet && goal.focus != null;
         if (hint)
         {
@@ -617,9 +617,12 @@ public class ForagePopup : Popup
         session.SaveNow();
     }
 
+    /// <summary>Day or night, for what can be found on this trip.</summary>
+    private static TimeOfDay Now(GameSession session) => session.State.isNight ? TimeOfDay.Night : TimeOfDay.Day;
+
     private void RefreshQuestCard(GameSession session)
     {
-        ForageGoal goal = ForageGoals.Current(session.Design, session.Quests);
+        ForageGoal goal = ForageGoals.Current(session.Design, session.Quests, Now(session));
         _questCard.SetActive(goal != null);
         if (goal == null) return;
         _questLabel.text = $"{goal.quest.title}: {goal.have} of {goal.needed} {goal.item.name.ToLowerInvariant()}";

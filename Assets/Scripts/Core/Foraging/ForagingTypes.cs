@@ -24,6 +24,8 @@ namespace Bush.Core
         bool IsQuestActive(string questId);
         /// <summary>A unique item the player has now or has handed in: it shouldn't drop again.</summary>
         bool IsUniqueCollected(string itemId);
+        /// <summary>A recipe the player already knows: a one-off note teaching it has nothing left to give.</summary>
+        bool IsRecipeKnown(string recipeId);
     }
 
     /// <summary>A context from plain sets, for tests, tools and cheats.</summary>
@@ -35,6 +37,11 @@ namespace Bush.Core
 
         public bool IsQuestActive(string questId) => activeQuests.Contains(questId);
         public bool IsUniqueCollected(string itemId) => obtained.Contains(itemId);
+
+        /// <summary>Recipes already learned.</summary>
+        public readonly HashSet<string> knownRecipes = new();
+
+        public bool IsRecipeKnown(string recipeId) => knownRecipes.Contains(recipeId);
     }
 
     /// <summary>The context for a real game.</summary>
@@ -49,6 +56,7 @@ namespace Bush.Core
 
         public bool IsQuestActive(string questId) => _state.IsQuestActive(questId);
         public bool IsUniqueCollected(string itemId) => _state.IsUniqueCollected(itemId);
+        public bool IsRecipeKnown(string recipeId) => _state.unlockedRecipes.Contains(recipeId);
     }
 
     /// <summary>One roll of the expedition, kept for the results screen and debugging.</summary>

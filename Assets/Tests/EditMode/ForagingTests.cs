@@ -90,6 +90,21 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void RecipeNote_StopsTurningUpOnceYouKnowTheRecipe()
+        {
+            var context = new ForageContext();
+            ExpeditionSetup setup = TestDesign.Setup(TestDesign.Weka, TestDesign.BigBasket);
+            bool found = false;
+            for (uint seed = 0; seed < 500 && !found; seed++)
+                found = Has(ForagingService.Resolve(_design, setup, context, seed), TestDesign.Note);
+            Assert.IsTrue(found, "Findable while the recipe's still to learn.");
+
+            context.knownRecipes.Add(TestDesign.SecretPie); // learned another way, e.g. as a quest reward
+            for (uint seed = 0; seed < 500; seed++)
+                Assert.IsFalse(Has(ForagingService.Resolve(_design, setup, context, seed), TestDesign.Note), $"seed {seed}");
+        }
+
+        [Test]
         public void TagWeight_MakesTaggedItemsMoreLikely()
         {
             int alone = CountFinds(TestDesign.Setup(), TestDesign.Bark);

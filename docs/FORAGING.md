@@ -13,7 +13,7 @@ Design data (items, companions, perks, focuses, forage tables) lives in [`Design
 | Perks | Zero or more (the jam UI offers one slot). Each brings modifiers. |
 | Focus | Optional. Multiplies the chance of an item once if it has any of the focus's tags. |
 | Time of day | `Day` or `Night`. Filters entries that only appear at one time. |
-| Context | Which quests are active, and which unique items the player has collected (has now, or handed in for a quest). |
+| Context | Which quests are active, which unique items the player has collected (has now, or handed in for a quest), and which recipes they know. |
 | Seed | A 32-bit unsigned integer for the random generator. |
 
 ## Modifiers
@@ -50,6 +50,7 @@ return (t XOR (t >> 14)) / 4294967296
    - its `requiresQuest` is empty or that quest is active,
    - its `requiresCompanion` is empty or that companion is on the expedition,
    - its item isn't `unique`, or the player hasn't collected it (doesn't have it now and hasn't handed it in).
+   - its item isn't a `unique` note with `teachesRecipe`, or the player doesn't know that recipe yet (it may have come from a quest instead).
 3. **Effective weight:** `w = entry.weight`, then multiply by every matching `TagWeight` and `RarityWeight` modifier value, in modifier order, then by the focus multiplier if the item has any of the focus's tags. Entries with `w <= 0` can't be picked.
 4. **Number of rolls:** `table.rolls + sum(floor(ExtraRolls values))`, at least 1.
 5. **Each roll**, using exactly two random numbers:

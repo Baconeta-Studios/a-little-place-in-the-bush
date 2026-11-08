@@ -26,15 +26,16 @@ namespace Bush.Core
         /// The first forageable item still wanted by the main quest, then by side quests under way. Items that come
         /// from somewhere else (a scrap someone's holding on to) aren't goals here, because foraging won't find them.
         /// If nothing's still wanted, the first item of a quest that's ready to hand in, so the results can show it
-        /// finished. Null if there's nothing to show.
+        /// finished. Null if there's nothing to show. Given a time of day, only items found then count (no "needs
+        /// crickets" in the day, when crickets only come out at night).
         /// </summary>
-        public static ForageGoal Current(DesignData design, QuestService quests)
+        public static ForageGoal Current(DesignData design, QuestService quests, TimeOfDay? now = null)
         {
             ForageGoal met = null;
             QuestData main = quests.CurrentMainQuest();
-            if (main != null && IsUnderWay(quests, main.id) && TryFind(design, quests, main, ref met) is { } wanted) return wanted;
+            if (main != null && IsUnderWay(quests, main.id) && TryFind(design, quests, main, now, ref met) is { } wanted) return wanted;
             foreach (QuestData side in quests.ActiveSideQuests())
-                if (TryFind(design, quests, side, ref met) is { } sideWanted) return sideWanted;
+                if (TryFind(design, quests, side, now, ref met) is { } sideWanted) return sideWanted;
             return met;
         }
 
@@ -62,14 +63,14 @@ namespace Bush.Core
             return status is QuestStatus.Active or QuestStatus.ReadyToClaim;
         }
 
-        private static ForageGoal TryFind(DesignData design, QuestService quests, QuestData quest, ref ForageGoal met)
+        private static ForageGoal TryFind(DesignData design, QuestService quests, QuestData quest, TimeOfDay? now, ref ForageGoal met)
         {
             for (int i = 0; i < quest.objectives.Count; i++)
             {
                 QuestObjective objective = quest.objectives[i];
                 if (objective.type is not (ObjectiveType.HaveItems or ObjectiveType.DeliverItems or ObjectiveType.FindItems)) continue;
                 ItemData item = design.GetItem(objective.target);
-                if (item == null || !CanBeForaged(design, item)) continue;
+                if (item == null || !CanBeForaged(design, item, now)) continue;
                 (int current, int required) = quests.GetProgress(quest.id, i);
                 var goal = new ForageGoal
                 {
@@ -82,7 +83,14 @@ namespace Bush.Core
             return null;
         }
 
-        private static bool CanBeForaged(DesignData design, ItemData item) =>
-            design.forageTables.Exists(table => table.entries.Exists(entry => entry.itemId == item.id));
+        private static bool CanBeForaged(DesignData design, ItemData item, TimeOfDay? now) =>
+            design.forageTables.Exists(table => table.entries.Exists(entry => entry.itemId == item.id && FoundAt(entry.time, now)));
+
+        private static bool FoundAt(EntryTime time, TimeOfDay? now) => now == null || time switch
+        {
+            EntryTime.Day => now == TimeOfDay.Day,
+            EntryTime.Night => now == TimeOfDay.Night,
+            _ => true
+        };
     }
 }

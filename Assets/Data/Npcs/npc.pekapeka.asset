@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: Pekapeka
   description: Shy, hungry, and very good at finding bugs.
   portrait: {fileID: 21300000, guid: 728bfc16ec6d4d79a0ce8e0812fbb434, type: 3}
+  seatedDrop: 0
   species: Pekapeka (bat)
   visits: 2
   visitChance: 0.2

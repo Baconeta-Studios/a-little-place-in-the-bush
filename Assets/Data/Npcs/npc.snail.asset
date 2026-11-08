@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: Snail
   description: Slurps up giant worms and will spend all day in the cafe if worm pie is on the menu.
   portrait: {fileID: 21300000, guid: 6df0e21de24d6af4bb3dc96ad07dfc05, type: 3}
+  seatedDrop: 0
   species: Snail
   visits: 2
   visitChance: 0.2
