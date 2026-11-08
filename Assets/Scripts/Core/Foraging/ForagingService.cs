@@ -409,6 +409,8 @@ namespace Bush.Core
                 if (!string.IsNullOrEmpty(entry.requiresCompanion) && entry.requiresCompanion != setup.companionId) continue;
                 if (!string.IsNullOrEmpty(entry.requiresQuest) && (context == null || !context.IsQuestActive(entry.requiresQuest))) continue;
                 if (item.unique && context != null && context.IsUniqueCollected(item.id)) continue;
+                // A one-off recipe note for a recipe you already know (from a quest, say) would teach you nothing.
+                if (item.unique && !string.IsNullOrEmpty(item.teachesRecipe) && context != null && context.IsRecipeKnown(item.teachesRecipe)) continue;
 
                 double weight = entry.weight;
                 foreach (ForageModifier modifier in modifiers)

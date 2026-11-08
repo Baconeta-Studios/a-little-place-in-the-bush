@@ -54,6 +54,19 @@ namespace Bush.Core.Tests
         }
 
         [Test]
+        public void ForageGoal_OnlyPointsAtWhatCanBeFoundNow()
+        {
+            var game = new TestGame();
+            game.design.quests.Find(q => q.id == TestDesign.Welcome).objectives[0] =
+                new QuestObjective { type = ObjectiveType.HaveItems, target = TestDesign.Glowworm, qty = 2 };
+            game.quests.Start(TestDesign.Welcome);
+
+            Assert.IsNull(ForageGoals.Current(game.design, game.quests, TimeOfDay.Day), "Glowworms only come out at night.");
+            Assert.AreEqual(TestDesign.Glowworm, ForageGoals.Current(game.design, game.quests, TimeOfDay.Night).item.id);
+            Assert.AreEqual(TestDesign.Glowworm, ForageGoals.Current(game.design, game.quests).item.id, "With no time given, any time counts.");
+        }
+
+        [Test]
         public void QuestHints_SayWhereThingsComeFrom()
         {
             TestGame game = GameWantingBugs(1);
