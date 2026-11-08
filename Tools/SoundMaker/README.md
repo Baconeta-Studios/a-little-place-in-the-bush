@@ -16,6 +16,7 @@ Each sound in `RECIPES` is a list of layers: which raw sound, when it starts, it
 | `draw1` (paper) | PaperOpen, PaperClose (a touch lower), PutAwayObject (higher, into the bag) |
 | `dropleaves1`, `dropleaves2` | ForageRustle (3 layered takes) only, so the bush you can tap is the only thing that rustles. Also faintly under PlaceObject |
 | `soul_collect` | ForageRareFind |
+| `ruru_hoo1` to `4` (cut from Ruru's voice recording) | NightFalls: her "hoo... hoo" pitched right up, with a faint echo. Hoos 3 and 4 are spares |
 
 Files in a `Source` folder are never put in the library.
 

@@ -23,6 +23,10 @@ SOURCES = {
     "leaf1": "dropleaves1.mp3",    # one leaf, short
     "leaf2": "dropleaves2.mp3",    # one leaf, longer and softer
     "soul": "soul_collect.wav",    # a sparkle
+    "hoo1": "ruru_hoo1.wav",       # Ruru's hoos, cut from her voice recording (10.3s and 11.1s, a pair)
+    "hoo2": "ruru_hoo2.wav",
+    "hoo3": "ruru_hoo3.wav",       # two more, from 5.4s and 24.8s
+    "hoo4": "ruru_hoo4.wav",
 }
 
 # name: (folder, loudness target in dB RMS while sounding, layers, extra) ; extra: lowpass Hz
@@ -48,6 +52,9 @@ RECIPES = {
     # Pushing off: a soft swish, not leaves, so the first rustle you hear is the bush you can tap.
     "ForageSetOff": ("SFX", -24, [("discard", 0, 0.8, 0)], 6000),
     "ForageHome":   ("SFX", -26, [("discard", 0, 0.92, 0)], 6000),  # a quiet swish back: it plays as the finds start dropping
+    # Night falling: Ruru's "hoo... hoo", pitched right up, with a faint echo carrying across the bush.
+    "NightFalls":   ("SFX", -22, [("hoo1", 0, 1.8, 0), ("hoo2", 0.45, 1.8, -1),
+                                  ("hoo1", 0.16, 1.8, -14), ("hoo2", 0.61, 1.8, -15)], None),
     # Build mode and the menu board
     "PickUpObject": ("SFX", -23, [("hover", 0, 1.22, 0)], None),
     "PlaceObject":  ("SFX", -23, [("hover", 0, 0.82, 0), ("leaf1", 0.01, 0.8, -12)], 4500),

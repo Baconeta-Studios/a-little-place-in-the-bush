@@ -192,7 +192,8 @@ MonoBehaviour:
   - name: NightFalls
     sound: 413
     plays: Night starting.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: be6eba8bae259dc4eaa5182bc68bf224, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: Morning
