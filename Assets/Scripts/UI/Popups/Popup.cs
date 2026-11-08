@@ -38,9 +38,12 @@ namespace UI.Popups
             PopupManager.Unregister(this);
         }
 
+        /// <summary>Whether opening plays the paper rustle. Off where something else speaks first, like a character.</summary>
+        protected virtual bool RustlesOnOpen => true;
+
         public virtual void Open()
         {
-            if (!IsOpen) GameAudio.Play(Bush.Core.GameSound.PaperOpen);
+            if (!IsOpen && RustlesOnOpen) GameAudio.Play(Bush.Core.GameSound.PaperOpen);
             gameObject.SetActive(true);
         }
 

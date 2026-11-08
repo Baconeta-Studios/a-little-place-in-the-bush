@@ -73,6 +73,9 @@ public class DialogueBox : Popup
         if (_instance == this) _instance = null;
     }
 
+    // Their voice is the first thing you hear, so no paper rustle on the way in (closing still rustles).
+    protected override bool RustlesOnOpen => false;
+
     private static GameSession Session => GameSession.Current;
     private string NpcName => string.IsNullOrEmpty(_npc.displayName) ? _npc.id : _npc.displayName;
 
