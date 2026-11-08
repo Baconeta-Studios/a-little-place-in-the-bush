@@ -319,7 +319,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 407e44559843d6c49ae28d23e5be5bde, type: 3}
     - {fileID: 8300000, guid: b61cae692966d7c43b038bed842194c6, type: 3}
     volume: 1
-    pitch: 1
+    pitch: 1.5
     pitchVariation: 0.04
   - name: Kunekune
     npc: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
