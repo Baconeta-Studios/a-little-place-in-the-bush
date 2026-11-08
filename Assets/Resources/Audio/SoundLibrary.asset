@@ -248,7 +248,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: eaf9f475719a4c94992ea1990eafbdb7, type: 3}
     - {fileID: 8300000, guid: 94adf9368cadf3c40b38c3f3bed4f93a, type: 3}
     volume: 1
-    pitch: 1
+    pitch: 1.286
     pitchVariation: 0.04
   - name: Weka
     npc: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
@@ -264,8 +264,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 8000783910074a249adb0a94242ef4fd, type: 3}
     - {fileID: 8300000, guid: c52645f8d41407d4586887e524aa772f, type: 3}
     volume: 1
-    pitch: 1
-    pitchVariation: 0.04
+    pitch: 1.36
+    pitchVariation: 0.224
   - name: Snail
     npc: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
     clips:
@@ -279,8 +279,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: b2cb55cbb6c4db64a8a86b11be2a17de, type: 3}
     - {fileID: 8300000, guid: ba7cce9f4e7ab844c8b210bc1b4a989a, type: 3}
     volume: 1
-    pitch: 1
-    pitchVariation: 0.04
+    pitch: 1.195
+    pitchVariation: 0.014
   - name: Pekapeka
     npc: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
     clips:
@@ -295,7 +295,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: e4c7940919b972b49927c06840a9e10b, type: 3}
     - {fileID: 8300000, guid: f0dd90bed7d0700468c375928964f0ae, type: 3}
     volume: 1
-    pitch: 1
+    pitch: 1.3
     pitchVariation: 0.04
   - name: "K\u014Dwhai"
     npc: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
@@ -319,8 +319,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 407e44559843d6c49ae28d23e5be5bde, type: 3}
     - {fileID: 8300000, guid: b61cae692966d7c43b038bed842194c6, type: 3}
     volume: 1
-    pitch: 1.5
-    pitchVariation: 0.04
+    pitch: 1.65
+    pitchVariation: 0.074
   - name: Kunekune
     npc: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
     clips:
@@ -332,8 +332,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: f67c1b39bdcbb6141bb6ffa35c3327cf, type: 3}
     - {fileID: 8300000, guid: 8182216312e4d3948ab574b19c9b85b0, type: 3}
     volume: 1
-    pitch: 1
-    pitchVariation: 0.04
+    pitch: 1.126
+    pitchVariation: 0.019
   - name: Spider
     npc: {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
     clips:
@@ -350,8 +350,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 5448d9cfa493c8847b497640800e47a9, type: 3}
     - {fileID: 8300000, guid: dc3dbfb6ee0b2854cb8aa3b72197a565, type: 3}
     volume: 1
-    pitch: 1
-    pitchVariation: 0.04
+    pitch: 1.553
+    pitchVariation: 0
   - name: Gus
     npc: {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
     clips:
@@ -369,6 +369,6 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 75686118ae21cfa4694270d5323253ff, type: 3}
     - {fileID: 8300000, guid: 70b8e43d41f56634e969b7c5093e6557, type: 3}
     volume: 1
-    pitch: 1
-    pitchVariation: 0.04
+    pitch: 1.154
+    pitchVariation: 0.164
   defaultVoice: []
