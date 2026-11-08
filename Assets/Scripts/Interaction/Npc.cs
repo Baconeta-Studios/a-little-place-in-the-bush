@@ -135,6 +135,7 @@ public class Npc : Interactable
     {
         transform.position = new Vector3(position.x, position.y, transform.position.z);
         IsSeated = sortFromY.HasValue; // only seats sort from somewhere other than the feet
+        _seatFloor = new Vector2(position.x, sortFromY ?? position.y); // the floor under them, at the front of their seat
         if (_sorter)
         {
             _sorter.position = new Vector3(position.x, sortFromY ?? position.y, transform.position.z);
@@ -194,12 +195,12 @@ public class Npc : Interactable
         Gizmos.DrawWireCube(feet + new Vector3(0f, footprintSize.y * 0.5f, 0f), new Vector3(footprintSize.x, footprintSize.y, 0f));
     }
 
-    // How far from a seated character the gecko stops: out to their seat's own stand point plus some slack, so it can
-    // come at them from its side, and not much closer than that, so it doesn't crowd them.
-    private const float SeatedReachSlack = 0.9f;
-    private const float SeatedReachMin = 1.8f;
-    private const float SeatedNearest = 0.75f; // of the reach
+    // How far across the floor from a seated character's seat the gecko stops: close enough to talk, not so close it
+    // crowds them. Measured from the floor under the seat, since the seat itself can be high up (a toadstool's cap).
+    private const float SeatedReach = 1.8f;
+    private const float SeatedNearest = 0.6f; // of the reach
     private GridPathfinder _pathfinder;
+    private Vector2 _seatFloor;
 
     /// <summary>
     /// Seated, they're talked to from whichever side the gecko comes from: the nearest spot beside them, not a fixed
@@ -211,11 +212,9 @@ public class Npc : Interactable
         if (!IsSeated) return usual;
         if (!_pathfinder) _pathfinder = FindAnyObjectByType<GridPathfinder>();
         if (!_pathfinder || !_pathfinder.Grid) return usual;
-        Vector2 here = transform.position;
-        float reach = Mathf.Max(SeatedReachMin, Vector2.Distance(here, usual) + SeatedReachSlack);
         // A comfortable distance if there's room, otherwise anywhere beside them, otherwise their seat's own spot.
-        if (TryBeside(here, reach * SeatedNearest, reach, from, out Vector2 beside)) return beside;
-        if (TryBeside(here, 0f, reach, from, out beside)) return beside;
+        if (TryBeside(_seatFloor, SeatedReach * SeatedNearest, SeatedReach, from, out Vector2 beside)) return beside;
+        if (TryBeside(_seatFloor, 0f, SeatedReach, from, out beside)) return beside;
         return usual;
     }
 
