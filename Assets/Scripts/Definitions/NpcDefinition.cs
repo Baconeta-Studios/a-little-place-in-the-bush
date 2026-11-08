@@ -6,6 +6,9 @@ using UnityEngine;
 public class NpcDefinition : GameDefinition
 {
     public Sprite portrait;
+    [Tooltip("How far (world units) their art sits lower when they're on a seat. For art whose feet point isn't where they'd " +
+             "rest, like a spider's back legs: 0 for most, and it changes nothing when they're standing.")]
+    public float seatedDrop;
     public string species;
     [Tooltip("Always: always at the cafe. Story: there while they give the current story quest. Random: drops by on some days.")]
     public VisitType visits;

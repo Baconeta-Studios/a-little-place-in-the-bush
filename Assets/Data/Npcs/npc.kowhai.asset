@@ -15,7 +15,7 @@ MonoBehaviour:
   id: npc.kowhai
   displayName: "K\u014Dwhai"
   description: You grew up together. Back in the bush, and hard to impress.
-  portrait: {fileID: 21300000, guid: b6c6eb8c89ac53e489f484dea81592f4, type: 3}
+  portrait: {fileID: 21300000, guid: 18213d5f2b2ab2a4d9e669d86f9cbd4f, type: 3}
   species: Gecko
   visits: 2
   visitChance: 0.25

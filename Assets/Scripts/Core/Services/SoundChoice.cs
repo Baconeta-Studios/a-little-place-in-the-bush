@@ -26,6 +26,7 @@ namespace Bush.Core
         ForageFind = 402,
         ForageRareFind = 403,
         ForageHome = 404,
+        ForageRustle = 418, // numbered after the rest, so saved libraries keep their rows
         Coins = 405,
         QuestStarted = 406,
         QuestDone = 407,

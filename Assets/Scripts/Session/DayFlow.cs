@@ -40,5 +40,8 @@ public static class DayFlow
     {
         DayTransition.Holding = false;
         DayNightLighting.SnapNow();
+        // Night arrives here, in the dark of the fade, not when the cafe closed (the rules turn to night then,
+        // with the day's summary still to come). Going to bed, it's already morning by now, so no hoot.
+        if (GameSession.Current?.State.isNight == true) GameAudio.Play(Bush.Core.GameSound.NightFalls);
     }
 }

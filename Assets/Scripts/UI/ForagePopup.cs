@@ -459,6 +459,7 @@ public class ForagePopup : Popup
         foreach (RectTransform b in _bushes) b.localRotation = Quaternion.identity;
 
         bool resolved = peek == null;
+        int rustlesHeard = 0; // one rustle sound each half second the bush keeps going (longer on still-air days)
         float hopAt = -1f;
         float facing = 1f;
         for (float t = 0f; t < TripSeconds && !_skipped; t += Time.unscaledDeltaTime) // the popup pauses the game
@@ -471,6 +472,11 @@ public class ForagePopup : Popup
                 _bushes[bush].localRotation = Quaternion.Euler(0f, 0f, rustling ? Mathf.Sin(t * 40f) * 7f : 0f);
                 if (rustling)
                 {
+                    if (t - rustleAt >= rustlesHeard * RustleSeconds)
+                    {
+                        rustlesHeard++;
+                        GameAudio.Play(GameSound.ForageRustle);
+                    }
                     _outText.text = "Something's rustling!";
                     _peekNote.text = "";
                     if (_gecko) facing = _bushes[bush].position.x < _gecko.position.x ? -1f : 1f;

@@ -20,7 +20,7 @@ MonoBehaviour:
   placement: 0
   alsoOnTables: 0
   scaleOnTable: 1
-  footprintSize: {x: 0.45, y: 0.25}
+  footprintSize: {x: 0.63, y: 0.35}
   chainSpan: 0
   canFlip: 1
   category: Furniture
@@ -28,6 +28,6 @@ MonoBehaviour:
   cosiness: 6
   style: fancy
   groundShadow: 1
-  shadowSize: {x: 1.15, y: 0.45}
-  shadowOffset: {x: 0, y: 0.06}
+  shadowSize: {x: 1.33, y: 0.63}
+  shadowOffset: {x: 0, y: 0.084}
   shadowStrength: 0.45

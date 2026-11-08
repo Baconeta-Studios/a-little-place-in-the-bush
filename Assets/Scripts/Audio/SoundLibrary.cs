@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bush.Core;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// The one place for the game's audio files: Resources/Audio/SoundLibrary.asset. Every sound has a row saying where it
@@ -42,7 +43,8 @@ public class SoundLibrary : ScriptableObject
 
     [Header("Mixer groups (the volume sliders in Settings)")]
     public AudioMixerGroup music;
-    public AudioMixerGroup ambient;
+    [Tooltip("Creature voices. The Dialogue slider in Settings.")]
+    [FormerlySerializedAs("ambient")] public AudioMixerGroup dialogue;
     public AudioMixerGroup sfx;
     [Tooltip("The AudioManager prefab, made when something first plays if the scene has none.")]
     public GameObject audioManagerPrefab;
@@ -89,8 +91,8 @@ public class SoundLibrary : ScriptableObject
         GameSound.MusicCafeEvening => "At the cafe once the day's foraging is done.",
         GameSound.MusicCafeNight => "At the cafe at night.",
         GameSound.MusicForaging => "While the forage screen is open.",
-        GameSound.AmbientBushDay => "Under the music all day: birds, wind in the trees.",
-        GameSound.AmbientBushNight => "Under the music at night: crickets, moreporks.",
+        GameSound.AmbientBushDay => "Under the music all day, on the Music slider: birds, wind in the trees.",
+        GameSound.AmbientBushNight => "Under the music at night, on the Music slider: crickets, moreporks.",
         GameSound.UiTap => "Tapping any button.",
         GameSound.UiBack => "Tapping Back, Bye, Not now or an x.",
         GameSound.UiNope => "Tapping a button that's greyed out.",
@@ -101,6 +103,7 @@ public class SoundLibrary : ScriptableObject
         GameSound.ForageFind => "Each find dropping into the basket.",
         GameSound.ForageRareFind => "A rare find dropping into the basket.",
         GameSound.ForageHome => "Getting back from a forage trip.",
+        GameSound.ForageRustle => "The bush rustling on a forage trip, for you to tap. Every half second while it lasts.",
         GameSound.Coins => "Coins going up.",
         GameSound.QuestStarted => "Taking on a quest.",
         GameSound.QuestDone => "Finishing a quest.",
@@ -109,7 +112,7 @@ public class SoundLibrary : ScriptableObject
         GameSound.UpgradeBought => "Buying a cafe upgrade.",
         GameSound.MenuChanged => "Putting a dish on the menu or taking it down.",
         GameSound.DayEnded => "Closing the cafe for the day.",
-        GameSound.NightFalls => "Night starting.",
+        GameSound.NightFalls => "Night arriving, in the dark of the fade after the day's summary.",
         GameSound.Morning => "A new morning.",
         GameSound.PlaceObject => "Putting something down in build mode.",
         GameSound.PickUpObject => "Picking something up in build mode.",

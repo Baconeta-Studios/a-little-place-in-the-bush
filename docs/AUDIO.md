@@ -10,14 +10,21 @@ Everything is hooked up and silent until it has clips. Any row with no clips doe
 
 Or open **Tools > Bush > Audio > Open Sound Library** (`Resources/Audio/SoundLibrary.asset`) and drag clips into the rows. Each row also has a volume and a pitch variation. If a row has several clips, it picks one at random.
 
-Volumes go through `Assets/Audio/AudioMixer.mixer`, so the Settings sliders work: music, ambient, and SFX, which includes creature voices.
+A sound named for its row joins the library by itself when Unity imports it, so Fill is only needed for a batch. Raw recordings kept in a `Source` folder are skipped. [`Tools/SoundMaker`](../Tools/SoundMaker/README.md) mixes the ones in `Assets/Audio/SFX/Source` into the game's sounds.
+
+Volumes go through `Assets/Audio/AudioMixer.mixer`, so the Settings sliders work: music (with the bush sounds under it), sound effects, and dialogue, which is every creature voice.
 
 ## Creature voices
 
-One line of gibberish plays each time a creature says something, and the next line cuts it off.
+One line of gibberish plays each time a creature says something, and the next line cuts it off. That's every line in the dialogue box: chats, quests, shops and scenes like the date. A creature goes through all their clips in a shuffled order before any comes round again. Voices play on the Dialogue slider in Settings.
+
+Narration is silent. Put actions in `<i>…</i>`, `(…)` or `*…*`. A line that's only that, like "<i>Gus gives you a friendly nod.</i>", plays no voice. A line with words as well, like "<i>(a bite of the scroll)</i> I was seven", still does (`DialogueText.IsSpoken`).
+
+A clip dropped in a creature's folder joins their voice by itself when Unity imports it. Fill does the same for everything at once.
 
 - **Recording:** 4 to 8 short clips per creature, 1 to 3 seconds each, is plenty. Leave a tiny bit of silence at each end, and record somewhere quiet.
 - **Filing:** put them in `Assets/Audio/Voices/Ruru`, `Kowhai`, `Kunekune`, `Snail`, `Spider`, `Weka`, `Pekapeka` or `Gus`, then run Fill. Any file name works here.
+- **One long take instead:** a creature's whole recording can sit loose in `Assets/Audio/Voices/` (Fill skips loose files there). [`Tools/VoiceSplitter`](../Tools/VoiceSplitter/README.md) cuts it into cleaned-up lines and remixes in their folder.
 - **Sharing:** each creature's *Pitch* (0.5 to 2) can turn one recording into several voices. Clips in `Voices/Default` are for anyone without their own.
 
 ## The sounds
@@ -41,6 +48,7 @@ One line of gibberish plays each time a creature says something, and the next li
 | `ForageFind` | Each find landing in the basket | Soft plop, 2 to 3 clips |
 | `ForageRareFind` | A rare find | Brighter, a small sparkle |
 | `ForageHome` | Getting back from a trip | Short and warm |
+| `ForageRustle` | The bush rustling in the peek-a-boo, each half second | Leaves, under a second |
 | `Coins` | Coins going up | Short clink |
 | `QuestStarted` | Taking on a quest | Pencil scribble |
 | `QuestDone` | Finishing a quest | Small happy flourish |
@@ -49,7 +57,7 @@ One line of gibberish plays each time a creature says something, and the next li
 | `UpgradeBought` | Buying an upgrade | Hammer tap and coins |
 | `MenuChanged` | A dish going on or off the menu | Paper pinned |
 | `DayEnded` | Closing the cafe | Door closing, bell |
-| `NightFalls` | Night starting | Soft owl call |
+| `NightFalls` | Night arriving, in the dark of the fade | Soft owl call |
 | `Morning` | A new morning | Birdsong sting |
 | `PlaceObject` | Putting something down in build mode | Soft thud |
 | `PickUpObject` | Picking something up in build mode | Light lift |

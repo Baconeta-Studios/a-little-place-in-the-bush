@@ -48,9 +48,15 @@ public class Npc : Interactable
     /// <summary>Where the gecko stands to talk to them at their own spot.</summary>
     public Vector2 HomeStand { get; private set; }
     public bool HomeFacesRight { get; private set; } = true;
+    /// <summary>Sitting on a seat of placed furniture, rather than at their own spot.</summary>
+    public bool IsSeated { get; private set; }
 
     public NpcDefinition Definition => npc;
     public override string Prompt => npc ? $"Talk to {npc.displayName}" : base.Prompt;
+
+    // You can always talk to someone, even when where you'd stand ends up out of reach (e.g. inside the base of the
+    // toadstool they're sitting on): the gecko walks as close as it can and the conversation starts from there.
+    public override bool AlwaysReachable => true;
 
     private void Start()
     {
@@ -128,10 +134,14 @@ public class Npc : Interactable
     public void PlaceAt(Vector2 position, Vector2 stand, bool faceRight, float? sortFromY = null)
     {
         transform.position = new Vector3(position.x, position.y, transform.position.z);
+        IsSeated = sortFromY.HasValue; // only seats sort from somewhere other than the feet
+        _seatFloor = new Vector2(position.x, sortFromY ?? position.y); // the floor under them, at the front of their seat
         if (_sorter)
         {
             _sorter.position = new Vector3(position.x, sortFromY ?? position.y, transform.position.z);
-            _visual.position = transform.position + _visualOffset;
+            // Some art (the spider's) rests lower than its feet point when sitting: see NpcDefinition.seatedDrop.
+            float drop = IsSeated && npc ? npc.seatedDrop : 0f;
+            _visual.position = transform.position + _visualOffset + Vector3.down * drop;
         }
         if (_stand) _stand.transform.position = new Vector3(stand.x, stand.y, _stand.transform.position.z);
         if (_visual)
@@ -184,6 +194,32 @@ public class Npc : Interactable
         Vector3 feet = transform.position;
         Gizmos.DrawWireCube(feet + new Vector3(0f, footprintSize.y * 0.5f, 0f), new Vector3(footprintSize.x, footprintSize.y, 0f));
     }
+
+    // How far across the floor from a seated character's seat the gecko stops: close enough to talk, not so close it
+    // crowds them. Measured from the floor under the seat, since the seat itself can be high up (a toadstool's cap).
+    private const float SeatedReach = 1.8f;
+    private const float SeatedNearest = 0.6f; // of the reach
+    private GridPathfinder _pathfinder;
+    private Vector2 _seatFloor;
+
+    /// <summary>
+    /// Seated, they're talked to from whichever side the gecko comes from: the nearest spot beside them, not a fixed
+    /// one that might be round the far side of the furniture. At their own spot, their stand point as usual.
+    /// </summary>
+    public override Vector2 GetStandPosition(Vector2 from)
+    {
+        Vector2 usual = base.GetStandPosition(from);
+        if (!IsSeated) return usual;
+        if (!_pathfinder) _pathfinder = FindAnyObjectByType<GridPathfinder>();
+        if (!_pathfinder || !_pathfinder.Grid) return usual;
+        // A comfortable distance if there's room, otherwise anywhere beside them, otherwise their seat's own spot.
+        if (TryBeside(_seatFloor, SeatedReach * SeatedNearest, SeatedReach, from, out Vector2 beside)) return beside;
+        if (TryBeside(_seatFloor, 0f, SeatedReach, from, out beside)) return beside;
+        return usual;
+    }
+
+    private bool TryBeside(Vector2 here, float nearest, float reach, Vector2 from, out Vector2 beside) =>
+        _pathfinder.Grid.TryFindWalkableAround(here, nearest, reach, from, out beside) && _pathfinder.IsReachable(from, beside);
 
     public override void Interact(in InteractionContext context)
     {

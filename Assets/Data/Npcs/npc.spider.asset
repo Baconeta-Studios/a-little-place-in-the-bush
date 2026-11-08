@@ -15,7 +15,8 @@ MonoBehaviour:
   id: npc.spider
   displayName: Spider
   description: Busy, blunt, and very handy with silk. Lives in a hollow trunk that needs fixing.
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 4c1bbd0c4f85db045ad7ef25fbde294d, type: 3}
+  seatedDrop: 0.3
   species: Spider
   visits: 2
   visitChance: 0.15

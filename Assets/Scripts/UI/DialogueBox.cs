@@ -73,6 +73,9 @@ public class DialogueBox : Popup
         if (_instance == this) _instance = null;
     }
 
+    // Their voice is the first thing you hear, so no paper rustle on the way in (closing still rustles).
+    protected override bool RustlesOnOpen => false;
+
     private static GameSession Session => GameSession.Current;
     private string NpcName => string.IsNullOrEmpty(_npc.displayName) ? _npc.id : _npc.displayName;
 
@@ -123,7 +126,7 @@ public class DialogueBox : Popup
                 break;
 
             default:
-                Say(Line(topic.line, HasShop ? "Care to look at my recipes?" : $"{NpcName} gives you a friendly nod."), null);
+                Say(Line(topic.line, HasShop ? "Care to look at my recipes?" : DialogueText.Narration($"{NpcName} gives you a friendly nod.")), null);
                 if (HasShop) Replies(("Recipes", OpenShop), ("Bye", Close));
                 else Replies(("Bye", Close));
                 break;
@@ -207,7 +210,9 @@ public class DialogueBox : Popup
 
     private void Say(string line, string detail)
     {
-        GameAudio.Say(_npc);
+        // Their voice plays for speech, not narration like "Gus gives you a friendly nod." (see DialogueText).
+        if (DialogueText.IsSpoken(line)) GameAudio.Say(_npc);
+        else GameAudio.StopVoice();
         _text.text = string.IsNullOrEmpty(detail) ? line : $"{line}\n\n<size=85%>{detail}</size>";
     }
 

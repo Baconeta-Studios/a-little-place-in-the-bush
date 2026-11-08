@@ -127,14 +127,14 @@ namespace Editor
 
             Slider music = AddSlider(panel, "Music");
             Slider sfx = AddSlider(panel, "Sound Effects");
-            Slider ambient = AddSlider(panel, "Ambience");
+            Slider dialogue = AddSlider(panel, "Dialogue");
             AddButton(panel, "Back", popup.Close);
 
             VolumeSettings volume = popup.gameObject.AddComponent<VolumeSettings>();
             SetField(volume, "mixer", AssetDatabase.LoadAssetAtPath<AudioMixer>(MixerPath));
             SetField(volume, "musicSlider", music);
             SetField(volume, "sfxSlider", sfx);
-            SetField(volume, "ambientSlider", ambient);
+            SetField(volume, "dialogueSlider", dialogue);
             return popup;
         }
 
