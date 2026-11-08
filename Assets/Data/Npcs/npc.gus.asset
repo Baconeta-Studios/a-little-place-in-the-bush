@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: Gus
   description: Only comes out at night. Has a Theory. Will not explain it.
   portrait: {fileID: 21300000, guid: e6c505a8c853b6b4b8a9ea284fcd1c7e, type: 3}
+  seatedDrop: 0
   species: Gecko
   visits: 2
   visitChance: 0.2

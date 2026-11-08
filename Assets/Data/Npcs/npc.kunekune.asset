@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: Kunekune
   description: Round, friendly and led everywhere by a very excellent nose.
   portrait: {fileID: 21300000, guid: 672fca97b72a4c8439470bd94b6b4654, type: 3}
+  seatedDrop: 0
   species: Kunekune pig
   visits: 2
   visitChance: 0.2
