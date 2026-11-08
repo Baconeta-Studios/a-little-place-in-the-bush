@@ -95,14 +95,14 @@ MonoBehaviour:
     plays: 'A screen opening: a soft paper rustle.'
     clips:
     - {fileID: 8300000, guid: c9a5632be01a4f458066c2d9a87567ab, type: 3}
-    volume: 1
+    volume: 0.4
     pitchVariation: 0.05
   - name: PaperClose
     sound: 304
     plays: A screen closing.
     clips:
     - {fileID: 8300000, guid: 6a3c0eb689c1437f800e5cc03d3d0a3b, type: 3}
-    volume: 1
+    volume: 0.2
     pitchVariation: 0.05
   - name: Footstep
     sound: 400

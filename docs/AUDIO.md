@@ -57,7 +57,7 @@ A clip dropped in a creature's folder joins their voice by itself when Unity imp
 | `UpgradeBought` | Buying an upgrade | Hammer tap and coins |
 | `MenuChanged` | A dish going on or off the menu | Paper pinned |
 | `DayEnded` | Closing the cafe | Door closing, bell |
-| `NightFalls` | Night starting | Soft owl call |
+| `NightFalls` | Night arriving, in the dark of the fade | Soft owl call |
 | `Morning` | A new morning | Birdsong sting |
 | `PlaceObject` | Putting something down in build mode | Soft thud |
 | `PickUpObject` | Picking something up in build mode | Light lift |

@@ -115,7 +115,6 @@ public class AudioDirector : MonoBehaviour
             events.UpgradeBought -= OnUpgrade;
             events.MenuChanged -= OnMenu;
             events.DayEnded -= OnDayEnded;
-            events.NightStarted -= OnNight;
             events.MorningStarted -= OnMorning;
             events.ExpeditionCompleted -= OnHome;
         }
@@ -131,7 +130,6 @@ public class AudioDirector : MonoBehaviour
         now.UpgradeBought += OnUpgrade;
         now.MenuChanged += OnMenu;
         now.DayEnded += OnDayEnded;
-        now.NightStarted += OnNight;
         now.MorningStarted += OnMorning;
         now.ExpeditionCompleted += OnHome;
     }
@@ -149,7 +147,6 @@ public class AudioDirector : MonoBehaviour
     private static void OnUpgrade(string _) => GameAudio.Play(GameSound.UpgradeBought);
     private static void OnMenu() => GameAudio.Play(GameSound.MenuChanged);
     private static void OnDayEnded(DaySummary _) => GameAudio.Play(GameSound.DayEnded);
-    private static void OnNight() => GameAudio.Play(GameSound.NightFalls);
     private static void OnMorning() => GameAudio.Play(GameSound.Morning);
     private static void OnHome(ForageResult _) => GameAudio.Play(GameSound.ForageHome);
 }

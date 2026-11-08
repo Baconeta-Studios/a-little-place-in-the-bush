@@ -112,7 +112,7 @@ public class SoundLibrary : ScriptableObject
         GameSound.UpgradeBought => "Buying a cafe upgrade.",
         GameSound.MenuChanged => "Putting a dish on the menu or taking it down.",
         GameSound.DayEnded => "Closing the cafe for the day.",
-        GameSound.NightFalls => "Night starting.",
+        GameSound.NightFalls => "Night arriving, in the dark of the fade after the day's summary.",
         GameSound.Morning => "A new morning.",
         GameSound.PlaceObject => "Putting something down in build mode.",
         GameSound.PickUpObject => "Picking something up in build mode.",
