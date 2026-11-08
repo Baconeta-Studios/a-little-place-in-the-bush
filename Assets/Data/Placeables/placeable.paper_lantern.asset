@@ -29,5 +29,5 @@ MonoBehaviour:
   style: glow
   groundShadow: 1
   shadowSize: {x: 1.3, y: 0.55}
-  shadowOffset: {x: 0, y: -0.15}
+  shadowOffset: {x: 0.08, y: -0.09}
   shadowStrength: 0.45
