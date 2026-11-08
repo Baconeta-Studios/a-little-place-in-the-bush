@@ -109,6 +109,35 @@ public class WalkableGrid : MonoBehaviour
         GridComponent.GetCellCenterWorld(new Vector3Int(cell.x + _minCell.x, cell.y + _minCell.y, 0));
 
     /// <summary>
+    /// Of the walkable spots between <paramref name="minRadius"/> and <paramref name="radius"/> from
+    /// <paramref name="centre"/>, the one closest to <paramref name="from"/>: where to stop to reach something from
+    /// whichever side you're coming from, without crowding it.
+    /// </summary>
+    public bool TryFindWalkableAround(Vector2 centre, float minRadius, float radius, Vector2 from, out Vector2 point)
+    {
+        point = centre;
+        if (!IsBuilt) return false;
+        Vector2Int middle = WorldToCell(centre);
+        int reachX = Mathf.CeilToInt(radius / Mathf.Max(0.01f, CellSize.x));
+        int reachY = Mathf.CeilToInt(radius / Mathf.Max(0.01f, CellSize.y));
+        float best = float.MaxValue;
+        for (int y = middle.y - reachY; y <= middle.y + reachY; y++)
+        for (int x = middle.x - reachX; x <= middle.x + reachX; x++)
+        {
+            var cell = new Vector2Int(x, y);
+            if (!IsWalkable(cell)) continue;
+            Vector2 world = CellToWorld(cell);
+            float away = Vector2.Distance(world, centre);
+            if (away > radius || away < minRadius) continue;
+            float distance = (world - from).sqrMagnitude;
+            if (distance >= best) continue;
+            best = distance;
+            point = world;
+        }
+        return best < float.MaxValue;
+    }
+
+    /// <summary>
     /// The walkable cell closest to <paramref name="world"/>. Among cells within about one cell of the
     /// closest, ones on the same side of the point as <paramref name="preferNear"/> (pass the gecko's
     /// position) win, so clicking the base of a prop stops on the gecko's side of it rather than behind it.
