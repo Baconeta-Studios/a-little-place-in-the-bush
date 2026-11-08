@@ -52,6 +52,10 @@ public class Npc : Interactable
     public NpcDefinition Definition => npc;
     public override string Prompt => npc ? $"Talk to {npc.displayName}" : base.Prompt;
 
+    // You can always talk to someone, even when where you'd stand ends up out of reach (e.g. inside the base of the
+    // toadstool they're sitting on): the gecko walks as close as it can and the conversation starts from there.
+    public override bool AlwaysReachable => true;
+
     private void Start()
     {
         if (!npc) Debug.LogWarning($"[Npc] {name} has no NPC asset set.", this);

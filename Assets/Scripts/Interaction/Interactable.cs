@@ -20,6 +20,12 @@ public class Interactable : MonoBehaviour, IInteractable
     public event Action<bool, bool> HighlightChanged;
 
     public virtual string Prompt => prompt;
+
+    /// <summary>
+    /// Used even when the gecko can't get all the way to a stand point (say it ends up inside a seat's base): whatever's
+    /// as close as the gecko can get counts. Stand points and walking work as usual; this only stops the use being refused.
+    /// </summary>
+    public virtual bool AlwaysReachable => false;
     public bool IsHovered { get; private set; }
     public bool IsTargeted { get; private set; }
     public float InteractRange => interactRange;

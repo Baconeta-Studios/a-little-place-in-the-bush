@@ -71,7 +71,10 @@ public class Interactor : MonoBehaviour
         _startingWalk = true;
         bool walking = Mover.MoveTo(stand, () => Arrive(target));
         _startingWalk = false;
-        if (!walking) ClearTarget();
+        if (walking) return;
+        // No way to walk there at all. Something that must always be usable (a character) is used from here instead.
+        if (AlwaysReachable(target)) Arrive(target);
+        else ClearTarget();
     }
 
     public void Cancel()
@@ -89,9 +92,10 @@ public class Interactor : MonoBehaviour
         var context = new InteractionContext(this);
         Mover.FaceTowards(target.transform.position);
 
-        // The path may have stopped short (the stand point is fenced off or off the floor).
+        // The path may have stopped short (the stand point is fenced off or off the floor). The walk already got as
+        // close as it could, so for a character that's close enough: you can always talk to them.
         float slack = RangeOf(target) + 0.3f;
-        bool reached = Vector2.Distance(transform.position, _targetStand) <= slack;
+        bool reached = Vector2.Distance(transform.position, _targetStand) <= slack || AlwaysReachable(target);
         if (reached && target.CanInteract(context))
         {
             _lastUsed = target;
@@ -104,6 +108,8 @@ public class Interactor : MonoBehaviour
             InteractionRefused?.Invoke(target);
         }
     }
+
+    private static bool AlwaysReachable(IInteractable target) => target is Interactable { AlwaysReachable: true };
 
     private static float RangeOf(IInteractable target) => target is Interactable interactable ? interactable.InteractRange : 0.35f;
 
