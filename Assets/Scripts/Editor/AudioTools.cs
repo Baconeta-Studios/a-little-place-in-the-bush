@@ -104,7 +104,7 @@ public static class AudioTools
 
         foreach (string path in AssetDatabase.FindAssets("t:AudioClip", new[] { AudioFolder }).Select(AssetDatabase.GUIDToAssetPath))
         {
-            if (path.StartsWith($"{AudioFolder}/Test/")) continue;
+            if (path.StartsWith($"{AudioFolder}/Test/") || IsSource(path)) continue;
             var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
             if (path.StartsWith($"{VoicesFolder}/"))
             {
@@ -139,13 +139,17 @@ public static class AudioTools
         return 1;
     }
 
+    /// <summary>Raw recordings that sounds are cut or mixed from, kept beside them in a Source folder: not sounds themselves.</summary>
+    public static bool IsSource(string path) => path.Contains("/Source/");
+
     /// <summary>Lower case, letters only, so "Ui Tap 2", "ui_tap-2" and "UiTap" all match.</summary>
     private static string Plain(string name) => new(name.Where(char.IsLetter).Select(char.ToLowerInvariant).ToArray());
 }
 
 /// <summary>
-/// A clip dropped in a creature's voice folder joins their voice by itself, so their lines play straight away without
-/// anyone running Fill. Runs after the import has finished, and only says something when it added a clip.
+/// A sound dropped in the Audio folders joins the library by itself: in a creature's voice folder it joins their voice,
+/// and anywhere else it joins the row its name matches (UiTap.wav, Coins2.wav). So it plays straight away without anyone
+/// running Fill. Runs after the import has finished, and only says something when it added a clip.
 /// </summary>
 public class VoiceFolderWatcher : AssetPostprocessor
 {
@@ -154,7 +158,7 @@ public class VoiceFolderWatcher : AssetPostprocessor
     private static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] movedFrom)
     {
         if (_queued || Application.isBatchMode) return;
-        if (!imported.Concat(moved).Any(IsVoiceClip)) return;
+        if (!imported.Concat(moved).Any(IsLibraryClip)) return;
         _queued = true;
         EditorApplication.delayCall += () =>
         {
@@ -164,12 +168,12 @@ public class VoiceFolderWatcher : AssetPostprocessor
             if (added == 0) return;
             EditorUtility.SetDirty(library);
             AssetDatabase.SaveAssetIfDirty(library);
-            Debug.Log($"[Audio] Added {added} voice clip(s) to the sound library.");
+            Debug.Log($"[Audio] Added {added} clip(s) to the sound library.");
         };
     }
 
-    private static bool IsVoiceClip(string path) =>
-        path.StartsWith("Assets/Audio/Voices/") && path.Substring("Assets/Audio/Voices/".Length).Contains('/')
+    private static bool IsLibraryClip(string path) =>
+        path.StartsWith("Assets/Audio/") && !path.StartsWith("Assets/Audio/Test/") && !AudioTools.IsSource(path)
         && AssetImporter.GetAtPath(path) is AudioImporter;
 }
 

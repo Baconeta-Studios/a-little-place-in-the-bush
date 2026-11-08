@@ -10,6 +10,8 @@ Everything is hooked up and silent until it has clips. Any row with no clips doe
 
 Or open **Tools > Bush > Audio > Open Sound Library** (`Resources/Audio/SoundLibrary.asset`) and drag clips into the rows. Each row also has a volume and a pitch variation. If a row has several clips, it picks one at random.
 
+A sound named for its row joins the library by itself when Unity imports it, so Fill is only needed for a batch. Raw recordings kept in a `Source` folder are skipped. [`Tools/SoundMaker`](../Tools/SoundMaker/README.md) mixes the ones in `Assets/Audio/SFX/Source` into the game's sounds.
+
 Volumes go through `Assets/Audio/AudioMixer.mixer`, so the Settings sliders work: music (with the bush sounds under it), sound effects, and dialogue, which is every creature voice.
 
 ## Creature voices
@@ -46,6 +48,7 @@ A clip dropped in a creature's folder joins their voice by itself when Unity imp
 | `ForageFind` | Each find landing in the basket | Soft plop, 2 to 3 clips |
 | `ForageRareFind` | A rare find | Brighter, a small sparkle |
 | `ForageHome` | Getting back from a trip | Short and warm |
+| `ForageRustle` | The bush rustling in the peek-a-boo, each half second | Leaves, under a second |
 | `Coins` | Coins going up | Short clink |
 | `QuestStarted` | Taking on a quest | Pencil scribble |
 | `QuestDone` | Finishing a quest | Small happy flourish |

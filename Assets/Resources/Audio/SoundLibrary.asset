@@ -72,31 +72,36 @@ MonoBehaviour:
   - name: UiTap
     sound: 300
     plays: Tapping any button.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 39958de82bc84c64bc180fec9c249a5e, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: UiBack
     sound: 301
     plays: Tapping Back, Bye, Not now or an x.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 1874500532e543b2bc433370de8d314f, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: UiNope
     sound: 302
     plays: Tapping a button that's greyed out.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: b1ec9474ee1a47bfa5b72c4164ba1543, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: PaperOpen
     sound: 303
     plays: 'A screen opening: a soft paper rustle.'
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: c9a5632be01a4f458066c2d9a87567ab, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: PaperClose
     sound: 304
     plays: A screen closing.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 6a3c0eb689c1437f800e5cc03d3d0a3b, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: Footstep
@@ -108,25 +113,31 @@ MonoBehaviour:
   - name: ForageSetOff
     sound: 401
     plays: Pressing Go on a forage trip.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 4b6a1ae8da6a4c40bfc8bc5d87d0b151, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: ForageFind
     sound: 402
     plays: Each find dropping into the basket.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: c4cddbf165dc4b6e9d2715c5f08923fc, type: 3}
+    - {fileID: 8300000, guid: c2dc2bdfb51842b5864d40ed515a97fd, type: 3}
+    - {fileID: 8300000, guid: 1dfdfb656c8341b88810fb989e7c2596, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: ForageRareFind
     sound: 403
     plays: A rare find dropping into the basket.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: bedba471c9684296910eaef0c14073a9, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: ForageHome
     sound: 404
     plays: Getting back from a forage trip.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 4c85e6c3704949e6ac542734a1ceef27, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: Coins
@@ -168,7 +179,8 @@ MonoBehaviour:
   - name: MenuChanged
     sound: 411
     plays: Putting a dish on the menu or taking it down.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 7033740a3b474315a7699c05693cd797, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: DayEnded
@@ -192,19 +204,31 @@ MonoBehaviour:
   - name: PlaceObject
     sound: 415
     plays: Putting something down in build mode.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: a423200ac7494a0896d6193b8dcfd4d6, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: PickUpObject
     sound: 416
     plays: Picking something up in build mode.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 24d3537ccb9c441ba9ec22e7d9a0e45d, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: PutAwayObject
     sound: 417
     plays: Putting something back in the bag in build mode.
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: ddcbc5d7fbf846d4a6eaa45235e7a43c, type: 3}
+    volume: 1
+    pitchVariation: 0.05
+  - name: ForageRustle
+    sound: 418
+    plays: The bush rustling on a forage trip, for you to tap. Every half second while it lasts.
+    clips:
+    - {fileID: 8300000, guid: 0ba51798691f469f9aadfd03617c2c30, type: 3}
+    - {fileID: 8300000, guid: 7c31c3770a8448f185377dc954c55782, type: 3}
+    - {fileID: 8300000, guid: 7201b97a0fca49808d35ac8d165be0b6, type: 3}
     volume: 1
     pitchVariation: 0.05
   voices:

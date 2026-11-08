@@ -103,6 +103,7 @@ public class SoundLibrary : ScriptableObject
         GameSound.ForageFind => "Each find dropping into the basket.",
         GameSound.ForageRareFind => "A rare find dropping into the basket.",
         GameSound.ForageHome => "Getting back from a forage trip.",
+        GameSound.ForageRustle => "The bush rustling on a forage trip, for you to tap. Every half second while it lasts.",
         GameSound.Coins => "Coins going up.",
         GameSound.QuestStarted => "Taking on a quest.",
         GameSound.QuestDone => "Finishing a quest.",
