@@ -9,7 +9,7 @@ python Tools/CharacterArt/paint_pekapeka.py Assets/Images/Characters/Pekapeka.pn
 
 Shapes are lists of points near the top (body, head, ears, wings, feet), and colours are named just above them. Change one and run it again. A hand-painted version can replace the PNG at any time, and anything pointing at it keeps working.
 
-`paint_firefly.py` paints `Assets/Images/Characters/Firefly.png`, the firefly companion's picture on the forage screen. It's a few flat shapes and a soft glow, kept small and simple on purpose.
+`paint_firefly.py` paints `Assets/Images/Characters/Firefly.png`, the firefly companion's picture on the forage screen. Just a dark dot, a glowing tail and a soft glow, kept as simple as possible on purpose.
 
 ```bash
 python Tools/CharacterArt/paint_firefly.py Assets/Images/Characters/Firefly.png
