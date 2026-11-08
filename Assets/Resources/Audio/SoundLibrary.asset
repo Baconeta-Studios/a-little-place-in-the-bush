@@ -74,14 +74,14 @@ MonoBehaviour:
     plays: Tapping any button.
     clips:
     - {fileID: 8300000, guid: 39958de82bc84c64bc180fec9c249a5e, type: 3}
-    volume: 1
+    volume: 0.8
     pitchVariation: 0.05
   - name: UiBack
     sound: 301
     plays: Tapping Back, Bye, Not now or an x.
     clips:
     - {fileID: 8300000, guid: 1874500532e543b2bc433370de8d314f, type: 3}
-    volume: 1
+    volume: 0.4
     pitchVariation: 0.05
   - name: UiNope
     sound: 302
@@ -103,7 +103,7 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 6a3c0eb689c1437f800e5cc03d3d0a3b, type: 3}
     volume: 0.2
-    pitchVariation: 0.05
+    pitchVariation: 0.105
   - name: Footstep
     sound: 400
     plays: Each step the gecko takes. Keep it very quiet.
@@ -191,7 +191,7 @@ MonoBehaviour:
     pitchVariation: 0.05
   - name: NightFalls
     sound: 413
-    plays: Night starting.
+    plays: Night arriving, in the dark of the fade after the day's summary.
     clips:
     - {fileID: 8300000, guid: be6eba8bae259dc4eaa5182bc68bf224, type: 3}
     volume: 1
