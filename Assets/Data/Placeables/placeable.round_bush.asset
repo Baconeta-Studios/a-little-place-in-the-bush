@@ -20,7 +20,7 @@ MonoBehaviour:
   placement: 0
   alsoOnTables: 0
   scaleOnTable: 1
-  footprintSize: {x: 1.35, y: 0.4}
+  footprintSize: {x: 1.55, y: 0.64}
   chainSpan: 0
   canFlip: 1
   category: Plants
@@ -29,5 +29,5 @@ MonoBehaviour:
   style: garden
   groundShadow: 1
   shadowSize: {x: 0, y: 0}
-  shadowOffset: {x: 0, y: 0}
+  shadowOffset: {x: 0, y: 0.16}
   shadowStrength: 0.45

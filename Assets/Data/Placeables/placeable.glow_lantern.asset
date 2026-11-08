@@ -20,7 +20,7 @@ MonoBehaviour:
   placement: 0
   alsoOnTables: 0
   scaleOnTable: 1
-  footprintSize: {x: 0.5, y: 0.25}
+  footprintSize: {x: 1.37, y: 0.25}
   chainSpan: 0
   canFlip: 1
   category: Decor

@@ -20,7 +20,7 @@ MonoBehaviour:
   placement: 0
   alsoOnTables: 1
   scaleOnTable: 0.65
-  footprintSize: {x: 0.75, y: 0.25}
+  footprintSize: {x: 0.9, y: 0.38}
   chainSpan: 0
   canFlip: 1
   category: Decor
@@ -28,6 +28,6 @@ MonoBehaviour:
   cosiness: 6
   style: glow
   groundShadow: 1
-  shadowSize: {x: 1.3, y: 0.55}
-  shadowOffset: {x: 0.08, y: -0.09}
-  shadowStrength: 0.45
+  shadowSize: {x: 1.3, y: 0.47}
+  shadowOffset: {x: 0.06, y: 0.035}
+  shadowStrength: 0.394

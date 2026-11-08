@@ -17,6 +17,9 @@ public class PlaceableBasesWindow : EditorWindow
     private const string DesignPath = "Design/design-data.json";
 
     private readonly List<PlaceableDefinition> _placeables = new();
+    // How far each one's art sits off the prefab's centre. Measuring reads the art back off the GPU, which can't happen
+    // while the window is drawing (it blanks the window), so it's done just after and remembered.
+    private readonly Dictionary<PlaceableDefinition, float> _offCentre = new();
     private PlaceableDefinition _selected;
     private Vector2 _listScroll;
 
@@ -28,6 +31,7 @@ public class PlaceableBasesWindow : EditorWindow
     private void Reload()
     {
         _placeables.Clear();
+        _offCentre.Clear();
         var database = AssetDatabase.LoadAssetAtPath<GameDatabase>(DatabasePath);
         if (database) _placeables.AddRange(database.placeables.Where(p => p && p.placement == Bush.Core.PlacementType.Floor).OrderBy(p => p.id));
         if (!_selected && _placeables.Count > 0) _selected = _placeables[0];
@@ -64,7 +68,12 @@ public class PlaceableBasesWindow : EditorWindow
             EditorGUILayout.EndScrollView();
             if (GUILayout.Button("Fit every base to its art", GUILayout.Height(28f)) &&
                 EditorUtility.DisplayDialog("Fit every base", "This replaces the base size of every floor placeable with one measured from its art.", "Fit them", "Cancel"))
-                FitAll();
+                EditorApplication.delayCall += () =>
+                {
+                    FitAll();
+                    _offCentre.Clear();
+                    Repaint();
+                };
         }
     }
 
@@ -80,10 +89,24 @@ public class PlaceableBasesWindow : EditorWindow
 
         using (new EditorGUILayout.HorizontalScope())
         {
-            if (GUILayout.Button("Fit Base To Art") && TryMeasureBase(placeable, out Vector2 fitted, out _)) SetFootprint(placeable, fitted);
+            if (GUILayout.Button("Fit Base To Art"))
+                EditorApplication.delayCall += () =>
+                {
+                    if (TryMeasureBase(placeable, out Vector2 fitted, out _)) SetFootprint(placeable, fitted);
+                    Repaint();
+                };
             if (GUILayout.Button("Select Prefab") && placeable.prefab) Selection.activeObject = placeable.prefab;
         }
-        if (TryMeasureBase(placeable, out _, out float offCentre) && Mathf.Abs(offCentre) > 0.1f)
+        if (!_offCentre.TryGetValue(placeable, out float offCentre))
+        {
+            _offCentre[placeable] = 0f; // asked for once
+            EditorApplication.delayCall += () =>
+            {
+                if (this && TryMeasureBase(placeable, out _, out float measured)) _offCentre[placeable] = measured;
+                if (this) Repaint();
+            };
+        }
+        else if (Mathf.Abs(offCentre) > 0.1f)
             EditorGUILayout.HelpBox($"The art sits {offCentre:+0.00;-0.00} from the prefab's centre. Bases are centred, so move the Visual child by that much to line them up.", MessageType.None);
 
         EditorGUI.BeginChangeCheck();
