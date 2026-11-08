@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: item.note_kunekune
   displayName: A muddy recipe scribble
-  description: The kunekune pig rooted up an old tin with a recipe inside, and insisted you keep it.
+  description: The kunekune pig rooted up an old tin with a recipe inside. It's mostly mud, but it smells like someone's nana. Kunekune might know whose.
   icon: {fileID: 21300000, guid: d6f8265d8368c534db987e8d19a8c6f3, type: 3}
   category: 3
   rarity: 2
@@ -22,4 +22,4 @@ MonoBehaviour:
   - encounter
   sellValue: 0
   unique: 1
-  teachesRecipe: {fileID: 11400000, guid: 6bf9482be144b6e4e96126f0e121791d, type: 2}
+  teachesRecipe: {fileID: 0}

@@ -758,8 +758,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       ],
       "sellValue": 0,
       "unique": true,
-      "description": "The kunekune pig rooted up an old tin with a recipe inside, and insisted you keep it.",
-      "teachesRecipe": "recipe.truffle_toast"
+      "description": "The kunekune pig rooted up an old tin with a recipe inside. It's mostly mud, but it smells like someone's nana. Kunekune might know whose.",
+      "teachesRecipe": ""
     },
     {
       "id": "item.chair",
@@ -2962,6 +2962,45 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       }
     },
     {
+      "id": "quest.kunekune_family_recipe",
+      "title": "Nana's secret",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.kunekune_nose"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "item.note_kunekune",
+      "giverComes": true,
+      "summary": "You found a muddy recipe scribble on a trip with Kunekune. Show it to Kunekune: it smells like home.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.note_kunekune",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.kauri_gum",
+          "qty": 2
+        },
+        {
+          "type": "Item",
+          "target": "item.fairylights_gold",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Snff. Snff snff. That smells like... Nana's kitchen! Where did you find that? Give it here!",
+        "active": "The muddy scribble! Bring it here, bring it here!",
+        "ready": "It IS Nana's! Her truffle toast, in her own muddy writing. I thought it was lost forever. I'm keeping it under my pillow. You have these: Grandad's two shiniest lumps of kauri gum, and Nana's golden lights. She'd want them somewhere cosy.",
+        "done": "Nana would have liked you. You smell like toast."
+      }
+    },
+    {
       "id": "quest.side_snail_hungry",
       "title": "A very hungry snail",
       "giver": "npc.snail",
@@ -3866,7 +3905,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.chair",
       "item": "item.chair",
       "placement": "Floor",
-      "footprintWidth": 1.85,
+      "footprintWidth": 2.59,
       "footprintDepth": 0.55,
       "canFlip": true,
       "category": "Furniture",
@@ -3881,7 +3920,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "item": "item.cafe_table",
       "placement": "Floor",
       "footprintWidth": 2.2,
-      "footprintDepth": 0.6,
+      "footprintDepth": 0.91,
       "canFlip": true,
       "category": "Furniture",
       "seats": 0,
@@ -3894,7 +3933,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.potted_fern",
       "item": "item.potted_fern",
       "placement": "Floor",
-      "footprintWidth": 1.2,
+      "footprintWidth": 1.38,
       "footprintDepth": 0.35,
       "canFlip": true,
       "category": "Plants",
@@ -3908,8 +3947,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.cafe_fancy_table",
       "item": "item.cafe_fancy_table",
       "placement": "Floor",
-      "footprintWidth": 2.25,
-      "footprintDepth": 0.6,
+      "footprintWidth": 2.58,
+      "footprintDepth": 0.8,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Furniture",
@@ -3922,8 +3961,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.mossy_rock",
       "item": "item.mossy_rock",
       "placement": "Floor",
-      "footprintWidth": 1.85,
-      "footprintDepth": 0.55,
+      "footprintWidth": 2.46,
+      "footprintDepth": 0.61,
       "chainSpan": 0.0,
       "canFlip": true,
       "category": "Furniture",
@@ -3936,7 +3975,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.boulder",
       "item": "item.boulder",
       "placement": "Floor",
-      "footprintWidth": 1.1,
+      "footprintWidth": 1.57,
       "footprintDepth": 0.35,
       "chainSpan": 0,
       "canFlip": true,
@@ -3950,8 +3989,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.mossy_boulder",
       "item": "item.mossy_boulder",
       "placement": "Floor",
-      "footprintWidth": 1.1,
-      "footprintDepth": 0.35,
+      "footprintWidth": 1.52,
+      "footprintDepth": 0.57,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Decor",
@@ -3964,8 +4003,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.round_bush",
       "item": "item.round_bush",
       "placement": "Floor",
-      "footprintWidth": 1.35,
-      "footprintDepth": 0.4,
+      "footprintWidth": 1.55,
+      "footprintDepth": 0.64,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Plants",
@@ -3992,7 +4031,7 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.glow_lantern",
       "item": "item.glow_lantern",
       "placement": "Floor",
-      "footprintWidth": 0.5,
+      "footprintWidth": 1.37,
       "footprintDepth": 0.25,
       "chainSpan": 0,
       "canFlip": true,
@@ -4006,8 +4045,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.paper_lantern",
       "item": "item.paper_lantern",
       "placement": "Floor",
-      "footprintWidth": 0.75,
-      "footprintDepth": 0.25,
+      "footprintWidth": 0.9,
+      "footprintDepth": 0.38,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Decor",
@@ -4020,8 +4059,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.toadstool",
       "item": "item.toadstool",
       "placement": "Floor",
-      "footprintWidth": 0.45,
-      "footprintDepth": 0.25,
+      "footprintWidth": 0.63,
+      "footprintDepth": 0.35,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Furniture",
@@ -4034,8 +4073,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.toadstool_blue",
       "item": "item.toadstool_blue",
       "placement": "Floor",
-      "footprintWidth": 0.45,
-      "footprintDepth": 0.25,
+      "footprintWidth": 0.63,
+      "footprintDepth": 0.35,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Furniture",
@@ -4048,8 +4087,8 @@ footer .wrap { padding-block: 16px 28px; font-size: .85rem; color: var(--ink-sof
       "id": "placeable.toadstool_green",
       "item": "item.toadstool_green",
       "placement": "Floor",
-      "footprintWidth": 0.45,
-      "footprintDepth": 0.25,
+      "footprintWidth": 0.63,
+      "footprintDepth": 0.35,
       "chainSpan": 0,
       "canFlip": true,
       "category": "Furniture",
@@ -4234,6 +4273,7 @@ function prepare(design, setup, context) {
   var ctx = context || {};
   var active = ctx.activeQuests || [];
   var obtained = ctx.obtained || [];
+  var known = ctx.knownRecipes || [];
   var time = setup.time === "Night" ? "Night" : "Day";
   var eligible = [];
   var entries = table.entries || [];
@@ -4246,6 +4286,7 @@ function prepare(design, setup, context) {
     if (e.requiresQuest && active.indexOf(e.requiresQuest) < 0) continue;
     if (e.requiresCompanion && setup.companion !== e.requiresCompanion) continue;
     if (item.unique && obtained.indexOf(item.id) >= 0) continue;
+    if (item.unique && item.teachesRecipe && known.indexOf(item.teachesRecipe) >= 0) continue; // a note for a recipe you know
     var w = Number(e.weight);
     for (var m = 0; m < mods.length; m++) {
       var md = mods[m];
@@ -4482,7 +4523,7 @@ function sanitiseUi() {
 function currentSetup() {
   return { table: ui.table, companion: ui.companion || null, perks: ui.perk ? [ui.perk] : [], focus: ui.focus || null, time: ui.time };
 }
-function currentContext() { return { activeQuests: campaign.activeQuests.slice(), obtained: campaign.obtained.slice() }; }
+function currentContext() { return { activeQuests: campaign.activeQuests.slice(), obtained: campaign.obtained.slice(), knownRecipes: campaign.unlockedRecipes.slice() }; }
 function setupLabel(setup) {
   var parts = [];
   var c = findById(design.companions, setup.companion); parts.push(c ? c.name : "No companion");

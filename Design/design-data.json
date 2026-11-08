@@ -324,8 +324,8 @@
       ],
       "sellValue": 0,
       "unique": true,
-      "description": "The kunekune pig rooted up an old tin with a recipe inside, and insisted you keep it.",
-      "teachesRecipe": "recipe.truffle_toast"
+      "description": "The kunekune pig rooted up an old tin with a recipe inside. It's mostly mud, but it smells like someone's nana. Kunekune might know whose.",
+      "teachesRecipe": ""
     },
     {
       "id": "item.chair",
@@ -2525,6 +2525,45 @@
         "active": "Is it ready? Is it ready now? How about now?",
         "ready": "It's better than I smelled it would be. Here. I found this deep in the good dirt, and I think it's the blue that matters.",
         "done": "Snff. You smell like a friend."
+      }
+    },
+    {
+      "id": "quest.kunekune_family_recipe",
+      "title": "Nana's secret",
+      "giver": "npc.kunekune",
+      "isMain": false,
+      "prerequisites": [
+        "quest.kunekune_nose"
+      ],
+      "nextDay": false,
+      "minDay": 0,
+      "requiresItem": "item.note_kunekune",
+      "giverComes": true,
+      "summary": "You found a muddy recipe scribble on a trip with Kunekune. Show it to Kunekune: it smells like home.",
+      "objectives": [
+        {
+          "type": "DeliverItems",
+          "target": "item.note_kunekune",
+          "qty": 1
+        }
+      ],
+      "rewards": [
+        {
+          "type": "Item",
+          "target": "item.kauri_gum",
+          "qty": 2
+        },
+        {
+          "type": "Item",
+          "target": "item.fairylights_gold",
+          "qty": 1
+        }
+      ],
+      "dialogue": {
+        "offer": "Snff. Snff snff. That smells like... Nana's kitchen! Where did you find that? Give it here!",
+        "active": "The muddy scribble! Bring it here, bring it here!",
+        "ready": "It IS Nana's! Her truffle toast, in her own muddy writing. I thought it was lost forever. I'm keeping it under my pillow. You have these: Grandad's two shiniest lumps of kauri gum, and Nana's golden lights. She'd want them somewhere cosy.",
+        "done": "Nana would have liked you. You smell like toast."
       }
     },
     {
