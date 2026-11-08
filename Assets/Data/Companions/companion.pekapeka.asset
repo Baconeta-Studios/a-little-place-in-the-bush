@@ -15,7 +15,7 @@ MonoBehaviour:
   id: companion.pekapeka
   displayName: Pekapeka
   description: Sees in the dark and eats insects. Finds more bugs, and spots night visitors.
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 728bfc16ec6d4d79a0ce8e0812fbb434, type: 3}
   unlockedByDefault: 0
   modifiers:
   - type: 0

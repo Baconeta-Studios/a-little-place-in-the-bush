@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SoundLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SoundLibrary
   music: {fileID: -9125522902173723532, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
-  ambient: {fileID: -2331718101565934472, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
+  dialogue: {fileID: -2331718101565934472, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
   sfx: {fileID: -8016216726190809901, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
   audioManagerPrefab: {fileID: 4629262566429204678, guid: 17f4b0f6aa0dcea41a71ca43a789d2fe, type: 3}
   menuScenes:
@@ -25,47 +25,47 @@ MonoBehaviour:
   - name: MusicMainMenu
     sound: 100
     plays: The main menu.
-    clips: 
+    clips:
     - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicCafeDay
     sound: 101
     plays: At the cafe, morning and afternoon.
-    clips: 
+    clips:
     - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicCafeEvening
     sound: 102
     plays: At the cafe once the day's foraging is done.
-    clips: 
+    clips:
     - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicCafeNight
     sound: 103
     plays: At the cafe at night.
-    clips: 
+    clips:
     - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: MusicForaging
     sound: 104
     plays: While the forage screen is open.
-    clips: 
+    clips:
     - {fileID: 8300000, guid: 0cdbe0beb8f7f844bb3f704048f98fe2, type: 3}
     volume: 1
     pitchVariation: 0.05
   - name: AmbientBushDay
     sound: 200
-    plays: 'Under the music all day: birds, wind in the trees.'
+    plays: 'Under the music all day, on the Music slider: birds, wind in the trees.'
     clips: []
     volume: 1
     pitchVariation: 0.05
   - name: AmbientBushNight
     sound: 201
-    plays: 'Under the music at night: crickets, moreporks.'
+    plays: 'Under the music at night, on the Music slider: crickets, moreporks.'
     clips: []
     volume: 1
     pitchVariation: 0.05
@@ -210,49 +210,140 @@ MonoBehaviour:
   voices:
   - name: Ruru
     npc: {fileID: 11400000, guid: 5d5225a0f63986044a63dd642f50f449, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: f496138cf5c5c9648a8eeb44fd18a0e2, type: 3}
+    - {fileID: 8300000, guid: 5900aaffd3b98474091b3d50dc0df7cb, type: 3}
+    - {fileID: 8300000, guid: dd9b94e859ad91446819ff1601a78ade, type: 3}
+    - {fileID: 8300000, guid: 0158349c16f64554bb52323d5a7b2aba, type: 3}
+    - {fileID: 8300000, guid: 2644b57a85dfbd246a0f5d499e89ee64, type: 3}
+    - {fileID: 8300000, guid: b0b68d06422db11408abe6d117f40d7e, type: 3}
+    - {fileID: 8300000, guid: abe8b577d8b286b47bfcbdcecacc75e7, type: 3}
+    - {fileID: 8300000, guid: adb49d0caf5194d408dcff3adf9d05e4, type: 3}
+    - {fileID: 8300000, guid: 431be3367241f38468da95a32587c01a, type: 3}
+    - {fileID: 8300000, guid: ea212f5dd55ab8f4b8e23f9bdc89ff04, type: 3}
+    - {fileID: 8300000, guid: eaf9f475719a4c94992ea1990eafbdb7, type: 3}
+    - {fileID: 8300000, guid: 94adf9368cadf3c40b38c3f3bed4f93a, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
   - name: Weka
     npc: {fileID: 11400000, guid: 4180bf08e2d5907468bafa73a53a8f5a, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: a7604d871cd04844d994bf371bcbae0a, type: 3}
+    - {fileID: 8300000, guid: ce016ab129441c844938b27f5b2cc681, type: 3}
+    - {fileID: 8300000, guid: 38d6483478410c84db79fa010221b3ee, type: 3}
+    - {fileID: 8300000, guid: c01edb0abd038474a853f27368bf49a7, type: 3}
+    - {fileID: 8300000, guid: dc763e5c23265f34f9a98c39e142796f, type: 3}
+    - {fileID: 8300000, guid: ca9ab9b7b268b744f9e8cbd07bde96fd, type: 3}
+    - {fileID: 8300000, guid: bae860189080d2144bd37c5e3a0ec736, type: 3}
+    - {fileID: 8300000, guid: f7b0fe66d7b1f894e90596206ac890a4, type: 3}
+    - {fileID: 8300000, guid: 8000783910074a249adb0a94242ef4fd, type: 3}
+    - {fileID: 8300000, guid: c52645f8d41407d4586887e524aa772f, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
   - name: Snail
     npc: {fileID: 11400000, guid: 8d88e64f18bc3f34299cc78b6b953607, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 99699db6a441a0744a84afcacbe1b77c, type: 3}
+    - {fileID: 8300000, guid: ce79ea888f89ec44994e88a0d6c1d451, type: 3}
+    - {fileID: 8300000, guid: a398558a0b6f9fe4fb01d7e6ac0c6e6e, type: 3}
+    - {fileID: 8300000, guid: 321730c7b84f0f84c8b5322ee89da1bf, type: 3}
+    - {fileID: 8300000, guid: b3bdc2dff8fe17d4e838fad9ae09c25b, type: 3}
+    - {fileID: 8300000, guid: 795bbb1d8a8d6d446960fc1c73fd47d6, type: 3}
+    - {fileID: 8300000, guid: 117286dc8435b2540861d15001a35147, type: 3}
+    - {fileID: 8300000, guid: b2cb55cbb6c4db64a8a86b11be2a17de, type: 3}
+    - {fileID: 8300000, guid: ba7cce9f4e7ab844c8b210bc1b4a989a, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
   - name: Pekapeka
     npc: {fileID: 11400000, guid: ff40b74e031a0544080ac511f31948ce, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 67b54a67a8ce60849aeaea5d4accd48d, type: 3}
+    - {fileID: 8300000, guid: 3234667dda60af74f96fdae9fe778f4a, type: 3}
+    - {fileID: 8300000, guid: d14b71e6b6d695a43a7aa0059a9bebee, type: 3}
+    - {fileID: 8300000, guid: 71dc9fe6cf9c491419477585e80e789d, type: 3}
+    - {fileID: 8300000, guid: c60d06e039ce6c24bb648e685730c6cc, type: 3}
+    - {fileID: 8300000, guid: 2cda931aa4c8150458574e9ef9252612, type: 3}
+    - {fileID: 8300000, guid: d5dacf7992e89c24a9489f11deb88eab, type: 3}
+    - {fileID: 8300000, guid: e72341ce58ec11f42bc96f09408b1c72, type: 3}
+    - {fileID: 8300000, guid: e4c7940919b972b49927c06840a9e10b, type: 3}
+    - {fileID: 8300000, guid: f0dd90bed7d0700468c375928964f0ae, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
-  - name: Kōwhai
+  - name: "K\u014Dwhai"
     npc: {fileID: 11400000, guid: f21f6627390bcb64886542154e0fbfe8, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 68799e44ac3048b4c8cbf1e6cc612042, type: 3}
+    - {fileID: 8300000, guid: f9f5dd58658f7224f96a464ade9ff53e, type: 3}
+    - {fileID: 8300000, guid: a723a44df857c5b4b8726f66d082109c, type: 3}
+    - {fileID: 8300000, guid: dd83e5167120b014c9f3b6052da8051b, type: 3}
+    - {fileID: 8300000, guid: 8a62889806447e64d8e17664d9df93c6, type: 3}
+    - {fileID: 8300000, guid: 95d96c89b14c6eb49a77c40349e4a081, type: 3}
+    - {fileID: 8300000, guid: 9a1816dcf94e75e47b24c6f07f45db1b, type: 3}
+    - {fileID: 8300000, guid: 04a41d2b225f7de4b87c8d733fffd8a5, type: 3}
+    - {fileID: 8300000, guid: 2d4b56133cc6a4e48b308b8b250196de, type: 3}
+    - {fileID: 8300000, guid: cf7671106fca753428581b5310895fe1, type: 3}
+    - {fileID: 8300000, guid: c8dbf755d33eae946ad270be2543dcdc, type: 3}
+    - {fileID: 8300000, guid: 3618e59f847b477438604a4a7e9954ed, type: 3}
+    - {fileID: 8300000, guid: a1b8c2795f032d546912862c267b7d9f, type: 3}
+    - {fileID: 8300000, guid: 0c123f7a7e69b7043b5b1df7ae9db0f7, type: 3}
+    - {fileID: 8300000, guid: 39cb7b0ecfaeeac4b8559fbc9d31d435, type: 3}
+    - {fileID: 8300000, guid: 3c5c5d75fae91a545b685b73405bcc1a, type: 3}
+    - {fileID: 8300000, guid: 407e44559843d6c49ae28d23e5be5bde, type: 3}
+    - {fileID: 8300000, guid: b61cae692966d7c43b038bed842194c6, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
   - name: Kunekune
     npc: {fileID: 11400000, guid: 2c36384265e346b4c861e8f313ad8a83, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: bc744fb46a1f1234b9ff977cfa586cbb, type: 3}
+    - {fileID: 8300000, guid: f80c882569eb6654bba416ec54ab775d, type: 3}
+    - {fileID: 8300000, guid: d4b3e5b710696cd4993b18aa36291cdd, type: 3}
+    - {fileID: 8300000, guid: 45eabd3e2c353514ebdef4d66e384eba, type: 3}
+    - {fileID: 8300000, guid: 079e80fce7225884590a9e38d1535412, type: 3}
+    - {fileID: 8300000, guid: f67c1b39bdcbb6141bb6ffa35c3327cf, type: 3}
+    - {fileID: 8300000, guid: 8182216312e4d3948ab574b19c9b85b0, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
   - name: Spider
     npc: {fileID: 11400000, guid: f2bec46a0fa805245915c0c60dd2b0e1, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 75b9a95c873ff2c4789a821e698a692a, type: 3}
+    - {fileID: 8300000, guid: 2f70a1526058096498292906566b95ed, type: 3}
+    - {fileID: 8300000, guid: ff9ada3a419dbac48a4b6c1d491ef140, type: 3}
+    - {fileID: 8300000, guid: 3c7b0ea053753cc4bad8cc183bc043f3, type: 3}
+    - {fileID: 8300000, guid: f671e600f19379441bc6cfe4c6e15dd3, type: 3}
+    - {fileID: 8300000, guid: ce81a8105cff7f247a908ac95fa66b6e, type: 3}
+    - {fileID: 8300000, guid: 6d52bcc8de92c8146b011919afceed2b, type: 3}
+    - {fileID: 8300000, guid: 9c89e0fd85d109e42b3438a5304dbb9f, type: 3}
+    - {fileID: 8300000, guid: 63dd9a8060cd9b74ab305cfdbe031ce0, type: 3}
+    - {fileID: 8300000, guid: 62bb8955aec64914abdfb5fb74087a42, type: 3}
+    - {fileID: 8300000, guid: 5448d9cfa493c8847b497640800e47a9, type: 3}
+    - {fileID: 8300000, guid: dc3dbfb6ee0b2854cb8aa3b72197a565, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04
   - name: Gus
     npc: {fileID: 11400000, guid: 03143a456f4f67747ba1bf100c63d7d0, type: 2}
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 89a8fb6a412a51b47b352193bbef9533, type: 3}
+    - {fileID: 8300000, guid: 0c6e3e120c31b6c4bad8f8de338be9de, type: 3}
+    - {fileID: 8300000, guid: 89242d3ffade4e54c89b9e7c9d79459d, type: 3}
+    - {fileID: 8300000, guid: 3c335884b7360ea4aad72bea04df8bfd, type: 3}
+    - {fileID: 8300000, guid: d29ed971be8b9084aad0568672a8515a, type: 3}
+    - {fileID: 8300000, guid: 29d2709778b60bc4a98b41072f5312bf, type: 3}
+    - {fileID: 8300000, guid: fe3a3e9dbc0b24e42b439ad37bf457e4, type: 3}
+    - {fileID: 8300000, guid: 1465466c99f8aaa4b8768859e723d4ed, type: 3}
+    - {fileID: 8300000, guid: bfca2ec356aa3774d840620390884d92, type: 3}
+    - {fileID: 8300000, guid: 7ee0844ed062b1a43805179c3baded64, type: 3}
+    - {fileID: 8300000, guid: 9379f30765883b14487d658bd7c5352b, type: 3}
+    - {fileID: 8300000, guid: 75686118ae21cfa4694270d5323253ff, type: 3}
+    - {fileID: 8300000, guid: 70b8e43d41f56634e969b7c5093e6557, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.04

@@ -259,7 +259,7 @@ MonoBehaviour:
   mixer: {fileID: 24100000, guid: c07848ed783d97c40b4556f64af32af1, type: 2}
   musicSlider: {fileID: 6686685597055440139}
   sfxSlider: {fileID: 4682759776988474479}
-  ambientSlider: {fileID: 8965623150018680739}
+  dialogueSlider: {fileID: 8965623150018680739}
 --- !u!114 &8663112620539301300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -585,7 +585,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Ambient
+  m_text: Dialogue
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0a6d5fbc2cf498f42b2592dc02305fdd, type: 2}
   m_sharedMaterial: {fileID: 5012077904895454979, guid: 0a6d5fbc2cf498f42b2592dc02305fdd, type: 2}
@@ -2338,7 +2338,7 @@ GameObject:
   - component: {fileID: 3636678396085196852}
   - component: {fileID: 8965623150018680739}
   m_Layer: 5
-  m_Name: AmbientSlider
+  m_Name: DialogueSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

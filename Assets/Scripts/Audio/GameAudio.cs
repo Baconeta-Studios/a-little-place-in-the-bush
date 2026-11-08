@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Audio;
 using Bush.Core;
 using Managers;
@@ -19,6 +20,8 @@ public static class GameAudio
     private static GameSound? _ambientNow;
     private static CustomAudioSource _voice;
     private static AudioClip _lastVoiceClip;
+    // Each voice's clips in a shuffled order, so a creature works through all of them before any repeat.
+    private static readonly Dictionary<AudioClip[], List<AudioClip>> VoiceDecks = new();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Reset()
@@ -28,6 +31,7 @@ public static class GameAudio
         _music = _ambient = _voice = null;
         _musicNow = _ambientNow = null;
         _lastVoiceClip = null;
+        VoiceDecks.Clear();
     }
 
     public static SoundLibrary Library
@@ -63,7 +67,7 @@ public static class GameAudio
     public static void PlayMusic(GameSound sound) => Crossfade(sound, Library ? Library.music : null, ref _music, ref _musicNow);
 
     /// <summary>Fades over to this background sound, unless it's what's playing already.</summary>
-    public static void PlayAmbient(GameSound sound) => Crossfade(sound, Library ? Library.ambient : null, ref _ambient, ref _ambientNow);
+    public static void PlayAmbient(GameSound sound) => Crossfade(sound, Library ? Library.music : null, ref _ambient, ref _ambientNow);
 
     public static void StopAmbient()
     {
@@ -72,18 +76,19 @@ public static class GameAudio
         _ambientNow = null;
     }
 
-    /// <summary>A creature says something: a line of their gibberish, cutting off the last one.</summary>
+    /// <summary>A creature says something: a line of their gibberish, cutting off the last one. They go through every
+    /// clip they have, in a random order, before any comes round again.</summary>
     public static void Say(NpcDefinition npc)
     {
         StopVoice();
         if (!Library) return;
         SoundLibrary.Voice voice = Library.VoiceOf(npc);
         bool own = voice != null && Pick(voice.clips, null);
-        AudioClip clip = Pick(own ? voice.clips : Library.defaultVoice, _lastVoiceClip);
+        AudioClip clip = Deal(own ? voice.clips : Library.defaultVoice, _lastVoiceClip);
         if (!clip) return;
         _lastVoiceClip = clip;
         float pitch = voice != null ? voice.pitch + Random.Range(-voice.pitchVariation, voice.pitchVariation) : 1f;
-        _voice = PlayOnce(clip, Library.sfx, voice?.volume ?? 1f, pitch);
+        _voice = PlayOnce(clip, Library.dialogue ? Library.dialogue : Library.sfx, voice?.volume ?? 1f, pitch);
     }
 
     public static void StopVoice()
@@ -136,6 +141,30 @@ public static class GameAudio
         if (!Library || !Library.audioManagerPrefab) return false;
         Object.Instantiate(Library.audioManagerPrefab);
         return true;
+    }
+
+    /// <summary>The next clip from a shuffled deck of <paramref name="clips"/>, shuffling a new deck once it's used up.
+    /// A new deck never starts with <paramref name="not"/> (the one just played) when there's a choice.</summary>
+    private static AudioClip Deal(AudioClip[] clips, AudioClip not)
+    {
+        if (clips == null) return null;
+        if (!VoiceDecks.TryGetValue(clips, out List<AudioClip> deck)) VoiceDecks[clips] = deck = new List<AudioClip>();
+        deck.RemoveAll(c => !c || System.Array.IndexOf(clips, c) < 0); // the library was edited while playing
+        if (deck.Count == 0)
+        {
+            foreach (AudioClip clip in clips)
+                if (clip && !deck.Contains(clip)) deck.Add(clip);
+            for (int i = deck.Count - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (deck[i], deck[j]) = (deck[j], deck[i]);
+            }
+            if (deck.Count > 1 && deck[^1] == not) (deck[0], deck[^1]) = (deck[^1], deck[0]);
+        }
+        if (deck.Count == 0) return null;
+        AudioClip next = deck[^1];
+        deck.RemoveAt(deck.Count - 1);
+        return next;
     }
 
     /// <summary>A random clip, avoiding <paramref name="not"/> when there's a choice.</summary>

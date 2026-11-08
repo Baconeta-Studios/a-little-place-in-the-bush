@@ -15,7 +15,7 @@ namespace Managers
 
         public const string MusicKey = "MusicVolume";
         public const string SfxKey = "SfxVolume";
-        public const string AmbientKey = "AmbientVolume";
+        public const string DialogueKey = "DialogueVolume";
 
         public CustomAudioSource Play(AudioClip clip, AudioMixerGroup mixerGroup, bool looping = true, float volume = 1, CustomAudioSource presetAudioSource = null)
         {
@@ -65,7 +65,7 @@ namespace Managers
 
             float musicVol   = PlayerPrefs.GetFloat(MusicKey,   0.5f);
             float sfxVol     = PlayerPrefs.GetFloat(SfxKey,     0.5f);
-            float ambientVol = PlayerPrefs.GetFloat(AmbientKey, 0.5f);
+            float dialogueVol = PlayerPrefs.GetFloat(DialogueKey, 0.5f);
 
             // Wait one frame — AudioMixer parameters cannot be set reliably on the same frame as scene load.
             yield return null;
@@ -73,7 +73,7 @@ namespace Managers
             // Clamp to a small positive value so Log10 never produces -Infinity (which silences the mixer).
             masterMixer.SetFloat(VolumeSettings.MixerMusic,   Mathf.Log10(Mathf.Max(musicVol,   0.0001f)) * 20);
             masterMixer.SetFloat(VolumeSettings.SfxMusic,     Mathf.Log10(Mathf.Max(sfxVol,     0.0001f)) * 20);
-            masterMixer.SetFloat(VolumeSettings.AmbientMusic, Mathf.Log10(Mathf.Max(ambientVol, 0.0001f)) * 20);
+            masterMixer.SetFloat(VolumeSettings.MixerDialogue, Mathf.Log10(Mathf.Max(dialogueVol, 0.0001f)) * 20);
         }
     }
 }

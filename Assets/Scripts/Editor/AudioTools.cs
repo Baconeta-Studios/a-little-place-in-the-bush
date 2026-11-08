@@ -43,7 +43,7 @@ public static class AudioTools
         if (mixer)
         {
             if (!library.music) library.music = Group(mixer, "Music");
-            if (!library.ambient) library.ambient = Group(mixer, "Ambient");
+            if (!library.dialogue) library.dialogue = Group(mixer, "Dialogue");
             if (!library.sfx) library.sfx = Group(mixer, "SFX");
         }
         if (!library.audioManagerPrefab) library.audioManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Audio/AudioManager.prefab");
@@ -94,10 +94,12 @@ public static class AudioTools
     }
 
     /// <summary>Adds what's in the folders and keeps what's already in the rows, so clips put in by hand stay.</summary>
-    public static string Fill(SoundLibrary library)
+    public static string Fill(SoundLibrary library) => Fill(library, out _);
+
+    public static string Fill(SoundLibrary library, out int added)
     {
         var rows = library.sounds.ToDictionary(r => Plain(r.sound.ToString()));
-        int added = 0;
+        added = 0;
         var unmatched = new List<string>();
 
         foreach (string path in AssetDatabase.FindAssets("t:AudioClip", new[] { AudioFolder }).Select(AssetDatabase.GUIDToAssetPath))
@@ -106,7 +108,9 @@ public static class AudioTools
             var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
             if (path.StartsWith($"{VoicesFolder}/"))
             {
-                string folder = path.Substring(VoicesFolder.Length + 1).Split('/')[0];
+                string inVoices = path.Substring(VoicesFolder.Length + 1);
+                if (!inVoices.Contains('/')) continue; // loose files here are the raw recordings the lines are cut from
+                string folder = inVoices.Split('/')[0];
                 if (folder.Equals(DefaultVoice, StringComparison.OrdinalIgnoreCase))
                 {
                     added += AddTo(ref library.defaultVoice, clip);
@@ -137,6 +141,36 @@ public static class AudioTools
 
     /// <summary>Lower case, letters only, so "Ui Tap 2", "ui_tap-2" and "UiTap" all match.</summary>
     private static string Plain(string name) => new(name.Where(char.IsLetter).Select(char.ToLowerInvariant).ToArray());
+}
+
+/// <summary>
+/// A clip dropped in a creature's voice folder joins their voice by itself, so their lines play straight away without
+/// anyone running Fill. Runs after the import has finished, and only says something when it added a clip.
+/// </summary>
+public class VoiceFolderWatcher : AssetPostprocessor
+{
+    private static bool _queued;
+
+    private static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] movedFrom)
+    {
+        if (_queued || Application.isBatchMode) return;
+        if (!imported.Concat(moved).Any(IsVoiceClip)) return;
+        _queued = true;
+        EditorApplication.delayCall += () =>
+        {
+            _queued = false;
+            SoundLibrary library = AudioTools.FindOrCreateLibrary();
+            AudioTools.Fill(library, out int added);
+            if (added == 0) return;
+            EditorUtility.SetDirty(library);
+            AssetDatabase.SaveAssetIfDirty(library);
+            Debug.Log($"[Audio] Added {added} voice clip(s) to the sound library.");
+        };
+    }
+
+    private static bool IsVoiceClip(string path) =>
+        path.StartsWith("Assets/Audio/Voices/") && path.Substring("Assets/Audio/Voices/".Length).Contains('/')
+        && AssetImporter.GetAtPath(path) is AudioImporter;
 }
 
 /// <summary>Sensible settings for a new sound, going by its folder, so music doesn't fill a phone's memory. Change any afterwards.</summary>

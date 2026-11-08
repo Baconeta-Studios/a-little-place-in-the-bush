@@ -123,7 +123,7 @@ public class DialogueBox : Popup
                 break;
 
             default:
-                Say(Line(topic.line, HasShop ? "Care to look at my recipes?" : $"{NpcName} gives you a friendly nod."), null);
+                Say(Line(topic.line, HasShop ? "Care to look at my recipes?" : DialogueText.Narration($"{NpcName} gives you a friendly nod.")), null);
                 if (HasShop) Replies(("Recipes", OpenShop), ("Bye", Close));
                 else Replies(("Bye", Close));
                 break;
@@ -207,7 +207,9 @@ public class DialogueBox : Popup
 
     private void Say(string line, string detail)
     {
-        GameAudio.Say(_npc);
+        // Their voice plays for speech, not narration like "Gus gives you a friendly nod." (see DialogueText).
+        if (DialogueText.IsSpoken(line)) GameAudio.Say(_npc);
+        else GameAudio.StopVoice();
         _text.text = string.IsNullOrEmpty(detail) ? line : $"{line}\n\n<size=85%>{detail}</size>";
     }
 

@@ -72,7 +72,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Ambient
+  m_Name: Dialogue
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 2fc0e8bf9fbe0324c8b223d8701d2aec
   m_Children: []
@@ -102,7 +102,7 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: e5567f5ac89ae484eb785da5b99b05b0
-    name: AmbientVolume
+    name: DialogueVolume
   - guid: ae3fe8f028a300342a33d6caa7c75b1c
     name: MasterVolume
   - guid: 970baf62677dd094eb3a15d6fb45ce74
