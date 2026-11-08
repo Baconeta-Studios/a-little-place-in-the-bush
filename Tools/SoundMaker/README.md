@@ -11,10 +11,10 @@ Each sound in `RECIPES` is a list of layers: which raw sound, when it starts, it
 
 | Raw sound | Used for |
 |---|---|
-| `hover` (a tiny tick) | UiTap, UiNope (lower and duller), PickUpObject (higher), PlaceObject (lower), MenuChanged (two ticks), the end of ForageHome |
-| `discard1` | UiBack |
+| `hover` (a tiny tick) | UiTap, UiNope (lower and duller), PickUpObject (higher), PlaceObject (lower), MenuChanged (two ticks), ForageFind (3 low plops), the plop before ForageRareFind |
+| `discard1` | UiBack, ForageSetOff and ForageHome (soft swishes) |
 | `draw1` (paper) | PaperOpen, PaperClose (a touch lower), PutAwayObject (higher, into the bag) |
-| `dropleaves1`, `dropleaves2` | ForageFind (3 takes), ForageRustle (3 layered takes), ForageSetOff, ForageHome, under PlaceObject |
+| `dropleaves1`, `dropleaves2` | ForageRustle (3 layered takes) only, so the bush you can tap is the only thing that rustles. Also faintly under PlaceObject |
 | `soul_collect` | ForageRareFind |
 
 Files in a `Source` folder are never put in the library.

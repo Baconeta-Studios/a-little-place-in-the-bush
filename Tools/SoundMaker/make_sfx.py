@@ -31,14 +31,15 @@ RECIPES = {
     "UiTap":        ("UI", -22, [("hover", 0, 1.0, 0)], None),
     "UiBack":       ("UI", -22, [("discard", 0, 1.0, 0)], None),
     "UiNope":       ("UI", -27, [("hover", 0, 0.72, 0)], 2200),          # lower and duller: it didn't work
-    "PaperOpen":    ("UI", -24, [("draw", 0, 1.0, 0)], None),
+    "PaperOpen":    ("UI", -24, [("draw", 0, 1.25, 0)], None),           # 25% quicker: a brisk flick
     "PaperClose":   ("UI", -25, [("draw", 0, 0.86, 0)], None),           # the same paper, a touch lower
     # Foraging
-    # A find dropping into the basket: the tick pitched well down into a soft plop, with a muffled leaf under it.
-    "ForageFind":   ("SFX", -24, [("hover", 0, 0.62, 0), ("leaf1", 0.005, 0.85, -14)], 3500),
-    "ForageFind2":  ("SFX", -24, [("hover", 0, 0.7, 0), ("leaf2", 0.005, 0.9, -15)], 3500),
-    "ForageFind3":  ("SFX", -24, [("hover", 0, 0.56, 0), ("leaf1", 0.005, 0.8, -14)], 3200),
-    "ForageRareFind": ("SFX", -21, [("hover", 0, 0.62, -4), ("leaf1", 0.005, 0.85, -18), ("soul", 0.06, 1.0, 0)], None),
+    # A find dropping into the basket: the tick pitched well down into a soft plop. No leaves: those are only for the
+    # bush you can tap, so nothing else rustles.
+    "ForageFind":   ("SFX", -24, [("hover", 0, 0.62, 0)], 3500),
+    "ForageFind2":  ("SFX", -24, [("hover", 0, 0.7, 0)], 3500),
+    "ForageFind3":  ("SFX", -24, [("hover", 0, 0.56, 0)], 3200),
+    "ForageRareFind": ("SFX", -21, [("hover", 0, 0.62, -4), ("soul", 0.06, 1.0, 0)], None),
     # A bush rustling: single leaves layered on top of each other a moment apart, so it sounds like a handful.
     "ForageRustle":  ("SFX", -22, [("leaf1", 0, 1.0, 0), ("leaf2", 0.07, 1.06, -2), ("leaf1", 0.16, 0.9, -3), ("leaf2", 0.24, 1.12, -6)], None),
     "ForageRustle2": ("SFX", -22, [("leaf2", 0, 0.95, 0), ("leaf1", 0.05, 1.1, -2), ("leaf1", 0.19, 1.0, -4), ("leaf2", 0.27, 0.88, -7)], None),
@@ -46,7 +47,7 @@ RECIPES = {
     # Pushing off into the bush, and back out of it
     # Pushing off: a soft swish, not leaves, so the first rustle you hear is the bush you can tap.
     "ForageSetOff": ("SFX", -24, [("discard", 0, 0.8, 0)], 6000),
-    "ForageHome":   ("SFX", -22, [("leaf2", 0, 1.1, -6), ("leaf1", 0.12, 1.0, -3), ("leaf2", 0.22, 0.95, 0), ("hover", 0.5, 0.9, -6)], None),
+    "ForageHome":   ("SFX", -26, [("discard", 0, 0.92, 0)], 6000),  # a quiet swish back: it plays as the finds start dropping
     # Build mode and the menu board
     "PickUpObject": ("SFX", -23, [("hover", 0, 1.22, 0)], None),
     "PlaceObject":  ("SFX", -23, [("hover", 0, 0.82, 0), ("leaf1", 0.01, 0.8, -12)], 4500),
