@@ -207,7 +207,7 @@ MonoBehaviour:
     requiresQuest: {fileID: 0}
     requiresCompanion: {fileID: 0}
   - item: {fileID: 11400000, guid: e63d68e2f5c0d664faccfed2b050a802, type: 2}
-    weight: 2
+    weight: 1
     min: 1
     max: 1
     time: 0
