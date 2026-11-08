@@ -15,7 +15,7 @@ MonoBehaviour:
   id: companion.snail
   displayName: Snail
   description: Slow, but knows where every worm in the bush lives. Finds many more worms.
-  portrait: {fileID: 0}
+  portrait: {fileID: 21300000, guid: 6df0e21de24d6af4bb3dc96ad07dfc05, type: 3}
   unlockedByDefault: 0
   modifiers:
   - type: 0
